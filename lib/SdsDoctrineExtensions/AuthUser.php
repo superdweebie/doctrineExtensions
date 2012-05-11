@@ -6,13 +6,10 @@ use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
 
 trait AuthUser {
 
+    use User;
+    
     protected $chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';    
     protected $saltLength = 50;
-    
-    /** 
-     * @ODM\Field(type="string") 
-     */
-    protected $username;
 
     /** 
      * @ODM\Field(type="string") 
@@ -23,14 +20,6 @@ trait AuthUser {
      * @ODM\Field(type="boolean") 
      */    
     protected $isGuest;    
-    
-    public function getUsername() {
-        return $this->username;
-    }
-
-    public function setUsername($username) {
-        $this->username = $username;
-    }
     
     public function isGuest() {
         return $this->isGuest;
