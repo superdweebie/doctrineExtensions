@@ -1,6 +1,6 @@
 <?php
 
-namespace SdsDoctrineExtensions;
+namespace SdsDoctrineExtensions\Stamped;
 
 use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
 
@@ -14,7 +14,7 @@ trait CreatedOn {
     /** 
      * @ODM\PrePersist 
      */
-    public function autosetCreatedOn(){
+    public function autoSetCreatedOn(){
         if (!isset($this->createdOn)){
             $this->createdOn = time();
         }

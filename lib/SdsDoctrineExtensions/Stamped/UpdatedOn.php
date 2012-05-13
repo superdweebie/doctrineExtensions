@@ -1,6 +1,6 @@
 <?php
 
-namespace SdsDoctrineExtensions;
+namespace SdsDoctrineExtensions\Stamped;
 
 use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
 
@@ -14,7 +14,7 @@ trait UpdatedOn {
     /** 
      * @ODM\PrePersist 
      */
-    public function autosetUpdatedOn(){
+    public function autoSetUpdatedOn(){
         $this->updatedOn = time();
     }    
     
