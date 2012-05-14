@@ -1,8 +1,9 @@
 <?php
 
-namespace SdsDoctrineExtensions;
+namespace SdsDoctrineExtensions\Behaviour;
 
-use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
+use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM,
+    SdsDoctrineExtensions\Utils;
 
 trait ActiveUser {
    
@@ -11,8 +12,8 @@ trait ActiveUser {
     public function setActiveUser($activeUser)
     {     
         $traits = Utils::getAllTraits($activeUser);
-        if(!isset($traits['SdsDoctrineExtensions\User'])){
-            throw new \Exception('$activeUser must exhibit the SdsDoctrineExtensions\User trait');
+        if(!isset($traits['SdsDoctrineExtensions\Behaviour\User'])){
+            throw new \Exception('$activeUser must exhibit the SdsDoctrineExtensions\Behaviour\User trait');
         }
         $this->activeUser = $activeUser;
     }   

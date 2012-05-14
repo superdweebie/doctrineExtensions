@@ -1,6 +1,6 @@
 <?php
 
-namespace SdsDoctrineExtensions\Stamped;
+namespace SdsDoctrineExtensions\Behaviour\Stamped;
 
 use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM,
     SdsDoctrineExtensions\Utils;
@@ -17,8 +17,8 @@ trait UpdatedBy {
      */
     public function autoSetUpdatedBy(){  
         $traits = Utils::getAllTraits($this);
-        if(!isset($traits['SdsDoctrineExtensions\ActiveUser'])){
-            throw new \Exception('Class must exhibit the SdsDoctrineExtensions\AciveUser trait in order to use the UpdatedBy trait.');
+        if(!isset($traits['SdsDoctrineExtensions\Behaviour\ActiveUser'])){
+            throw new \Exception('Class must exhibit the SdsDoctrineExtensions\Behaviour\AciveUser trait in order to use the UpdatedBy trait.');
         } else {
             $this->updatedBy = $this->activeUser->getUsername(); 
         }                    

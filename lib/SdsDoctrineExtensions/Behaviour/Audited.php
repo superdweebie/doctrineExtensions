@@ -1,24 +1,20 @@
 <?php
 
-namespace SdsDoctrineExtensions;
+namespace SdsDoctrineExtensions\Behaviour;
 
 use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
 
-trait Audit {
+trait Audited {
   
     /**
     * @ODM\Field(type="hash")
     */      
-    protected $audits = array();  
+    protected $audits = [];  
     
     protected $oldValues;
     
-    protected $propertiesToAudit;
-    
-    protected $timestampAudit = true;
-    
-    protected $userstampAudit = true;
-    
+    protected $propertiesToAudit = [];
+            
     /** 
      * @ODM\PostLoad 
      */
@@ -30,7 +26,12 @@ trait Audit {
         return $oldValues;
     }
 
-    public function setPropertiesToAudit(array $propertiesToAudit){
+    public function getOldValue($property){
+        $oldValues = $this->getOldValues();
+        return $oldValues[$property];
+    }
+    
+    protected function setPropertiesToAudit(array $propertiesToAudit){
         $properties = get_object_vars($this);
         foreach($propertiesToAudit as $propertyToAudit){
             if(!(array_key_exists($propertyToAudit, $properties))){
@@ -44,15 +45,15 @@ trait Audit {
     }
     
     /** 
-     * @ODM\PrePersist 
+     * @ODM\PreUpdate 
      */
     public function autoAddAudit(){
         $newValues = get_object_vars($this);
-        $oldValues = $this->oldValues;
+        $oldValues = $this->oldValues;        
         foreach($this->propertiesToAudit as $propertyToAudit){
             if($oldValues[$propertyToAudit] != $newValues[$propertyToAudit]){
                 $this->audits[] = $propertyToAudit;
             }
-        }      
+        }
     }    
 }

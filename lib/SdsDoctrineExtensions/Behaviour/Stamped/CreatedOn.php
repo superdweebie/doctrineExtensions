@@ -1,6 +1,6 @@
 <?php
 
-namespace SdsDoctrineExtensions\Stamped;
+namespace SdsDoctrineExtensions\Behaviour\Stamped;
 
 use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
 
