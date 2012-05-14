@@ -1,0 +1,28 @@
+{
+    "name": "superdweebie/SdsDoctrineExtensions",
+    "description": "Provides php 5.4 extension traits for Doctrine",
+    "type": "library",
+    "keywords": [
+        "doctrine",
+        "zf2"
+    ],
+    "homepage": "http://github.com/superdweebie/SdsDoctrineExtensions",
+    "authors": [
+        {
+            "name": "Tim Roediger",
+            "email": "superdweebie@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.4"
+    },
+
+    "autoload": {
+        "psr-0": {
+            "SdsDoctrineExtensions": "lib/"
+        },
+        "classmap": [
+            "./"
+        ]
+    }
+}
