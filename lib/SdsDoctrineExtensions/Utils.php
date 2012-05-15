@@ -30,4 +30,12 @@ class Utils {
         };
         return $allParents;
     }
+    
+    static public function checkForTrait($object, $trait){        
+        $traits = Utils::getAllTraits($object);
+        if(isset($traits[$trait])){
+            return true;
+        }    
+        return false;
+    }
 }

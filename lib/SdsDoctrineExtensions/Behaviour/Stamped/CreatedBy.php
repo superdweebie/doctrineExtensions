@@ -16,14 +16,10 @@ trait CreatedBy {
      * @ODM\PrePersist 
      */
     public function autoSetCreatedBy(){
-        if (!isset($this->createdBy)){  
-            $traits = Utils::getAllTraits($this);
-            if(!isset($traits['SdsDoctrineExtensions\Behaviour\ActiveUser'])){
-                throw new \Exception('Class must exhibit the SdsDoctrineExtensions\Behaviour\AciveUser trait in order to use the CreatedBy trait.');
-            } else {
-                $this->createdBy = $this->activeUser->getUsername(); 
-            }              
+        if(!Utils::checkForTrait($this, 'SdsDoctrineExtensions\Behaviour\ActiveUser')){
+            throw new \Exception('Class must exhibit the SdsDoctrineExtensions\Behaviour\AciveUser trait in order to use the CreatedBy trait.');
         }
+        $this->createdBy = $this->activeUser->getUsername(); 
     }
         
     public function getCreatedBy(){

@@ -7,7 +7,7 @@ use Doctrine\Common\EventSubscriber,
     SdsDoctrineExtensions\Behaviour\ActiveUser as ActiveUserTrait,
     SdsDoctrineExtensions\Utils;
 
-class ActiveUser implements EventSubscriber
+class ActiveUserInjector implements EventSubscriber
 {
     use ActiveUserTrait;
     
@@ -15,8 +15,7 @@ class ActiveUser implements EventSubscriber
     {
         if($this->activeUser){
             $document = $eventArgs->getDocument();
-            $traits = Utils::getAllTraits($document);
-            if(isset($traits['SdsDoctrineExtensions\Behaviour\ActiveUser'])){
+            if(Utils::checkForTrait($document, 'SdsDoctrineExtensions\Behaviour\ActiveUser')){
                 $document->setActiveUser($this->activeUser);
             }
         }

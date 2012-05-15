@@ -10,9 +10,8 @@ trait ActiveUser {
     protected $activeUser;
         
     public function setActiveUser($activeUser)
-    {     
-        $traits = Utils::getAllTraits($activeUser);
-        if(!isset($traits['SdsDoctrineExtensions\Behaviour\User'])){
+    {   
+        if(!Utils::checkForTrait($activeUser, 'SdsDoctrineExtensions\Behaviour\User')){
             throw new \Exception('$activeUser must exhibit the SdsDoctrineExtensions\Behaviour\User trait');
         }
         $this->activeUser = $activeUser;

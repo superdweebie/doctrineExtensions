@@ -15,9 +15,7 @@ trait CreatedOn {
      * @ODM\PrePersist 
      */
     public function autoSetCreatedOn(){
-        if (!isset($this->createdOn)){
-            $this->createdOn = time();
-        }
+        $this->createdOn = time();
     }
     
     public function getCreatedOn(){

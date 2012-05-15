@@ -13,15 +13,13 @@ trait UpdatedBy {
     protected $updatedBy;
     
     /** 
-     * @ODM\PrePersist 
+     * @ODM\PreUpdate 
      */
     public function autoSetUpdatedBy(){  
-        $traits = Utils::getAllTraits($this);
-        if(!isset($traits['SdsDoctrineExtensions\Behaviour\ActiveUser'])){
+        if(!Utils::checkForTrait($this, 'SdsDoctrineExtensions\Behaviour\ActiveUser')){
             throw new \Exception('Class must exhibit the SdsDoctrineExtensions\Behaviour\AciveUser trait in order to use the UpdatedBy trait.');
-        } else {
-            $this->updatedBy = $this->activeUser->getUsername(); 
-        }                    
+        }
+        $this->updatedBy = $this->activeUser->getUsername();                
     }
         
     public function getUpdatedBy(){

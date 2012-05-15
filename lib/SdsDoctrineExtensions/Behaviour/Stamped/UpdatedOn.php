@@ -12,7 +12,7 @@ trait UpdatedOn {
     protected $updatedOn;
 
     /** 
-     * @ODM\PrePersist 
+     * @ODM\PreUpdate 
      */
     public function autoSetUpdatedOn(){
         $this->updatedOn = time();
