@@ -45,7 +45,11 @@ trait UserAccessControl {
     
     public function getRoles($zone = null){
         $zone = (string) $zone;
-        return $this->getZoneRole($zone)->getRoles();
+        $zoneRole = $this->getZoneRole($zone);
+        if(isset($zoneRole)){
+           return $zoneRole->getRoles(); 
+        }
+        return;
     }
     
     public function addZoneRole(ZoneRole $zoneRole){

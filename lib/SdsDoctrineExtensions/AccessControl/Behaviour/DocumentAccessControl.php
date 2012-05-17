@@ -5,7 +5,8 @@ namespace SdsDoctrineExtensions\AccessControl\Behaviour;
 use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM,
     SdsDoctrineExtensions\AccessControl\Model\Permission,
     SdsDoctrineExtensions\Audit\Mapping\Annotation\Audit as SDS_Audit,
-    SdsDoctrineExtensions\Readonly\Mapping\Annotation\Readonly as SDS_Readonly;
+    SdsDoctrineExtensions\Readonly\Mapping\Annotation\Readonly as SDS_Readonly,
+    SdsDoctrineExtensions\Common\Utils;
 
 trait DocumentAccessControl {
     
@@ -74,6 +75,9 @@ trait DocumentAccessControl {
     
     public function isActionAllowed($action, $state = null, $user = null){
         $permissions = $this->getUserPermissions($user, $state);
+        if(!isset($permissions) || count($permissions) == 0){
+            return false;
+        }
         foreach($permssions as $permission){
             if($permission->getAction() == $action){
                 return true;
