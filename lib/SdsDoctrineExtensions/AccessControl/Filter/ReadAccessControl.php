@@ -4,32 +4,28 @@ namespace SdsDoctrineExtensions\AccessControl\Filter;
 
 use Doctrine\ODM\MongoDB\Mapping\ClassMetaData,
     Doctrine\ODM\MongoDB\Query\Filter\BsonFilter,
-    SdsDoctrineExtensions\ActiveUser\Behaviour\ActiveUser as ActiveUserTrait;
+    SdsDoctrineExtensions\Common\Utils,
+    SdsDoctrineExtensions\AccessControl\Model\Permission;
     
-class MyLocaleFilter extends BsonFilter
-{
-    use ActiveUserTrait;
-    
-    protected $activeUser;
-    
+class ReadAccessControl extends BsonFilter
+{  
     protected $documentAccessControlTrait = 'SdsDoctrineExtensions\AccessControl\Behaviour\DocumentAccessControl';
-    
-    
-    public function addFilterConstraint(ClassMetadata $targetDocument)
+       
+    public function addFilterCriteria(ClassMetadata $targetDocument)
     {
         // Check if the document exhibits the DocumentAccessControl trait
         
-        if(!Utils::checkForTrait($targetDocument, $this->documentAccessControlTrait)){
+        if(!Utils::checkForTrait($targetDocument->name, $this->documentAccessControlTrait)){
             return [];
         } 
             
-        return ['permissions' => $this->AssemleQuery()];
+        return ['permissions' => $this->AssembleQuery()];
     }
     
     protected function AssembleQuery(){
-        $roles = json_encode($this->activeUser->getRoles());
+        $roles = json_encode($this->getParameter('activeUser')->getRoles());
         return '
-            permissions: {
+            {
                 $eleMatch: {
                     state: state,
                     action: '.Permission::ACTION_READ.',
