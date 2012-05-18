@@ -4,82 +4,48 @@ namespace SdsDoctrineExtensions\AccessControl\Behaviour;
 
 use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM,
     SdsDoctrineExtensions\AccessControl\Model\Permission,
-    SdsDoctrineExtensions\AccessControl\Model\ZoneRole;
+    SdsDoctrineExtensions\AccessControl\Model\Role;
 
 trait UserAccessControl {
   
     /**
     * @ODM\EmbedMany(
-    *     targetDocument="SdsDoctrineExtensions\AccessControl\Model\ZoneRole"
+    *     targetDocument="SdsDoctrineExtensions\AccessControl\Model\Role"
     * )
     */     
-    protected $zoneRoles = [];
+    protected $roles = [];
     
-    public function addRole($role, $zone = null){
+    public function addRole($name, $zone = null){
+        $name = (string) $name;        
         $zone = (string) $zone;
-        $role = (string) $role;
-        foreach($this->zoneRoles as $zoneRole){
-            if($zoneRole->getZone() == $zone){
-                $zoneRole->addRole($role);
-                return;
-            }
-        }
-        $zoneRole = new ZoneRole($zone);
-        $zoneRole->addRole($role);
-        $this->addZoneRole($zoneRole);
+        $role = new Role($name, $zone);
+        $this->roles[$role];
     }
     
-    public function removeRole($role, $zone = null){
-        $zone = (string) $zone;
-        $role = (string) $role;
-        foreach($this->zoneRoles as $zoneRole){
-            if($zoneRole->getZone() == $zone){
-                $zoneRole->removeRole($role);
-                if(count($zoneRole->getRoles())==0){
-                    $this->removeZoneRole($zoneRole);
-                }
+    public function removeRole($name, $zone = null){
+        $name = (string) $name;        
+        $zone = (string) $zone;       
+        foreach($this->roles as $index => $role){
+            if($role->getName() == $name && $role->getZone() == $zone){
+                unset($this->roles[$index]);
+                $this->roles = array_values($this->roles());               
                 return;
             }
         }       
     }
     
+    public function getAllRoles(){
+        return $this->roles;        
+    }
+    
     public function getRoles($zone = null){
         $zone = (string) $zone;
-        $zoneRole = $this->getZoneRole($zone);
-        if(isset($zoneRole)){
-           return $zoneRole->getRoles(); 
-        }
-        return;
-    }
-    
-    public function addZoneRole(ZoneRole $zoneRole){
-        $this->zoneRoles[] = $zoneRole;
-    }
-    
-    public function removeZoneRole(ZoneRole $zoneRole){
-        foreach($this->zoneRoles as $index => $item){
-            if($item == $zoneRole){
-                unset($this->zoneRoles[$index]);
-                $this->zoneRoles = array_values($this->zoneRoles);
-                return;
+        $return = [];
+        foreach($this->roles as $index => $role){
+            if($role->getZone() == $zone){
+                $return[] = $role;
             }
-        }
-    }
-    
-    public function setZoneRoles(array $zoneRoles){
-        $this->zoneRoles = $zoneRoles;
-    }
-    
-    public function getZoneRoles(){
-        return $this->zoneRoles;
-    }
-    
-    public function getZoneRole($zone){
-        $zone = (string) $zone;
-        foreach($this->zoneRoles as $index => $item){
-            if($item == $zoneRole){
-                return $zoneRole;
-            }
-        }        
-    }
+        } 
+        return $return;
+    }    
 }

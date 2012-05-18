@@ -34,6 +34,9 @@ trait DocumentAccessControl {
     
     public function setZone($zone){
         $this->zone = (string) $zone;
+        foreach($this->permissions as $permission){
+            $permission->getRole()->setZone($zone);
+        }
     }
     
     public function getZone(){
@@ -49,6 +52,7 @@ trait DocumentAccessControl {
     }
     
     public function addPermission(Permission $permission){
+        $permission->getRole()->setZone($permission);
         $this->permissions[] = $permission;
     }
     

@@ -20,22 +20,11 @@ class Permission
     const ACTION_UPDATE = 'update';    
     const ACTION_DELETE = 'delete';
         
-    /** 
-     * @ODM\Id(strategy="UUID") 
-     */
-    protected $id;
-
     /**
     * @ODM\Field(type="string")
     * @SDS_Readonly 
     */        
     protected $state;
-
-    /**
-    * @ODM\Field(type="string")
-    * @SDS_Readonly
-    */         
-    protected $role;
     
     /**
     * @ODM\Field(type="string")
@@ -43,23 +32,26 @@ class Permission
     */         
     protected $action;
 
-    public function getId() {
-        return $this->id;
-    }
-
+    /**
+    * @ODM\EmbedOne(
+    *   targetDocument="SdsDoctrineExtensions\AccessControl\Model\Role"
+    * )
+    */             
+    protected $role;
+    
     public function getState() {
         return $this->state;
-    }
-
-    public function getRole() {
-        return $this->role;
     }
 
     public function getAction() {
         return $this->action;
     }
 
-    public function __construct($role, $action, $state = null){
+    public function getRole() {
+        return $this->role;
+    }
+    
+    public function __construct(Role $role, $action, $state = null){
         $this->state = (string) $state;
         $this->role = (string) $role;
         $this->action = (string) $action;
