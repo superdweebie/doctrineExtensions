@@ -19,7 +19,8 @@ class Permission
     const ACTION_READ = 'read';
     const ACTION_UPDATE = 'update';    
     const ACTION_DELETE = 'delete';
-        
+    const ACTION_RESTORE = 'restore';
+    
     /**
     * @ODM\Field(type="string")
     * @SDS_Readonly 
@@ -53,7 +54,7 @@ class Permission
     
     public function __construct(Role $role, $action, $state = null){
         $this->state = (string) $state;
-        $this->role = (string) $role;
+        $this->role = $role;
         $this->action = (string) $action;
     }
 }

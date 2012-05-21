@@ -33,11 +33,11 @@ class Readonly implements EventSubscriber
             $changeSet = $uow->getDocumentChangeSet($document);
             $metadata = $dm->getClassMetadata(get_class($document));            
             foreach ($changeSet as $field => $change){
+                $old = $change[0];
+                $new = $change[1];                 
                 if(isset($metadata->fieldMappings[$field][ReadonlyDriver::READONLY]) && 
-                    $metadata->fieldMappings[$field][ReadonlyDriver::READONLY]
-                ){  
-                    $old = $change[0];
-                    $new = $change[1];            
+                    $metadata->fieldMappings[$field][ReadonlyDriver::READONLY] && $old != null
+                ){             
                     if($old != $new){                        
                         $document->{'set'.ucfirst($field)}($old);                   
                         $uow->recomputeSingleEntityChangeSet($metadata, $document);                    

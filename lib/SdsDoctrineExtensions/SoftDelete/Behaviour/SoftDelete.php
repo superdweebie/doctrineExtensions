@@ -18,4 +18,12 @@ trait SoftDelete {
     public function getDeleted(){
         return $this->deleted;
     }
+    
+    public function delete(){
+        $this->setDeleted(true);
+    }
+    
+    public function restore(){
+        $this->setDeleted(false);
+    }
 }

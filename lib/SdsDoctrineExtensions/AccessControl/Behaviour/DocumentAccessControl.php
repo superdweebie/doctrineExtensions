@@ -4,6 +4,7 @@ namespace SdsDoctrineExtensions\AccessControl\Behaviour;
 
 use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM,
     SdsDoctrineExtensions\AccessControl\Model\Permission,
+    SdsDoctrineExtensions\AccessControl\Model\Role,    
     SdsDoctrineExtensions\Audit\Mapping\Annotation\Audit as SDS_Audit,
     SdsDoctrineExtensions\Readonly\Mapping\Annotation\Readonly as SDS_Readonly,
     SdsDoctrineExtensions\Common\Utils;
@@ -51,24 +52,40 @@ trait DocumentAccessControl {
         return $this->state;
     }
     
-    public function addPermission(Permission $permission){
-        $permission->getRole()->setZone($permission);
-        $this->permissions[] = $permission;
+    public function addPermission($permission){
+        if(is_array($permission)){
+            $state = $permission['state'];
+            $action = $permission['action'];
+            $roleName = $permission['role']['name'];
+            $roleZone = $this->getZone();
+            $this->permissions[] = new Permission(
+                new Role($roleName, $roleZone),
+                $action,
+                $state
+            ); 
+            return;
+        }
+        if($permission instanceof Permission){
+            $permission->getRole()->setZone($this->getZone());
+            $this->permissions[] = $permission; 
+            return;
+        }
+        throw new \InvalidArgumentException('addPermission method must take a permission config array or Permission object.');
     }
     
-    public function getAllPermissions(){
+    public function getPermissions(){
         return $this->permissions;
     }
     
     public function getUserPermissions($user = null, $state = null){
         $user = $this->checkUserParam($user);
-        $roles = $user->getRoles($this->zone);
+        $roles = $user->getRolesInZone($this->zone);
         if(!isset($state)){
             $state = $this->state;
         }
         $return = [];
         foreach($this->permissions as $permission){
-            if(in_array($permission->getRole(), $roles) &&
+            if(isset($roles) && in_array($permission->getRole(), $roles) &&
                 $permission->getState() == $state
             ){
                 $return[] = $permission;
@@ -82,7 +99,7 @@ trait DocumentAccessControl {
         if(!isset($permissions) || count($permissions) == 0){
             return false;
         }
-        foreach($permssions as $permission){
+        foreach($permissions as $permission){
             if($permission->getAction() == $action){
                 return true;
             }

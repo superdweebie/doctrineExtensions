@@ -54,7 +54,22 @@ class SerializerService {
             ){
                 continue;
             }
-            $return[$field] = $document->{'get'.ucfirst($field)}();
+            if(isset($mapping['embedded'])){
+                switch ($mapping['type']){
+                    case 'one':
+                        $return[$field] = $this->serialize($document->{'get'.ucfirst($field)}());
+                        break;
+                    case 'many':
+                        $return[$field] = [];                
+                        $embedDocuments = $document->{'get'.ucfirst($field)}(); 
+                        foreach($embedDocuments as $embedDocument){
+                            $return[$field][] = $this->serialize($embedDocument);
+                        }       
+                        break;
+                }                
+            } else {
+                $return[$field] = $document->{'get'.ucfirst($field)}();                
+            }
         }
         return $return;
     }

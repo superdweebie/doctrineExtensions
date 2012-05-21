@@ -15,30 +15,45 @@ trait UserAccessControl {
     */     
     protected $roles = [];
     
-    public function addRole($name, $zone = null){
-        $name = (string) $name;        
-        $zone = (string) $zone;
-        $role = new Role($name, $zone);
-        $this->roles[$role];
+    public function addRole(Role $role = null, $name = null, $zone = null){
+        if($role){
+            $this->roles[] = $role;
+            return;
+        } else {
+            $name = (string) $name;        
+            $zone = (string) $zone;
+            $role = new Role($name, $zone);
+            $this->roles[] = $role;            
+        }        
     }
     
-    public function removeRole($name, $zone = null){
-        $name = (string) $name;        
-        $zone = (string) $zone;       
-        foreach($this->roles as $index => $role){
-            if($role->getName() == $name && $role->getZone() == $zone){
-                unset($this->roles[$index]);
-                $this->roles = array_values($this->roles());               
-                return;
-            }
-        }       
+    public function removeRole(Role $roleToRemove = null, $name = null, $zone = null){
+        if($roleToRemove){
+            foreach($this->roles as $index => $role){
+                if($role === $roleToRemove){
+                    unset($this->roles[$index]);
+                    $this->roles = array_values($this->roles());               
+                    return;
+                }
+            } 
+        } else {
+            $name = (string) $name;        
+            $zone = (string) $zone;       
+            foreach($this->roles as $index => $role){
+                if($role->getName() == $name && $role->getZone() == $zone){
+                    unset($this->roles[$index]);
+                    $this->roles = array_values($this->roles());               
+                    return;
+                }
+            }  
+        }
     }
     
-    public function getAllRoles(){
+    public function getRoles(){
         return $this->roles;        
     }
     
-    public function getRoles($zone = null){
+    public function getRolesInZone($zone = null){
         $zone = (string) $zone;
         $return = [];
         foreach($this->roles as $index => $role){

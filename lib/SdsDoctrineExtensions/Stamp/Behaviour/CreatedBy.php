@@ -14,14 +14,8 @@ trait CreatedBy {
      */
     protected $createdBy;
     
-    /** 
-     * @ODM\PrePersist 
-     */
-    public function autoSetCreatedBy(){
-        if(!Utils::checkForTrait($this, $this->createdByactiveUserTrait)){
-            throw new \Exception('Class must exhibit the '.$this->createdByactiveUserTrait.' trait in order to use the CreatedBy trait.');
-        }
-        $this->createdBy = $this->activeUser->getUsername(); 
+    public function setCreatedBy($username){
+        $this->createdBy = (string) $username; 
     }
         
     public function getCreatedBy(){

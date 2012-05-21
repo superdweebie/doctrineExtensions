@@ -11,11 +11,8 @@ trait CreatedOn {
      */
     protected $createdOn;
 
-    /** 
-     * @ODM\PrePersist 
-     */
-    public function autoSetCreatedOn(){
-        $this->createdOn = time();
+    public function setCreatedOn($timestamp){
+        $this->createdOn = $timestamp;
     }
     
     public function getCreatedOn(){

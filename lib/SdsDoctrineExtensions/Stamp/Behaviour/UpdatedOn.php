@@ -11,11 +11,8 @@ trait UpdatedOn {
      */
     protected $updatedOn;
 
-    /** 
-     * @ODM\PreUpdate 
-     */
-    public function autoSetUpdatedOn(){
-        $this->updatedOn = time();
+    public function setUpdatedOn($time){
+        $this->updatedOn = $time;
     }    
     
     public function getUpdatedOn(){
