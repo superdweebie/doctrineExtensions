@@ -7,7 +7,7 @@ use Doctrine\Common\EventSubscriber,
     Doctrine\ODM\MongoDB\Event\LoadClassMetadataEventArgs,
     SdsDoctrineExtensions\Common\Utils,
     SdsDoctrineExtensions\Readonly\Mapping\Driver\Readonly as ReadonlyDriver,
-    SdsDoctrineExtensions\Common\Reader;
+    SdsDoctrineExtensions\Common\Behaviour\Reader;
 
 class Readonly implements EventSubscriber
 {

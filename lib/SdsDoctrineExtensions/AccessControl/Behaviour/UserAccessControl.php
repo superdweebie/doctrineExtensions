@@ -15,16 +15,25 @@ trait UserAccessControl {
     */     
     protected $roles = [];
     
-    public function addRole(Role $role = null, $name = null, $zone = null){
-        if($role){
-            $this->roles[] = $role;
-            return;
-        } else {
-            $name = (string) $name;        
-            $zone = (string) $zone;
+    public function addRoles(array $roles = []){
+        foreach($roles as $role){
+            $this->addRole($role);
+        }
+    }
+    
+    public function addRole($role){
+        if(is_array($role)){
+            $name = (string) $role['name'];        
+            $zone = (string) $role['zone'];
             $role = new Role($name, $zone);
-            $this->roles[] = $role;            
-        }        
+            $this->roles[] = $role;        
+            return;
+        }
+        if($role instanceof Role){        
+            $this->roles[] = $role;
+            return;          
+        }   
+        throw new \InvalidArgumentException('addRole method must take a permission config array or Role object.');     
     }
     
     public function removeRole(Role $roleToRemove = null, $name = null, $zone = null){

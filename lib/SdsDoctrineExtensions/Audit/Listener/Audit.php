@@ -9,7 +9,7 @@ use Doctrine\Common\EventSubscriber,
     SdsDoctrineExtensions\Common\Utils,
     SdsDoctrineExtensions\Audit\Model\Audit as AuditModel,
     SdsDoctrineExtensions\Audit\Mapping\Driver\Audit as AuditDriver,
-    SdsDoctrineExtensions\Common\Reader;
+    SdsDoctrineExtensions\Common\Behaviour\Reader;
 
 class Audit implements EventSubscriber
 {

@@ -6,8 +6,9 @@ use Doctrine\Common\EventSubscriber,
     Doctrine\ODM\MongoDB\Event\LifecycleEventArgs,
     SdsDoctrineExtensions\ActiveUser\Behaviour\ActiveUser as ActiveUserTrait,
     SdsDoctrineExtensions\Common\Utils;
+use SdsDoctrineExtensions\Common\Listener\AbstractListener;
 
-class ActiveUser implements EventSubscriber
+class ActiveUser extends AbstractListener
 {
     use ActiveUserTrait;
     

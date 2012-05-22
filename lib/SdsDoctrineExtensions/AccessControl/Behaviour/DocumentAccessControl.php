@@ -73,6 +73,12 @@ trait DocumentAccessControl {
         throw new \InvalidArgumentException('addPermission method must take a permission config array or Permission object.');
     }
     
+    public function addPermissions(array $permissions = array()){
+        foreach ($permissions as $permission){
+            $this->addPermission($permission);
+        }
+    }
+    
     public function getPermissions(){
         return $this->permissions;
     }

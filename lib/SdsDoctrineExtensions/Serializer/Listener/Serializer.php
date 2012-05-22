@@ -6,7 +6,7 @@ use Doctrine\Common\EventSubscriber,
     Doctrine\ODM\MongoDB\Event\LoadClassMetadataEventArgs,
     SdsDoctrineExtensions\Common\Utils,
     SdsDoctrineExtensions\Serializer\Mapping\Driver\Serializer as SerializerDriver,
-    SdsDoctrineExtensions\Common\Reader;
+    SdsDoctrineExtensions\Common\Behaviour\Reader;
 
 class Serializer implements EventSubscriber
 {
