@@ -6,11 +6,11 @@ use Doctrine\Common\EventSubscriber,
     Doctrine\ODM\MongoDB\Event\LoadClassMetadataEventArgs,
     SdsDoctrineExtensions\Common\Utils,
     SdsDoctrineExtensions\Serializer\Mapping\Driver\Serializer as SerializerDriver,
-    SdsDoctrineExtensions\Common\Behaviour\Reader;
+    SdsDoctrineExtensions\Common\Behaviour\AnnotationReader;
 
 class Serializer implements EventSubscriber
 {
-    use Reader;
+    use AnnotationReader;
                
     public function getSubscribedEvents(){
         return ['loadClassMetadata'];
@@ -19,7 +19,7 @@ class Serializer implements EventSubscriber
     public function loadClassMetadata(LoadClassMetadataEventArgs $eventArgs)
     {
         $metadata = $eventArgs->getClassMetadata();                
-        $driver = new SerializerDriver($this->reader);
+        $driver = new SerializerDriver($this->annotationReader);
         $driver->loadMetadataForClass($metadata);        
     }         
 }

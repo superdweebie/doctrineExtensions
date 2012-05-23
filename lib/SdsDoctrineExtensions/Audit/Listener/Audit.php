@@ -9,11 +9,11 @@ use Doctrine\Common\EventSubscriber,
     SdsDoctrineExtensions\Common\Utils,
     SdsDoctrineExtensions\Audit\Model\Audit as AuditModel,
     SdsDoctrineExtensions\Audit\Mapping\Driver\Audit as AuditDriver,
-    SdsDoctrineExtensions\Common\Behaviour\Reader;
+    SdsDoctrineExtensions\Common\Behaviour\AnnotationReader;
 
 class Audit implements EventSubscriber
 {
-    use ActiveUserTrait, Reader;
+    use ActiveUserTrait, AnnotationReader;
     
     protected $auditTrait = 'SdsDoctrineExtensions\Audit\Behaviour\Audit';
            
@@ -24,7 +24,7 @@ class Audit implements EventSubscriber
     public function loadClassMetadata(LoadClassMetadataEventArgs $eventArgs)
     {
         $metadata = $eventArgs->getClassMetadata();                
-        $driver = new AuditDriver($this->reader);
+        $driver = new AuditDriver($this->annotationReader);
         $driver->loadMetadataForClass($metadata);        
     }     
     

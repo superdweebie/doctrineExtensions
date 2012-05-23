@@ -7,11 +7,11 @@ use Doctrine\Common\EventSubscriber,
     Doctrine\ODM\MongoDB\Event\LoadClassMetadataEventArgs,
     SdsDoctrineExtensions\Common\Utils,
     SdsDoctrineExtensions\Readonly\Mapping\Driver\Readonly as ReadonlyDriver,
-    SdsDoctrineExtensions\Common\Behaviour\Reader;
+    SdsDoctrineExtensions\Common\Behaviour\AnnotationReader;
 
 class Readonly implements EventSubscriber
 {
-    use Reader;
+    use AnnotationReader;
                
     public function getSubscribedEvents(){
         return ['loadClassMetadata', 'onFlush'];
@@ -20,7 +20,7 @@ class Readonly implements EventSubscriber
     public function loadClassMetadata(LoadClassMetadataEventArgs $eventArgs)
     {
         $metadata = $eventArgs->getClassMetadata();                
-        $driver = new ReadonlyDriver($this->reader);
+        $driver = new ReadonlyDriver($this->annotationReader);
         $driver->loadMetadataForClass($metadata);        
     }     
     
