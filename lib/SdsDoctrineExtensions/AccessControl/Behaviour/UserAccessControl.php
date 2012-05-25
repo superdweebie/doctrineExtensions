@@ -26,36 +26,30 @@ trait UserAccessControl {
             $name = (string) $role['name'];        
             $zone = (string) $role['zone'];
             $role = new Role($name, $zone);
-            $this->roles[] = $role;        
-            return;
         }
-        if($role instanceof Role){        
-            $this->roles[] = $role;
-            return;          
+        if(!$role instanceof Role){        
+            throw new \InvalidArgumentException('addRole method must take a permission config array or Role object.');         
         }   
-        throw new \InvalidArgumentException('addRole method must take a permission config array or Role object.');     
+        $this->roles[] = $role;        
+        return;            
     }
     
-    public function removeRole(Role $roleToRemove = null, $name = null, $zone = null){
-        if($roleToRemove){
-            foreach($this->roles as $index => $role){
-                if($role === $roleToRemove){
-                    unset($this->roles[$index]);
-                    $this->roles = array_values($this->roles());               
-                    return;
-                }
-            } 
-        } else {
-            $name = (string) $name;        
-            $zone = (string) $zone;       
-            foreach($this->roles as $index => $role){
-                if($role->getName() == $name && $role->getZone() == $zone){
-                    unset($this->roles[$index]);
-                    $this->roles = array_values($this->roles());               
-                    return;
-                }
-            }  
+    public function removeRole($role){
+        if(is_array($role)){
+            $name = (string) $role['name'];        
+            $zone = (string) $role['zone'];                  
         }
+        if($role instanceof $role){
+            $name = $role->getName();
+            $zone = $role->getZone();            
+        }
+        foreach($this->roles as $index => $userRole){
+            if($userRole->getName() == $name && $userRole->getZone() == $zone){
+                unset($this->roles[$index]);
+                $this->roles = array_values($this->roles());               
+                return;
+            }
+        }                 
     }
     
     public function getRoles(){
@@ -71,5 +65,22 @@ trait UserAccessControl {
             }
         } 
         return $return;
-    }    
+    }
+    
+    public function hasRole($role){
+        if(is_array($role)){
+            $name = (string) $role['name'];        
+            $zone = (string) $role['zone'];            
+        }
+        if($role instanceof Role){
+            $name = $role->getName();
+            $zone = $role->getZone();
+        }
+        foreach($this->roles as $userRole){
+            if($userRole->getName() == $name && $userRole->getZone() == $zone){
+                return true;
+            }
+        }
+        return false;
+    }
 }
