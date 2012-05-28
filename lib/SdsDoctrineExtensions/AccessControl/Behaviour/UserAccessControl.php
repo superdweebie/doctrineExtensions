@@ -24,7 +24,11 @@ trait UserAccessControl {
     public function addRole($role){
         if(is_array($role)){
             $name = (string) $role['name'];        
-            $zone = (string) $role['zone'];
+            if(isset($role['zone'])){
+                $zone = (string) $role['zone'];
+            } else {
+                $zone = null;
+            }
             $role = new Role($name, $zone);
         }
         if(!$role instanceof Role){        
