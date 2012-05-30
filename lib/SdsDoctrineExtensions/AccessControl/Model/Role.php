@@ -2,11 +2,12 @@
 
 namespace SdsDoctrineExtensions\AccessControl\Model;
 
-use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM,
-    SdsDoctrineExtensions\Readonly\Mapping\Annotation\Readonly as SDS_Readonly;    
+use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
+use SdsDoctrineExtensions\Readonly\Mapping\Annotation\Readonly as SDS_Readonly;    
+use SdsCommon\AccessControl\RoleInterface;
 
 /** @ODM\EmbeddedDocument */
-class Role
+class Role implements RoleInterface
 {
 
     /**

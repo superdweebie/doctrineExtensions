@@ -5,34 +5,32 @@ namespace SdsDoctrineExtensions\AccessControl\Listener;
 use Doctrine\Common\EventSubscriber,
     Doctrine\ODM\MongoDB\Event\OnFlushEventArgs,
     SdsDoctrineExtensions\ActiveUser\Behaviour\ActiveUser as ActiveUserTrait,    
-    SdsDoctrineExtensions\Common\Utils,
     SdsDoctrineExtensions\AccessControl\Model\Permission,
     Doctrine\ODM\MongoDB\Events as ODMEvents,
     SdsDoctrineExtensions\SoftDelete\Events as SoftDeleteEvents,
     SdsDoctrineExtensions\AccessControl\Events as AccessControlEvents,    
     Doctrine\ODM\MongoDB\Event\LifecycleEventArgs;
+use SdsCommon\AccessControl\ControlledObjectInterface;
+use SdsCommon\AccessControl\UserInterface;
+use SdsCommon\AccessControl\Constant\Action;
 
 class AccessControl implements EventSubscriber
 {    
     use ActiveUserTrait;
-    
-    protected $documentAccessControlTrait = 'SdsDoctrineExtensions\AccessControl\Behaviour\DocumentAccessControl';
-    protected $userAccessControlTrait = 'SdsDoctrineExtensions\AccessControl\Behaviour\UserAccessControl';
-    protected $softDeleteTrait = 'SdsDoctrineExtensions\SoftDelete\Behaviour\SoftDelete';    
-    
+      
     public function getSubscribedEvents(){
-        return [
+        return array(
             ODMEvents::onFlush,
             SoftDeleteEvents::preSoftDelete,
             SoftDeleteEvents::preSoftRestore
-        ];
+        );
     }      
     
     public function preSoftDelete(LifecycleEventArgs $eventArgs){
         $doucment = $eventArgs->getDocument();
         
-        if(Utils::checkForTrait($document, $this->documentAccessControlTrait)){
-            if(!$document->isActionAllowed(Permission::ACTION_DELETE, null, $this->activeUser)){                    
+        if($document instanceof ControlledObjectInterface){
+            if(!$document->isActionAllowed(Action::DELETE, null, $this->activeUser)){                    
                 $document->setIsDeleted(false);
                 
                 if ($evm->hasListeners(AccessControlEvents::deleteDenied)) {
@@ -47,8 +45,8 @@ class AccessControl implements EventSubscriber
     public function preSoftRestore(LifecycleEventArgs $eventArgs){
         $doucment = $eventArgs->getDocument();
         
-        if(Utils::checkForTrait($document, $this->documentAccessControlTrait)){
-            if(!$document->isActionAllowed(Permission::ACTION_RESTORE, null, $this->activeUser)){                    
+        if($document instanceof ControlledObjectInterface){
+            if(!$document->isActionAllowed(Action::RESTORE, null, $this->activeUser)){                    
                 $document->setIsDeleted(true);    
 
                 if ($evm->hasListeners(AccessControlEvents::restoreDenied)) {
@@ -66,13 +64,13 @@ class AccessControl implements EventSubscriber
         $uow = $dm->getUnitOfWork();        
         $evm = $dm->getEventManager();
         
-        if(!Utils::checkForTrait($this->activeUser, $this->userAccessControlTrait)){            
-            throw new \Exception('activeUser must exhibit the '.$this->userAccessControlTrait.' trait');                
+        if(!$this->activeUser instanceOf UserInterface){            
+            throw new \Exception('activeUser must exhibit the UserInterface');                
         }
                 
         foreach ($uow->getScheduledDocumentInsertions() AS $document) {
-            if(Utils::checkForTrait($document, $this->documentAccessControlTrait)){
-                if(!$document->isActionAllowed(Permission::ACTION_CREATE, null, $this->activeUser)){                    
+            if($document instanceof ControlledObjectInterface){
+                if(!$document->isActionAllowed(Action::CREATE, null, $this->activeUser)){                    
                     $uow->detach($document);  
           
                     if ($evm->hasListeners(AccessControlEvents::insertDenied)) {
@@ -83,8 +81,8 @@ class AccessControl implements EventSubscriber
         }
 
         foreach ($uow->getScheduledDocumentUpdates() AS $document) {
-            if(Utils::checkForTrait($document, $this->documentAccessControlTrait)){
-                if(!$document->isActionAllowed(Permission::ACTION_UPDATE, null, $this->activeUser)){                    
+            if($document instanceof ControlledObjectInterface){
+                if(!$document->isActionAllowed(Action::UPDATE, null, $this->activeUser)){                    
                     $uow->detach($document);   
                     
                     if ($evm->hasListeners(AccessControlEvents::updateDenied)) {
@@ -95,8 +93,8 @@ class AccessControl implements EventSubscriber
         }       
         
         foreach ($uow->getScheduledDocumentDeletions() AS $document) {
-            if(Utils::checkForTrait($document, $this->documentAccessControlTrait)){
-                if(!$document->isActionAllowed(Permission::ACTION_DELETE, null, $this->activeUser)){
+            if($document instanceof ControlledObjectInterface){
+                if(!$document->isActionAllowed(Action::DELETE, null, $this->activeUser)){
                     $uow->detach($document);    
                     
                     if ($evm->hasListeners(AccessControlEvents::deleteDenied)) {

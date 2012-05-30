@@ -2,18 +2,17 @@
 
 namespace SdsDoctrineExtensions\AccessControl\Behaviour;
 
-use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM,
-    SdsDoctrineExtensions\AccessControl\Model\Permission,
-    SdsDoctrineExtensions\AccessControl\Model\Role,    
-    SdsDoctrineExtensions\Audit\Mapping\Annotation\Audit as SDS_Audit,
-    SdsDoctrineExtensions\Readonly\Mapping\Annotation\Readonly as SDS_Readonly,
-    SdsDoctrineExtensions\Common\Utils;
+use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
+use SdsDoctrineExtensions\AccessControl\Model\Permission;
+use SdsDoctrineExtensions\AccessControl\Model\Role;
+use SdsDoctrineExtensions\Audit\Mapping\Annotation\Audit as SDS_Audit;
+use SdsDoctrineExtensions\Readonly\Mapping\Annotation\Readonly as SDS_Readonly;
+use SdsCommon\AccessControl\PermissionInterface;
+use SdsCommon\AccessControl\UserInterface;
+use SdsCommon\User\ActiveUserInterface;
 
 trait DocumentAccessControl {
-    
-    protected $accessControlActiveUserTrait = 'SdsDoctrineExtensions\ActiveUser\Behaviour\ActiveUser';
-    protected $accessControlUserAccessControlTrait = 'SdsDoctrineExtensions\AccessControl\Behaviour\UserAccessControl';
-    
+        
     /**
     * @ODM\Field(type="string")
     * @SDS_Readonly 
@@ -65,7 +64,7 @@ trait DocumentAccessControl {
             ); 
             return;
         }
-        if($permission instanceof Permission){
+        if($permission instanceof PermissionInterface){
             $permission->getRole()->setZone($this->getZone());
             $this->permissions[] = $permission; 
             return;
@@ -113,15 +112,12 @@ trait DocumentAccessControl {
         return false;
     }
     
-    protected function checkUserParam($user = null){
+    protected function checkUserParam(UserInterface $user = null){
         if(!isset($user)){
-            if(!Utils::checkForTrait($this, $this->accessControlActiveUserTrait)){
-                throw new \Exception('Class must exhibit the '.$this->accessControlActiveUserTrait.' trait.');
+            if(!$this instanceof ActiveUserInterface)){
+                throw new \Exception('Class must exhibit the ActiveUserInterface.');
             } 
-            $user = $this->activeUser;
-        }
-        if(!Utils::checkForTrait($user, $this->accessControlUserAccessControlTrait)){
-            throw new \Exception('User object must exhibit the '.$this->accessControlUserAccessControlTrait.' trait.');
+            $user = $this->getActiveUser();
         }
         return $user;        
     }

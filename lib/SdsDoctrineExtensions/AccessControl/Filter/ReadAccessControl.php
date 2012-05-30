@@ -2,24 +2,20 @@
 
 namespace SdsDoctrineExtensions\AccessControl\Filter;
 
-use Doctrine\ODM\MongoDB\Mapping\ClassMetaData,
-    Doctrine\ODM\MongoDB\Query\Filter\BsonFilter,
-    SdsDoctrineExtensions\Common\Utils,
-    SdsDoctrineExtensions\AccessControl\Model\Permission;
-    
+use Doctrine\ODM\MongoDB\Mapping\ClassMetaData;
+use Doctrine\ODM\MongoDB\Query\Filter\BsonFilter;
+use SdsDoctrineExtensions\AccessControl\Model\Permission;
+use SdsCommon\AccessControl\ObjectInterface;
+
 class ReadAccessControl extends BsonFilter
-{  
-    protected $documentAccessControlTrait = 'SdsDoctrineExtensions\AccessControl\Behaviour\DocumentAccessControl';
-       
+{         
     public function addFilterCriteria(ClassMetadata $targetDocument)
     {
         // Check if the document exhibits the DocumentAccessControl trait
-        
-        if(!Utils::checkForTrait($targetDocument->name, $this->documentAccessControlTrait)){
-            return [];
+        if($targetDocument instanceof ObjectInterface){
+            return array('permissions' => $this->AssembleQuery());
         } 
-            
-        return ['permissions' => $this->AssembleQuery()];
+        return array(); 
     }
     
     protected function AssembleQuery(){

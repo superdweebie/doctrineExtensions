@@ -1,6 +1,6 @@
 <?php
 
-namespace SdsDoctrineExtensions\Readonly\Listener;
+namespace SdsDoctrineExtensions\Metadata\Listener;
 
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ODM\MongoDB\Event\OnFlushEventArgs;

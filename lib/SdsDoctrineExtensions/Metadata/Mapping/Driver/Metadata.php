@@ -8,7 +8,7 @@ use SdsDoctrineExtensions\Metadata\Mapping\Annotation\Hidden as SDS_Hidden;
 use SdsDoctrineExtensions\Metadata\Mapping\Annotation\Label as SDS_Label;
 use SdsDoctrineExtensions\Metadata\Mapping\Annotation\Width as SDS_Width;
 
-class Readonly
+class Metadata
 {
     const HIDDEN = 'hidden';
     const LABEL = 'label';

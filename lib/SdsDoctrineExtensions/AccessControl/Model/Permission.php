@@ -2,25 +2,13 @@
 
 namespace SdsDoctrineExtensions\AccessControl\Model;
 
-use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM,
-    SdsDoctrineExtensions\Readonly\Mapping\Annotation\Readonly as SDS_Readonly;
+use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
+use SdsDoctrineExtensions\Readonly\Mapping\Annotation\Readonly as SDS_Readonly;
+use SdsCommon\AccessControl\PermissionInterface;
 
 /** @ODM\EmbeddedDocument */
-class Permission
-{
-    const STATE_ACTIVE = 'active';
-    const STATE_INACTIVE = 'inactive';
-    
-    const ROLE_GUEST = 'guest';
-    const ROLE_AUTHENTICATED = 'authenticated';
-    const ROLE_ADMIN = 'admin';
-    
-    const ACTION_CREATE = 'create';
-    const ACTION_READ = 'read';
-    const ACTION_UPDATE = 'update';    
-    const ACTION_DELETE = 'delete';
-    const ACTION_RESTORE = 'restore';
-    
+class Permission implements PermissionInterface
+{    
     /**
     * @ODM\Field(type="string")
     * @SDS_Readonly 

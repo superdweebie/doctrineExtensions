@@ -2,9 +2,10 @@
 
 namespace SdsDoctrineExtensions\AccessControl\Behaviour;
 
-use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM,
-    SdsDoctrineExtensions\AccessControl\Model\Permission,
-    SdsDoctrineExtensions\AccessControl\Model\Role;
+use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
+use SdsDoctrineExtensions\AccessControl\Model\Permission;
+use SdsDoctrineExtensions\AccessControl\Model\Role;
+use SdsCommon\AccessControl\RoleInterface;
 
 trait UserAccessControl {
   
@@ -31,8 +32,8 @@ trait UserAccessControl {
             }
             $role = new Role($name, $zone);
         }
-        if(!$role instanceof Role){        
-            throw new \InvalidArgumentException('addRole method must take a permission config array or Role object.');         
+        if(!$role instanceof RoleInterface){        
+            throw new \InvalidArgumentException('addRole method must take a permission config array or RoleInterface object.');  
         }   
         $this->roles[] = $role;        
         return;            
@@ -76,7 +77,7 @@ trait UserAccessControl {
             $name = (string) $role['name'];        
             $zone = (string) $role['zone'];            
         }
-        if($role instanceof Role){
+        if($role instanceof RoleInterface){
             $name = $role->getName();
             $zone = $role->getZone();
         }
