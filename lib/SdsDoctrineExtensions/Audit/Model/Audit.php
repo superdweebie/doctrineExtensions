@@ -2,11 +2,12 @@
 
 namespace SdsDoctrineExtensions\Audit\Model;
 
-use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM,
-    SdsDoctrineExtensions\Readonly\Mapping\Annotation\Readonly as SDS_Readonly;
+use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
+use SdsDoctrineExtensions\Readonly\Mapping\Annotation\Readonly as SDS_Readonly;
+use SdsCommon\Audit\AuditInterface;
 
 /** @ODM\EmbeddedDocument */
-class Audit
+class Audit implements AuditInterface
 {
     /** 
      * @ODM\Id(strategy="UUID") 
@@ -37,6 +38,13 @@ class Audit
     */         
     protected $changedBy;    
     
+    public function __construct($oldValue, $newValue, $changedOn, $changedBy){
+        $this->oldValue = (string) $oldValue;
+        $this->newValue = (string) $newValue;
+        $this->changedOn = $changedOn;
+        $this->changedBy = (string) $changedBy;
+    }
+    
     public function getId() {
         return $this->id;
     }
@@ -45,31 +53,15 @@ class Audit
         return $this->oldValue;
     }
 
-    public function setOldValue($oldValue) {
-        $this->oldValue = $oldValue;
-    }
-
     public function getNewValue() {
         return $this->newValue;
-    }
-
-    public function setNewValue($newValue) {
-        $this->newValue = $newValue;
     }
 
     public function getChangedOn() {
         return $this->changedOn;
     }
 
-    public function setChangedOn($changedOn) {
-        $this->changedOn = $changedOn;
-    }
-
     public function getChangedBy() {
         return $this->changedBy;
     }
-
-    public function setChangedBy($changedBy) {
-        $this->changedBy = $changedBy;
-    }    
 }

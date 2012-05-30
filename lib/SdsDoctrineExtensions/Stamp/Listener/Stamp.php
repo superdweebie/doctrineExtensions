@@ -2,42 +2,45 @@
 
 namespace SdsDoctrineExtensions\Stamp\Listener;
 
-use Doctrine\Common\EventSubscriber,
-    Doctrine\ODM\MongoDB\Event\LifecycleEventArgs,
-    SdsDoctrineExtensions\ActiveUser\Behaviour\ActiveUser as ActiveUserTrait,    
-    SdsDoctrineExtensions\Common\Utils;
-
-class Stamp implements EventSubscriber
+use Doctrine\Common\EventSubscriber;
+use Doctrine\ODM\MongoDB\Event\LifecycleEventArgs;
+use SdsDoctrineExtensions\ActiveUser\Behaviour\ActiveUser as ActiveUserTrait;
+use SdsCommon\ActiveUser\ActiveUserInterface;
+use SdsCommon\Stamp\CreatedByInterface;
+use SdsCommon\Stamp\CreatedOnInterface;
+use SdsCommon\Stamp\UpdatedByInterface;
+use SdsCommon\Stamp\UpdatedOnInterface;
+use Doctrine\ODM\MongoDB\Events as ODMEvents;
+        
+class Stamp implements EventSubscriber, ActiveUserInterface
 {    
     use ActiveUserTrait;
-
-    protected $createdByTrait = 'SdsDoctrineExtensions\Stamp\Behaviour\CreatedBy';  
-    protected $createdOnTrait = 'SdsDoctrineExtensions\Stamp\Behaviour\CreatedOn';  
-    protected $updatedByTrait = 'SdsDoctrineExtensions\Stamp\Behaviour\UpdatedBy';  
-    protected $updatedOnTrait = 'SdsDoctrineExtensions\Stamp\Behaviour\UpdatedOn';  
-    
+   
     public function getSubscribedEvents(){
-        return ['prePersist', 'preUpdate'];
+        return array(
+            ODMEvents::prePersist,
+            ODMEvents::preUpdate
+        );        
     }      
     
     public function prePersist(LifecycleEventArgs $eventArgs)
     {        
-        $doucment = $eventArgs->getDocument();
-        if(Utils::checkForTrait($this, $this->createdByTrait)){
+        $document = $eventArgs->getDocument();
+        if($document instanceof CreatedByInterface){
             $document->setCreatedBy($this->activeUser->getUsername()); 
         }
-        if(Utils::checkForTrait($this, $this->createdOnTrait)){
+        if($document instanceof CreatedOnInterface){
             $document->setCreatedOn(time()); 
         }        
     }
 
     public function preUpdate(LifecycleEventArgs $eventArgs)
     {        
-        $doucment = $eventArgs->getDocument();
-        if(Utils::checkForTrait($this, $this->updatedByTrait)){
+        $document = $eventArgs->getDocument();
+        if($document instanceof UpdatedByInterface){
             $document->setUpdatedBy($this->activeUser->getUsername()); 
         }
-        if(Utils::checkForTrait($this, $this->updatedOnTrait)){
+        if($document instanceof UpdatedOnInterface){
             $document->setUpdatedOn(time()); 
         }        
     }    

@@ -4,7 +4,7 @@ namespace SdsDoctrineExtensions\Stamp\Behaviour;
 
 use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
 
-trait UpdatedOn {
+trait UpdatedOnTrait {
    
     /** 
      * @ODM\Field(type="timestamp") 

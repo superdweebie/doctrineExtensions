@@ -5,7 +5,7 @@ namespace SdsDoctrineExtensions\Stamp\Behaviour;
 use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM,
     SdsDoctrineExtensions\Common\Utils;
 
-trait UpdatedBy {
+trait UpdatedByTrait {
    
     /** 
      * @ODM\Field(type="string") 

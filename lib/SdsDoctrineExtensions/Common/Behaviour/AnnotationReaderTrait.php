@@ -4,7 +4,7 @@ namespace SdsDoctrineExtensions\Common\Behaviour;
 
 use Doctrine\Common\Annotations\Reader as DoctrineAnnotationReader;
 
-trait AnnotationReader {
+trait AnnotationReaderTrait {
   
     protected $annotationReader;
     

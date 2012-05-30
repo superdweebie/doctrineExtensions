@@ -4,7 +4,7 @@ namespace SdsDoctrineExtensions\SoftDelete\Behaviour;
 
 use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
 
-trait SoftDelete {
+trait SoftDeleteTrait {
   
     /** 
      * @ODM\Field(type="boolean") 

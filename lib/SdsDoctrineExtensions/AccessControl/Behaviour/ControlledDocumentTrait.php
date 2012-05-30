@@ -11,7 +11,7 @@ use SdsCommon\AccessControl\PermissionInterface;
 use SdsCommon\AccessControl\UserInterface;
 use SdsCommon\User\ActiveUserInterface;
 
-trait DocumentAccessControl {
+trait ControlledDocumentTrait {
         
     /**
     * @ODM\Field(type="string")

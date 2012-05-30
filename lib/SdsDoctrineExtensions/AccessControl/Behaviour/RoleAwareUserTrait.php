@@ -7,7 +7,7 @@ use SdsDoctrineExtensions\AccessControl\Model\Permission;
 use SdsDoctrineExtensions\AccessControl\Model\Role;
 use SdsCommon\AccessControl\RoleInterface;
 
-trait UserAccessControl {
+trait RoleAwareUserTrait {
   
     /**
     * @ODM\EmbedMany(
@@ -44,7 +44,7 @@ trait UserAccessControl {
             $name = (string) $role['name'];        
             $zone = (string) $role['zone'];                  
         }
-        if($role instanceof $role){
+        if($role instanceof RoleInterface){
             $name = $role->getName();
             $zone = $role->getZone();            
         }

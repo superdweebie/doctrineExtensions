@@ -2,23 +2,27 @@
 
 namespace SdsDoctrineExtensions\Audit\Listener;
 
-use Doctrine\Common\EventSubscriber,
-    Doctrine\ODM\MongoDB\Event\OnFlushEventArgs,
-    Doctrine\ODM\MongoDB\Event\LoadClassMetadataEventArgs,
-    SdsDoctrineExtensions\ActiveUser\Behaviour\ActiveUser as ActiveUserTrait,
-    SdsDoctrineExtensions\Common\Utils,
-    SdsDoctrineExtensions\Audit\Model\Audit as AuditModel,
-    SdsDoctrineExtensions\Audit\Mapping\Driver\Audit as AuditDriver,
-    SdsDoctrineExtensions\Common\Behaviour\AnnotationReader;
+use Doctrine\Common\EventSubscriber;
+use Doctrine\ODM\MongoDB\Event\OnFlushEventArgs;
+use Doctrine\ODM\MongoDB\Event\LoadClassMetadataEventArgs;
+use SdsDoctrineExtensions\ActiveUser\Behaviour\ActiveUser as ActiveUserTrait;
+use SdsDoctrineExtensions\Common\Utils;
+use SdsDoctrineExtensions\Audit\Model\Audit as AuditModel;
+use SdsDoctrineExtensions\Audit\Mapping\Driver\Audit as AuditDriver;
+use SdsDoctrineExtensions\Common\Behaviour\AnnotationReader;
+use SdsDoctrineExtensions\Common\AnnotationReaderInterface;
+use Doctrine\ODM\MongoDB\Events as ODMEvents;
+use SdsCommon\Audit\AuditedObjectInterface;
 
-class Audit implements EventSubscriber
+class Audit implements EventSubscriber, AnnotationReaderInterface
 {
     use ActiveUserTrait, AnnotationReader;
-    
-    protected $auditTrait = 'SdsDoctrineExtensions\Audit\Behaviour\Audit';
-           
+               
     public function getSubscribedEvents(){
-        return ['loadClassMetadata', 'onFlush'];
+        return array(
+            ODMEvents::loadClassMetadata,
+            ODMEvents::onFlush
+        );
     }  
     
     public function loadClassMetadata(LoadClassMetadataEventArgs $eventArgs)
@@ -34,7 +38,7 @@ class Audit implements EventSubscriber
         $uow = $dm->getUnitOfWork();        
         
         foreach ($uow->getScheduledDocumentUpdates() AS $document) {
-            if(!Utils::checkForTrait($document, $this->auditTrait)){
+            if(!$document instanceof AuditedObjectInterface){
                 continue;
             }
             $changeSet = $uow->getDocumentChangeSet($document);

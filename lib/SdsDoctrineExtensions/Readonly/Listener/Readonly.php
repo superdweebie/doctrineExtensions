@@ -2,19 +2,24 @@
 
 namespace SdsDoctrineExtensions\Readonly\Listener;
 
-use Doctrine\Common\EventSubscriber,
-    Doctrine\ODM\MongoDB\Event\OnFlushEventArgs,
-    Doctrine\ODM\MongoDB\Event\LoadClassMetadataEventArgs,
-    SdsDoctrineExtensions\Common\Utils,
-    SdsDoctrineExtensions\Readonly\Mapping\Driver\Readonly as ReadonlyDriver,
-    SdsDoctrineExtensions\Common\Behaviour\AnnotationReader;
+use Doctrine\Common\EventSubscriber;
+use Doctrine\ODM\MongoDB\Event\OnFlushEventArgs;
+use Doctrine\ODM\MongoDB\Event\LoadClassMetadataEventArgs;
+use SdsDoctrineExtensions\Common\Utils;
+use SdsDoctrineExtensions\Readonly\Mapping\Driver\Readonly as ReadonlyDriver;
+use SdsDoctrineExtensions\Common\Behaviour\AnnotationReader;
+use SdsDoctrineExtensions\Common\AnnotationReaderInterface;
+use Doctrine\ODM\MongoDB\Events as ODMEvents;
 
-class Readonly implements EventSubscriber
+class Readonly implements EventSubscriber, AnnotationReaderInterface
 {
     use AnnotationReader;
                
     public function getSubscribedEvents(){
-        return ['loadClassMetadata', 'onFlush'];
+        return array(
+            ODMEvents::loadClassMetadata,
+            ODMEvents::onFlush
+        );
     }  
     
     public function loadClassMetadata(LoadClassMetadataEventArgs $eventArgs)

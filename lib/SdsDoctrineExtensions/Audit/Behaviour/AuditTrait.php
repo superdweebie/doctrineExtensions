@@ -5,14 +5,14 @@ namespace SdsDoctrineExtensions\Audit\Behaviour;
 use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM,
     SdsDoctrineExtensions\Audit\Model\Audit as AuditModel;
 
-trait Audit {
+trait AuditTrait {
   
      /**
     * @ODM\EmbedMany(
     *   targetDocument="SdsDoctrineExtensions\Audit\Model\Audit"
     * )
     */     
-    protected $audits = [];
+    protected $audits = array();
     
     public function addAudit(AuditModel $audit){
         $this->audits[] = $audit;

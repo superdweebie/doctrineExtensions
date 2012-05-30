@@ -8,13 +8,17 @@ use Doctrine\ODM\MongoDB\Event\LoadClassMetadataEventArgs;
 use SdsDoctrineExtensions\Common\Utils;
 use SdsDoctrineExtensions\Metadata\Mapping\Driver\Metadata as MetadataDriver;
 use SdsDoctrineExtensions\Common\Behaviour\AnnotationReader;
+use SdsDoctrineExtensions\Common\AnnotationReaderInterface;
+use Doctrine\ODM\MongoDB\Events as ODMEvents;
 
-class Metadata implements EventSubscriber
+class Metadata implements EventSubscriber, AnnotationReaderInterface
 {
     use AnnotationReader;
                
     public function getSubscribedEvents(){
-        return ['loadClassMetadata'];
+        return array(
+            ODMEvents::loadClassMetadata
+        );
     }  
     
     public function loadClassMetadata(LoadClassMetadataEventArgs $eventArgs)

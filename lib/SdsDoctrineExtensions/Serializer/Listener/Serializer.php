@@ -2,18 +2,22 @@
 
 namespace SdsDoctrineExtensions\Serializer\Listener;
 
-use Doctrine\Common\EventSubscriber,
-    Doctrine\ODM\MongoDB\Event\LoadClassMetadataEventArgs,
-    SdsDoctrineExtensions\Common\Utils,
-    SdsDoctrineExtensions\Serializer\Mapping\Driver\Serializer as SerializerDriver,
-    SdsDoctrineExtensions\Common\Behaviour\AnnotationReader;
+use Doctrine\Common\EventSubscriber;
+use Doctrine\ODM\MongoDB\Event\LoadClassMetadataEventArgs;
+use SdsDoctrineExtensions\Common\Utils;
+use SdsDoctrineExtensions\Serializer\Mapping\Driver\Serializer as SerializerDriver;
+use SdsDoctrineExtensions\Common\Behaviour\AnnotationReader;
+use SdsDoctrineExtensions\Common\AnnotationReaderInterface;
+use Doctrine\ODM\MongoDB\Events as ODMEvents;
 
-class Serializer implements EventSubscriber
+class Serializer implements EventSubscriber, AnnotationReaderInterface
 {
     use AnnotationReader;
                
     public function getSubscribedEvents(){
-        return ['loadClassMetadata'];
+        return array(
+            ODMEvents::loadClassMetadata,
+        );
     }  
     
     public function loadClassMetadata(LoadClassMetadataEventArgs $eventArgs)

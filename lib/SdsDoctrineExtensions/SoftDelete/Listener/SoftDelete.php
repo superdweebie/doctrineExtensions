@@ -11,10 +11,10 @@ use Doctrine\Common\EventSubscriber,
     SdsDoctrineExtensions\SoftDelete\Events,
     Doctrine\ODM\MongoDB\Event\LifecycleEventArgs,
     Doctrine\ODM\MongoDB\Events as ODMEvents;
-
+    SdsCommon\SoftDelete\SoftDeleteInterface;
+    
 class SoftDelete implements EventSubscriber
 {
-    protected $softDeleteTrait = 'SdsDoctrineExtensions\SoftDelete\Behaviour\SoftDelete';
            
     public function getSubscribedEvents(){
         return [ODMEvents::onFlush];
@@ -27,7 +27,7 @@ class SoftDelete implements EventSubscriber
         $evm = $dm->getEventManager();
         
         foreach ($uow->getScheduledDocumentUpdates() AS $document) {
-            if(Utils::checkForTrait($document, $this->softDeleteTrait)){                
+            if($document instanceof SoftDeleteInterface){                
                 $changeSet = $uow->getDocumentChangeSet($document);           
                 if(
                     isset($changeSet['isDeleted']) && 
@@ -71,7 +71,7 @@ class SoftDelete implements EventSubscriber
         }   
         
         foreach ($uow->getScheduledDocumentDeletions() AS $document) {
-            if(!Utils::checkForTrait($document, $this->softDeleteTrait)){
+            if(!$document instanceof SoftDeleteInterface){ 
                 continue;
             }   
             $document->setIsDeleted(true);
