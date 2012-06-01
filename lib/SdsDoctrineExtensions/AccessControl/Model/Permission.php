@@ -5,6 +5,7 @@ namespace SdsDoctrineExtensions\AccessControl\Model;
 use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
 use SdsDoctrineExtensions\Readonly\Mapping\Annotation\Readonly as SDS_Readonly;
 use SdsCommon\AccessControl\PermissionInterface;
+use SdsCommon\AccessControl\RoleInterface;
 
 /** @ODM\EmbeddedDocument */
 class Permission implements PermissionInterface
@@ -40,7 +41,10 @@ class Permission implements PermissionInterface
         return $this->role;
     }
     
-    public function __construct(Role $role, $action, $state = null){
+    public function __construct(RoleInterface $role, $action, $state = null){
+        if(!$role instanceof Role){
+            throw new \InvalidArgumentException();
+        }
         $this->state = (string) $state;
         $this->role = $role;
         $this->action = (string) $action;

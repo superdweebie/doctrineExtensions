@@ -2,19 +2,20 @@
 
 namespace SdsDoctrineExtensions\AccessControl\Listener;
 
-use Doctrine\Common\EventSubscriber,
-    Doctrine\ODM\MongoDB\Event\OnFlushEventArgs,
-    SdsDoctrineExtensions\ActiveUser\Behaviour\ActiveUser as ActiveUserTrait,    
-    SdsDoctrineExtensions\AccessControl\Model\Permission,
-    Doctrine\ODM\MongoDB\Events as ODMEvents,
-    SdsDoctrineExtensions\SoftDelete\Events as SoftDeleteEvents,
-    SdsDoctrineExtensions\AccessControl\Events as AccessControlEvents,    
-    Doctrine\ODM\MongoDB\Event\LifecycleEventArgs;
+use Doctrine\Common\EventSubscriber;
+use Doctrine\ODM\MongoDB\Event\OnFlushEventArgs;
+use SdsDoctrineExtensions\ActiveUser\Behaviour\ActiveUserTrait;    
+use SdsDoctrineExtensions\AccessControl\Model\Permission;
+use Doctrine\ODM\MongoDB\Events as ODMEvents;
+use SdsDoctrineExtensions\SoftDelete\Events as SoftDeleteEvents;
+use SdsDoctrineExtensions\AccessControl\Events as AccessControlEvents;
+use Doctrine\ODM\MongoDB\Event\LifecycleEventArgs;
 use SdsCommon\AccessControl\ControlledObjectInterface;
-use SdsCommon\AccessControl\UserInterface;
+use SdsCommon\User\UserInterface;
 use SdsCommon\AccessControl\Constant\Action;
+use SdsCommon\ActiveUser\ActiveUserInterface;
 
-class AccessControl implements EventSubscriber
+class AccessControl implements EventSubscriber, ActiveUserInterface
 {    
     use ActiveUserTrait;
       

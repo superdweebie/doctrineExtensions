@@ -2,16 +2,15 @@
 
 namespace SdsDoctrineExtensions\SoftDelete\Listener;
 
-use Doctrine\Common\EventSubscriber,
-    Doctrine\ODM\MongoDB\Event\OnFlushEventArgs,
-    Doctrine\ODM\MongoDB\Event\LoadClassMetadataEventArgs,
-    SdsDoctrineExtensions\Common\Utils,
-    SdsDoctrineExtensions\Audit\Model\Audit as AuditModel,
-    SdsDoctrineExtensions\Audit\Mapping\Driver\Audit as AuditDriver,
-    SdsDoctrineExtensions\SoftDelete\Events,
-    Doctrine\ODM\MongoDB\Event\LifecycleEventArgs,
-    Doctrine\ODM\MongoDB\Events as ODMEvents;
-    SdsCommon\SoftDelete\SoftDeleteInterface;
+use Doctrine\Common\EventSubscriber;
+use Doctrine\ODM\MongoDB\Event\OnFlushEventArgs;
+use Doctrine\ODM\MongoDB\Event\LoadClassMetadataEventArgs;
+use SdsDoctrineExtensions\Audit\Model\Audit as AuditModel;
+use SdsDoctrineExtensions\Audit\Mapping\Driver\Audit as AuditDriver;
+use SdsDoctrineExtensions\SoftDelete\Events;
+use Doctrine\ODM\MongoDB\Event\LifecycleEventArgs;
+use Doctrine\ODM\MongoDB\Events as ODMEvents;
+use SdsCommon\SoftDelete\SoftDeleteInterface;
     
 class SoftDelete implements EventSubscriber
 {

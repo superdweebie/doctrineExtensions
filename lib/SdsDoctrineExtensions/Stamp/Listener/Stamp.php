@@ -4,7 +4,7 @@ namespace SdsDoctrineExtensions\Stamp\Listener;
 
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ODM\MongoDB\Event\LifecycleEventArgs;
-use SdsDoctrineExtensions\ActiveUser\Behaviour\ActiveUser as ActiveUserTrait;
+use SdsDoctrineExtensions\ActiveUser\Behaviour\ActiveUserTrait;
 use SdsCommon\ActiveUser\ActiveUserInterface;
 use SdsCommon\Stamp\CreatedByInterface;
 use SdsCommon\Stamp\CreatedOnInterface;
@@ -27,7 +27,10 @@ class Stamp implements EventSubscriber, ActiveUserInterface
     {        
         $document = $eventArgs->getDocument();
         if($document instanceof CreatedByInterface){
-            $document->setCreatedBy($this->activeUser->getUsername()); 
+            if(!isset($this->activeUser)){
+                throw new \Exception('ActiveUser not set');
+            }
+            $document->setCreatedBy($this->activeUser); 
         }
         if($document instanceof CreatedOnInterface){
             $document->setCreatedOn(time()); 
@@ -38,7 +41,10 @@ class Stamp implements EventSubscriber, ActiveUserInterface
     {        
         $document = $eventArgs->getDocument();
         if($document instanceof UpdatedByInterface){
-            $document->setUpdatedBy($this->activeUser->getUsername()); 
+            if(!isset($this->activeUser)){
+                throw new \Exception('ActiveUser not set');
+            }            
+            $document->setUpdatedBy($this->activeUser); 
         }
         if($document instanceof UpdatedOnInterface){
             $document->setUpdatedOn(time()); 

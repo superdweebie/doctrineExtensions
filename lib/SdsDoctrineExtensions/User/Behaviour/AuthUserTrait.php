@@ -5,9 +5,9 @@ namespace SdsDoctrineExtensions\User\Behaviour;
 use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM,
     SdsDoctrineExtensions\Serializer\Mapping\Annotation\DoNotSerialize as SDS_DoNotSerialize;    
 
-trait AuthUser {
+trait AuthUserTrait {
 
-    use User;
+    use UserTrait;
     
     protected $chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';    
     protected $saltLength = 50;

@@ -2,8 +2,8 @@
 
 namespace SdsDoctrineExtensions\Stamp\Behaviour;
 
-use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM,
-    SdsDoctrineExtensions\Common\Utils;
+use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
+use SdsCommon\User\UserInterface;
 
 trait UpdatedByTrait {
    
@@ -12,8 +12,8 @@ trait UpdatedByTrait {
      */
     protected $updatedBy;
     
-    public function setUpdatedBy($username){  
-        $this->updatedBy = (string) $username;                
+    public function setUpdatedBy(UserInterface $username){  
+        $this->updatedBy = (string) $user->getUsername();               
     }
         
     public function getUpdatedBy(){

@@ -4,11 +4,11 @@ namespace SdsDoctrineExtensions\ActiveUser\Listener;
 
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ODM\MongoDB\Event\LifecycleEventArgs;
-use SdsDoctrineExtensions\ActiveUser\Behaviour\ActiveUser as ActiveUserTrait;
+use SdsDoctrineExtensions\ActiveUser\Behaviour\ActiveUserTrait;
 use SdsCommon\ActiveUser\ActiveUserInterface;
 use Doctrine\ODM\MongoDB\Events as ODMEvents;
     
-class ActiveUser extends AbstractListener implements ActiveUserInterface
+class ActiveUser implements EventSubscriber, ActiveUserInterface
 {
     use ActiveUserTrait;
         

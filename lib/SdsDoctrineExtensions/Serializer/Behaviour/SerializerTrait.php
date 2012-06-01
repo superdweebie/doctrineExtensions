@@ -5,7 +5,7 @@ namespace SdsDoctrineExtensions\Serializer\Behaviour;
 use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM,
     SdsDoctrineExtensions\Serializer\SerializerService;
 
-trait Serializer {
+trait SerializerTrait {
  
     public function jsonSerialize(){
         $serializerService = SerializerService::getInstance();

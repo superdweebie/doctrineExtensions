@@ -5,7 +5,7 @@ namespace SdsDoctrineExtensions\User\Behaviour;
 use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM,
     SdsDoctrineExtensions\Readonly\Mapping\Annotation\Readonly as SDS_Readonly;
 
-trait User {
+trait UserTrait {
   
     /** 
      * @ODM\Field(type="string") 

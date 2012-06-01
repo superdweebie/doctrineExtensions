@@ -8,28 +8,28 @@ use SdsDoctrineExtensions\AccessControl\Model\Role;
 use SdsDoctrineExtensions\Audit\Mapping\Annotation\Audit as SDS_Audit;
 use SdsDoctrineExtensions\Readonly\Mapping\Annotation\Readonly as SDS_Readonly;
 use SdsCommon\AccessControl\PermissionInterface;
-use SdsCommon\AccessControl\UserInterface;
-use SdsCommon\User\ActiveUserInterface;
+use SdsCommon\ActiveUser\ActiveUserInterface;
+use SdsCommon\User\UserInterface;
 
-trait ControlledDocumentTrait {
+trait ControlledObjectTrait {
         
     /**
-    * @ODM\Field(type="string")
-    * @SDS_Readonly 
-    */       
+     * @ODM\Field(type="string")
+     * @SDS_Readonly 
+     */       
     protected $zone;
     
     /**
-    * @ODM\Field(type="string")
-    * @SDS_Audit 
-    */       
+     * @ODM\Field(type="string")
+     * @SDS_Audit 
+     */       
     protected $state;
     
-     /**
-    * @ODM\EmbedMany(
-    *   targetDocument="SdsDoctrineExtensions\AccessControl\Model\Permission"
-    * )
-    */     
+    /**
+     * @ODM\EmbedMany(
+     *   targetDocument="SdsDoctrineExtensions\AccessControl\Model\Permission"
+     * )
+     */     
     protected $permissions = [];
     
     public function setZone($zone){
@@ -82,13 +82,13 @@ trait ControlledDocumentTrait {
         return $this->permissions;
     }
     
-    public function getUserPermissions($user = null, $state = null){
+    public function getUserPermissions(UserInterface $user = null, $state = null){
         $user = $this->checkUserParam($user);
         $roles = $user->getRolesInZone($this->zone);
         if(!isset($state)){
             $state = $this->state;
         }
-        $return = [];
+        $return = array();
         foreach($this->permissions as $permission){
             if(isset($roles) && in_array($permission->getRole(), $roles) &&
                 $permission->getState() == $state
@@ -99,7 +99,7 @@ trait ControlledDocumentTrait {
         return $return;
     }
     
-    public function isActionAllowed($action, $state = null, $user = null){
+    public function isActionAllowed($action, $state = null, UserInterface $user = null){
         $permissions = $this->getUserPermissions($user, $state);
         if(!isset($permissions) || count($permissions) == 0){
             return false;
@@ -114,7 +114,7 @@ trait ControlledDocumentTrait {
     
     protected function checkUserParam(UserInterface $user = null){
         if(!isset($user)){
-            if(!$this instanceof ActiveUserInterface)){
+            if(!$this instanceof ActiveUserInterface){
                 throw new \Exception('Class must exhibit the ActiveUserInterface.');
             } 
             $user = $this->getActiveUser();

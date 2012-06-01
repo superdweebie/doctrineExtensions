@@ -2,10 +2,11 @@
 
 namespace SdsDoctrineExtensions\Audit\Behaviour;
 
-use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM,
-    SdsDoctrineExtensions\Audit\Model\Audit as AuditModel;
+use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
+use SdsDoctrineExtensions\Audit\Model\Audit;
+use SdsCommon\Audit\AuditInterface;
 
-trait AuditTrait {
+trait AuditedObjectTrait {
   
      /**
     * @ODM\EmbedMany(
@@ -14,7 +15,10 @@ trait AuditTrait {
     */     
     protected $audits = array();
     
-    public function addAudit(AuditModel $audit){
+    public function addAudit(AuditInterface $audit){
+        if(!$audit instanceof Audit){
+            throw new \InvalidArgumentException();
+        }
         $this->audits[] = $audit;
     }
     

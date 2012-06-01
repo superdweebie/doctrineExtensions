@@ -2,7 +2,7 @@
 
 namespace SdsDoctrineExtensions\ActiveUser\Behaviour;
 
-use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM,
+use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
 use SdsCommon\User\UserInterface;
 
 trait ActiveUserTrait {

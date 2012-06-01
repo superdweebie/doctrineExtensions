@@ -5,18 +5,23 @@ namespace SdsDoctrineExtensions\Audit\Listener;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ODM\MongoDB\Event\OnFlushEventArgs;
 use Doctrine\ODM\MongoDB\Event\LoadClassMetadataEventArgs;
-use SdsDoctrineExtensions\ActiveUser\Behaviour\ActiveUser as ActiveUserTrait;
-use SdsDoctrineExtensions\Common\Utils;
+use SdsDoctrineExtensions\ActiveUser\Behaviour\ActiveUserTrait;
 use SdsDoctrineExtensions\Audit\Model\Audit as AuditModel;
 use SdsDoctrineExtensions\Audit\Mapping\Driver\Audit as AuditDriver;
-use SdsDoctrineExtensions\Common\Behaviour\AnnotationReader;
+use SdsDoctrineExtensions\Common\Behaviour\AnnotationReaderTrait;
 use SdsDoctrineExtensions\Common\AnnotationReaderInterface;
 use Doctrine\ODM\MongoDB\Events as ODMEvents;
 use SdsCommon\Audit\AuditedObjectInterface;
+use SdsCommon\ActiveUser\ActiveUserInterface;
 
-class Audit implements EventSubscriber, AnnotationReaderInterface
+class Audit 
+implements 
+    EventSubscriber, 
+    AnnotationReaderInterface, 
+    ActiveUserInterface
 {
-    use ActiveUserTrait, AnnotationReader;
+    use ActiveUserTrait;
+    use AnnotationReaderTrait;
                
     public function getSubscribedEvents(){
         return array(
