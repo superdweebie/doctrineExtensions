@@ -20,10 +20,8 @@
 
     "autoload": {
         "psr-0": {
-            "SdsDoctrineExtensions": "lib/"
-        },
-        "classmap": [
-            "./"
-        ]
+            "SdsDoctrineExtensions": "lib/",
+            "SdsDoctrineExtensionsTest": "tests/"            
+        }
     }
 }
