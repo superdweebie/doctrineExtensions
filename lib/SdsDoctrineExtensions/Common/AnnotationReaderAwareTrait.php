@@ -1,10 +1,10 @@
 <?php
 
-namespace SdsDoctrineExtensions\Common\Behaviour;
+namespace SdsDoctrineExtensions\Common;
 
 use Doctrine\Common\Annotations\Reader as DoctrineAnnotationReader;
 
-trait AnnotationReaderTrait {
+trait AnnotationReaderAwareTrait {
   
     protected $annotationReader;
     
