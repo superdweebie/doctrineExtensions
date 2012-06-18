@@ -22,7 +22,7 @@ class ReadAccessControl extends BsonFilter
         $roles = json_encode($this->getParameter('activeUser')->getRoles());
         return '
             {
-                $eleMatch: {
+                $elemMatch: {
                     state: state,
                     action: '.Permission::ACTION_READ.',
                     role: {
