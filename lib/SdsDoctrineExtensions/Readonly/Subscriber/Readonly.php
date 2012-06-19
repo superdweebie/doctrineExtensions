@@ -10,9 +10,10 @@ use Doctrine\Common\EventSubscriber;
 use Doctrine\ODM\MongoDB\Event\OnFlushEventArgs;
 use Doctrine\ODM\MongoDB\Event\LoadClassMetadataEventArgs;
 use SdsDoctrineExtensions\Readonly\Mapping\MetadataInjector\Readonly as MetadataInjector;
-use SdsDoctrineExtensions\Common\Behaviour\AnnotationReaderTrait;
-use SdsDoctrineExtensions\Common\AnnotationReaderInterface;
+use SdsDoctrineExtensions\Common\AnnotationReaderAwareTrait;
+use SdsDoctrineExtensions\Common\AnnotationReaderAwareInterface;
 use Doctrine\ODM\MongoDB\Events as ODMEvents;
+use Doctrine\Common\Annotations\Reader;
 
 /**
  * Listener enforces readonly annotation
@@ -20,10 +21,18 @@ use Doctrine\ODM\MongoDB\Events as ODMEvents;
  * @since   1.0
  * @author  Tim Roediger <superdweebie@gmail.com>
  */
-class Readonly implements EventSubscriber, AnnotationReaderInterface
+class Readonly implements EventSubscriber, AnnotationReaderAwareInterface
 {
-    use AnnotationReaderTrait;
+    use AnnotationReaderAwareTrait;
 
+    /**
+     * 
+     * @param \Doctrine\Common\Annotations\Reader $annotationReader
+     */
+    public function __construct(Reader $annotationReader){
+        $this->setReader($annotationReader);
+    }
+    
     /**
      * @return array
      */
@@ -60,19 +69,21 @@ class Readonly implements EventSubscriber, AnnotationReaderInterface
             foreach ($changeSet as $field => $change){
                 $old = $change[0];
                 $new = $change[1];
-                if(isset($metadata->fieldMappings[$field][ReadonlyDriver::READONLY]) &&
-                    $metadata->fieldMappings[$field][ReadonlyDriver::READONLY] && $old != null
+                if(isset($metadata->fieldMappings[$field][MetadataInjector::READONLY]) &&
+                    $metadata->fieldMappings[$field][MetadataInjector::READONLY]['value'] && 
+                    $old != null
                 ){
                     if($old != $new){
-                        $setMethod = 'set'.ucfirst($field);
+                        $setMethod = $metadata->fieldMappings[$field][MetadataInjector::READONLY]['setMethod'];
                         if (!method_exists($document, $setMethod)){
-                            throw new \ExceptionMethodNotFound(sprintf(
-                                'Method %s not found. This method is required when using the @readonly annotation',
+                            throw new \BadMethodCallException(sprintf(
+                                'Method %s not found. This method was defined in the @readonly annotation
+                                 to be used for resetting a property',
                                 $setMethod
                             ));
                         }
                         $document->$setMethod($old);
-                        $unitOfWork->recomputeSingleEntityChangeSet($metadata, $document);
+                        $unitOfWork->recomputeSingleDocumentChangeSet($metadata, $document);
                     }
                 }
             }

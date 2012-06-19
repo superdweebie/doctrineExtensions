@@ -12,7 +12,7 @@
 >
     <testsuites>
         <testsuite name="SdsDocrineExtensions Test Suite">
-            <directory>./tests/SdsDoctrineExtensions/Test/</directory>
+            <directory>./tests/SdsDoctrineExtensionsTest/</directory>
         </testsuite>
     </testsuites>
 

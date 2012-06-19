@@ -9,6 +9,11 @@ use SdsDoctrineExtensions\Readonly\Mapping\Annotation\Readonly as SDS_Readonly;
 class TestDoc {
 
     /**
+     * @ODM\Id(strategy="UUID")
+     */
+    protected $id;
+    
+    /**
      * @ODM\Field(type="string")
      * @SDS_Readonly
      */
@@ -16,10 +21,13 @@ class TestDoc {
 
     /**
      * @ODM\Field(type="string")
-     * @SDS_Readonly
      */
     protected $mutableField;
 
+    public function getId() {
+        return $this->id;
+    }
+    
     public function getReadonlyField() {
         return $this->readonlyField;
     }

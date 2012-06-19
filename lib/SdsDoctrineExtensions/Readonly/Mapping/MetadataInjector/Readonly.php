@@ -4,7 +4,7 @@
  * @package    Sds
  * @license    MIT
  */
-namespace SdsDoctrineExtensions\Readonly\Mapping\Driver;
+namespace SdsDoctrineExtensions\Readonly\Mapping\MetadataInjector;
 
 use Doctrine\Common\Annotations\Reader;
 use Doctrine\ODM\MongoDB\Mapping\ClassMetadataInfo;
@@ -50,7 +50,14 @@ class Readonly
 
             foreach ($this->reader->getPropertyAnnotations($property) as $annot) {
                 if ($annot instanceof SDS_Readonly) {
-                    $class->fieldMappings[$property->getName()][self::READONLY] = true;
+                    $setMethod = $annot->setMethod;
+                    if ($annot->setMethod == 'set*'){
+                        $setMethod = 'set' . $property->getName();
+                    }                    
+                    $class->fieldMappings[$property->getName()][self::READONLY] = array(
+                        'value' => $annot->value,
+                        'setMethod' => $setMethod
+                    );
                 }
             }
         }

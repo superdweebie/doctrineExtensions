@@ -2,24 +2,28 @@
 
 namespace SdsDoctrineExtensionsTest;
 
-use Doctrine\Common\Cache\ApcCache;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\ODM\MongoDB\Configuration;
-use Doctrine\ODM\MongoDB\Mapping\ClassMetadata;
 use Doctrine\ODM\MongoDB\Mapping\Driver\AnnotationDriver;
 use Doctrine\ODM\MongoDB\Mapping\Driver\DriverChain;
 use Doctrine\Common\EventManager;
 use Doctrine\MongoDB\Connection;
+use Doctrine\Common\Annotations\AnnotationRegistry;
 
 abstract class BaseTest extends \PHPUnit_Framework_TestCase
 {
 
     const DEFAULT_DB = 'sds_doctrine_extensions_tests';
 
-    protected $dm;
-    protected $uow;
-
+    protected $documentManager;
+    protected $unitOfWork;
+    protected $annotationReader;
+    
+    public function setUp(){
+        $this->annotationReader = new AnnotationReader();        
+    }
+    
     protected function configure(
         array $documents = array(),
         array $filters = array(),
@@ -38,9 +42,9 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
 
         //create driver chain
         $chain  = new DriverChain;
-        $reader = new AnnotationReader();
+
         foreach ($documents as $namespace => $path){
-            $driver = new AnnotationDriver($reader, $path);
+            $driver = new AnnotationDriver($this->annotationReader, $path);
             $chain->addDriver($driver, $namespace);
         }
         $config->setMetadataDriverImpl($chain);
@@ -62,14 +66,14 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
         }
 
         $conn = new Connection(null, array(), $config);
-        $this->dm = DocumentManager::create($conn, $config);
-        $this->uow = $this->dm->getUnitOfWork();
+        $this->documentManager = DocumentManager::create($conn, $config, $eventManager);
+        $this->unitOfWork = $this->documentManager->getUnitOfWork();
     }
 
     public function tearDown()
     {
-        if ($this->dm) {
-            $collections = $this->dm->getConnection()->selectDatabase(self::DEFAULT_DB)->listCollections();
+        if ($this->documentManager) {
+            $collections = $this->documentManager->getConnection()->selectDatabase(self::DEFAULT_DB)->listCollections();
             foreach ($collections as $collection) {
                 $collection->remove(array(), array('safe' => true));
             }

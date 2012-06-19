@@ -10,7 +10,7 @@ require_once $file;
 use Doctrine\Common\ClassLoader;
 use Doctrine\ODM\MongoDB\Mapping\Driver\AnnotationDriver;
 
-$classLoader = new ClassLoader('Doctrine\ODM\MongoDB\Tests', __DIR__ . '/../tests');
+$classLoader = new ClassLoader('SdsDoctrineExtensionsTest', __DIR__);
 $classLoader->register();
 
 AnnotationDriver::registerAnnotationClasses();
