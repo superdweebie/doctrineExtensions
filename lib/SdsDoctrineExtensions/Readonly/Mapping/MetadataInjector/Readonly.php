@@ -1,22 +1,29 @@
 <?php
-
+/**
+ * @link       http://superdweebie.com
+ * @package    Sds
+ * @license    MIT
+ */
 namespace SdsDoctrineExtensions\Readonly\Mapping\Driver;
 
-use Doctrine\Common\Annotations\Reader,
-    Doctrine\ODM\MongoDB\Mapping\ClassMetadataInfo,
-    SdsDoctrineExtensions\Readonly\Mapping\Annotation\Readonly as SDS_Readonly;
+use Doctrine\Common\Annotations\Reader;
+use Doctrine\ODM\MongoDB\Mapping\ClassMetadataInfo;
+use SdsDoctrineExtensions\Readonly\Mapping\Annotation\Readonly as SDS_Readonly;
 
 class Readonly
 {
+    /**
+     * Readonly
+     */
     const READONLY = 'readonly';
-    
+
     /**
      * The annotation reader.
      *
      * @var Reader
      */
     private $reader;
-    
+
     /**
      * Initializes a new AnnotationDriver that uses the given Reader for reading
      * docblock annotations.
@@ -26,8 +33,8 @@ class Readonly
     public function __construct(Reader $reader)
     {
         $this->reader = $reader;
-    }   
-    
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -47,5 +54,5 @@ class Readonly
                 }
             }
         }
-    }      
+    }
 }

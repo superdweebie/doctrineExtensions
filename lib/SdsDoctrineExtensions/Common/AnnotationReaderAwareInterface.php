@@ -1,10 +1,23 @@
 <?php
-
+/**
+ * @link       http://superdweebie.com
+ * @package    Sds
+ * @license    MIT
+ */
 namespace SdsDoctrineExtensions\Common;
 
-use Doctrine\Common\Annotations\Reader as DoctrineAnnotationReader;
+use Doctrine\Common\Annotations\Reader;
 
+/**
+ * Use on a class that requires an annotation reader
+ *
+ * @since   1.0
+ * @author  Tim Roediger <superdweebie@gmail.com>
+ */
 interface AnnotationReaderAwareInterface {
-    
-    public function setReader(DoctrineAnnotationReader $annotationReader); 
+
+    /**
+     * @param \Doctrine\Common\Annotations\Reader $annoationReader
+     */
+    public function setReader(Reader $annoationReader);
 }
