@@ -9,7 +9,7 @@ namespace SdsDoctrineExtensions\Serializer\Mapping\Annotation;
 use Doctrine\Common\Annotations\Annotation;
 
 /**
- * Mark a field to be skipped during serialization
+ * Designate a non-standard getter for serialization
  *
  * @since   1.0
  * @author  Tim Roediger <superdweebie@gmail.com>
@@ -17,6 +17,6 @@ use Doctrine\Common\Annotations\Annotation;
  * @Annotation
  * @Target({"PROPERTY"})
  */
-final class DoNotSerialize extends Annotation
+final class SerializeGetter extends Annotation
 {
 }

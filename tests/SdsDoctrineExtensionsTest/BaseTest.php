@@ -19,11 +19,11 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
     protected $documentManager;
     protected $unitOfWork;
     protected $annotationReader;
-    
+
     public function setUp(){
-        $this->annotationReader = new AnnotationReader();        
+        $this->annotationReader = new AnnotationReader();
     }
-    
+
     protected function configure(
         array $documents = array(),
         array $filters = array(),
@@ -78,5 +78,17 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
                 $collection->remove(array(), array('safe' => true));
             }
         }
+    }
+
+    protected function persist($document){
+
+        $documentManager = $this->documentManager;
+
+        $documentManager->persist($document);
+        $documentManager->flush();
+        $id = $document->getId();
+        $documentManager->clear();
+
+        return $id;
     }
 }

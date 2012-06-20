@@ -19,6 +19,5 @@ use Doctrine\Common\Annotations\Annotation;
  */
 final class Readonly extends Annotation
 {
-    public $value = true;
     public $setMethod = 'set*';
 }

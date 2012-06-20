@@ -4,37 +4,36 @@
  * @package    Sds
  * @license    MIT
  */
-namespace SdsDoctrineExtensions\Stamp\Behaviour;
+namespace SdsDoctrineExtensions\SoftDelete\Behaviour;
 
 use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
 
 /**
- * Implements \SdsCommon\Stamp\CreatedOnInterface
+ * Implements \SdsCommon\SoftDelete\RestoredOnInterface
  *
  * @since   1.0
  * @author  Tim Roediger <superdweebie@gmail.com>
  */
-trait CreatedOnTrait {
+trait RestoredOnTrait {
 
     /**
      * @ODM\Field(type="timestamp")
-     * @SDS_Readonly
      */
-    protected $createdOn;
+    protected $restoredOn;
 
     /**
      *
      * @param timestamp $timestamp
      */
-    public function setCreatedOn($timestamp){
-        $this->createdOn = $timestamp;
+    public function setRestoredOn($timestamp){
+        $this->restoredOn = $timestamp;
     }
 
     /**
      *
      * @return timestamp
      */
-    public function getCreatedOn(){
-        return $this->createdOn;
+    public function getRestoredOn(){
+        return $this->restoredOn;
     }
 }

@@ -4,12 +4,13 @@
  * @package    Sds
  * @license    MIT
  */
-namespace SdsDoctrineExtensions\Serializer\Mapping\Annotation;
+namespace SdsDoctrineExtensions\SoftDelete\Mapping\Annotation;
 
 use Doctrine\Common\Annotations\Annotation;
 
 /**
- * Mark a field to be skipped during serialization
+ * Annotation to mark a property as the soft delete flag. Property must be a
+ * boolean type.
  *
  * @since   1.0
  * @author  Tim Roediger <superdweebie@gmail.com>
@@ -17,6 +18,7 @@ use Doctrine\Common\Annotations\Annotation;
  * @Annotation
  * @Target({"PROPERTY"})
  */
-final class DoNotSerialize extends Annotation
+final class SoftDelete extends Annotation
 {
+    public $getMethod = 'get*';
 }

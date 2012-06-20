@@ -4,37 +4,36 @@
  * @package    Sds
  * @license    MIT
  */
-namespace SdsDoctrineExtensions\Stamp\Behaviour;
+namespace SdsDoctrineExtensions\SoftDelete\Behaviour;
 
 use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
 
 /**
- * Implements \SdsCommon\Stamp\CreatedByInterface
+ * Implements \SdsCommon\SoftDelete\SoftDeletedByInterface
  *
  * @since   1.0
  * @author  Tim Roediger <superdweebie@gmail.com>
  */
-trait CreatedByTrait {
+trait SoftDeletedByTrait {
 
     /**
      * @ODM\Field(type="string")
-     * @SDS_Readonly
      */
-    protected $createdBy;
+    protected $softDeletedBy;
 
     /**
      *
      * @param string $username
      */
-    public function setCreatedBy($username){
-        $this->createdBy = (string) $username;
+    public function setSoftDeletedBy($username){
+        $this->softDeletedBy = (string) $username;
     }
 
     /**
      *
      * @return string
      */
-    public function getCreatedBy(){
-        return $this->createdBy;
+    public function getSoftDeletedBy(){
+        return $this->softDeletedBy;
     }
 }

@@ -15,13 +15,13 @@
     "require": {
         "php": ">=5.4",
         "superdweebie/SdsCommon": "dev-master",
-        "doctrine/mongodb-odm": "dev-master"        
+        "doctrine/mongodb-odm": "dev-master"
     },
 
     "autoload": {
         "psr-0": {
             "SdsDoctrineExtensions": "lib/",
-            "SdsDoctrineExtensionsTest": "tests/"            
+            "SdsDoctrineExtensionsTest": "tests/"
         }
     }
 }

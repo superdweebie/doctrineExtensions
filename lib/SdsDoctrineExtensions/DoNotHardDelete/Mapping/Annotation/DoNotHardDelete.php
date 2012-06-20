@@ -4,19 +4,19 @@
  * @package    Sds
  * @license    MIT
  */
-namespace SdsDoctrineExtensions\Serializer\Mapping\Annotation;
+namespace SdsDoctrineExtensions\DoNotHardDelete\Mapping\Annotation;
 
 use Doctrine\Common\Annotations\Annotation;
 
 /**
- * Mark a field to be skipped during serialization
+ * Annotation to mark a class as impossible to hard delete (soft delete still permitted)
  *
  * @since   1.0
  * @author  Tim Roediger <superdweebie@gmail.com>
  *
  * @Annotation
- * @Target({"PROPERTY"})
+ * @Target({"CLASS"})
  */
-final class DoNotSerialize extends Annotation
+final class DoNotHardDelete extends Annotation
 {
 }

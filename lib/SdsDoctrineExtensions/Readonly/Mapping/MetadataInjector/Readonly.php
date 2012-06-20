@@ -6,34 +6,21 @@
  */
 namespace SdsDoctrineExtensions\Readonly\Mapping\MetadataInjector;
 
-use Doctrine\Common\Annotations\Reader;
 use Doctrine\ODM\MongoDB\Mapping\ClassMetadataInfo;
 use SdsDoctrineExtensions\Readonly\Mapping\Annotation\Readonly as SDS_Readonly;
-
-class Readonly
+use SdsDoctrineExtensions\Common\AbstractMetadataInjector;
+/**
+ * Adds readonly values to classmetadata
+ *
+ * @since   1.0
+ * @author  Tim Roediger <superdweebie@gmail.com>
+ */
+class Readonly extends AbstractMetadataInjector
 {
     /**
      * Readonly
      */
-    const READONLY = 'readonly';
-
-    /**
-     * The annotation reader.
-     *
-     * @var Reader
-     */
-    private $reader;
-
-    /**
-     * Initializes a new AnnotationDriver that uses the given Reader for reading
-     * docblock annotations.
-     *
-     * @param $reader Reader The annotation reader to use.
-     */
-    public function __construct(Reader $reader)
-    {
-        $this->reader = $reader;
-    }
+    const readonly = 'readonly';
 
     /**
      * {@inheritdoc}
@@ -53,8 +40,8 @@ class Readonly
                     $setMethod = $annot->setMethod;
                     if ($annot->setMethod == 'set*'){
                         $setMethod = 'set' . $property->getName();
-                    }                    
-                    $class->fieldMappings[$property->getName()][self::READONLY] = array(
+                    }
+                    $class->fieldMappings[$property->getName()][self::readonly] = array(
                         'value' => $annot->value,
                         'setMethod' => $setMethod
                     );
