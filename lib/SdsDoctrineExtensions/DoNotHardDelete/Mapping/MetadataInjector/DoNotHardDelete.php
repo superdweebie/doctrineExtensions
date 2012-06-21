@@ -8,7 +8,7 @@ namespace SdsDoctrineExtensions\DoNotHardDelete\Mapping\MetadataInjector;
 
 use Doctrine\ODM\MongoDB\Mapping\ClassMetadataInfo;
 use SdsDoctrineExtensions\DoNotHardDelete\Mapping\Annotation\DoNotHardDelete as SDS_DoNotHardDelete;
-use SdsDoctrineExtensions\Common\AbstractMetadataInjector;
+use SdsDoctrineExtensions\AbstractMetadataInjector;
 
 /**
  * Adds doNotHardDelete values to classmetadata

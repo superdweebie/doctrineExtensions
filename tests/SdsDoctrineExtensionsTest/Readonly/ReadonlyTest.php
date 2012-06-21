@@ -3,7 +3,6 @@
 namespace SdsDoctrineExtensionsTest\Readonly;
 
 use SdsDoctrineExtensionsTest\BaseTest;
-use SdsDoctrineExtensions\Readonly\Subscriber\Readonly as ReadonlySubscriber;
 use SdsDoctrineExtensionsTest\Readonly\TestAsset\Document\Simple;
 use SdsDoctrineExtensionsTest\Readonly\TestAsset\Document\SetMethod;
 use SdsDoctrineExtensionsTest\Readonly\TestAsset\Subscriber;
@@ -13,14 +12,16 @@ class ReadonlyTest extends BaseTest {
     public function setUp(){
 
         parent::setUp();
-
-        $reflection = new \ReflectionClass('\SdsDoctrineExtensions\Readonly\Mapping\Annotation\Readonly');
+        $manifest = $this->getManifest(array('SdsDoctrineExtensions\Readonly' => null));
 
         $this->configure(
-            array('SdsDoctrineExtensionsTest\Readonly\TestAsset\Document' => __DIR__ . '/TestAsset/Document'),
-            array(),
-            array(new ReadonlySubscriber($this->annotationReader)),
-            array($reflection->getFilename())
+            array_merge(
+                $manifest->getDocuments(),
+                array('SdsDoctrineExtensionsTest\Readonly\TestAsset\Document' => __DIR__ . '/TestAsset/Document')
+            ),
+            $manifest->getFilters(),
+            $manifest->getSubscribers(),
+            $manifest->getAnnotations()
         );
     }
 

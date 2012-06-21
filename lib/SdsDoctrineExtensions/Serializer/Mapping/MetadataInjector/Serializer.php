@@ -9,7 +9,7 @@ namespace SdsDoctrineExtensions\Serializer\Mapping\MetadataInjector;
 use Doctrine\ODM\MongoDB\Mapping\ClassMetadataInfo;
 use SdsDoctrineExtensions\Serializer\Mapping\Annotation\DoNotSerialize as SDS_DoNotSerialize;
 use SdsDoctrineExtensions\Serializer\Mapping\Annotation\SerializeGetter as SDS_SerializeGetter;
-use SdsDoctrineExtensions\Common\AbstractMetadataInjector;
+use SdsDoctrineExtensions\AbstractMetadataInjector;
 
 /**
  * Adds serialization values to metadata

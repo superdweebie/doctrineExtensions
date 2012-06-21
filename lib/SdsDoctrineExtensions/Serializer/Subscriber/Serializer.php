@@ -9,8 +9,8 @@ namespace SdsDoctrineExtensions\Serializer\Subscriber;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ODM\MongoDB\Event\LoadClassMetadataEventArgs;
 use SdsDoctrineExtensions\Serializer\Mapping\MetadataInjector\Serializer as MetadataInjector;
-use SdsDoctrineExtensions\Common\AnnotationReaderAwareTrait;
-use SdsDoctrineExtensions\Common\AnnotationReaderAwareInterface;
+use SdsDoctrineExtensions\AnnotationReaderAwareTrait;
+use SdsDoctrineExtensions\AnnotationReaderAwareInterface;
 use Doctrine\ODM\MongoDB\Events as ODMEvents;
 use Doctrine\Common\Annotations\Reader;
 

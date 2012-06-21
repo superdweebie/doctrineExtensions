@@ -10,6 +10,8 @@ use Doctrine\ODM\MongoDB\Mapping\Driver\DriverChain;
 use Doctrine\Common\EventManager;
 use Doctrine\MongoDB\Connection;
 use Doctrine\Common\Annotations\AnnotationRegistry;
+use SdsDoctrineExtensions\Manifest;
+use SdsDoctrineExtensions\ManifestConfig;
 
 abstract class BaseTest extends \PHPUnit_Framework_TestCase
 {
@@ -61,9 +63,7 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
         }
 
         //register annotations
-        foreach ($annotations as $annotation){
-            AnnotationRegistry::registerFile($annotation);
-        }
+        AnnotationRegistry::registerAutoloadNamespaces($annotations);
 
         $conn = new Connection(null, array(), $config);
         $this->documentManager = DocumentManager::create($conn, $config, $eventManager);
@@ -78,6 +78,16 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
                 $collection->remove(array(), array('safe' => true));
             }
         }
+    }
+
+    protected function getManifest(array $extensionConfigs){
+
+        $manifestConfig = new ManifestConfig(
+            $this->annotationReader,
+            $extensionConfigs
+        );
+
+        return new Manifest($manifestConfig);
     }
 
     protected function persist($document){

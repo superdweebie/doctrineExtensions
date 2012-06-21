@@ -8,7 +8,7 @@ namespace SdsDoctrineExtensions\Readonly\Mapping\MetadataInjector;
 
 use Doctrine\ODM\MongoDB\Mapping\ClassMetadataInfo;
 use SdsDoctrineExtensions\Readonly\Mapping\Annotation\Readonly as SDS_Readonly;
-use SdsDoctrineExtensions\Common\AbstractMetadataInjector;
+use SdsDoctrineExtensions\AbstractMetadataInjector;
 /**
  * Adds readonly values to classmetadata
  *

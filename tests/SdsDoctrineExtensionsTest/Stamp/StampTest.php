@@ -3,9 +3,9 @@
 namespace SdsDoctrineExtensionsTest\Readonly;
 
 use SdsDoctrineExtensionsTest\BaseTest;
-use SdsDoctrineExtensions\Stamp\Subscriber\Stamp as StampSubscriber;
 use SdsDoctrineExtensionsTest\Stamp\TestAsset\Document\Simple;
 use SdsDoctrineExtensionsTest\Stamp\TestAsset\User;
+use SdsDoctrineExtensions\Stamp\ExtensionConfig as StampConfig;
 
 class StampTest extends BaseTest {
 
@@ -20,17 +20,19 @@ class StampTest extends BaseTest {
         $user->setUsername('toby');
         $this->user = $user;
 
-        $subscriber = new StampSubscriber($user);
-        $this->subscriber = $subscriber;
-
-        $reflection = new \ReflectionClass('\SdsDoctrineExtensions\Readonly\Mapping\Annotation\Readonly');
+        $manifest = $this->getManifest(array('SdsDoctrineExtensions\Stamp' => new StampConfig($user)));
 
         $this->configure(
-            array('SdsDoctrineExtensionsTest\Stamp\TestAsset\Document' => __DIR__ . '/TestAsset/Document'),
-            array(),
-            array($subscriber),
-            array($reflection->getFilename())
+            array_merge(
+                $manifest->getDocuments(),
+                array('SdsDoctrineExtensionsTest\Stamp\TestAsset\Document' => __DIR__ . '/TestAsset/Document')
+            ),
+            $manifest->getFilters(),
+            $manifest->getSubscribers(),
+            $manifest->getAnnotations()
         );
+        
+        $this->subscriber = $manifest->getSubscribers()[0];
     }
 
     public function testStamp(){

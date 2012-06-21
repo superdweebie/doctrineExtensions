@@ -4,7 +4,7 @@
  * @package    Sds
  * @license    MIT
  */
-namespace SdsDoctrineExtensions\Common;
+namespace SdsDoctrineExtensions;
 
 use Doctrine\Common\Annotations\Reader;
 

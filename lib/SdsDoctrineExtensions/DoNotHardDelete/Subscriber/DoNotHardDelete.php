@@ -13,8 +13,8 @@ use Doctrine\ODM\MongoDB\Event\LifecycleEventArgs;
 use Doctrine\ODM\MongoDB\Events as ODMEvents;
 use SdsDoctrineExtensions\DoNotHardDelete\Mapping\MetadataInjector\DoNotHardDelete as MetadataInjector;
 use Doctrine\ODM\MongoDB\Event\LoadClassMetadataEventArgs;
-use SdsDoctrineExtensions\Common\AnnotationReaderAwareTrait;
-use SdsDoctrineExtensions\Common\AnnotationReaderAwareInterface;
+use SdsDoctrineExtensions\AnnotationReaderAwareTrait;
+use SdsDoctrineExtensions\AnnotationReaderAwareInterface;
 use Doctrine\Common\Annotations\Reader;
 
 /**

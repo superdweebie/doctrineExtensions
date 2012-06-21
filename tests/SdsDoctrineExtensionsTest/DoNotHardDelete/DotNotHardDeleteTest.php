@@ -3,7 +3,6 @@
 namespace SdsDoctrineExtensionsTest\DoNotHardDelete;
 
 use SdsDoctrineExtensionsTest\BaseTest;
-use SdsDoctrineExtensions\DoNotHardDelete\Subscriber\DoNotHardDelete as DoNotHardDeleteSubscriber;
 use SdsDoctrineExtensionsTest\DoNotHardDelete\TestAsset\Document\Deleteable;
 use SdsDoctrineExtensionsTest\DoNotHardDelete\TestAsset\Document\NotDeleteable;
 use SdsDoctrineExtensionsTest\DoNotHardDelete\TestAsset\Subscriber;
@@ -13,14 +12,16 @@ class DoNotHardDeleteTest extends BaseTest {
     public function setUp(){
 
         parent::setUp();
-
-        $reflection = new \ReflectionClass('\SdsDoctrineExtensions\DoNotHardDelete\Mapping\Annotation\DoNotHardDelete');
+        $manifest = $this->getManifest(array('SdsDoctrineExtensions\DoNotHardDelete' => null));
 
         $this->configure(
-            array('SdsDoctrineExtensionsTest\DoNotHardDelete\TestAsset\Document' => __DIR__ . '/TestAsset/Document'),
-            array(),
-            array(new DoNotHardDeleteSubscriber($this->annotationReader)),
-            array($reflection->getFilename())
+            array_merge(
+                $manifest->getDocuments(),
+                array('SdsDoctrineExtensionsTest\DoNotHardDelete\TestAsset\Document' => __DIR__ . '/TestAsset/Document')
+            ),
+            $manifest->getFilters(),
+            $manifest->getSubscribers(),
+            $manifest->getAnnotations()
         );
     }
 

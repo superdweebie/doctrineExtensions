@@ -15,18 +15,16 @@ class SerializerTest extends BaseTest {
     public function setUp(){
 
         parent::setUp();
-
-        $refDoNoSerialize = new \ReflectionClass('\SdsDoctrineExtensions\Serializer\Mapping\Annotation\DoNotSerialize');
-        $refSerializeGetter = new \ReflectionClass('\SdsDoctrineExtensions\Serializer\Mapping\Annotation\SerializeGetter');
+        $manifest = $this->getManifest(array('SdsDoctrineExtensions\Serializer' => null));
 
         $this->configure(
-            array('SdsDoctrineExtensionsTest\Serializer\TestAsset\Document' => __DIR__ . '/TestAsset/Document'),
-            array(),
-            array(new SerializerSubscriber($this->annotationReader)),
-            array(
-                $refDoNoSerialize->getFilename(),
-                $refSerializeGetter->getFilename()
-            )
+            array_merge(
+                $manifest->getDocuments(),
+                array('SdsDoctrineExtensionsTest\Serializer\TestAsset\Document' => __DIR__ . '/TestAsset/Document')
+            ),
+            $manifest->getFilters(),
+            $manifest->getSubscribers(),
+            $manifest->getAnnotations()
         );
     }
 
