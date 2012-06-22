@@ -4,10 +4,12 @@
  * @package    Sds
  * @license    MIT
  */
-namespace SdsDoctrineExtensions\Readonly\Event;
+namespace SdsDoctrineExtensions\Audit\Event;
 
 use Doctrine\Common\EventArgs as BaseEventArgs;
 use Doctrine\ODM\MongoDB\DocumentManager;
+use SdsCommon\Audit\AuditInterface;
+
 /**
  * Arguments for readonly events
  *
@@ -17,25 +19,10 @@ use Doctrine\ODM\MongoDB\DocumentManager;
 class EventArgs extends BaseEventArgs {
 
     /**
-     * Name of the field which has been changed
      *
-     * @var string
+     * @var \SdsCommon\Audit\AuditInterface
      */
-    protected $field;
-
-    /**
-     * The field value before it was changed
-     *
-     * @var mixed
-     */
-    protected $originalValue;
-
-    /**
-     * The field value after it was changed
-     *
-     * @var mixed
-     */
-    protected $newValue;
+    protected $audit;
 
     /**
      * The document with the changed field
@@ -52,48 +39,26 @@ class EventArgs extends BaseEventArgs {
 
     /**
      *
-     * @param string $field
-     * @param mixed $originalValue
-     * @param mixed $newValue
+     * @param \SdsCommon\Audit\AuditInterface $audit
      * @param object $document
      * @param \Doctrine\ODM\MongoDB\DocumentManager $documentManager
      */
     public function __construct(
-        $field,
-        $originalValue,
-        $newValue,
+        AuditInterface $audit,
         $document,
         DocumentManager $documentManager
     ) {
-        $this->field = $field;
-        $this->originalValue = $originalValue;
-        $this->newValue = $newValue;
+        $this->audit = $audit;
         $this->document = $document;
         $this->documentManager = $documentManager;
     }
 
     /**
      *
-     * @return string
+     * @return \SdsCommon\Audit\AuditInterface
      */
-    public function getField() {
-        return $this->field;
-    }
-
-    /**
-     *
-     * @return mixed
-     */
-    public function getOriginalValue() {
-        return $this->originalValue;
-    }
-
-    /**
-     *
-     * @return mixed
-     */
-    public function getNewValue() {
-        return $this->newValue;
+    public function getAudit() {
+        return $this->audit;
     }
 
     /**

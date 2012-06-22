@@ -4,24 +4,24 @@
  * @package    Sds
  * @license    MIT
  */
-namespace SdsDoctrineExtensions\Readonly\Mapping\MetadataInjector;
+namespace SdsDoctrineExtensions\Audit\Mapping\MetadataInjector;
 
 use Doctrine\ODM\MongoDB\Mapping\ClassMetadataInfo;
-use SdsDoctrineExtensions\Readonly\Mapping\Annotation\Readonly as SDS_Readonly;
+use SdsDoctrineExtensions\Audit\Mapping\Annotation\Audit as SDS_Audit;
 use SdsDoctrineExtensions\AbstractMetadataInjector;
 
 /**
- * Adds readonly values to classmetadata
+ * Adds audit values to classmetadata
  *
  * @since   1.0
  * @author  Tim Roediger <superdweebie@gmail.com>
  */
-class Readonly extends AbstractMetadataInjector
+class Audit extends AbstractMetadataInjector
 {
     /**
-     * Readonly
+     * audit
      */
-    const readonly = 'readonly';
+    const audit = 'audit';
 
     /**
      * {@inheritdoc}
@@ -37,15 +37,8 @@ class Readonly extends AbstractMetadataInjector
             }
 
             foreach ($this->reader->getPropertyAnnotations($property) as $annot) {
-                if ($annot instanceof SDS_Readonly) {
-                    $setMethod = $annot->setMethod;
-                    if ($annot->setMethod == 'set*'){
-                        $setMethod = 'set' . $property->getName();
-                    }
-                    $class->fieldMappings[$property->getName()][self::readonly] = array(
-                        'value' => $annot->value,
-                        'setMethod' => $setMethod
-                    );
+                if ($annot instanceof SDS_Audit) {
+                    $class->fieldMappings[$property->getName()][self::audit] = true;
                 }
             }
         }

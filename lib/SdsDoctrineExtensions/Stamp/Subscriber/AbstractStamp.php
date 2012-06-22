@@ -30,6 +30,10 @@ abstract class AbstractStamp implements EventSubscriber, ActiveUserAwareInterfac
         $this->setActiveUser($activeUser);
     }
 
+    /**
+     *
+     * @param \Doctrine\ODM\MongoDB\Event\LifecycleEventArgs $eventArgs
+     */
     protected function recomputeChangeset(LifecycleEventArgs $eventArgs) {
         $documentManager = $eventArgs->getDocumentManager();
         $document = $eventArgs->getDocument();
