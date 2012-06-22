@@ -18,7 +18,6 @@ use Doctrine\Common\Annotations\Annotation;
  * @Annotation
  * @Target({"PROPERTY"})
  */
-final class SoftDelete extends Annotation
+final class SoftDeleteField extends Annotation
 {
-    public $getMethod = 'get*';
 }

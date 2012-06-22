@@ -9,8 +9,8 @@ namespace SdsDoctrineExtensions\SoftDelete\Subscriber;
 use Doctrine\ODM\MongoDB\Event\LifecycleEventArgs;
 use SdsCommon\SoftDelete\SoftDeletedByInterface;
 use SdsCommon\SoftDelete\SoftDeletedOnInterface;
-use SdsCommon\SoftDelete\RestoredByInterface;
-use SdsCommon\SoftDelete\RestoredOnInterface;
+use SdsCommon\SoftDelete\SoftRestoredByInterface;
+use SdsCommon\SoftDelete\SoftRestoredOnInterface;
 use SdsDoctrineExtensions\SoftDelete\Event\Events as SoftDeleteEvents;
 use SdsDoctrineExtensions\Stamp\Subscriber\AbstractStamp;
 
@@ -20,7 +20,7 @@ use SdsDoctrineExtensions\Stamp\Subscriber\AbstractStamp;
  * @since   1.0
  * @author  Tim Roediger <superdweebie@gmail.com>
  */
-class Stamp extends AbstractStamp {
+class SoftStamp extends AbstractStamp {
 
     /**
      *
@@ -29,7 +29,7 @@ class Stamp extends AbstractStamp {
     public function getSubscribedEvents() {
         return array(
             SoftDeleteEvents::postSoftDelete,
-            SoftDeleteEvents::postRestore
+            SoftDeleteEvents::postSoftRestore
         );
     }
 
@@ -57,15 +57,15 @@ class Stamp extends AbstractStamp {
      *
      * @param \Doctrine\ODM\MongoDB\Event\LifecycleEventArgs $eventArgs
      */
-    public function postRestore(LifecycleEventArgs $eventArgs) {
+    public function postSoftRestore(LifecycleEventArgs $eventArgs) {
         $recomputeChangeSet = false;
         $document = $eventArgs->getDocument();
-        if($document instanceof RestoredByInterface){
-            $document->setRestoredBy($this->activeUser->getUsername());
+        if($document instanceof SoftRestoredByInterface){
+            $document->setSoftRestoredBy($this->activeUser->getUsername());
             $recomputeChangeSet = true;
         }
-        if($document instanceof RestoredOnInterface){
-            $document->setRestoredOn(time());
+        if($document instanceof SoftRestoredOnInterface){
+            $document->setSoftRestoredOn(time());
             $recomputeChangeSet = true;
         }
         if ($recomputeChangeSet) {

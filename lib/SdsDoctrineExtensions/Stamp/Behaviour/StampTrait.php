@@ -16,10 +16,13 @@ use SdsDoctrineExtensions\Stamp\Behaviour\UpdatedByTrait;
  * Implements \SdsCommon\Stamp\CreatedOnInterface
  * Implements \SdsCommon\Stamp\UpdatedByInterface
  * Implements \SdsCommon\Stamp\UpdatedOnInterface
- *  
+ *
  * @since   1.0
  * @author  Tim Roediger <superdweebie@gmail.com>
  */
 trait StampTrait {
-   use CreatedOnTrait, CreatedByTrait, UpdatedOnTrait, UpdatedByTrait;
+   use CreatedOnTrait;
+   use CreatedByTrait;
+   use UpdatedOnTrait;
+   use UpdatedByTrait;
 }

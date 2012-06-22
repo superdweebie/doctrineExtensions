@@ -7,6 +7,7 @@
 namespace SdsDoctrineExtensions\SoftDelete\Behaviour;
 
 use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
+use SdsDoctrineExtensions\SoftDelete\Mapping\Annotation\SoftDeleteField as SDS_SoftDeleteField;
 
 /**
  * Implements the SdsCommon\SoftDelete\SoftDeleteableInterface
@@ -18,9 +19,9 @@ trait SoftDeleteableTrait {
 
     /**
      * @ODM\Field(type="boolean")
-     * @SDS_SoftDelete
+     * @SDS_SoftDeleteField
      */
-    protected $softDeleted;
+    protected $softDeleted = false;
 
     /**
      * Check if object has been soft deleted

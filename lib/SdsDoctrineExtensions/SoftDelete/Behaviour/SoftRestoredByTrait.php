@@ -9,12 +9,12 @@ namespace SdsDoctrineExtensions\SoftDelete\Behaviour;
 use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
 
 /**
- * Implements \SdsCommon\SoftDelete\RestoredByInterface
+ * Implements \SdsCommon\SoftDelete\SoftRestoredByInterface
  *
  * @since   1.0
  * @author  Tim Roediger <superdweebie@gmail.com>
  */
-trait RestoredByTrait {
+trait SoftRestoredByTrait {
 
     /**
      * @ODM\Field(type="string")
@@ -25,7 +25,7 @@ trait RestoredByTrait {
      *
      * @param string $username
      */
-    public function setRestoredBy($username){
+    public function setSoftRestoredBy($username){
         $this->restoredBy = (string) $username;
     }
 
@@ -33,7 +33,7 @@ trait RestoredByTrait {
      *
      * @return string
      */
-    public function getRestoredBy(){
+    public function getSoftRestoredBy(){
         return $this->restoredBy;
     }
 }

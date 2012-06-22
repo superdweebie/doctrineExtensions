@@ -7,10 +7,15 @@
 namespace SdsDoctrineExtensions;
 
 use Doctrine\Common\Annotations\Reader;
+use SdsCommon\User\UserInterface;
 
-class ManifestConfig extends AbstractExtensionConfig implements AnnotationReaderConfigInterface {
+class ManifestConfig extends AbstractExtensionConfig implements
+    AnnotationReaderConfigInterface,
+    ActiveUserConfigInterface
+{
 
     use AnnotationReaderConfigTrait;
+    use ActiveUserConfigTrait;
 
     /**
      * Keys are extension namespaces
@@ -25,9 +30,14 @@ class ManifestConfig extends AbstractExtensionConfig implements AnnotationReader
      * @param \Doctrine\Common\Annotations\Reader $annoationReader
      * @param array $extensionConfigs
      */
-    public function __construct(Reader $annoationReader = null, array $extensionConfigs = array()){
-        $this->setAnnoationReader($annoationReader);
+    public function __construct(
+        Reader $annoationReader = null,
+        array $extensionConfigs = array(),
+        UserInterface $activeUser = null
+        ){
+        isset($annoationReader) ? $this->setAnnoationReader($annoationReader) : null;
         $this->setExtensionConfigs($extensionConfigs);
+        isset($activeUser) ? $this->setActiveUser($activeUser) : null;
     }
 
     /**

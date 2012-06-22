@@ -4,7 +4,7 @@
  * @package    Sds
  * @license    MIT
  */
-namespace SdsDoctrineExtensions\SoftDelete;
+namespace SdsDoctrineExtensions\SoftDelete\Event;
 
 /**
  * Provides constants for event names used by the soft delete extension

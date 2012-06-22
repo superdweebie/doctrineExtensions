@@ -7,7 +7,8 @@
 namespace SdsDoctrineExtensions\Stamp;
 
 use SdsDoctrineExtensions\AbstractExtensionConfig;
-use SdsCommon\User\UserInterface;
+use SdsDoctrineExtensions\ActiveUserConfigInterface;
+use SdsDoctrineExtensions\ActiveUserConfigTrait;
 
 /**
  * Defines the resouces this extension requires
@@ -15,27 +16,7 @@ use SdsCommon\User\UserInterface;
  * @since   1.0
  * @author  Tim Roediger <superdweebie@gmail.com>
  */
-class ExtensionConfig extends AbstractExtensionConfig {
+class ExtensionConfig extends AbstractExtensionConfig implements ActiveUserConfigInterface {
 
-    /**
-     *
-     * @var \SdsCommon\User\UserInterface
-     */
-    protected $activeUser;
-
-    /**
-     *
-     * @param \SdsCommon\User\UserInterface $user
-     */
-    public function __construct(UserInterface $activeUser){
-        $this->activeUser= $activeUser;
-    }
-
-    /**
-     *
-     * @return \SdsCommon\User\UserInterface
-     */
-    public function getActiveUser() {
-        return $this->activeUser;
-    }
+    use ActiveUserConfigTrait;
 }

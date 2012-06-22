@@ -6,6 +6,8 @@
  */
 namespace SdsDoctrineExtensions;
 
+use SdsCommon\ActiveUser\ActiveUserAwareInterface;
+
 /**
  * Pass this class a configuration array with extension namespaces, and then retrieve the
  * required annotations, filters, subscribers, and document locations
@@ -46,6 +48,12 @@ class Manifest implements ExtensionInterface {
             if ($extensionConfig instanceof AnnotationReaderConfigInterface &&
                 $extensionConfig->getAnnoationReader() == null) {
                 $extensionConfig->setAnnoationReader($config->getAnnoationReader());
+            }
+
+            //Inject active user if required, but not given
+            if ($extensionConfig instanceof ActiveUserConfigInterface &&
+                $extensionConfig->getActiveUser() == null) {
+                $extensionConfig->setActiveUser($config->getActiveUser());
             }
 
             // Create extension

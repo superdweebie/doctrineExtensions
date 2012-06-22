@@ -5,22 +5,16 @@ namespace SdsDoctrineExtensionsTest\Readonly;
 use SdsDoctrineExtensionsTest\BaseTest;
 use SdsDoctrineExtensionsTest\Stamp\TestAsset\Document\Simple;
 use SdsDoctrineExtensionsTest\Stamp\TestAsset\User;
-use SdsDoctrineExtensions\Stamp\ExtensionConfig as StampConfig;
 
 class StampTest extends BaseTest {
 
-    protected $user;
     protected $subscriber;
 
     public function setUp(){
 
         parent::setUp();
 
-        $user = new User();
-        $user->setUsername('toby');
-        $this->user = $user;
-
-        $manifest = $this->getManifest(array('SdsDoctrineExtensions\Stamp' => new StampConfig($user)));
+        $manifest = $this->getManifest(array('SdsDoctrineExtensions\Stamp' => null));
 
         $this->configure(
             array_merge(
@@ -31,7 +25,7 @@ class StampTest extends BaseTest {
             $manifest->getSubscribers(),
             $manifest->getAnnotations()
         );
-        
+
         $this->subscriber = $manifest->getSubscribers()[0];
     }
 
@@ -47,15 +41,14 @@ class StampTest extends BaseTest {
         $testDoc = null;
         $testDoc = $repository->find($id);
 
-        $this->assertNotNull($testDoc);
         $this->assertEquals('version1', $testDoc->getName());
         $this->assertEquals('toby', $testDoc->getCreatedBy());
         $this->assertNotNull($testDoc->getCreatedOn());
         $this->assertNull($testDoc->getUpdatedBy());
         $this->assertNull($testDoc->getUpdatedOn());
 
-        $this->user->setUsername('lucy');
-        $this->subscriber->setActiveUser($this->user);
+        $this->activeUser->setUsername('lucy');
+        $this->subscriber->setActiveUser($this->activeUser);
 
         $testDoc->setName('version2');
 
@@ -64,7 +57,6 @@ class StampTest extends BaseTest {
         $testDoc = null;
         $testDoc = $repository->find($id);
 
-        $this->assertNotNull($testDoc);
         $this->assertEquals('version2', $testDoc->getName());
         $this->assertEquals('toby', $testDoc->getCreatedBy());
         $this->assertNotNull($testDoc->getCreatedOn());

@@ -6,9 +6,9 @@
  */
 namespace SdsDoctrineExtensions\SoftDelete\Mapping\MetadataInjector;
 
-use Doctrine\ODM\MongoDB\Mapping\ClassMetadata;
-use SdsDoctrineExtensions\SoftDelete\Mapping\Annotation\SoftDelete as SDS_SoftDelete;
-use SdsDoctrineExtensions\Common\AbstractMetadataInjector;
+use Doctrine\ODM\MongoDB\Mapping\ClassMetadataInfo;
+use SdsDoctrineExtensions\SoftDelete\Mapping\Annotation\SoftDeleteField as SDS_SoftDeleteField;
+use SdsDoctrineExtensions\AbstractMetadataInjector;
 
 /**
  * Adds doNotHardDelete values to classmetadata
@@ -21,12 +21,12 @@ class SoftDelete extends AbstractMetadataInjector
     /**
      * SoftDelete
      */
-    const softDelete = 'softDelete';
+    const softDeleteField = 'softDeleteField';
 
     /**
      * {@inheritdoc}
      */
-    public function loadMetadataForClass(ClassMetadata $class)
+    public function loadMetadataForClass(ClassMetadataInfo $class)
     {
         $reflClass = $class->getReflectionClass();
 
@@ -37,15 +37,8 @@ class SoftDelete extends AbstractMetadataInjector
             }
 
             foreach ($this->reader->getPropertyAnnotations($property) as $annot) {
-                if ($annot instanceof SDS_SoftDelete) {
-                    $getMethod = $annot->getMethod;
-                    if ($annot->getMethod == 'get*'){
-                        $getMethod = 'get' . $property->getName();
-                    }
-                    $class->softDelete = array(
-                        'field' => $property,
-                        'getMethod' => $getMethod
-                    );
+                if ($annot instanceof SDS_SoftDeleteField) {
+                    $class->softDeleteField = $property->name;
                     return;
                 }
             }

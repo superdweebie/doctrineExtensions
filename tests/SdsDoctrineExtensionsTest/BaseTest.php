@@ -12,6 +12,7 @@ use Doctrine\MongoDB\Connection;
 use Doctrine\Common\Annotations\AnnotationRegistry;
 use SdsDoctrineExtensions\Manifest;
 use SdsDoctrineExtensions\ManifestConfig;
+use SdsDoctrineExtensionsTest\TestAsset\User;
 
 abstract class BaseTest extends \PHPUnit_Framework_TestCase
 {
@@ -21,9 +22,14 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
     protected $documentManager;
     protected $unitOfWork;
     protected $annotationReader;
+    protected $activeUser;
 
     public function setUp(){
         $this->annotationReader = new AnnotationReader();
+
+        $user = new User();
+        $user->setUsername('toby');
+        $this->activeUser = $user;
     }
 
     protected function configure(
@@ -84,7 +90,8 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
 
         $manifestConfig = new ManifestConfig(
             $this->annotationReader,
-            $extensionConfigs
+            $extensionConfigs,
+            $this->activeUser
         );
 
         return new Manifest($manifestConfig);

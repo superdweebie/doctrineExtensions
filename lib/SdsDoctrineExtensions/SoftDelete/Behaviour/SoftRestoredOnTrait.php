@@ -9,12 +9,12 @@ namespace SdsDoctrineExtensions\SoftDelete\Behaviour;
 use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
 
 /**
- * Implements \SdsCommon\SoftDelete\RestoredOnInterface
+ * Implements \SdsCommon\SoftDelete\SoftRestoredOnInterface
  *
  * @since   1.0
  * @author  Tim Roediger <superdweebie@gmail.com>
  */
-trait RestoredOnTrait {
+trait SoftRestoredOnTrait {
 
     /**
      * @ODM\Field(type="timestamp")
@@ -25,7 +25,7 @@ trait RestoredOnTrait {
      *
      * @param timestamp $timestamp
      */
-    public function setRestoredOn($timestamp){
+    public function setSoftRestoredOn($timestamp){
         $this->restoredOn = $timestamp;
     }
 
@@ -33,7 +33,7 @@ trait RestoredOnTrait {
      *
      * @return timestamp
      */
-    public function getRestoredOn(){
+    public function getSoftRestoredOn(){
         return $this->restoredOn;
     }
 }

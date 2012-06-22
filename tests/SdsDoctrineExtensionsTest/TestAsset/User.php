@@ -1,6 +1,6 @@
 <?php
 
-namespace SdsDoctrineExtensionsTest\Stamp\TestAsset;
+namespace SdsDoctrineExtensionsTest\TestAsset;
 
 use SdsCommon\User\UserInterface;
 
