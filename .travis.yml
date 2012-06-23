@@ -5,7 +5,7 @@ php:
   - 5.4
 
 before_script:
-  - wget http://pecl.php.net/get/mongo-1.2.7.tgz
+  - wget http://pecl.php.net/get/mongo-1.2.10.tgz
   - tar -xzf mongo-1.2.10.tgz
   - sh -c "cd mongo-1.2.10 && phpize && ./configure --enable-mongo && make && sudo make install"
   - echo "extension=mongo.so" >> `php --ini | grep "Loaded Configuration" | sed -e "s|.*:\s*||"`
