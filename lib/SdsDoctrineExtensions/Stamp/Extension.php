@@ -24,8 +24,6 @@ class Extension extends AbstractExtension {
     public function __construct(ExtensionConfig $config){
         $this->config = $config;
 
-        $this->annotations = array('SdsDoctrineExtensions\Readonly\Mapping\Annotation' => __DIR__.'/../../');
-
         $this->subscribers = array(new StampSubscriber($config->getActiveUser()));
     }
 }

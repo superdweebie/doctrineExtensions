@@ -26,8 +26,6 @@ class Extension extends AbstractExtension {
 
         $this->annotations = array(
             'SdsDoctrineExtensions\Audit\Mapping\Annotation' => __DIR__.'/../../',
-            'SdsDoctrineExtensions\DoNotHardDelete\Mapping\Annotation' => __DIR__.'/../../',
-            'SdsDoctrineExtensions\Readonly\Mapping\Annotation' => __DIR__.'/../../'
         );
 
         $this->subscribers = array(new AuditSubscriber(

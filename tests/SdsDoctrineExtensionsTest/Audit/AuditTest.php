@@ -26,6 +26,8 @@ class AuditTest extends BaseTest {
 
     public function testBasicFunction(){
 
+        $this->markTestIncomplete();
+        
         $documentManager = $this->documentManager;
         $testDoc = new Simple();
 

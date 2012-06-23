@@ -34,6 +34,14 @@ class ExtensionConfig extends AbstractExtensionConfig implements
     protected $auditClass = 'SdsDoctrineExtensions\Audit\Model\Audit';
 
     /**
+     * {@inheritdoc}
+     */    
+    protected $dependencies = array(
+        'SdsDoctrineExtensions\DoNotHardDelete' => null,
+        'SdsDoctrineExtensions\Readonly' => null
+    );
+    
+    /**
      *
      * @return string
      */

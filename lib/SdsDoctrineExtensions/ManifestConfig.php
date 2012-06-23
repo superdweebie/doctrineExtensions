@@ -9,7 +9,8 @@ namespace SdsDoctrineExtensions;
 use Doctrine\Common\Annotations\Reader;
 use SdsCommon\User\UserInterface;
 
-class ManifestConfig extends AbstractExtensionConfig implements
+class ManifestConfig extends AbstractExtensionConfig 
+implements
     AnnotationReaderConfigInterface,
     ActiveUserConfigInterface
 {

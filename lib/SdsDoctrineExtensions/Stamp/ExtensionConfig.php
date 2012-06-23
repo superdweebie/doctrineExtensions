@@ -19,4 +19,11 @@ use SdsDoctrineExtensions\ActiveUserConfigTrait;
 class ExtensionConfig extends AbstractExtensionConfig implements ActiveUserConfigInterface {
 
     use ActiveUserConfigTrait;
+    
+    /**
+     * {@inheritdoc}
+     */    
+    protected $dependencies = array(
+        'SdsDoctrineExtensions\Readonly' => null
+    );    
 }
