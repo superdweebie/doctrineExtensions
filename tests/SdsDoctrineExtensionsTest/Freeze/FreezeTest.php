@@ -1,22 +1,22 @@
 <?php
 
-namespace SdsDoctrineExtensionsTest\SoftDelete;
+namespace SdsDoctrineExtensionsTest\Freeze;
 
 use SdsDoctrineExtensionsTest\BaseTest;
-use SdsDoctrineExtensionsTest\SoftDelete\TestAsset\Document\Simple;
-use SdsDoctrineExtensionsTest\SoftDelete\TestAsset\Subscriber;
+use SdsDoctrineExtensionsTest\Freeze\TestAsset\Document\Simple;
+use SdsDoctrineExtensionsTest\Freeze\TestAsset\Subscriber;
 
-class SoftDeleteTest extends BaseTest {
+class FreezeTest extends BaseTest {
 
     public function setUp(){
 
         parent::setUp();
-        $manifest = $this->getManifest(array('SdsDoctrineExtensions\SoftDelete' => null));
+        $manifest = $this->getManifest(array('SdsDoctrineExtensions\Freeze' => null));
 
         $this->configure(
             array_merge(
                 $manifest->getDocuments(),
-                array('SdsDoctrineExtensionsTest\SoftDelete\TestAsset\Document' => __DIR__ . '/TestAsset/Document')
+                array('SdsDoctrineExtensionsTest\Freeze\TestAsset\Document' => __DIR__ . '/TestAsset/Document')
             ),
             $manifest->getFilters(),
             $manifest->getSubscribers(),
@@ -37,16 +37,16 @@ class SoftDeleteTest extends BaseTest {
         $testDoc = null;
         $testDoc = $repository->find($id);
 
-        $this->assertFalse($testDoc->getSoftDeleted());
+        $this->assertFalse($testDoc->getFrozen());
 
-        $testDoc->softDelete();
+        $testDoc->freeze();
 
         $documentManager->flush();
         $documentManager->clear();
         $testDoc = null;
         $testDoc = $repository->find($id);
 
-        $this->assertTrue($testDoc->getSoftDeleted());
+        $this->assertTrue($testDoc->getFrozen());
 
         $testDoc->setName('version 2');
         
@@ -57,20 +57,28 @@ class SoftDeleteTest extends BaseTest {
         
         $this->assertEquals('version 1', $testDoc->getName());
         
-        $testDoc->restore();
+        $documentManager->remove($testDoc);
+        $documentManager->flush();
+        $documentManager->clear();
+        $testDoc = null;
+        $testDoc = $repository->find($id);
+        
+        $this->assertEquals('version 1', $testDoc->getName());        
+                
+        $testDoc->thaw();
 
         $documentManager->flush();
         $documentManager->clear();
         $testDoc = null;
         $testDoc = $repository->find($id);
 
-        $this->assertFalse($testDoc->getSoftDeleted());
+        $this->assertFalse($testDoc->getFrozen());
     }
 
     public function testFilter() {
 
         $documentManager = $this->documentManager;
-        $documentManager->getFilterCollection()->enable('softDelete');
+        $documentManager->getFilterCollection()->enable('freeze');
 
         $testDocA = new Simple();
         $testDocA->setName('miriam');
@@ -90,9 +98,9 @@ class SoftDeleteTest extends BaseTest {
         $this->assertEquals(array('lucy', 'miriam'), $docNames);
 
         if ($testDocs[0]->getName() == 'lucy'){
-            $testDocs[0]->softDelete();
+            $testDocs[0]->freeze();
         } else {
-            $testDocs[1]->softDelete();
+            $testDocs[1]->freeze();
         }
 
         $documentManager->flush();
@@ -101,20 +109,20 @@ class SoftDeleteTest extends BaseTest {
         list($testDocs, $docNames) = $this->getTestDocs();
         $this->assertEquals(array('miriam'), $docNames);
 
-        $filter = $documentManager->getFilterCollection()->getFilter('softDelete');
-        $filter->onlySoftDeleted();
+        $filter = $documentManager->getFilterCollection()->getFilter('freeze');
+        $filter->onlyFrozen();
         $documentManager->clear();
         
         list($testDocs, $docNames) = $this->getTestDocs();
         $this->assertEquals(array('lucy'), $docNames);
         
-        $filter->onlyNotSoftDeleted();
+        $filter->onlyNotFrozen();
         $documentManager->clear();
         
         list($testDocs, $docNames) = $this->getTestDocs();
         $this->assertEquals(array('miriam'), $docNames);
         
-        $documentManager->getFilterCollection()->disable('softDelete');
+        $documentManager->getFilterCollection()->disable('freeze');
 
         $documentManager->flush();
         $documentManager->clear();
@@ -123,12 +131,12 @@ class SoftDeleteTest extends BaseTest {
         $this->assertEquals(array('lucy', 'miriam'), $docNames);
 
         if ($testDocs[0]->getName() == 'lucy'){
-            $testDocs[0]->restore();
+            $testDocs[0]->thaw();
         } else {
-            $testDocs[1]->restore();
+            $testDocs[1]->thaw();
         }
 
-        $documentManager->getFilterCollection()->enable('softDelete');
+        $documentManager->getFilterCollection()->enable('freeze');
 
         $documentManager->flush();
         $documentManager->clear();
@@ -138,7 +146,7 @@ class SoftDeleteTest extends BaseTest {
     }
 
     protected function getTestDocs(){
-        $repository = $this->documentManager->getRepository('SdsDoctrineExtensionsTest\SoftDelete\TestAsset\Document\Simple');
+        $repository = $this->documentManager->getRepository('SdsDoctrineExtensionsTest\Freeze\TestAsset\Document\Simple');
         $testDocs = $repository->findAll();
         $returnDocs = array();
         $returnNames = array();
@@ -164,86 +172,94 @@ class SoftDeleteTest extends BaseTest {
 
         $id = $this->persist($testDoc);
 
-        $this->assertFalse($subscriber->getPreDeleteCalled());
-        $this->assertFalse($subscriber->getPostDeleteCalled());
-        $this->assertFalse($subscriber->getPreSoftRestoreCalled());
-        $this->assertFalse($subscriber->getPostSoftRestoreCalled());
+        $this->assertFalse($subscriber->getPreFreezeCalled());
+        $this->assertFalse($subscriber->getPostFreezeCalled());
+        $this->assertFalse($subscriber->getPreThawCalled());
+        $this->assertFalse($subscriber->getPostThawCalled());
 
         $repository = $documentManager->getRepository(get_class($testDoc));
-        $testDoc = null;
         $testDoc = $repository->find($id);
 
-        $this->assertFalse($testDoc->getSoftDeleted());
+        $this->assertFalse($testDoc->getFrozen());
 
-        $testDoc->softDelete();
+        $testDoc->freeze();
         $subscriber->reset();
 
         $documentManager->flush();
 
-        $this->assertTrue($subscriber->getPreDeleteCalled());
-        $this->assertTrue($subscriber->getPostDeleteCalled());
-        $this->assertFalse($subscriber->getPreSoftRestoreCalled());
-        $this->assertFalse($subscriber->getPostSoftRestoreCalled());
+        $this->assertTrue($subscriber->getPreFreezeCalled());
+        $this->assertTrue($subscriber->getPostFreezeCalled());
+        $this->assertFalse($subscriber->getPreThawCalled());
+        $this->assertFalse($subscriber->getPostThawCalled());        
 
         $testDoc = null;
         $testDoc = $repository->find($id);
 
-        $this->assertTrue($testDoc->getSoftDeleted());
+        $this->assertTrue($testDoc->getFrozen());
 
         $testDoc->setName('version 2');
         $subscriber->reset();
         $documentManager->flush();
         
-        $this->assertTrue($subscriber->getSoftDeleteUpdateDeniedCalled());        
+        $this->assertTrue($subscriber->getFrozenUpdateDeniedCalled());        
+        $subscriber->reset();
         
-        $testDoc->restore();
+        $documentManager->remove($testDoc);
+        $documentManager->flush();
+
+        $this->assertTrue($subscriber->getFrozenDeleteDeniedCalled());        
+        
+        $documentManager->clear();
+        $testDoc = $repository->find($id);
+        
+        $testDoc->thaw();
         $subscriber->reset();
 
         $documentManager->flush();
 
-        $this->assertFalse($subscriber->getPreDeleteCalled());
-        $this->assertFalse($subscriber->getPostDeleteCalled());
-        $this->assertTrue($subscriber->getPreSoftRestoreCalled());
-        $this->assertTrue($subscriber->getPostSoftRestoreCalled());
+        $this->assertFalse($subscriber->getPreFreezeCalled());
+        $this->assertFalse($subscriber->getPostFreezeCalled());
+        $this->assertTrue($subscriber->getPreThawCalled());
+        $this->assertTrue($subscriber->getPostThawCalled());        
 
         $testDoc = null;
         $testDoc = $repository->find($id);
 
-        $this->assertFalse($testDoc->getSoftDeleted());
+        $this->assertFalse($testDoc->getFrozen());
 
-        $testDoc->softDelete();
+        $testDoc->freeze();
         $subscriber->reset();
-        $subscriber->setRollbackDelete(true);
+        $subscriber->setRollbackFreeze(true);
 
         $documentManager->flush();
 
-        $this->assertTrue($subscriber->getPreDeleteCalled());
-        $this->assertFalse($subscriber->getPostDeleteCalled());
-        $this->assertFalse($subscriber->getPreSoftRestoreCalled());
-        $this->assertFalse($subscriber->getPostSoftRestoreCalled());
+        $this->assertTrue($subscriber->getPreFreezeCalled());
+        $this->assertFalse($subscriber->getPostFreezeCalled());
+        $this->assertFalse($subscriber->getPreThawCalled());
+        $this->assertFalse($subscriber->getPostThawCalled()); 
 
         $testDoc = null;
         $testDoc = $repository->find($id);
 
-        $this->assertFalse($testDoc->getSoftDeleted());
-        $testDoc->softDelete();
+        $this->assertFalse($testDoc->getFrozen());
+        $testDoc->freeze();
         $subscriber->reset();
         $documentManager->flush();
 
         $testDoc = null;
         $testDoc = $repository->find($id);
 
-        $this->assertTrue($testDoc->getSoftDeleted());
+        $this->assertTrue($testDoc->getFrozen());
 
-        $testDoc->restore();
+        $testDoc->thaw();
         $subscriber->reset();
-        $subscriber->setRollbackRestore(true);
+        $subscriber->setRollbackThaw(true);
 
         $documentManager->flush();
 
-        $this->assertFalse($subscriber->getPreDeleteCalled());
-        $this->assertFalse($subscriber->getPostDeleteCalled());
-        $this->assertTrue($subscriber->getPreSoftRestoreCalled());
-        $this->assertFalse($subscriber->getPostSoftRestoreCalled());
+        $this->assertFalse($subscriber->getPreFreezeCalled());
+        $this->assertFalse($subscriber->getPostFreezeCalled());
+        $this->assertTrue($subscriber->getPreThawCalled());
+        $this->assertFalse($subscriber->getPostThawCalled());         
     }
 }

@@ -4,24 +4,24 @@
  * @package    Sds
  * @license    MIT
  */
-namespace SdsDoctrineExtensions\SoftDelete\Mapping\MetadataInjector;
+namespace SdsDoctrineExtensions\Freeze\Mapping\MetadataInjector;
 
 use Doctrine\ODM\MongoDB\Mapping\ClassMetadataInfo;
-use SdsDoctrineExtensions\SoftDelete\Mapping\Annotation\SoftDeleteField as SDS_SoftDeleteField;
+use SdsDoctrineExtensions\Freeze\Mapping\Annotation\FreezeField as SDS_FreezeField;
 use SdsDoctrineExtensions\AbstractMetadataInjector;
 
 /**
- * Adds doNotHardDelete values to classmetadata
+ * Adds freeze values to classmetadata
  *
  * @since   1.0
  * @author  Tim Roediger <superdweebie@gmail.com>
  */
-class SoftDelete extends AbstractMetadataInjector
+class Freeze extends AbstractMetadataInjector
 {
     /**
-     * SoftDelete
+     * Freeze
      */
-    const softDeleteField = 'softDeleteField';
+    const freezeField = 'freezeField';
 
     /**
      * {@inheritdoc}
@@ -30,7 +30,7 @@ class SoftDelete extends AbstractMetadataInjector
     {
         $reflClass = $class->getReflectionClass();
 
-        if (!$reflClass->implementsInterface('SdsCommon\SoftDelete\SoftDeleteableInterface')){
+        if (!$reflClass->implementsInterface('SdsCommon\Freeze\FreezeableInterface')){
             return;
         }
         
@@ -41,8 +41,8 @@ class SoftDelete extends AbstractMetadataInjector
             }
 
             foreach ($this->reader->getPropertyAnnotations($property) as $annotation) {
-                if ($annotation instanceof SDS_SoftDeleteField) {
-                    $class->softDeleteField = $property->name;
+                if ($annotation instanceof SDS_FreezeField) {
+                    $class->freezeField = $property->name;
                     return;
                 }
             }

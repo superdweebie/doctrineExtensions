@@ -20,6 +20,28 @@ use Doctrine\ODM\MongoDB\Query\Filter\BsonFilter;
  */
 class SoftDelete extends BsonFilter
 {
+    
+    /**
+     *
+     * @var array
+     */
+    protected $parameters = array('softDeleted' => false);
+    
+    /**
+     * Set the filter to return only documents which are not 
+     * soft deleted
+     */
+    public function onlyNotSoftDeleted(){
+        $this->parameters['softDeleted'] = false;
+    }
+    
+    /**
+     * Set the filter to return only documents which are soft deleted
+     */
+    public function onlySoftDeleted(){
+        $this->parameters['softDeleted'] = true;
+    }
+    
     /**
      *
      * @param \Doctrine\ODM\MongoDB\Mapping\ClassMetadata $targetMetadata
@@ -28,7 +50,7 @@ class SoftDelete extends BsonFilter
     public function addFilterCriteria(ClassMetadata $targetMetadata)
     {
         if (isset($targetMetadata->softDeleteField)) {
-            return array($targetMetadata->softDeleteField => false);
+            return array($targetMetadata->softDeleteField => $this->parameters['softDeleted']);
         }
         return array();
     }
