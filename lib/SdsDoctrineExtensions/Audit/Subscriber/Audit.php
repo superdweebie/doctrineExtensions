@@ -81,7 +81,7 @@ class Audit implements
         UserInterface $activeUser = null,
         $auditClass = null
     ){
-        $this->setReader($annotationReader);
+        $this->setAnnotationReader($annotationReader);
         isset($activeUser) ? $this->setActiveUser($activeUser) : null;
         isset($auditClass) ? $this->setAuditClass($auditClass) : null;
     }

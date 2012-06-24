@@ -29,7 +29,7 @@ class SoftDeleteTest extends BaseTest {
         $documentManager = $this->documentManager;
         $testDoc = new Simple();
 
-        $testDoc->setName('hello');
+        $testDoc->setName('version 1');
 
         $id = $this->persist($testDoc);
 
@@ -48,6 +48,15 @@ class SoftDeleteTest extends BaseTest {
 
         $this->assertTrue($testDoc->getSoftDeleted());
 
+        $testDoc->setName('version 2');
+        
+        $documentManager->flush();
+        $documentManager->clear();
+        $testDoc = null;
+        $testDoc = $repository->find($id);
+        
+        $this->assertEquals('version 1', $testDoc->getName());
+        
         $testDoc->restore();
 
         $documentManager->flush();
@@ -138,7 +147,7 @@ class SoftDeleteTest extends BaseTest {
 
         $testDoc = new Simple();
 
-        $testDoc->setName('evented');
+        $testDoc->setName('version 1');
 
         $id = $this->persist($testDoc);
 
@@ -168,6 +177,12 @@ class SoftDeleteTest extends BaseTest {
 
         $this->assertTrue($testDoc->getSoftDeleted());
 
+        $testDoc->setName('version 2');
+        $subscriber->reset();
+        $documentManager->flush();
+        
+        $this->assertTrue($subscriber->getSoftDeleteUpdateDeniedCalled());        
+        
         $testDoc->restore();
         $subscriber->reset();
 

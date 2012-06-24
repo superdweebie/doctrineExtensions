@@ -33,7 +33,7 @@ class DoNotHardDelete implements EventSubscriber, AnnotationReaderAwareInterface
      * @param \Doctrine\Common\Annotations\Reader $annotationReader
      */
     public function __construct(Reader $annotationReader){
-        $this->setReader($annotationReader);
+        $this->setAnnotationReader($annotationReader);
     }
 
     /**

@@ -35,4 +35,9 @@ final class Events
      * Fires after a soft deleted document is restored
      */
     const postSoftRestore = 'postSoftRestore';
+    
+    /**
+     * Fires if an updated is attempted on a soft deleted object
+     */
+    const softDeletedUpdateDenied = 'softDeletedUpdateDenied';
 }

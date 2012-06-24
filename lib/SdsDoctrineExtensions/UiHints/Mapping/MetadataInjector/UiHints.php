@@ -4,25 +4,25 @@
  * @package    Sds
  * @license    MIT
  */
-namespace SdsDoctrineExtensions\SoftDelete\Mapping\MetadataInjector;
+namespace SdsDoctrineExtensions\UiHints\Mapping\MetadataInjector;
 
-use Doctrine\ODM\MongoDB\Mapping\ClassMetadataInfo;
-use SdsDoctrineExtensions\SoftDelete\Mapping\Annotation\SoftDeleteField as SDS_SoftDeleteField;
 use SdsDoctrineExtensions\AbstractMetadataInjector;
+use Doctrine\ODM\MongoDB\Mapping\ClassMetadataInfo;
+use SdsDoctrineExtensions\UiHints\Mapping\Annotation\UiHints as SDS_UiHints;
 
 /**
- * Adds doNotHardDelete values to classmetadata
+ * Adds UiHints values to classmetadata
  *
  * @since   1.0
  * @author  Tim Roediger <superdweebie@gmail.com>
  */
-class SoftDelete extends AbstractMetadataInjector
+class UiHints extends AbstractMetadataInjector
 {
     /**
-     * SoftDelete
+     * uiHints
      */
-    const softDeleteField = 'softDeleteField';
-
+    const uiHints = 'uiHints';
+    
     /**
      * {@inheritdoc}
      */
@@ -37,11 +37,10 @@ class SoftDelete extends AbstractMetadataInjector
             }
 
             foreach ($this->reader->getPropertyAnnotations($property) as $annotation) {
-                if ($annotation instanceof SDS_SoftDeleteField) {
-                    $class->softDeleteField = $property->name;
-                    return;
-                }
+                if ($annotation instanceof SDS_UiHints) {
+                    $class->fieldMappings[$property->getName()][self::uiHints] = get_object_vars($annotation);
+                }                
             }
         }
-    }
+    }      
 }

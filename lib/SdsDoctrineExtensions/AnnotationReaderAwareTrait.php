@@ -25,7 +25,7 @@ trait AnnotationReaderAwareTrait {
      *
      * @param Reader $annotationReader
      */
-    public function setReader(Reader $annotationReader){
+    public function setAnnotationReader(Reader $annotationReader){
         $this->annotationReader = $annotationReader;
     }
 }

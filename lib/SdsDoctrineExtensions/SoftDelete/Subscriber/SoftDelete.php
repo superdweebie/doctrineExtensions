@@ -33,7 +33,7 @@ class SoftDelete implements EventSubscriber, AnnotationReaderAwareInterface
      * @param \Doctrine\Common\Annotations\Reader $annotationReader
      */
     public function __construct(Reader $annotationReader){
-        $this->setReader($annotationReader);
+        $this->setAnnotationReader($annotationReader);
     }
 
     /**
@@ -75,15 +75,34 @@ class SoftDelete implements EventSubscriber, AnnotationReaderAwareInterface
 
             $metadata = $documentManager->getClassMetadata(get_class($document));
             if (!isset($metadata->softDeleteField)) {
-                continue;
+                throw new \Exception(sprintf(
+                    'Document class %s implements the SoftDeleteableInterface, but does not have a field annotatated as @softDeleteField.', 
+                    get_class($document)
+                ));
             }
+            
+            $eventManager = $documentManager->getEventManager();            
             $changeSet = $unitOfWork->getDocumentChangeSet($document);
             $field = $metadata->softDeleteField;
+                        
             if (!isset($changeSet[$field])) {
-                continue;
+                if ($document->getSoftDeleted()) {
+                    // Updates to softDeleted documents are not allowed. Roll them back                    
+                    $unitOfWork->clearDocumentChangeSet(spl_object_hash($document));
+
+                    // Raise softDeletedUpdateDenied
+                    if ($eventManager->hasListeners(SoftDeleteEvents::softDeletedUpdateDenied)) {
+                        $eventManager->dispatchEvent(
+                            SoftDeleteEvents::softDeletedUpdateDenied,
+                            new LifecycleEventArgs($document, $documentManager)
+                        );
+                    }
+                    continue;
+                } else {
+                    continue;
+                }
             }
 
-            $eventManager = $documentManager->getEventManager();
             if ($changeSet[$field][1]) {
                 // Trigger soft delete events
 

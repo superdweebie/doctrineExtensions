@@ -19,5 +19,5 @@ interface AnnotationReaderAwareInterface {
     /**
      * @param \Doctrine\Common\Annotations\Reader $annoationReader
      */
-    public function setReader(Reader $annoationReader);
+    public function setAnnotationReader(Reader $annoationReader);
 }
