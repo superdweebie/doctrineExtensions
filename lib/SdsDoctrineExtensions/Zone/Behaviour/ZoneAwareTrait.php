@@ -15,7 +15,7 @@ use SdsDoctrineExtensions\Zone\Mapping\Annotation\ZonesField as SDS_ZonesField;
  * @since   1.0
  * @author  Tim Roediger <superdweebie@gmail.com>
  */
-trait ZoneAwareObjectTrait {
+trait ZoneAwareTrait {
 
     /**
      * @ODM\Field(type="hash")

@@ -4,13 +4,13 @@ namespace SdsDoctrineExtensionsTest\Zone\TestAsset\Document;
 
 use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
 use SdsDoctrineExtensions\Zone\Mapping\Annotation\ZonesField as SDS_ZonesField;
-use SdsDoctrineExtensions\Zone\Behaviour\ZoneAwareObjectTrait;
-use SdsCommon\Zone\ZoneAwareObjectInterface;
+use SdsDoctrineExtensions\Zone\Behaviour\ZoneAwareTrait;
+use SdsCommon\Zone\ZoneAwareInterface;
 
 /** @ODM\Document */
-class Simple implements ZoneAwareObjectInterface {
+class Simple implements ZoneAwareInterface {
 
-    use ZoneAwareObjectTrait;
+    use ZoneAwareTrait;
 
     /**
      * @ODM\Id(strategy="UUID")

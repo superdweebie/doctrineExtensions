@@ -1,5 +1,9 @@
 <?php
-
+/**
+ * @link       http://superdweebie.com
+ * @package    Sds
+ * @license    MIT
+ */
 namespace SdsDoctrineExtensions\AccessControl\Behaviour;
 
 use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
@@ -7,85 +11,59 @@ use SdsDoctrineExtensions\AccessControl\Model\Permission;
 use SdsDoctrineExtensions\AccessControl\Model\Role;
 use SdsCommon\AccessControl\RoleInterface;
 
+/**
+ *
+ * @since   1.0
+ * @author  Tim Roediger <superdweebie@gmail.com>
+ */
 trait RoleAwareUserTrait {
-  
+
     /**
-    * @ODM\EmbedMany(
-    *     targetDocument="SdsDoctrineExtensions\AccessControl\Model\Role"
-    * )
-    */     
+     * @ODM\Field(type="hash")
+     */
     protected $roles = [];
-    
-    public function addRoles(array $roles = []){
-        foreach($roles as $role){
-            $this->addRole($role);
-        }
+
+    /**
+     *
+     * @param array $roles
+     */
+    public function setRoles(array $roles){
+        $this->roles = $roles;
     }
-    
+
+    /**
+     *
+     * @param string $role
+     */
     public function addRole($role){
-        if(is_array($role)){
-            $name = (string) $role['name'];        
-            if(isset($role['zone'])){
-                $zone = (string) $role['zone'];
-            } else {
-                $zone = null;
-            }
-            $role = new Role($name, $zone);
-        }
-        if(!$role instanceof RoleInterface){        
-            throw new \InvalidArgumentException('addRole method must take a permission config array or RoleInterface object.');  
-        }   
-        $this->roles[] = $role;        
-        return;            
+        $this->roles[] = $role;
     }
-    
+
+    /**
+     *
+     * @param string $role
+     */
     public function removeRole($role){
-        if(is_array($role)){
-            $name = (string) $role['name'];        
-            $zone = (string) $role['zone'];                  
+        if(($key = array_search($role, $this->roles)) !== false)
+        {
+            unset($this->roles[$key]);
         }
-        if($role instanceof RoleInterface){
-            $name = $role->getName();
-            $zone = $role->getZone();            
-        }
-        foreach($this->roles as $index => $userRole){
-            if($userRole->getName() == $name && $userRole->getZone() == $zone){
-                unset($this->roles[$index]);
-                $this->roles = array_values($this->roles());               
-                return;
-            }
-        }                 
     }
-    
+
+    /**
+     *
+     * @return array
+     */
     public function getRoles(){
-        return $this->roles;        
+        return $this->roles;
     }
-    
-    public function getRolesInZone($zone = null){
-        $zone = (string) $zone;
-        $return = [];
-        foreach($this->roles as $index => $role){
-            if($role->getZone() == $zone){
-                $return[] = $role;
-            }
-        } 
-        return $return;
-    }
-    
+
+    /**
+     *
+     * @param string $role
+     * @return boolean
+     */
     public function hasRole($role){
-        if(is_array($role)){
-            $name = (string) $role['name'];        
-            $zone = (string) $role['zone'];            
-        }
-        if($role instanceof RoleInterface){
-            $name = $role->getName();
-            $zone = $role->getZone();
-        }
-        foreach($this->roles as $userRole){
-            if($userRole->getName() == $name && $userRole->getZone() == $zone){
-                return true;
-            }
-        }
-        return false;
+        return in_array($role, $this_roles);
     }
 }
