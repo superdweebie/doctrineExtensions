@@ -21,7 +21,7 @@ use Doctrine\ODM\MongoDB\Query\Filter\BsonFilter;
  */
 class Zone extends BsonFilter
 {
-    
+
     /**
      *
      * @var array
@@ -30,40 +30,40 @@ class Zone extends BsonFilter
         'includeZoneList' => true,
         'zones' => array()
    );
-    
+
     /**
-     * Set the filter to return only documents which are not 
+     * Set the filter to return only documents which are not
      * in the zone list
      */
     public function includeZoneList(){
         $this->parameters['includeZoneList'] = true;
     }
-    
+
     /**
      * Set the filter to return only documents which are in the zone list
      */
     public function excludeZoneList(){
         $this->parameters['includeZoneList'] = false;
     }
-    
+
     /**
-     * 
+     *
      * @param array $zones
      */
     public function setZones(array $zones){
         $this->parameters['zones'] = $zones;
     }
-    
+
     /**
-     * 
+     *
      * @param string $zone
      */
     public function addZone($zone){
         $this->parameters['zones'][] = (string) $zone;
     }
-    
+
     /**
-     * 
+     *
      * @param string $zone
      */
     public function removeZone($zone){
@@ -71,21 +71,21 @@ class Zone extends BsonFilter
             unset($this->parameters['zones'][$zone]);
         }
     }
-    
+
     /**
      *
      * @param \Doctrine\ODM\MongoDB\Mapping\ClassMetadata $targetMetadata
      * @return array
      */
     public function addFilterCriteria(ClassMetadata $targetMetadata)
-    {        
+    {
         if (isset($targetMetadata->zonesField) &&
             count($this->parameters['zones'])
         ) {
             $operator = $this->parameters['includeZoneList'] ? '$in' : '$nin';
             return array(
-                $targetMetadata->zonesField => '{'.$operator.': '.json_encode($this->parameters['zones']).'}'
-            );                            
+                $targetMetadata->zonesField => array($operator => $this->parameters['zones'])
+            );
         }
         return array();
     }

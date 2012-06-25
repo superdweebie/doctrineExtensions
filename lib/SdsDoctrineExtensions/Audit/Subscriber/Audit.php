@@ -101,7 +101,7 @@ class Audit implements
      *
      * @param \Doctrine\ODM\MongoDB\Event\OnFlushEventArgs $eventArgs
      */
-    public function onFlush(OnFlushEventArgs  $eventArgs)
+    public function onFlush(OnFlushEventArgs $eventArgs)
     {
         $documentManager = $eventArgs->getDocumentManager();
         $unitOfWork = $documentManager->getUnitOfWork();

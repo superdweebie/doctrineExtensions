@@ -4,7 +4,7 @@
  * @package    Sds
  * @license    MIT
  */
-namespace SdsDoctrineExtensions\Zone;
+namespace SdsDoctrineExtensions\Zone\Behaviour;
 
 use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
 use SdsDoctrineExtensions\Zone\Mapping\Annotation\ZonesField as SDS_ZonesField;
@@ -17,12 +17,12 @@ use SdsDoctrineExtensions\Zone\Mapping\Annotation\ZonesField as SDS_ZonesField;
  */
 trait ZoneAwareObjectTrait {
 
-    /** 
-     * @ODM\Field(type="hash") 
-     * @SDS_ZonesField 
+    /**
+     * @ODM\Field(type="hash")
+     * @SDS_ZonesField
      */
     protected $zones = array();
-    
+
     /**
      * Set all possible zones
      *
@@ -39,6 +39,17 @@ trait ZoneAwareObjectTrait {
      */
     public function addZone($zone){
         $this->zones[] = (string) $zone;
+    }
+
+    /**
+     *
+     * @param string $zone
+     */
+    public function removeZone($zone){
+        if(($key = array_search($zone, $this->zones)) !== false)
+        {
+            unset($this->zones[$key]);
+        }
     }
 
     /**
