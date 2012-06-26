@@ -3,14 +3,20 @@
 namespace SdsDoctrineExtensionsTest\AccessControl\TestAsset\Document;
 
 use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
-use SdsDoctrineExtensions\AccessControl\Behaviour\AccessControlledTrait;
 use SdsCommon\AccessControl\AccessControlledInterface;
+use SdsCommon\State\StateAwareInterface;
+use SdsDoctrineExtensions\AccessControl\Behaviour\AccessControlledTrait;
+use SdsDoctrineExtensions\Audit\Mapping\Annotation\Audit as SDS_Audit;
+use SdsDoctrineExtensions\Readonly\Mapping\Annotation\Readonly as SDS_Readonly;
+use SdsDoctrineExtensions\State\Behaviour\StateAwareTrait;
+use SdsDoctrineExtensions\State\Mapping\Annotation\StateField as SDS_StateField;
 
 /** @ODM\Document */
-class Simple implements AccessControlledInterface {
+class Simple implements AccessControlledInterface, StateAwareInterface {
 
     use AccessControlledTrait;
-
+    use StateAwareTrait;
+    
     /**
      * @ODM\Id(strategy="UUID")
      */

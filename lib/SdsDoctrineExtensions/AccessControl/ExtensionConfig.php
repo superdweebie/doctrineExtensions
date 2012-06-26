@@ -27,6 +27,13 @@ class ExtensionConfig extends AbstractExtensionConfig implements
     use ActiveUserAwareTrait;
 
     /**
+     * Defines the permission class to use
+     *
+     * @var boolean
+     */
+    protected $permissionClass = 'SdsDoctrineExtensions\AccessControl\Model\Permission';
+    
+    /**
      *
      * @var array
      */
@@ -80,7 +87,7 @@ class ExtensionConfig extends AbstractExtensionConfig implements
      * @param boolean $accessControlCreate
      */
     public function setAccessControlCreate($accessControlCreate) {
-        $this->accessControlCreate = $accessControlCreate;
+        $this->accessControlCreate = (boolean) $accessControlCreate;
     }
 
     /**
@@ -96,7 +103,7 @@ class ExtensionConfig extends AbstractExtensionConfig implements
      * @param boolean $accessControlRead
      */
     public function setAccessControlRead($accessControlRead) {
-        $this->accessControlRead = $accessControlRead;
+        $this->accessControlRead = (boolean) $accessControlRead;
     }
 
     /**
@@ -112,7 +119,7 @@ class ExtensionConfig extends AbstractExtensionConfig implements
      * @param boolean $accessControlUpdate
      */
     public function setAccessControlUpdate($accessControlUpdate) {
-        $this->accessControlUpdate = $accessControlUpdate;
+        $this->accessControlUpdate = (boolean) $accessControlUpdate;
     }
 
     /**
@@ -128,6 +135,24 @@ class ExtensionConfig extends AbstractExtensionConfig implements
      * @param boolean $accessControlDelete
      */
     public function setAccessControlDelete($accessControlDelete) {
-        $this->accessControlDelete = $accessControlDelete;
+        $this->accessControlDelete = (boolean) $accessControlDelete;
     }
+    
+    /**
+     * 
+     * @return string
+     */
+    public function getPermissionClass() {
+        return $this->permissionClass;
+    }
+
+    /**
+     * 
+     * @param string $permissonClass
+     */
+    public function setPermissionClass($permissionClass) {
+        $this->permissionClass = (string) $permissionClass;
+    }
+
+    
 }

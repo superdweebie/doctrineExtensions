@@ -24,17 +24,4 @@ use SdsDoctrineExtensions\Audit\Behaviour\AuditTrait;
 class Audit implements AuditInterface
 {
     use AuditTrait;
-
-    /**
-     * @ODM\Id(strategy="UUID")
-     */
-    protected $id;
-
-    /**
-     *
-     * @return int
-     */
-    public function getId() {
-        return $this->id;
-    }
 }

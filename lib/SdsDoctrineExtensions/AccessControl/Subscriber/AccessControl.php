@@ -17,10 +17,8 @@ use SdsCommon\User\ActiveUserAwareInterface;
 use SdsCommon\User\ActiveUserAwareTrait;
 use SdsCommon\User\RoleAwareUserInterface;
 use SdsDoctrineExtensions\AccessControl\AccessController;
-use SdsDoctrineExtensions\AccessControl\Events as AccessControlEvents;
 use SdsDoctrineExtensions\AccessControl\Constant\Action;
-
-
+use SdsDoctrineExtensions\AccessControl\Event\Events as AccessControlEvents;
 
 /**
  *
@@ -94,7 +92,7 @@ class AccessControl implements EventSubscriber, ActiveUserAwareInterface
                 ) {
                     //stop creation
                     $unitOfWork->detach($document);
-
+                    
                     if ($eventManager->hasListeners(AccessControlEvents::createDenied)) {
                         $eventManager->dispatchEvent(
                             AccessControlEvents::createDenied,

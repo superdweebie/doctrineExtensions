@@ -4,12 +4,9 @@
  * @package    Sds
  * @license    MIT
  */
-namespace SdsDoctrineExtensions\AccessControl\Behaviour;
+namespace SdsDoctrineExtensions\User\Behaviour;
 
 use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
-use SdsDoctrineExtensions\AccessControl\Model\Permission;
-use SdsDoctrineExtensions\AccessControl\Model\Role;
-use SdsCommon\AccessControl\RoleInterface;
 
 /**
  *
@@ -18,6 +15,8 @@ use SdsCommon\AccessControl\RoleInterface;
  */
 trait RoleAwareUserTrait {
 
+    use UserTrait;
+    
     /**
      * @ODM\Field(type="hash")
      */

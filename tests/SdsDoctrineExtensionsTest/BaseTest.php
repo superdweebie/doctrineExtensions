@@ -3,15 +3,16 @@
 namespace SdsDoctrineExtensionsTest;
 
 use Doctrine\Common\Annotations\AnnotationReader;
-use Doctrine\ODM\MongoDB\DocumentManager;
-use Doctrine\ODM\MongoDB\Configuration;
-use Doctrine\ODM\MongoDB\Mapping\Driver\AnnotationDriver;
-use Doctrine\ODM\MongoDB\Mapping\Driver\DriverChain;
+use Doctrine\Common\Annotations\AnnotationRegistry;
 use Doctrine\Common\EventManager;
 use Doctrine\MongoDB\Connection;
-use Doctrine\Common\Annotations\AnnotationRegistry;
+use Doctrine\ODM\MongoDB\Configuration;
+use Doctrine\ODM\MongoDB\DocumentManager;
+use Doctrine\ODM\MongoDB\Mapping\Driver\AnnotationDriver;
+use Doctrine\ODM\MongoDB\Mapping\Driver\DriverChain;
 use SdsDoctrineExtensions\Manifest;
 use SdsDoctrineExtensions\ManifestConfig;
+use SdsDoctrineExtensionsTest\TestAsset\RoleAwareUser;
 use SdsDoctrineExtensionsTest\TestAsset\User;
 
 abstract class BaseTest extends \PHPUnit_Framework_TestCase
@@ -20,24 +21,41 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
     const DEFAULT_DB = 'sds_doctrine_extensions_tests';
 
     protected $documentManager;
+    
     protected $unitOfWork;
+    
     protected $annotationReader;
+    
     protected $activeUser;
 
     public function setUp(){
         $this->annotationReader = new AnnotationReader();
-
-        $user = new User();
-        $user->setUsername('toby');
-        $this->activeUser = $user;
     }
 
-    protected function configure(
+    protected function configActiveUser($configRoleAwareUser = false){
+        $user = $configRoleAwareUser ? new RoleAwareUser() : new User();
+        $user->setUsername('toby');
+        $this->activeUser = $user; 
+    }
+    
+    protected function getManifest(array $extensionConfigs){
+
+        $manifestConfig = new ManifestConfig(
+            $this->annotationReader,
+            $extensionConfigs,
+            $this->activeUser
+        );
+
+        return new Manifest($manifestConfig);
+    }
+    
+    protected function configureDoctrine(
         array $documents = array(),
         array $filters = array(),
         array $subscribers = array(),
         array $annotations = array()
     ){
+                    
         $config = new Configuration();
 
         $config->setProxyDir(__DIR__ . '/../Proxies');
@@ -84,28 +102,5 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
                 $collection->remove(array(), array('safe' => true));
             }
         }
-    }
-
-    protected function getManifest(array $extensionConfigs){
-
-        $manifestConfig = new ManifestConfig(
-            $this->annotationReader,
-            $extensionConfigs,
-            $this->activeUser
-        );
-
-        return new Manifest($manifestConfig);
-    }
-
-    protected function persist($document){
-
-        $documentManager = $this->documentManager;
-
-        $documentManager->persist($document);
-        $documentManager->flush();
-        $id = $document->getId();
-        $documentManager->clear();
-
-        return $id;
     }
 }

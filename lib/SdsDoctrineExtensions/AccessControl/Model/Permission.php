@@ -7,8 +7,10 @@
 namespace SdsDoctrineExtensions\AccessControl\Model;
 
 use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
-use SdsDoctrineExtensions\Readonly\Mapping\Annotation\Readonly as SDS_Readonly;
 use SdsCommon\AccessControl\PermissionInterface;
+use SdsDoctrineExtensions\AccessControl\Behaviour\PermissionTrait;
+use SdsDoctrineExtensions\Readonly\Mapping\Annotation\Readonly as SDS_Readonly;
+
 
 /**
  * Implementation of SdsCommon\AccessControl\PermissionInterface
@@ -20,51 +22,5 @@ use SdsCommon\AccessControl\PermissionInterface;
  */
 class Permission implements PermissionInterface
 {
-    /**
-    * @ODM\Field(type="string")
-    * @SDS_Readonly
-    */
-    protected $state;
-
-    /**
-    * @ODM\Field(type="string")
-    * @SDS_Readonly
-    */
-    protected $action;
-
-    /**
-    * @ODM\Field(type="string")
-    * @SDS_Readonly
-    */
-    protected $role;
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getState() {
-        return $this->state;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getAction() {
-        return $this->action;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getRole() {
-        return $this->role;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function __construct($role, $action, $state = null){
-        $this->state = (string) $state;
-        $this->role = (string) $role;
-        $this->action = (string) $action;
-    }
+    use PermissionTrait;
 }

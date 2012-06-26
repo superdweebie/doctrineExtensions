@@ -10,7 +10,7 @@ use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
 use SdsDoctrineExtensions\Readonly\Mapping\Annotation\Readonly as SDS_Readonly;
 
 /**
- * Implements SdsCommon\Audit\AuditedObjectInterface
+ * Implements SdsCommon\Audit\AuditInterface
  *
  * @since   1.0
  * @author  Tim Roediger <superdweebie@gmail.com>

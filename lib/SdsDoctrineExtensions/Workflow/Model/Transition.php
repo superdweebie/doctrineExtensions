@@ -36,10 +36,7 @@ class Transition implements TransitionInterface
     /**
      * {@inheritdoc}
      */
-    public function __construct(
-        $fromState,
-        $toState
-    ){
+    public function __construct($fromState, $toState){
         $this->fromState = (string) $fromState;
         $this->toState = (string) $toState;
     }
@@ -58,15 +55,5 @@ class Transition implements TransitionInterface
      */
     public function getToState() {
         return $this->toState;
-    }
-
-    /**
-     * Return the action name for this transition.
-     * Used for access control
-     *
-     * @return string
-     */
-    public function getAction() {
-        return State\Transition::getAction($this->fromState, $this->toState);
     }
 }
