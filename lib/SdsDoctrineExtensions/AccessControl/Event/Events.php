@@ -4,7 +4,7 @@
  * @package    Sds
  * @license    MIT
  */
-namespace SdsDoctrineExtensions\Event\AccessControl;
+namespace SdsDoctrineExtensions\AccessControl\Event;
 
 /**
  *
@@ -15,5 +15,21 @@ final class Events
 {
     private function __construct() {}
 
-    const accessDenied = 'accessDenied';
+    /**
+     * Triggered when activeUser attempts to create a document they don't have permission
+     * for
+     */
+    const createDenied = 'createDenied';
+
+    /**
+     * Triggers when activeUser attempts to update a document they don't have permission
+     * for
+     */
+    const updateDenied = 'updateDenied';
+
+    /**
+     * Triggers wehn activeUser attempts to delete a document they don't have permission
+     * for
+     */
+    const deleteDenied = 'deleteDenied';
 }

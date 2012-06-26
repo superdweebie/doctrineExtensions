@@ -7,8 +7,8 @@
 namespace SdsDoctrineExtensions\Stamp;
 
 use SdsDoctrineExtensions\AbstractExtensionConfig;
-use SdsDoctrineExtensions\ActiveUserConfigInterface;
-use SdsDoctrineExtensions\ActiveUserConfigTrait;
+use SdsCommon\User\ActiveUserAwareInterface;
+use SdsCommon\User\ActiveUserAwareTrait;
 
 /**
  * Defines the resouces this extension requires
@@ -16,14 +16,14 @@ use SdsDoctrineExtensions\ActiveUserConfigTrait;
  * @since   1.0
  * @author  Tim Roediger <superdweebie@gmail.com>
  */
-class ExtensionConfig extends AbstractExtensionConfig implements ActiveUserConfigInterface {
+class ExtensionConfig extends AbstractExtensionConfig implements ActiveUserAwareInterface {
 
-    use ActiveUserConfigTrait;
-    
+    use ActiveUserAwareTrait;
+
     /**
      * {@inheritdoc}
-     */    
+     */
     protected $dependencies = array(
         'SdsDoctrineExtensions\Readonly' => null
-    );    
+    );
 }

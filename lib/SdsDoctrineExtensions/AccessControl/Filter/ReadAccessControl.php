@@ -45,7 +45,9 @@ class ReadAccessControl extends BsonFilter
      */
     public function addFilterCriteria(ClassMetadata $targetDocument)
     {
-        if($targetDocument instanceof AccessControlledInterface){
+        if($targetDocument instanceof AccessControlledInterface &&
+            $targetDocument instanceof StateAwareInterface
+        ){
             return array(
                 'permissions' => array(
                     '$elemMatch' => array(

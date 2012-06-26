@@ -26,7 +26,7 @@ class Extension extends AbstractExtension {
 
         $this->annotations = array('SdsDoctrineExtensions\Zone\Mapping\Annotation' => __DIR__.'/../../');
 
-        $this->subscribers = array(new ZoneSubscriber($config->getAnnoationReader()));
+        $this->subscribers = array(new ZoneSubscriber($config->getAnnotationReader()));
 
         $this->filters = array('zone' => 'SdsDoctrineExtensions\Zone\Filter\Zone');
     }

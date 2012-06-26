@@ -30,10 +30,10 @@ class Zone extends AbstractMetadataInjector
     {
         $reflClass = $class->getReflectionClass();
 
-        if (!$reflClass->implementsInterface('SdsCommon\Zone\ZoneAwareObjectInterface')){
+        if (!$reflClass->implementsInterface('SdsCommon\Zone\ZoneAwareInterface')){
             return;
         }
-        
+
         //Property annotations
         foreach ($reflClass->getProperties() as $property) {
             if ($class->isMappedSuperclass && !$property->isPrivate() || $class->isInheritedField($property->name)) {

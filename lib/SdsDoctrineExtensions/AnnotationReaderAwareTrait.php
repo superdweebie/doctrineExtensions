@@ -9,7 +9,6 @@ namespace SdsDoctrineExtensions;
 use Doctrine\Common\Annotations\Reader;
 
 /**
- * Implementation of AnnotationReaderAwareInterface
  *
  * @since   1.0
  * @author  Tim Roediger <superdweebie@gmail.com>
@@ -19,13 +18,21 @@ trait AnnotationReaderAwareTrait {
     /**
      * @var \Doctrine\Common\Annotations\Reader
      */
-    protected $annoationReader;
+    protected $annotationReader;
 
     /**
      *
-     * @param Reader $annotationReader
+     * @return \Doctrine\Common\Annotations\Reader
      */
-    public function setAnnotationReader(Reader $annotationReader){
+    public function getAnnotationReader() {
+        return $this->annotationReader;
+    }
+
+    /**
+     *
+     * @param \Doctrine\Common\Annotations\Reader $annoationReader
+     */
+    public function setAnnotationReader(Reader $annotationReader) {
         $this->annotationReader = $annotationReader;
     }
 }

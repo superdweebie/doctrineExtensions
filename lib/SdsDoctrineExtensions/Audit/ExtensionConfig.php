@@ -7,10 +7,10 @@
 namespace SdsDoctrineExtensions\Audit;
 
 use SdsDoctrineExtensions\AbstractExtensionConfig;
-use SdsDoctrineExtensions\AnnotationReaderConfigInterface;
-use SdsDoctrineExtensions\AnnotationReaderConfigTrait;
-use SdsDoctrineExtensions\ActiveUserConfigInterface;
-use SdsDoctrineExtensions\ActiveUserConfigTrait;
+use SdsDoctrineExtensions\AnnotationReaderAwareInterface;
+use SdsDoctrineExtensions\AnnotationReaderAwareTrait;
+use SdsCommon\User\ActiveUserAwareInterface;
+use SdsCommon\User\ActiveUserAwareTrait;
 
 /**
  * Defines the resouces this extension requires
@@ -19,12 +19,12 @@ use SdsDoctrineExtensions\ActiveUserConfigTrait;
  * @author  Tim Roediger <superdweebie@gmail.com>
  */
 class ExtensionConfig extends AbstractExtensionConfig implements
-    AnnotationReaderConfigInterface,
-    ActiveUserConfigInterface
+    AnnotationReaderAwareInterface,
+    ActiveUserAwareInterface
 {
 
-    use AnnotationReaderConfigTrait;
-    use ActiveUserConfigTrait;
+    use AnnotationReaderAwareTrait;
+    use ActiveUserAwareTrait;
 
     /**
      * Defines the audit class to use
@@ -35,12 +35,12 @@ class ExtensionConfig extends AbstractExtensionConfig implements
 
     /**
      * {@inheritdoc}
-     */    
+     */
     protected $dependencies = array(
         'SdsDoctrineExtensions\DoNotHardDelete' => null,
         'SdsDoctrineExtensions\Readonly' => null
     );
-    
+
     /**
      *
      * @return string

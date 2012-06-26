@@ -10,12 +10,12 @@ use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
 use SdsCommon\Audit\AuditInterface;
 
 /**
- * Implements SdsCommon\Audit\AuditedObjectInterface
+ * Implements SdsCommon\Audit\AuditedInterface
  *
  * @since   1.0
  * @author  Tim Roediger <superdweebie@gmail.com>
  */
-trait AuditedObjectTrait {
+trait AuditedTrait {
 
     /**
      * @ODM\EmbedMany(

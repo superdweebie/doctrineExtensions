@@ -4,7 +4,7 @@
  * @package    Sds
  * @license    MIT
  */
-namespace SdsDoctrineExtensions\Event\Workflow;
+namespace SdsDoctrineExtensions\Workflow\Event;
 
 /**
  *
@@ -16,17 +16,13 @@ final class Events
     private function __construct() {}
 
     /**
-     * Called before state change. Can be used to roll the state change back
+     * Called if state change is attempted which has not transition defined
      */
-    const preStateChange = 'preStateChange';
+    const transitionDoesNotExist = 'transitionDoesNotExist';
 
     /**
-     * Called during state change. Can be used to update the workflow vars
+     * Convienicene event. Called during onStateChange as a trigger to update
+     * workflow vars
      */
-    const onStateChange = 'onStateChange';
-
-    /**
-     * Called after state change complete
-     */
-    const postStateChange = 'postStateChange';
+    const updateWorkflowVars = 'updateWorkflowVars';
 }

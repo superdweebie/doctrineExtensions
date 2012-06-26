@@ -9,7 +9,6 @@ namespace SdsDoctrineExtensions;
 use Doctrine\Common\Annotations\Reader;
 
 /**
- * Use on a class that requires an annotation reader
  *
  * @since   1.0
  * @author  Tim Roediger <superdweebie@gmail.com>
@@ -17,7 +16,14 @@ use Doctrine\Common\Annotations\Reader;
 interface AnnotationReaderAwareInterface {
 
     /**
+     *
+     * @return \Doctrine\Common\Annotations\Reader
+     */
+    public function getAnnotationReader();
+
+    /**
+     *
      * @param \Doctrine\Common\Annotations\Reader $annoationReader
      */
-    public function setAnnotationReader(Reader $annoationReader);
+    public function setAnnotationReader(Reader $annotationReader);
 }

@@ -19,7 +19,6 @@
     <filter>
         <whitelist>
             <directory suffix=".php">./lib</directory>
-            <directory suffix=".php">./vendor</directory>            
         </whitelist>
     </filter>
 </phpunit>

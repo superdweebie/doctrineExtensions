@@ -17,13 +17,7 @@ use SdsCommon\AccessControl\PermissionInterface;
  * @since   1.0
  * @author  Tim Roediger <superdweebie@gmail.com>
  */
-trait ControlledObjectTrait{
-
-    /**
-     * @ODM\Field(type="string")
-     * @SDS_Audit
-     */
-    protected $state;
+trait AccessControlledTrait{
 
     /**
      * @ODM\EmbedMany(
@@ -31,22 +25,6 @@ trait ControlledObjectTrait{
      * )
      */
     protected $permissions = [];
-
-    /**
-     * Set the current resource state
-     *
-     * @param string $state
-     */
-    public function setState($state){
-        $this->state = (string) $state;
-    }
-
-    /**
-     * @return string
-     */
-    public function getState(){
-        return $this->state;
-    }
 
     /**
      * Set all permissions
@@ -69,7 +47,7 @@ trait ControlledObjectTrait{
     /**
      *
      * @param \SdsCommon\AccessControl\PermissionInterface $permission
-     */    
+     */
     public function removePermission(PermissionInterface $permission){
         if(($key = array_search($permission, $this->permissions)) !== false)
         {

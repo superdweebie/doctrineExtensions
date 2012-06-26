@@ -7,19 +7,20 @@
 namespace SdsDoctrineExtensions\AccessControl\Subscriber;
 
 use Doctrine\Common\EventSubscriber;
-use Doctrine\ODM\MongoDB\Event\OnFlushEventArgs;
-use SdsCommon\AccessControl\ActiveUserAwareTrait;
-use SdsDoctrineExtensions\AccessControl\Model\Permission;
-use Doctrine\ODM\MongoDB\Events as ODMEvents;
-use SdsDoctrineExtensions\SoftDelete\Events as SoftDeleteEvents;
-use SdsDoctrineExtensions\Freeze\Events as FreezeEvents;
-use SdsDoctrineExtensions\Workflow\Events as WorkflowEvents;
-use SdsDoctrineExtensions\AccessControl\Events as AccessControlEvents;
+
 use Doctrine\ODM\MongoDB\Event\LifecycleEventArgs;
-use SdsCommon\AccessControl\ControlledObjectInterface;
-use SdsCommon\User\UserInterface;
-use SdsCommon\AccessControl\Constant\Action;
-use SdsCommon\AccessControl\ActiveUserAwareInterface;
+use Doctrine\ODM\MongoDB\Event\OnFlushEventArgs;
+use Doctrine\ODM\MongoDB\Events as ODMEvents;
+use SdsCommon\AccessControl\AccessControlledInterface;
+use SdsCommon\State\StateAwareInterface;
+use SdsCommon\User\ActiveUserAwareInterface;
+use SdsCommon\User\ActiveUserAwareTrait;
+use SdsCommon\User\RoleAwareUserInterface;
+use SdsDoctrineExtensions\AccessControl\AccessController;
+use SdsDoctrineExtensions\AccessControl\Events as AccessControlEvents;
+use SdsDoctrineExtensions\AccessControl\Constant\Action;
+
+
 
 /**
  *
@@ -32,92 +33,113 @@ class AccessControl implements EventSubscriber, ActiveUserAwareInterface
 
     /**
      *
+     * @var boolean
+     */
+    protected $accessControlCreate = true;
+
+    /**
+     *
+     * @var boolean
+     */
+    protected $accessControlUpdate = true;
+
+    /**
+     *
+     * @var boolean
+     */
+    protected $accessControlDelete =true;
+
+    /**
+     *
      * @return array
      */
     public function getSubscribedEvents(){
         return array(
-            ODMEvents::onFlush,
-            SoftDeleteEvents::preSoftDelete,
-            SoftDeleteEvents::preSoftRestore,
-            FreezeEvents::preFreeze,
-            FreezeEvents::preThaw,
-            WorkflowEvents::preStateChange
+            ODMEvents::onFlush
         );
     }
 
-    public function preSoftDelete(LifecycleEventArgs $eventArgs){
-        $doucment = $eventArgs->getDocument();
-
-        if($document instanceof ControlledObjectInterface){
-            if(!$document->isActionAllowed(Action::DELETE, null, $this->activeUser)){
-                $document->setIsDeleted(false);
-
-                if ($evm->hasListeners(AccessControlEvents::deleteDenied)) {
-                    $dm = $eventArgs->getDocumentManager();
-                    $evm = $dm->getEventManager();
-                    $evm->dispatchEvent(AccessControlEvents::deleteDenied, new LifecycleEventArgs($document, $dm));
-                }
-            }
-        }
+    /**
+     *
+     * @param \SdsCommon\AccessControl\RoleAwareUserInterface $activeUser
+     */
+    public function __construct(
+        RoleAwareUserInterface $activeUser,
+        $controlCreate = true,
+        $controlUpdate = true,
+        $controlDelete = true
+    ) {
+        $this->setActiveUser($activeUser);
+        $this->controlCreate = $controlCreate;
+        $this->controlUpdate = $controlUpdate;
+        $this->controlDelete = $controlDelete;
     }
 
-    public function preSoftRestore(LifecycleEventArgs $eventArgs){
-        $doucment = $eventArgs->getDocument();
-
-        if($document instanceof ControlledObjectInterface){
-            if(!$document->isActionAllowed(Action::RESTORE, null, $this->activeUser)){
-                $document->setIsDeleted(true);
-
-                if ($evm->hasListeners(AccessControlEvents::restoreDenied)) {
-                    $dm = $eventArgs->getDocumentManager();
-                    $evm = $dm->getEventManager();
-                    $evm->dispatchEvent(AccessControlEvents::restoreDenied, new LifecycleEventArgs($document, $dm));
-                }
-            }
-        }
-    }
-
+    /**
+     *
+     * @param \Doctrine\ODM\MongoDB\Event\OnFlushEventArgs $eventArgs
+     */
     public function onFlush(OnFlushEventArgs $eventArgs)
     {
-        $dm = $eventArgs->getDocumentManager();
-        $uow = $dm->getUnitOfWork();
-        $evm = $dm->getEventManager();
+        $documentManager = $eventArgs->getDocumentManager();
+        $unitOfWork = $documentManager->getUnitOfWork();
+        $eventManager = $documentManager->getEventManager();
 
-        if(!$this->activeUser instanceOf UserInterface){
-            throw new \Exception('activeUser must exhibit the UserInterface');
-        }
+        //Check create permissions
+        if ($this->controlCreate){
+            foreach ($unitOfWork->getScheduledDocumentInsertions() as $document) {
+                if($document instanceof AccessControlledInterface &&
+                    $document instanceof StateAwareInterface &&
+                    !AccessController::isActionAllowed($document, Action::create, $this->activeUser)
+                ) {
+                    //stop creation
+                    $unitOfWork->detach($document);
 
-        foreach ($uow->getScheduledDocumentInsertions() AS $document) {
-            if($document instanceof ControlledObjectInterface){
-                if(!$document->isActionAllowed(Action::CREATE, null, $this->activeUser)){
-                    $uow->detach($document);
-
-                    if ($evm->hasListeners(AccessControlEvents::insertDenied)) {
-                        $evm->dispatchEvent(AccessControlEvents::insertDenied, new LifecycleEventArgs($document, $dm));
+                    if ($eventManager->hasListeners(AccessControlEvents::createDenied)) {
+                        $eventManager->dispatchEvent(
+                            AccessControlEvents::createDenied,
+                            new LifecycleEventArgs($document, $documentManager)
+                        );
                     }
                 }
             }
         }
 
-        foreach ($uow->getScheduledDocumentUpdates() AS $document) {
-            if($document instanceof ControlledObjectInterface){
-                if(!$document->isActionAllowed(Action::UPDATE, null, $this->activeUser)){
-                    $uow->detach($document);
+        //Check update permissions
+        if ($this->controlUpdate){
+            foreach ($unitOfWork->getScheduledDocumentUpdates() as $document) {
+                if($document instanceof AccessControlledInterface &&
+                    $document instanceof StateAwareInterface &&
+                    !AccessController::isActionAllowed($document, Action::update, $this->activeUser)
+                ) {
+                    //stop updates
+                    $unitOfWork->clearDocumentChangeSet(spl_object_hash($document));
 
-                    if ($evm->hasListeners(AccessControlEvents::updateDenied)) {
-                        $evm->dispatchEvent(AccessControlEvents::updateDenied, new LifecycleEventArgs($document, $dm));
+                    if ($eventManager->hasListeners(AccessControlEvents::updateDenied)) {
+                        $eventManager->dispatchEvent(
+                            AccessControlEvents::updateDenied,
+                            new LifecycleEventArgs($document, $documentManager)
+                        );
                     }
                 }
             }
         }
 
-        foreach ($uow->getScheduledDocumentDeletions() AS $document) {
-            if($document instanceof ControlledObjectInterface){
-                if(!$document->isActionAllowed(Action::DELETE, null, $this->activeUser)){
-                    $uow->detach($document);
+        //Check delete permsisions
+        if ($this->controlDelete){
+            foreach ($unitOfWork->getScheduledDocumentDeletions() as $document) {
+                if($document instanceof AccessControlledInterface &&
+                    $document instanceof StateAwareInterface &&
+                    !AccessController::isActionAllowed($document, Action::delete, $this->activeUser)
+                ) {
+                    //stop delete
+                    $documentManager->persist($document);
 
-                    if ($evm->hasListeners(AccessControlEvents::deleteDenied)) {
-                        $evm->dispatchEvent(AccessControlEvents::deleteDenied, new LifecycleEventArgs($document, $dm));
+                    if ($eventManager->hasListeners(AccessControlEvents::deleteDenied)) {
+                        $eventManager->dispatchEvent(
+                            AccessControlEvents::deleteDenied,
+                            new LifecycleEventArgs($document, $documentManager)
+                        );
                     }
                 }
             }

@@ -7,8 +7,8 @@
 namespace SdsDoctrineExtensions\Zone;
 
 use SdsDoctrineExtensions\AbstractExtensionConfig;
-use SdsDoctrineExtensions\AnnotationReaderConfigInterface;
-use SdsDoctrineExtensions\AnnotationReaderConfigTrait;
+use SdsDoctrineExtensions\AnnotationReaderAwareInterface;
+use SdsDoctrineExtensions\AnnotationReaderAwareTrait;
 
 /**
  * Defines the resouces this extension requires
@@ -17,8 +17,8 @@ use SdsDoctrineExtensions\AnnotationReaderConfigTrait;
  * @author  Tim Roediger <superdweebie@gmail.com>
  */
 class ExtensionConfig extends AbstractExtensionConfig implements
-    AnnotationReaderConfigInterface
+    AnnotationReaderAwareInterface
 {
 
-    use AnnotationReaderConfigTrait;
+    use AnnotationReaderAwareTrait;
 }

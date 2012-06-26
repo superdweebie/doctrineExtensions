@@ -18,7 +18,7 @@ use SdsDoctrineExtensions\UiHints\Subscriber\UiHints as UiHintsSubscriber;
 class Extension extends AbstractExtension {
 
     /**
-     * 
+     *
      * @param \SdsDoctrineExtensions\UiHints\ExtensionConfig $config
      */
     public function __construct(ExtensionConfig $config){
@@ -26,6 +26,6 @@ class Extension extends AbstractExtension {
 
         $this->annotations = array('SdsDoctrineExtensions\UiHints\Mapping\Annotation' => __DIR__.'/../../');
 
-        $this->subscribers = array(new UiHintsSubscriber($config->getAnnoationReader()));
+        $this->subscribers = array(new UiHintsSubscriber($config->getAnnotationReader()));
     }
 }

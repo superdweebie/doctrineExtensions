@@ -29,7 +29,7 @@ class Extension extends AbstractExtension {
         );
 
         $this->subscribers = array(new AuditSubscriber(
-            $config->getAnnoationReader(),
+            $config->getAnnotationReader(),
             $config->getActiveUser(),
             $config->getAuditClass()
         ));

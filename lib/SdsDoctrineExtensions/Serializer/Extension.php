@@ -26,6 +26,6 @@ class Extension extends AbstractExtension {
 
         $this->annotations = array('SdsDoctrineExtensions\Serializer\Mapping\Annotation' => __DIR__.'/../../');
 
-        $this->subscribers = array(new SerializerSubscriber($config->getAnnoationReader()));
+        $this->subscribers = array(new SerializerSubscriber($config->getAnnotationReader()));
     }
 }

@@ -26,6 +26,6 @@ class Extension extends AbstractExtension {
 
         $this->annotations = array('SdsDoctrineExtensions\Readonly\Mapping\Annotation' => __DIR__.'/../../');
 
-        $this->subscribers = array(new ReadonlySubscriber($config->getAnnoationReader()));
+        $this->subscribers = array(new ReadonlySubscriber($config->getAnnotationReader()));
     }
 }

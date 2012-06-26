@@ -6,17 +6,17 @@
  */
 namespace SdsDoctrineExtensions\SoftDelete\Subscriber;
 
+use Doctrine\Common\Annotations\Reader;
 use Doctrine\Common\EventSubscriber;
-use Doctrine\ODM\MongoDB\Event\OnFlushEventArgs;
-use SdsDoctrineExtensions\SoftDelete\Event\Events as SoftDeleteEvents;
+use Doctrine\ODM\MongoDB\Event\LoadClassMetadataEventArgs;
 use Doctrine\ODM\MongoDB\Event\LifecycleEventArgs;
+use Doctrine\ODM\MongoDB\Event\OnFlushEventArgs;
 use Doctrine\ODM\MongoDB\Events as ODMEvents;
-use SdsDoctrineExtensions\SoftDelete\Mapping\MetadataInjector\SoftDelete as MetadataInjector;
 use SdsCommon\SoftDelete\SoftDeleteableInterface;
 use SdsDoctrineExtensions\AnnotationReaderAwareTrait;
 use SdsDoctrineExtensions\AnnotationReaderAwareInterface;
-use Doctrine\ODM\MongoDB\Event\LoadClassMetadataEventArgs;
-use Doctrine\Common\Annotations\Reader;
+use SdsDoctrineExtensions\SoftDelete\Event\Events as SoftDeleteEvents;
+use SdsDoctrineExtensions\SoftDelete\Mapping\MetadataInjector\SoftDelete as MetadataInjector;
 
 /**
  * Emits soft delete events
@@ -76,18 +76,18 @@ class SoftDelete implements EventSubscriber, AnnotationReaderAwareInterface
             $metadata = $documentManager->getClassMetadata(get_class($document));
             if (!isset($metadata->softDeleteField)) {
                 throw new \Exception(sprintf(
-                    'Document class %s implements the SoftDeleteableInterface, but does not have a field annotatated as @softDeleteField.', 
+                    'Document class %s implements the SoftDeleteableInterface, but does not have a field annotatated as @softDeleteField.',
                     get_class($document)
                 ));
             }
-            
-            $eventManager = $documentManager->getEventManager();            
+
+            $eventManager = $documentManager->getEventManager();
             $changeSet = $unitOfWork->getDocumentChangeSet($document);
             $field = $metadata->softDeleteField;
-                        
+
             if (!isset($changeSet[$field])) {
                 if ($document->getSoftDeleted()) {
-                    // Updates to softDeleted documents are not allowed. Roll them back                    
+                    // Updates to softDeleted documents are not allowed. Roll them back
                     $unitOfWork->clearDocumentChangeSet(spl_object_hash($document));
 
                     // Raise softDeletedUpdateDenied

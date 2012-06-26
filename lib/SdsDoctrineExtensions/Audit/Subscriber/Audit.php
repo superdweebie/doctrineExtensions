@@ -17,8 +17,8 @@ use SdsCommon\Audit\AuditedObjectInterface;
 use SdsDoctrineExtensions\Audit\Event\Events as AuditEvents;
 use SdsDoctrineExtensions\Audit\Event\EventArgs;
 use SdsCommon\User\UserInterface;
-use SdsCommon\ActiveUser\ActiveUserAwareTrait;
-use SdsCommon\ActiveUser\ActiveUserAwareInterface;
+use SdsCommon\User\ActiveUserAwareTrait;
+use SdsCommon\User\ActiveUserAwareInterface;
 use Doctrine\Common\Annotations\Reader;
 
 /**

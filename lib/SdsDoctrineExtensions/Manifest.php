@@ -6,6 +6,8 @@
  */
 namespace SdsDoctrineExtensions;
 
+use SdsCommon\User\ActiveUserAwareInterface;
+
 /**
  * Pass this class a configuration array with extension namespaces, and then retrieve the
  * required annotations, filters, subscribers, and document locations
@@ -33,14 +35,14 @@ class Manifest extends AbstractExtension {
      */
     public function __construct(ManifestConfig $config) {
         $this->config = $config;
-        
+
         foreach ($config->getExtensionConfigs() as $namespace => $extensionConfig){
             $this->addExtension($namespace, $extensionConfig);
         }
     }
 
     /**
-     * 
+     *
      * @param string $namespace
      * @param object $extensionConfig
      * @throws \Exception
@@ -51,7 +53,7 @@ class Manifest extends AbstractExtension {
         if (isset($this->extensions[$namespace])){
             return;
         }
-        
+
         $config = $this->config;
 
         $extensionConfigClass = $namespace. '\ExtensionConfig';
@@ -62,13 +64,13 @@ class Manifest extends AbstractExtension {
         }
 
         // Inject annotation reader if required, but not given
-        if ($extensionConfig instanceof AnnotationReaderConfigInterface &&
-            $extensionConfig->getAnnoationReader() == null) {
-            $extensionConfig->setAnnoationReader($config->getAnnoationReader());
+        if ($extensionConfig instanceof AnnotationReaderAwareInterface &&
+            $extensionConfig->getAnnotationReader() == null) {
+            $extensionConfig->setAnnotationReader($config->getAnnotationReader());
         }
 
         //Inject active user if required, but not given
-        if ($extensionConfig instanceof ActiveUserConfigInterface &&
+        if ($extensionConfig instanceof ActiveUserAwareInterface &&
             $extensionConfig->getActiveUser() == null) {
             $extensionConfig->setActiveUser($config->getActiveUser());
         }
@@ -78,12 +80,12 @@ class Manifest extends AbstractExtension {
         $extension = new $extensionClass($extensionConfig);
         if (!$extension instanceof ExtensionInterface) {
             throw new \Exception(sprintf(
-                '%s must be an instance of ExtensionInterface, but is not', 
+                '%s must be an instance of ExtensionInterface, but is not',
                 $extensionClass
             ));
         }
-        $this->extensions[$namespace] = $extension;       
-        
+        $this->extensions[$namespace] = $extension;
+
         //Add dependencies
         $manifestConfigs = $config->getExtensionConfigs();
         foreach ($extensionConfig->getDependencies() as $namespace => $dependencyConfig){
@@ -94,7 +96,7 @@ class Manifest extends AbstractExtension {
             $this->addExtension($namespace, $dependencyConfig);
         }
     }
-    
+
     /**
      * {@inheritdoc}
      */

@@ -7,8 +7,8 @@
 namespace SdsDoctrineExtensions\Serializer;
 
 use SdsDoctrineExtensions\AbstractExtensionConfig;
-use SdsDoctrineExtensions\AnnotationReaderConfigInterface;
-use SdsDoctrineExtensions\AnnotationReaderConfigTrait;
+use SdsDoctrineExtensions\AnnotationReaderAwareInterface;
+use SdsDoctrineExtensions\AnnotationReaderAwareTrait;
 
 /**
  * Defines the resouces this extension requires
@@ -16,7 +16,7 @@ use SdsDoctrineExtensions\AnnotationReaderConfigTrait;
  * @since   1.0
  * @author  Tim Roediger <superdweebie@gmail.com>
  */
-class ExtensionConfig extends AbstractExtensionConfig implements AnnotationReaderConfigInterface {
+class ExtensionConfig extends AbstractExtensionConfig implements AnnotationReaderAwareInterface {
 
-    use AnnotationReaderConfigTrait;
+    use AnnotationReaderAwareTrait;
 }

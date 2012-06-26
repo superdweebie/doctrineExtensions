@@ -26,6 +26,6 @@ class Extension extends AbstractExtension {
 
         $this->annotations = array('SdsDoctrineExtensions\DoNotHardDelete\Mapping\Annotation' => __DIR__.'/../../');
 
-        $this->subscribers = array(new DoNotHardDeleteSubscriber($config->getAnnoationReader()));
+        $this->subscribers = array(new DoNotHardDeleteSubscriber($config->getAnnotationReader()));
     }
 }

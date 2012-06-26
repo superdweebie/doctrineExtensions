@@ -7,10 +7,10 @@
 namespace SdsDoctrineExtensions\SoftDelete;
 
 use SdsDoctrineExtensions\AbstractExtensionConfig;
-use SdsDoctrineExtensions\AnnotationReaderConfigInterface;
-use SdsDoctrineExtensions\AnnotationReaderConfigTrait;
-use SdsDoctrineExtensions\ActiveUserConfigInterface;
-use SdsDoctrineExtensions\ActiveUserConfigTrait;
+use SdsDoctrineExtensions\AnnotationReaderAwareInterface;
+use SdsDoctrineExtensions\AnnotationReaderAwareTrait;
+use SdsCommon\User\ActiveUserAwareInterface;
+use SdsCommon\User\ActiveUserAwareTrait;
 
 /**
  * Defines the resouces this extension requires
@@ -19,12 +19,12 @@ use SdsDoctrineExtensions\ActiveUserConfigTrait;
  * @author  Tim Roediger <superdweebie@gmail.com>
  */
 class ExtensionConfig extends AbstractExtensionConfig implements
-    AnnotationReaderConfigInterface,
-    ActiveUserConfigInterface
+    AnnotationReaderAwareInterface,
+    ActiveUserAwareInterface
 {
 
-    use AnnotationReaderConfigTrait;
-    use ActiveUserConfigTrait;
+    use AnnotationReaderAwareTrait;
+    use ActiveUserAwareTrait;
 
     /**
      * Flag if the SoftDelete\Subscriber\Stamp should be registed to stamp
@@ -33,6 +33,18 @@ class ExtensionConfig extends AbstractExtensionConfig implements
      * @var boolean
      */
     protected $useSoftDeleteStamps = false;
+
+    /**
+     *
+     * @var boolean
+     */
+    protected $accessControlSoftDelete = false;
+
+    /**
+     *
+     * @var boolean
+     */
+    protected $accessControlRestore = false;
 
     /**
      *
@@ -48,5 +60,49 @@ class ExtensionConfig extends AbstractExtensionConfig implements
      */
     public function setUseSoftDeleteStamps($useSoftDeleteStamps) {
         $this->useSoftDeleteStamps = (boolean) $useSoftDeleteStamps;
+    }
+
+    /**
+     *
+     * @return boolean
+     */
+    public function getAccessControlSoftDelete() {
+        return $this->accessControlSoftDelete;
+    }
+
+    /**
+     *
+     * @param boolean $accessControlSoftDelete
+     */
+    public function setAccessControlSoftDelete($accessControlSoftDelete) {
+        $this->accessControlSoftDelete = $accessControlSoftDelete;
+        $this->updateRequiredRoleAwareUser();
+    }
+
+    /**
+     *
+     * @return boolean
+     */
+    public function getAccessControlRestore() {
+        return $this->accessControlRestore;
+    }
+
+    /**
+     *
+     * @param boolean $accessControlRestore
+     */
+    public function setAccessControlRestore($accessControlRestore) {
+        $this->accessControlRestore = $accessControlRestore;
+        $this->updateRequiredRoleAwareUser();
+    }
+
+    protected function updateRequiredRoleAwareUser(){
+        if ($this->accessControlSoftDelete ||
+            $this->accessControlRestore
+        ) {
+            $this->setRequireRoleAwareUser(true);
+        } else {
+            $this->setRequireRoleAwareUser(false);
+        }
     }
 }

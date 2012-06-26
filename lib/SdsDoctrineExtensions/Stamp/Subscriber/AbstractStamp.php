@@ -8,8 +8,8 @@ namespace SdsDoctrineExtensions\Stamp\Subscriber;
 
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ODM\MongoDB\Event\LifecycleEventArgs;
-use SdsCommon\ActiveUser\ActiveUserAwareTrait;
-use SdsCommon\ActiveUser\ActiveUserAwareInterface;
+use SdsCommon\User\ActiveUserAwareTrait;
+use SdsCommon\User\ActiveUserAwareInterface;
 use SdsCommon\User\UserInterface;
 
 /**
