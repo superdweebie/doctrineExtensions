@@ -10,10 +10,10 @@ class Subscriber implements EventSubscriber {
 
     protected $preDeleteCalled = false;
     protected $postDeleteCalled = false;
-    protected $preSoftRestoreCalled = false;
-    protected $postSoftRestoreCalled = false;
+    protected $preRestoreCalled = false;
+    protected $postRestoreCalled = false;
     protected $softDeleteUpdateDeniedCalled = false;
-    
+
     protected $rollbackDelete = false;
     protected $rollbackRestore = false;
 
@@ -21,17 +21,17 @@ class Subscriber implements EventSubscriber {
         return array(
             SoftDeleteEvents::preSoftDelete,
             SoftDeleteEvents::postSoftDelete,
-            SoftDeleteEvents::preSoftRestore,
-            SoftDeleteEvents::postSoftRestore,
-            SoftDeleteEvents::softDeletedUpdateDenied            
+            SoftDeleteEvents::preRestore,
+            SoftDeleteEvents::postRestore,
+            SoftDeleteEvents::softDeletedUpdateDenied
         );
     }
 
     public function reset() {
         $this->preDeleteCalled = false;
         $this->postDeleteCalled = false;
-        $this->preSoftRestoreCalled = false;
-        $this->postSoftRestoreCalled = false;
+        $this->preRestoreCalled = false;
+        $this->postRestoreCalled = false;
         $this->softDeleteUpdateDeniedCalled = false;
         $this->rollbackDelete = false;
         $this->rollbackRestore = false;
@@ -48,21 +48,21 @@ class Subscriber implements EventSubscriber {
         $this->postDeleteCalled = true;
     }
 
-    public function preSoftRestore(LifecycleEventArgs $eventArgs) {
-        $this->preSoftRestoreCalled = true;
+    public function preRestore(LifecycleEventArgs $eventArgs) {
+        $this->preRestoreCalled = true;
         if ($this->rollbackRestore) {
             $eventArgs->getDocument()->softDelete();
         }
     }
 
-    public function postSoftRestore(LifecycleEventArgs $eventArgs) {
-        $this->postSoftRestoreCalled = true;
+    public function postRestore(LifecycleEventArgs $eventArgs) {
+        $this->postRestoreCalled = true;
     }
 
     public function softDeletedUpdateDenied(LifecycleEventArgs $eventArgs) {
         $this->softDeleteUpdateDeniedCalled = true;
     }
-    
+
     public function setRollbackDelete($rollbackDelete) {
         $this->rollbackDelete = $rollbackDelete;
     }
@@ -79,15 +79,15 @@ class Subscriber implements EventSubscriber {
         return $this->postDeleteCalled;
     }
 
-    public function getpreSoftRestoreCalled() {
-        return $this->preSoftRestoreCalled;
+    public function getpreRestoreCalled() {
+        return $this->preRestoreCalled;
     }
 
-    public function getpostSoftRestoreCalled() {
-        return $this->postSoftRestoreCalled;
+    public function getpostRestoreCalled() {
+        return $this->postRestoreCalled;
     }
-    
+
     public function getSoftDeleteUpdateDeniedCalled() {
         return $this->softDeleteUpdateDeniedCalled;
-    }    
+    }
 }

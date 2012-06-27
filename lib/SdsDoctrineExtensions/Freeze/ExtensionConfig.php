@@ -7,6 +7,7 @@
 namespace SdsDoctrineExtensions\Freeze;
 
 use SdsDoctrineExtensions\AbstractExtensionConfig;
+use SdsDoctrineExtensions\AccessControl;
 use SdsDoctrineExtensions\AnnotationReaderAwareInterface;
 use SdsDoctrineExtensions\AnnotationReaderAwareTrait;
 use SdsCommon\User\ActiveUserAwareInterface;
@@ -76,6 +77,7 @@ class ExtensionConfig extends AbstractExtensionConfig implements
     public function setAccessControlFreeze($accessControlFreeze) {
         $this->accessControlFreeze = $accessControlFreeze;
         $this->updateRequiredRoleAwareUser();
+        $this->updateDependencies();
     }
 
     /**
@@ -93,8 +95,12 @@ class ExtensionConfig extends AbstractExtensionConfig implements
     public function setAccessControlThaw($accessControlThaw) {
         $this->accessControlThaw = $accessControlThaw;
         $this->updateRequiredRoleAwareUser();
+        $this->updateDependencies();
     }
 
+    /**
+     *
+     */
     protected function updateRequiredRoleAwareUser(){
         if ($this->accessControlFreeze ||
             $this->accessControlThaw
@@ -102,6 +108,27 @@ class ExtensionConfig extends AbstractExtensionConfig implements
             $this->setRequireRoleAwareUser(true);
         } else {
             $this->setRequireRoleAwareUser(false);
+        }
+    }
+
+    /**
+     *
+     */
+    protected function updateDependencies(){
+        if ($this->accessControlFreeze ||
+            $this->accessControlThaw
+        ) {
+            $accessControlConfig = new AccessControl\ExtensionConfig();
+            $accessControlConfig->setAccessControlCreate(false);
+            $accessControlConfig->setAccessControlRead(false);
+            $accessControlConfig->setAccessControlUpdate(false);
+            $accessControlConfig->setAccessControlDelete(false);
+            $this->addDependency(
+                'SdsDoctrineExtensions\AccessControl',
+                $accessControlConfig
+            );
+        } else {
+            $this->removeDependency('SdsDoctrineExtensions\AccessControl');
         }
     }
 }

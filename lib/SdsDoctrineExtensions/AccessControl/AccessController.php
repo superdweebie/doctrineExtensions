@@ -8,6 +8,7 @@ namespace SdsDoctrineExtensions\AccessControl;
 
 use SdsCommon\AccessControl\AccessControllerInterface;
 use SdsCommon\AccessControl\AccessControlledInterface;
+use SdsCommon\State\StateAwareInterface;
 use SdsCommon\User\RoleAwareUserInterface;
 
 /**
@@ -26,7 +27,9 @@ class AccessController implements AccessControllerInterface{
         RoleAwareUserInterface $user,
         $state = null
     ){
-        $state = isset($state) ? $state : $object->getState();
+        if ($object instanceof StateAwareInterface && !isset($state)) {
+            $state = $object->getState();
+        }
         $roles = $user->getRoles();
 
         $allowedActions = array();
@@ -50,7 +53,9 @@ class AccessController implements AccessControllerInterface{
         RoleAwareUserInterface $user,
         $state = null
     ){
-        $state = isset($state) ? $state : $object->getState();
+        if ($object instanceof StateAwareInterface && !isset($state)) {
+            $state = $object->getState();
+        }
         $roles = $user->getRoles();
 
         foreach ($object->getPermissions() as $permission){

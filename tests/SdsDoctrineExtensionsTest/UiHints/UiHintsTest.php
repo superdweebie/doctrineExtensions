@@ -11,7 +11,7 @@ class UiHintsTest extends BaseTest {
         parent::setUp();
         $manifest = $this->getManifest(array('SdsDoctrineExtensions\UiHints' => null));
 
-        $this->configure(
+        $this->configDoctrine(
             array_merge(
                 $manifest->getDocuments(),
                 array('SdsDoctrineExtensionsTest\UiHints\TestAsset\Document' => __DIR__ . '/TestAsset/Document')
@@ -26,13 +26,13 @@ class UiHintsTest extends BaseTest {
 
         $documentManager = $this->documentManager;
         $metadata = $documentManager->getClassMetadata('SdsDoctrineExtensionsTest\UiHints\TestAsset\Document\Simple');
-        
+
         $idMetadata = $metadata->fieldMappings['id'];
         $nameMetadata = $metadata->fieldMappings['name'];
-        
+
         $this->assertTrue(isset($idMetadata['uiHints']));
         $this->assertTrue($idMetadata['uiHints']['hidden']);
-        
+
         $this->assertTrue(isset($nameMetadata['uiHints']));
         $this->assertFalse($nameMetadata['uiHints']['hidden']);
         $this->assertEquals('Simple Name', $nameMetadata['uiHints']['label']);

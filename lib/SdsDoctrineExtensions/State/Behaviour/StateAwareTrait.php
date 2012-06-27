@@ -7,6 +7,7 @@
 namespace SdsDoctrineExtensions\State\Behaviour;
 
 use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
+use SdsDoctrineExtensions\AccessControl\Mapping\Annotation\DoNotAccessControlUpdate as SDS_DoNotAccessControlUpdate;
 use SdsDoctrineExtensions\Audit\Mapping\Annotation\Audit as SDS_Audit;
 
 /**
@@ -20,6 +21,7 @@ trait StateAwareTrait{
      * @ODM\Field(type="string")
      * @SDS_Audit
      * @SDS_StateField
+     * @SDS_DoNotAccessControlUpdate
      */
     protected $state;
 

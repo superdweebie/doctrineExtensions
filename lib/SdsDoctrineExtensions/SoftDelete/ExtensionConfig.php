@@ -7,6 +7,7 @@
 namespace SdsDoctrineExtensions\SoftDelete;
 
 use SdsDoctrineExtensions\AbstractExtensionConfig;
+use SdsDoctrineExtensions\AccessControl;
 use SdsDoctrineExtensions\AnnotationReaderAwareInterface;
 use SdsDoctrineExtensions\AnnotationReaderAwareTrait;
 use SdsCommon\User\ActiveUserAwareInterface;
@@ -77,6 +78,7 @@ class ExtensionConfig extends AbstractExtensionConfig implements
     public function setAccessControlSoftDelete($accessControlSoftDelete) {
         $this->accessControlSoftDelete = $accessControlSoftDelete;
         $this->updateRequiredRoleAwareUser();
+        $this->updateDependencies();
     }
 
     /**
@@ -94,8 +96,12 @@ class ExtensionConfig extends AbstractExtensionConfig implements
     public function setAccessControlRestore($accessControlRestore) {
         $this->accessControlRestore = $accessControlRestore;
         $this->updateRequiredRoleAwareUser();
+        $this->updateDependencies();
     }
 
+    /**
+     *
+     */
     protected function updateRequiredRoleAwareUser(){
         if ($this->accessControlSoftDelete ||
             $this->accessControlRestore
@@ -103,6 +109,27 @@ class ExtensionConfig extends AbstractExtensionConfig implements
             $this->setRequireRoleAwareUser(true);
         } else {
             $this->setRequireRoleAwareUser(false);
+        }
+    }
+
+    /**
+     *
+     */
+    protected function updateDependencies(){
+        if ($this->accessControlSoftDelete ||
+            $this->accessControlRestore
+        ) {
+            $accessControlConfig = new AccessControl\ExtensionConfig();
+            $accessControlConfig->setAccessControlCreate(false);
+            $accessControlConfig->setAccessControlRead(false);
+            $accessControlConfig->setAccessControlUpdate(false);
+            $accessControlConfig->setAccessControlDelete(false);
+            $this->addDependency(
+                'SdsDoctrineExtensions\AccessControl',
+                $accessControlConfig
+            );
+        } else {
+            $this->removeDependency('SdsDoctrineExtensions\AccessControl');
         }
     }
 }

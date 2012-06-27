@@ -11,11 +11,14 @@ class StampTest extends BaseTest {
     public function setUp(){
 
         parent::setUp();
+
+        $this->configActiveUser();
+
         $extensionConfig = new ExtensionConfig();
         $extensionConfig->setUseFreezeStamps(true);
         $manifest = $this->getManifest(array('SdsDoctrineExtensions\Freeze' => $extensionConfig));
 
-        $this->configure(
+        $this->configDoctrine(
             array_merge(
                 $manifest->getDocuments(),
                 array('SdsDoctrineExtensionsTest\Freeze\TestAsset\Document' => __DIR__ . '/TestAsset/Document')
@@ -32,7 +35,10 @@ class StampTest extends BaseTest {
         $testDoc = new Stamped();
         $testDoc->setName('version1');
 
-        $id = $this->persist($testDoc);
+        $documentManager->persist($testDoc);
+        $documentManager->flush();
+        $id = $testDoc->getId();
+        $documentManager->clear();
 
         $repository = $documentManager->getRepository(get_class($testDoc));
         $testDoc = null;

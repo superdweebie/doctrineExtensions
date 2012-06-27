@@ -21,11 +21,11 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
     const DEFAULT_DB = 'sds_doctrine_extensions_tests';
 
     protected $documentManager;
-    
+
     protected $unitOfWork;
-    
+
     protected $annotationReader;
-    
+
     protected $activeUser;
 
     public function setUp(){
@@ -35,9 +35,9 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
     protected function configActiveUser($configRoleAwareUser = false){
         $user = $configRoleAwareUser ? new RoleAwareUser() : new User();
         $user->setUsername('toby');
-        $this->activeUser = $user; 
+        $this->activeUser = $user;
     }
-    
+
     protected function getManifest(array $extensionConfigs){
 
         $manifestConfig = new ManifestConfig(
@@ -49,13 +49,13 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
         return new Manifest($manifestConfig);
     }
     
-    protected function configureDoctrine(
+    protected function configDoctrine(
         array $documents = array(),
         array $filters = array(),
         array $subscribers = array(),
         array $annotations = array()
     ){
-                    
+
         $config = new Configuration();
 
         $config->setProxyDir(__DIR__ . '/../Proxies');

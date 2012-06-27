@@ -57,7 +57,6 @@ class SoftDelete implements EventSubscriber, ActiveUserAwareInterface
         $document = $eventArgs->getDocument();
 
         if($document instanceof AccessControlledInterface &&
-            $document instanceof StateAwareInterface &&
             !AccessController::isActionAllowed($document, Action::softDelete, $this->activeUser)
         ) {
             //stop SoftDelete

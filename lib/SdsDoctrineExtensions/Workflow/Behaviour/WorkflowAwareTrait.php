@@ -9,7 +9,7 @@ namespace SdsDoctrineExtensions\Workflow\Behaviour;
 use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
 use SdsCommon\Workflow\WorkflowInterface;
 use SdsDoctrineExtensions\Readonly\Mapping\Annotation\Readonly as SDS_Readonly;
-
+use SdsDoctrineExtensions\State\Behaviour\StateAwareTrait;
 
 /**
  *
@@ -17,6 +17,8 @@ use SdsDoctrineExtensions\Readonly\Mapping\Annotation\Readonly as SDS_Readonly;
  * @author  Tim Roediger <superdweebie@gmail.com>
  */
 trait WorkflowAwareTrait {
+
+    use StateAwareTrait;
 
     /**
      * @ODM\EmbedOne(

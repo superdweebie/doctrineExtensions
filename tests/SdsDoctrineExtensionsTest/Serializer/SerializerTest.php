@@ -17,7 +17,7 @@ class SerializerTest extends BaseTest {
         parent::setUp();
         $manifest = $this->getManifest(array('SdsDoctrineExtensions\Serializer' => null));
 
-        $this->configure(
+        $this->configDoctrine(
             array_merge(
                 $manifest->getDocuments(),
                 array('SdsDoctrineExtensionsTest\Serializer\TestAsset\Document' => __DIR__ . '/TestAsset/Document')

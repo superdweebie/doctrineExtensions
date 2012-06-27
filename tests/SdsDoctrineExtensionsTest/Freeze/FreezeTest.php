@@ -11,9 +11,12 @@ class FreezeTest extends BaseTest {
     public function setUp(){
 
         parent::setUp();
+
+        $this->configActiveUser();
+
         $manifest = $this->getManifest(array('SdsDoctrineExtensions\Freeze' => null));
 
-        $this->configure(
+        $this->configDoctrine(
             array_merge(
                 $manifest->getDocuments(),
                 array('SdsDoctrineExtensionsTest\Freeze\TestAsset\Document' => __DIR__ . '/TestAsset/Document')
@@ -31,7 +34,10 @@ class FreezeTest extends BaseTest {
 
         $testDoc->setName('version 1');
 
-        $id = $this->persist($testDoc);
+        $documentManager->persist($testDoc);
+        $documentManager->flush();
+        $id = $testDoc->getId();
+        $documentManager->clear();
 
         $repository = $documentManager->getRepository(get_class($testDoc));
         $testDoc = null;
@@ -49,22 +55,22 @@ class FreezeTest extends BaseTest {
         $this->assertTrue($testDoc->getFrozen());
 
         $testDoc->setName('version 2');
-        
+
         $documentManager->flush();
         $documentManager->clear();
         $testDoc = null;
         $testDoc = $repository->find($id);
-        
+
         $this->assertEquals('version 1', $testDoc->getName());
-        
+
         $documentManager->remove($testDoc);
         $documentManager->flush();
         $documentManager->clear();
         $testDoc = null;
         $testDoc = $repository->find($id);
-        
-        $this->assertEquals('version 1', $testDoc->getName());        
-                
+
+        $this->assertEquals('version 1', $testDoc->getName());
+
         $testDoc->thaw();
 
         $documentManager->flush();
@@ -86,13 +92,11 @@ class FreezeTest extends BaseTest {
         $testDocB = new Simple();
         $testDocB->setName('lucy');
 
-        $ids = array(
-            $this->persist($testDocA),
-            $this->persist($testDocB)
-        );
-
-        $testDocA = null;
-        $testDocB = null;
+        $documentManager->persist($testDocA);
+        $documentManager->persist($testDocB);
+        $documentManager->flush();
+        $ids = array($testDocA->getId(), $testDocB->getId());
+        $documentManager->clear();
 
         list($testDocs, $docNames) = $this->getTestDocs();
         $this->assertEquals(array('lucy', 'miriam'), $docNames);
@@ -112,16 +116,16 @@ class FreezeTest extends BaseTest {
         $filter = $documentManager->getFilterCollection()->getFilter('freeze');
         $filter->onlyFrozen();
         $documentManager->clear();
-        
+
         list($testDocs, $docNames) = $this->getTestDocs();
         $this->assertEquals(array('lucy'), $docNames);
-        
+
         $filter->onlyNotFrozen();
         $documentManager->clear();
-        
+
         list($testDocs, $docNames) = $this->getTestDocs();
         $this->assertEquals(array('miriam'), $docNames);
-        
+
         $documentManager->getFilterCollection()->disable('freeze');
 
         $documentManager->flush();
@@ -170,7 +174,10 @@ class FreezeTest extends BaseTest {
 
         $testDoc->setName('version 1');
 
-        $id = $this->persist($testDoc);
+        $documentManager->persist($testDoc);
+        $documentManager->flush();
+        $id = $testDoc->getId();
+        $documentManager->clear();
 
         $this->assertFalse($subscriber->getPreFreezeCalled());
         $this->assertFalse($subscriber->getPostFreezeCalled());
@@ -190,7 +197,7 @@ class FreezeTest extends BaseTest {
         $this->assertTrue($subscriber->getPreFreezeCalled());
         $this->assertTrue($subscriber->getPostFreezeCalled());
         $this->assertFalse($subscriber->getPreThawCalled());
-        $this->assertFalse($subscriber->getPostThawCalled());        
+        $this->assertFalse($subscriber->getPostThawCalled());
 
         $testDoc = null;
         $testDoc = $repository->find($id);
@@ -200,18 +207,18 @@ class FreezeTest extends BaseTest {
         $testDoc->setName('version 2');
         $subscriber->reset();
         $documentManager->flush();
-        
-        $this->assertTrue($subscriber->getFrozenUpdateDeniedCalled());        
+
+        $this->assertTrue($subscriber->getFrozenUpdateDeniedCalled());
         $subscriber->reset();
-        
+
         $documentManager->remove($testDoc);
         $documentManager->flush();
 
-        $this->assertTrue($subscriber->getFrozenDeleteDeniedCalled());        
-        
+        $this->assertTrue($subscriber->getFrozenDeleteDeniedCalled());
+
         $documentManager->clear();
         $testDoc = $repository->find($id);
-        
+
         $testDoc->thaw();
         $subscriber->reset();
 
@@ -220,7 +227,7 @@ class FreezeTest extends BaseTest {
         $this->assertFalse($subscriber->getPreFreezeCalled());
         $this->assertFalse($subscriber->getPostFreezeCalled());
         $this->assertTrue($subscriber->getPreThawCalled());
-        $this->assertTrue($subscriber->getPostThawCalled());        
+        $this->assertTrue($subscriber->getPostThawCalled());
 
         $testDoc = null;
         $testDoc = $repository->find($id);
@@ -236,7 +243,7 @@ class FreezeTest extends BaseTest {
         $this->assertTrue($subscriber->getPreFreezeCalled());
         $this->assertFalse($subscriber->getPostFreezeCalled());
         $this->assertFalse($subscriber->getPreThawCalled());
-        $this->assertFalse($subscriber->getPostThawCalled()); 
+        $this->assertFalse($subscriber->getPostThawCalled());
 
         $testDoc = null;
         $testDoc = $repository->find($id);
@@ -260,6 +267,6 @@ class FreezeTest extends BaseTest {
         $this->assertFalse($subscriber->getPreFreezeCalled());
         $this->assertFalse($subscriber->getPostFreezeCalled());
         $this->assertTrue($subscriber->getPreThawCalled());
-        $this->assertFalse($subscriber->getPostThawCalled());         
+        $this->assertFalse($subscriber->getPostThawCalled());
     }
 }

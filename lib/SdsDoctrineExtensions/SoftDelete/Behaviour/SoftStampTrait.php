@@ -8,8 +8,8 @@ namespace SdsDoctrineExtensions\SoftDelete\Behaviour;
 
 use SdsDoctrineExtensions\SoftDelete\Behaviour\SoftDeletedOnTrait;
 use SdsDoctrineExtensions\SoftDelete\Behaviour\SoftDeletedByTrait;
-use SdsDoctrineExtensions\SoftDelete\Behaviour\SoftRestoredOnTrait;
-use SdsDoctrineExtensions\SoftDelete\Behaviour\SoftRestoredByTrait;
+use SdsDoctrineExtensions\SoftDelete\Behaviour\RestoredOnTrait;
+use SdsDoctrineExtensions\SoftDelete\Behaviour\RestoredByTrait;
 
 /**
  *
@@ -19,6 +19,6 @@ use SdsDoctrineExtensions\SoftDelete\Behaviour\SoftRestoredByTrait;
 trait SoftStampTrait {
    use SoftDeletedOnTrait;
    use SoftDeletedByTrait;
-   use SoftRestoredByTrait;
-   use SoftRestoredOnTrait;
+   use RestoredByTrait;
+   use RestoredOnTrait;
 }

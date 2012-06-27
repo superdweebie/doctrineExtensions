@@ -107,7 +107,7 @@ class State implements EventSubscriber, AnnotationReaderAwareInterface
                 continue;
             }
 
-            // Raise onStateChange - this is when workflow vars should be updated
+            // Raise onStateChange
             if ($eventManager->hasListeners(StateEvents::onStateChange)) {
                 $eventManager->dispatchEvent(
                     StateEvents::onStateChange,

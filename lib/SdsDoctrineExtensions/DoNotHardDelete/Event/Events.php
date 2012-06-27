@@ -19,5 +19,5 @@ final class Events
     /**
      * Fires if delete is attempted on a class with the doNotHardDelete annotation
      */
-    const hardDeleteRefused = 'hardDeleteRefused';
+    const hardDeleteDenied = 'hardDeleteDenied';
 }

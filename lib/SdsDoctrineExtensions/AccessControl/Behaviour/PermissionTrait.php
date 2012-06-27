@@ -36,31 +36,14 @@ trait PermissionTrait
     protected $role;
 
     /**
-     * 
-     * @return string
+     * @ODM\Boolean
+     *
+     * @var boolean
      */
-    public function getState() {
-        return $this->state;
-    }
+    protected $stateEqualToParent;
 
     /**
-     * 
-     * @return string
-     */
-    public function getAction() {
-        return $this->action;
-    }
-
-    /**
-     * 
-     * @return string
-     */
-    public function getRole() {
-        return $this->role;
-    }
-
-    /**
-     * 
+     *
      * @param string $role
      * @param string $action
      * @param string $state
@@ -68,7 +51,47 @@ trait PermissionTrait
     public function __construct($role, $action, $state = null){
         $this->role = (string) $role;
         $this->action = (string) $action;
-        $this->state = isset($state) ? (string) $state : null;        
+        $this->state = isset($state) ? (string) $state : null;
+    }
+
+    /**
+     *
+     * @return string
+     */
+    public function getState() {
+        return $this->state;
+    }
+
+    /**
+     *
+     * @return string
+     */
+    public function getAction() {
+        return $this->action;
+    }
+
+    /**
+     *
+     * @return string
+     */
+    public function getRole() {
+        return $this->role;
+    }
+
+    /**
+     *
+     * @param boolean $value
+     */
+    public function setStateEqualToParent($value){
+        $this->stateEqualToParent = (boolean) $value;
+    }
+
+    /**
+     *
+     * @return boolean
+     */
+    public function getStateEqualToParent(){
+        return $this->stateEqualToParent;
     }
 }
 

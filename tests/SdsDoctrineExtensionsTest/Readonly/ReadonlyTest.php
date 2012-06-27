@@ -14,7 +14,7 @@ class ReadonlyTest extends BaseTest {
         parent::setUp();
         $manifest = $this->getManifest(array('SdsDoctrineExtensions\Readonly' => null));
 
-        $this->configure(
+        $this->configDoctrine(
             array_merge(
                 $manifest->getDocuments(),
                 array('SdsDoctrineExtensionsTest\Readonly\TestAsset\Document' => __DIR__ . '/TestAsset/Document')
@@ -33,7 +33,10 @@ class ReadonlyTest extends BaseTest {
         $testDoc->setReadonlyField('cannot-change');
         $testDoc->setMutableField('can-change');
 
-        $id = $this->persist($testDoc);
+        $documentManager->persist($testDoc);
+        $documentManager->flush();
+        $id = $testDoc->getId();
+        $documentManager->clear();
 
         $repository = $documentManager->getRepository(get_class($testDoc));
         $testDoc = null;
@@ -63,7 +66,10 @@ class ReadonlyTest extends BaseTest {
 
         $testDoc->good('cannot-change');
 
-        $id = $this->persist($testDoc);
+        $documentManager->persist($testDoc);
+        $documentManager->flush();
+        $id = $testDoc->getId();
+        $documentManager->clear();
 
         $repository = $documentManager->getRepository(get_class($testDoc));
         $testDoc = null;
@@ -92,7 +98,10 @@ class ReadonlyTest extends BaseTest {
 
         $testDoc->bad('cannot-change');
 
-        $id = $this->persist($testDoc);
+        $documentManager->persist($testDoc);
+        $documentManager->flush();
+        $id = $testDoc->getId();
+        $documentManager->clear();
 
         $repository = $documentManager->getRepository(get_class($testDoc));
         $testDoc = null;
@@ -118,7 +127,10 @@ class ReadonlyTest extends BaseTest {
         $testDoc->setReadonlyField('cannot-change');
         $testDoc->setMutableField('can-change');
 
-        $id = $this->persist($testDoc);
+        $documentManager->persist($testDoc);
+        $documentManager->flush();
+        $id = $testDoc->getId();
+        $documentManager->clear();
 
         $repository = $documentManager->getRepository(get_class($testDoc));
         $testDoc = null;

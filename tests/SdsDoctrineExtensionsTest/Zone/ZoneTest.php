@@ -12,7 +12,7 @@ class ZoneTest extends BaseTest {
         parent::setUp();
         $manifest = $this->getManifest(array('SdsDoctrineExtensions\Zone' => null));
 
-        $this->configure(
+        $this->configDoctrine(
             array_merge(
                 $manifest->getDocuments(),
                 array('SdsDoctrineExtensionsTest\Zone\TestAsset\Document' => __DIR__ . '/TestAsset/Document')
@@ -32,7 +32,10 @@ class ZoneTest extends BaseTest {
         $testDoc->setZones(array('zone1', 'zone2'));
         $testDoc->addZone('zone3');
 
-        $id = $this->persist($testDoc);
+        $documentManager->persist($testDoc);
+        $documentManager->flush();
+        $id = $testDoc->getId();
+        $documentManager->clear();
 
         $repository = $documentManager->getRepository(get_class($testDoc));
         $testDoc = null;
@@ -62,10 +65,11 @@ class ZoneTest extends BaseTest {
         $testDocB->setName('lucy');
         $testDocB->setZones(array('zone2', 'zone3'));
 
-        $ids = array(
-            $this->persist($testDocA),
-            $this->persist($testDocB)
-        );
+        $documentManager->persist($testDocA);
+        $documentManager->persist($testDocB);
+        $documentManager->flush();
+        $ids = array($testDocA->getId(), $testDocB->getId());
+        $documentManager->clear();
 
         list($testDocs, $docNames) = $this->getTestDocs();
         $this->assertEquals(array('lucy', 'miriam'), $docNames);

@@ -57,7 +57,6 @@ class Freeze implements EventSubscriber, ActiveUserAwareInterface
         $document = $eventArgs->getDocument();
 
         if($document instanceof AccessControlledInterface &&
-            $document instanceof StateAwareInterface &&
             !AccessController::isActionAllowed($document, Action::freeze, $this->activeUser)
         ) {
             //stop freeze

@@ -6,6 +6,8 @@
  */
 namespace SdsDoctrineExtensions\State;
 
+use SdsCommon\User\ActiveUserAwareInterface;
+use SdsCommon\User\ActiveUserAwareTrait;
 use SdsDoctrineExtensions\AbstractExtensionConfig;
 use SdsDoctrineExtensions\AnnotationReaderAwareInterface;
 use SdsDoctrineExtensions\AnnotationReaderAwareTrait;
@@ -16,9 +18,14 @@ use SdsDoctrineExtensions\AnnotationReaderAwareTrait;
  * @since   1.0
  * @author  Tim Roediger <superdweebie@gmail.com>
  */
-class ExtensionConfig extends AbstractExtensionConfig implements AnnotationReaderAwareInterface {
+class ExtensionConfig extends AbstractExtensionConfig
+implements
+    AnnotationReaderAwareInterface,
+    ActiveUserAwareInterface
+{
 
     use AnnotationReaderAwareTrait;
+    use ActiveUserAwareTrait;
 
     /**
      *
@@ -41,16 +48,28 @@ class ExtensionConfig extends AbstractExtensionConfig implements AnnotationReade
     public function setAccessControlStateChange($accessControlStateChange) {
         $this->accessControlStateChange = (boolean) $accessControlStateChange;
         $this->updateRequiredRoleAwareUser();
+        $this->updateDependencies();
     }
 
     /**
-     * 
+     *
      */
     protected function updateRequiredRoleAwareUser(){
-        if ($this->$accessControlStateChange) {
+        if ($this->accessControlStateChange) {
             $this->setRequireRoleAwareUser(true);
         } else {
             $this->setRequireRoleAwareUser(false);
+        }
+    }
+
+    /**
+     *
+     */
+    protected function updateDependencies(){
+        if ($this->accessControlStateChange) {
+            $this->addDependency('SdsDoctrineExtensions\AccessControl', null);
+        } else {
+            $this->removeDependency('SdsDoctrineExtensions\AccessControl');
         }
     }
 }

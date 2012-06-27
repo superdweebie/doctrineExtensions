@@ -7,12 +7,9 @@
 namespace SdsDoctrineExtensions\Workflow\Subscriber;
 
 use Doctrine\Common\EventSubscriber;
-use Doctrine\ODM\MongoDB\Event\LifecycleEventArgs;
-use Doctrine\ODM\MongoDB\Event\OnFlushEventArgs;
+use Doctrine\ODM\MongoDB\Event\PreFlushEventArgs;
 use Doctrine\ODM\MongoDB\Events as ODMEvents;
-use SdsCommon\State\StateAwareInterface;
 use SdsCommon\Workflow\WorkflowAwareInterface;
-use SdsCommon\Workflow\WorkflowInterface;
 use SdsDoctrineExtensions\State\Event\Events as StateEvents;
 use SdsDoctrineExtensions\State\Event\EventArgs as StateEventArgs;
 
@@ -29,9 +26,27 @@ class Workflow implements EventSubscriber
      */
     public function getSubscribedEvents(){
         return array(
+            ODMEvents::preFlush,
             StateEvents::preStateChange,
             StateEvents::onStateChange
         );
+    }
+
+    /**
+     *
+     * @param \Doctrine\ODM\MongoDB\Event\PreFlushEventArgs $eventArgs
+     */
+    public function preFlush(PreFlushEventArgs $eventArgs) {
+        $documentManager = $eventArgs->getDocumentManager();
+        $unitOfWork = $documentManager->getUnitOfWork();
+
+        //Set startState for documents with workflow
+        foreach ($unitOfWork->getScheduledDocumentInsertions() as $document) {
+            if (!$document instanceof WorkflowAwareInterface){
+                continue;
+            }
+            $document->setState($document->getWorkflow()->getStartState());
+        }
     }
 
     /**

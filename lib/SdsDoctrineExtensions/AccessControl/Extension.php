@@ -25,18 +25,18 @@ class Extension extends AbstractExtension {
         $this->config = $config;
 
         $this->subscribers = array(new AccessControlSubscriber(
-            $config->getActiveUser(),
             $config->getAnnotationReader(),
+            $config->getActiveUser(),
             $config->getAccessControlCreate(),
             $config->getAccessControlUpdate(),
             $config->getAccessControlDelete()
         ));
 
         if ($config->getAccessControlRead()){
-            $this->filters = array('freeze' => 'SdsDoctrineExtensions\AccessControl\Filter\ReadAccessControl');
+            $this->filters = array('readAccessControl' => 'SdsDoctrineExtensions\AccessControl\Filter\ReadAccessControl');
         }
-        
+
         $reflection = new \ReflectionClass($config->getPermissionClass());
-        $this->documents = array($reflection->getNamespaceName() => dirname($reflection->getFileName()));        
+        $this->documents = array($reflection->getNamespaceName() => dirname($reflection->getFileName()));
     }
 }

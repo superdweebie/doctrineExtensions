@@ -27,14 +27,6 @@ class SdsDoctrineExtensionsAuditModelAuditHydrator implements HydratorInterface
     {
         $hydratedData = array();
 
-        /** @Field(type="custom_id") */
-        if (isset($data['_id'])) {
-            $value = $data['_id'];
-            $return = $value;
-            $this->class->reflFields['id']->setValue($document, $return);
-            $hydratedData['id'] = $return;
-        }
-
         /** @Field(type="string") */
         if (isset($data['oldValue'])) {
             $value = $data['oldValue'];

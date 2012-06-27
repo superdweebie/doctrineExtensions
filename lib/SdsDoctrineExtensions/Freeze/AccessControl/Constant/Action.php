@@ -4,7 +4,7 @@
  * @package    Sds
  * @license    MIT
  */
-namespace SdsCommon\Freeze\AccessControl\Constant;
+namespace SdsDoctrineExtensions\Freeze\AccessControl\Constant;
 
 /**
  * Defines commonly used action constants

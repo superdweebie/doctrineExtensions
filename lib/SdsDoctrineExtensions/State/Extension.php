@@ -24,7 +24,10 @@ class Extension extends AbstractExtension {
     public function __construct(ExtensionConfig $config){
         $this->config = $config;
 
-        $this->annotations = array('SdsDoctrineExtensions\State\Mapping\Annotation' => __DIR__.'/../../');
+        $this->annotations = array(
+            'SdsDoctrineExtensions\State\Mapping\Annotation' => __DIR__.'/../../',
+            'SdsDoctrineExtensions\AccessControl\Mapping\Annotation' => __DIR__.'/../../'
+        );
 
         $this->subscribers = array(new Subscriber\State($config->getAnnotationReader()));
         if ($config->getAccessControlStateChange()){

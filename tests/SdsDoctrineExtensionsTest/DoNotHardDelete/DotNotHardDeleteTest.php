@@ -2,19 +2,21 @@
 
 namespace SdsDoctrineExtensionsTest\DoNotHardDelete;
 
+use SdsDoctrineExtensions\DoNotHardDelete\Event\Events;
 use SdsDoctrineExtensionsTest\BaseTest;
 use SdsDoctrineExtensionsTest\DoNotHardDelete\TestAsset\Document\Deleteable;
 use SdsDoctrineExtensionsTest\DoNotHardDelete\TestAsset\Document\NotDeleteable;
-use SdsDoctrineExtensionsTest\DoNotHardDelete\TestAsset\Subscriber;
 
 class DoNotHardDeleteTest extends BaseTest {
+
+    protected $calls = array();
 
     public function setUp(){
 
         parent::setUp();
         $manifest = $this->getManifest(array('SdsDoctrineExtensions\DoNotHardDelete' => null));
 
-        $this->configure(
+        $this->configDoctrine(
             array_merge(
                 $manifest->getDocuments(),
                 array('SdsDoctrineExtensionsTest\DoNotHardDelete\TestAsset\Document' => __DIR__ . '/TestAsset/Document')
@@ -31,7 +33,11 @@ class DoNotHardDeleteTest extends BaseTest {
 
         $testDoc = new Deleteable();
         $testDoc->setName('go');
-        $id = $this->persist($testDoc);
+
+        $documentManager->persist($testDoc);
+        $documentManager->flush();
+        $id = $testDoc->getId();
+        $documentManager->clear();
 
         $repository = $documentManager->getRepository(get_class($testDoc));
         $testDoc = null;
@@ -56,7 +62,11 @@ class DoNotHardDeleteTest extends BaseTest {
 
         $testDoc = new NotDeleteable();
         $testDoc->setName('stay');
-        $id = $this->persist($testDoc);
+
+        $documentManager->persist($testDoc);
+        $documentManager->flush();
+        $id = $testDoc->getId();
+        $documentManager->clear();
 
         $repository = $documentManager->getRepository(get_class($testDoc));
         $testDoc = null;
@@ -78,15 +88,17 @@ class DoNotHardDeleteTest extends BaseTest {
 
     public function testEventCalled() {
 
-        $subscriber = new Subscriber();
-
         $documentManager = $this->documentManager;
         $eventManager = $documentManager->getEventManager();
-        $eventManager->addEventSubscriber($subscriber);
+        $eventManager->addEventListener(Events::hardDeleteDenied, $this);
 
         $testDoc = new NotDeleteable();
         $testDoc->setName('stay');
-        $id = $this->persist($testDoc);
+
+        $documentManager->persist($testDoc);
+        $documentManager->flush();
+        $id = $testDoc->getId();
+        $documentManager->clear();
 
         $repository = $documentManager->getRepository(get_class($testDoc));
         $testDoc = null;
@@ -94,8 +106,12 @@ class DoNotHardDeleteTest extends BaseTest {
 
         $documentManager->remove($testDoc);
 
-        $this->assertFalse($subscriber->getHardDeleteRefusedCalled());
+        $this->assertFalse(isset($this->calls[Events::hardDeleteDenied]));
         $documentManager->flush();
-        $this->assertTrue($subscriber->getHardDeleteRefusedCalled());
+        $this->assertTrue(isset($this->calls[Events::hardDeleteDenied]));
+    }
+
+    public function __call($name, $arguments){
+        $this->calls[$name] = $arguments;
     }
 }

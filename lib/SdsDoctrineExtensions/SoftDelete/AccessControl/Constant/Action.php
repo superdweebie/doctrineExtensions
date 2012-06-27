@@ -4,7 +4,7 @@
  * @package    Sds
  * @license    MIT
  */
-namespace SdsCommon\SoftDelete\AccessControl\Constant;
+namespace SdsDoctrineExtensions\SoftDelete\AccessControl\Constant;
 
 /**
  * Defines commonly used action constants

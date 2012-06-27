@@ -4,7 +4,6 @@ namespace SdsDoctrineExtensionsTest\Readonly;
 
 use SdsDoctrineExtensionsTest\BaseTest;
 use SdsDoctrineExtensionsTest\Stamp\TestAsset\Document\Simple;
-use SdsDoctrineExtensionsTest\Stamp\TestAsset\User;
 
 class StampTest extends BaseTest {
 
@@ -14,9 +13,11 @@ class StampTest extends BaseTest {
 
         parent::setUp();
 
+        $this->configActiveUser();
+
         $manifest = $this->getManifest(array('SdsDoctrineExtensions\Stamp' => null));
 
-        $this->configure(
+        $this->configDoctrine(
             array_merge(
                 $manifest->getDocuments(),
                 array('SdsDoctrineExtensionsTest\Stamp\TestAsset\Document' => __DIR__ . '/TestAsset/Document')
@@ -35,7 +36,10 @@ class StampTest extends BaseTest {
         $testDoc = new Simple();
         $testDoc->setName('version1');
 
-        $id = $this->persist($testDoc);
+        $documentManager->persist($testDoc);
+        $documentManager->flush();
+        $id = $testDoc->getId();
+        $documentManager->clear();
 
         $repository = $documentManager->getRepository(get_class($testDoc));
         $testDoc = null;
@@ -52,7 +56,10 @@ class StampTest extends BaseTest {
 
         $testDoc->setName('version2');
 
-        $id = $this->persist($testDoc);
+        $documentManager->persist($testDoc);
+        $documentManager->flush();
+        $id = $testDoc->getId();
+        $documentManager->clear();
 
         $testDoc = null;
         $testDoc = $repository->find($id);

@@ -4,16 +4,18 @@ namespace SdsDoctrineExtensionsTest\Audit;
 
 use SdsDoctrineExtensionsTest\BaseTest;
 use SdsDoctrineExtensionsTest\Audit\TestAsset\Document\Simple;
-use SdsDoctrineExtensionsTest\Audit\TestAsset\Subscriber;
 
 class AuditTest extends BaseTest {
 
     public function setUp(){
 
         parent::setUp();
+
+        $this->configActiveUser();
+
         $manifest = $this->getManifest(array('SdsDoctrineExtensions\Audit' => null));
 
-        $this->configure(
+        $this->configDoctrine(
             array_merge(
                 $manifest->getDocuments(),
                 array('SdsDoctrineExtensionsTest\Audit\TestAsset\Document' => __DIR__ . '/TestAsset/Document')
@@ -33,7 +35,10 @@ class AuditTest extends BaseTest {
 
         $testDoc->setName('version 1');
 
-        $id = $this->persist($testDoc);
+        $documentManager->persist($testDoc);
+        $documentManager->flush();
+        $id = $testDoc->getId();
+        $documentManager->clear();
 
         $repository = $documentManager->getRepository(get_class($testDoc));
         $testDoc = null;

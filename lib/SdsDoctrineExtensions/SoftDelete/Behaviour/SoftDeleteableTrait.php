@@ -7,6 +7,7 @@
 namespace SdsDoctrineExtensions\SoftDelete\Behaviour;
 
 use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
+use SdsDoctrineExtensions\AccessControl\Mapping\Annotation\DoNotAccessControlUpdate as SDS_DoNotAccessControlUpdate;
 use SdsDoctrineExtensions\SoftDelete\Mapping\Annotation\SoftDeleteField as SDS_SoftDeleteField;
 
 /**
@@ -20,6 +21,7 @@ trait SoftDeleteableTrait {
     /**
      * @ODM\Field(type="boolean")
      * @SDS_SoftDeleteField
+     * @SDS_DoNotAccessControlUpdate
      */
     protected $softDeleted = false;
 

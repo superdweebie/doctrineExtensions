@@ -132,18 +132,18 @@ class SoftDelete implements EventSubscriber, AnnotationReaderAwareInterface
                 // Trigger restore events
 
                 // Raise preRestore
-                if ($eventManager->hasListeners(SoftDeleteEvents::preSoftRestore)) {
+                if ($eventManager->hasListeners(SoftDeleteEvents::preRestore)) {
                     $eventManager->dispatchEvent(
-                        SoftDeleteEvents::preSoftRestore,
+                        SoftDeleteEvents::preRestore,
                         new LifecycleEventArgs($document, $documentManager)
                     );
                 }
 
                 if(!$document->getSoftDeleted()){
                     // Raise postRestore
-                    if ($eventManager->hasListeners(SoftDeleteEvents::postSoftRestore)) {
+                    if ($eventManager->hasListeners(SoftDeleteEvents::postRestore)) {
                         $eventManager->dispatchEvent(
-                            SoftDeleteEvents::postSoftRestore,
+                            SoftDeleteEvents::postRestore,
                             new LifecycleEventArgs($document, $documentManager)
                         );
                     }

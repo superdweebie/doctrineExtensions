@@ -79,9 +79,9 @@ class DoNotHardDelete implements EventSubscriber, AnnotationReaderAwareInterface
             $documentManager->persist($document);
 
             // Raise hardDeleteRefused event
-            if ($eventManager->hasListeners(DoNotHardDeleteEvents::hardDeleteRefused)) {
+            if ($eventManager->hasListeners(DoNotHardDeleteEvents::hardDeleteDenied)) {
                 $eventManager->dispatchEvent(
-                    DoNotHardDeleteEvents::hardDeleteRefused,
+                    DoNotHardDeleteEvents::hardDeleteDenied,
                     new LifecycleEventArgs($document, $documentManager)
                 );
             }

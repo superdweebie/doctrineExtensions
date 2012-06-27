@@ -57,11 +57,10 @@ class Restore implements EventSubscriber, ActiveUserAwareInterface
         $document = $eventArgs->getDocument();
 
         if($document instanceof AccessControlledInterface &&
-            $document instanceof StateAwareInterface &&
             !AccessController::isActionAllowed($document, Action::restore, $this->activeUser)
         ) {
             //stop restore
-            $document->restore();
+            $document->softDelete();
 
             $eventManager = $eventArgs->getDocumentManager()->getEventManager();
             if ($eventManager->hasListeners(AccessControlEvents::restoreDenied)) {

@@ -7,6 +7,7 @@
 namespace SdsDoctrineExtensions\Freeze\Behaviour;
 
 use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
+use SdsDoctrineExtensions\AccessControl\Mapping\Annotation\DoNotAccessControlUpdate as SDS_DoNotAccessControlUpdate;
 use SdsDoctrineExtensions\Freeze\Mapping\Annotation\FreezeField as SDS_FreezeField;
 
 /**
@@ -20,6 +21,7 @@ trait FreezeableTrait {
     /**
      * @ODM\Field(type="boolean")
      * @SDS_FreezeField
+     * @SDS_DoNotAccessControlUpdate
      */
     protected $frozen = false;
 

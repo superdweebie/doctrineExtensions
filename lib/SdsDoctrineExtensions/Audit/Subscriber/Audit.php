@@ -6,20 +6,20 @@
  */
 namespace SdsDoctrineExtensions\Audit\Subscriber;
 
+use Doctrine\Common\Annotations\Reader;
 use Doctrine\Common\EventSubscriber;
-use Doctrine\ODM\MongoDB\Event\OnFlushEventArgs;
 use Doctrine\ODM\MongoDB\Event\LoadClassMetadataEventArgs;
-use SdsDoctrineExtensions\Audit\Mapping\MetadataInjector\Audit as MetadataInjector;
-use SdsDoctrineExtensions\AnnotationReaderAwareTrait;
-use SdsDoctrineExtensions\AnnotationReaderAwareInterface;
+use Doctrine\ODM\MongoDB\Event\OnFlushEventArgs;
 use Doctrine\ODM\MongoDB\Events as ODMEvents;
-use SdsCommon\Audit\AuditedObjectInterface;
-use SdsDoctrineExtensions\Audit\Event\Events as AuditEvents;
-use SdsDoctrineExtensions\Audit\Event\EventArgs;
-use SdsCommon\User\UserInterface;
+use SdsCommon\Audit\AuditedInterface;
 use SdsCommon\User\ActiveUserAwareTrait;
 use SdsCommon\User\ActiveUserAwareInterface;
-use Doctrine\Common\Annotations\Reader;
+use SdsCommon\User\UserInterface;
+use SdsDoctrineExtensions\AnnotationReaderAwareTrait;
+use SdsDoctrineExtensions\AnnotationReaderAwareInterface;
+use SdsDoctrineExtensions\Audit\Event\EventArgs;
+use SdsDoctrineExtensions\Audit\Event\Events as AuditEvents;
+use SdsDoctrineExtensions\Audit\Mapping\MetadataInjector\Audit as MetadataInjector;
 
 /**
  * Implements SdsCommon\Audit\AuditedObjectInterface
@@ -107,7 +107,7 @@ class Audit implements
         $unitOfWork = $documentManager->getUnitOfWork();
 
         foreach ($unitOfWork->getScheduledDocumentUpdates() AS $document) {
-            if(!$document instanceof AuditedObjectInterface){
+            if(!$document instanceof AuditedInterface){
                 continue;
             }
             $changeSet = $unitOfWork->getDocumentChangeSet($document);

@@ -8,9 +8,8 @@ namespace SdsDoctrineExtensions\AccessControl\Filter;
 
 use Doctrine\ODM\MongoDB\Mapping\ClassMetadata;
 use Doctrine\ODM\MongoDB\Query\Filter\BsonFilter;
-use SdsCommon\AccessControl\Constant\Action;
-use SdsCommon\AccessControl\AccessControlledInterface;
-use SdsCommon\AccessControl\RoleAwareUserInterface;
+use SdsCommon\User\RoleAwareUserInterface;
+use SdsDoctrineExtensions\AccessControl\Constant\Action;
 
 /**
  * When this filter is enabled, will filter out all documents
@@ -45,13 +44,10 @@ class ReadAccessControl extends BsonFilter
      */
     public function addFilterCriteria(ClassMetadata $targetDocument)
     {
-        if($targetDocument instanceof AccessControlledInterface &&
-            $targetDocument instanceof StateAwareInterface
-        ){
-            return array(
+        if($targetDocument->reflClass->implementsInterface('SdsCommon\AccessControl\AccessControlledInterface')){
+            $return = array(
                 'permissions' => array(
                     '$elemMatch' => array(
-                        'state' => 'state',
                         'action' => Action::read,
                         'role' => array(
                             '$in' => $this->parameters['activeUser']->getRoles()
@@ -59,6 +55,10 @@ class ReadAccessControl extends BsonFilter
                     )
                 )
             );
+            if($targetDocument->reflClass->implementsInterface('SdsCommon\State\StateAwareInterface')){
+                $return['permissions']['$elemMatch']['stateEqualToParent'] = true;
+            }
+            return $return;
         }
         return array();
     }

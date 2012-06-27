@@ -11,9 +11,12 @@ class SoftDeleteTest extends BaseTest {
     public function setUp(){
 
         parent::setUp();
+
+        $this->configActiveUser();
+
         $manifest = $this->getManifest(array('SdsDoctrineExtensions\SoftDelete' => null));
 
-        $this->configure(
+        $this->configDoctrine(
             array_merge(
                 $manifest->getDocuments(),
                 array('SdsDoctrineExtensionsTest\SoftDelete\TestAsset\Document' => __DIR__ . '/TestAsset/Document')
@@ -31,7 +34,10 @@ class SoftDeleteTest extends BaseTest {
 
         $testDoc->setName('version 1');
 
-        $id = $this->persist($testDoc);
+        $documentManager->persist($testDoc);
+        $documentManager->flush();
+        $id = $testDoc->getId();
+        $documentManager->clear();
 
         $repository = $documentManager->getRepository(get_class($testDoc));
         $testDoc = null;
@@ -49,14 +55,14 @@ class SoftDeleteTest extends BaseTest {
         $this->assertTrue($testDoc->getSoftDeleted());
 
         $testDoc->setName('version 2');
-        
+
         $documentManager->flush();
         $documentManager->clear();
         $testDoc = null;
         $testDoc = $repository->find($id);
-        
+
         $this->assertEquals('version 1', $testDoc->getName());
-        
+
         $testDoc->restore();
 
         $documentManager->flush();
@@ -78,13 +84,11 @@ class SoftDeleteTest extends BaseTest {
         $testDocB = new Simple();
         $testDocB->setName('lucy');
 
-        $ids = array(
-            $this->persist($testDocA),
-            $this->persist($testDocB)
-        );
-
-        $testDocA = null;
-        $testDocB = null;
+        $documentManager->persist($testDocA);
+        $documentManager->persist($testDocB);
+        $documentManager->flush();
+        $ids = array($testDocA->getId(), $testDocB->getId());
+        $documentManager->clear();
 
         list($testDocs, $docNames) = $this->getTestDocs();
         $this->assertEquals(array('lucy', 'miriam'), $docNames);
@@ -104,16 +108,16 @@ class SoftDeleteTest extends BaseTest {
         $filter = $documentManager->getFilterCollection()->getFilter('softDelete');
         $filter->onlySoftDeleted();
         $documentManager->clear();
-        
+
         list($testDocs, $docNames) = $this->getTestDocs();
         $this->assertEquals(array('lucy'), $docNames);
-        
+
         $filter->onlyNotSoftDeleted();
         $documentManager->clear();
-        
+
         list($testDocs, $docNames) = $this->getTestDocs();
         $this->assertEquals(array('miriam'), $docNames);
-        
+
         $documentManager->getFilterCollection()->disable('softDelete');
 
         $documentManager->flush();
@@ -162,12 +166,15 @@ class SoftDeleteTest extends BaseTest {
 
         $testDoc->setName('version 1');
 
-        $id = $this->persist($testDoc);
+        $documentManager->persist($testDoc);
+        $documentManager->flush();
+        $id = $testDoc->getId();
+        $documentManager->clear();
 
         $this->assertFalse($subscriber->getPreDeleteCalled());
         $this->assertFalse($subscriber->getPostDeleteCalled());
-        $this->assertFalse($subscriber->getPreSoftRestoreCalled());
-        $this->assertFalse($subscriber->getPostSoftRestoreCalled());
+        $this->assertFalse($subscriber->getPreRestoreCalled());
+        $this->assertFalse($subscriber->getPostRestoreCalled());
 
         $repository = $documentManager->getRepository(get_class($testDoc));
         $testDoc = null;
@@ -182,8 +189,8 @@ class SoftDeleteTest extends BaseTest {
 
         $this->assertTrue($subscriber->getPreDeleteCalled());
         $this->assertTrue($subscriber->getPostDeleteCalled());
-        $this->assertFalse($subscriber->getPreSoftRestoreCalled());
-        $this->assertFalse($subscriber->getPostSoftRestoreCalled());
+        $this->assertFalse($subscriber->getPreRestoreCalled());
+        $this->assertFalse($subscriber->getPostRestoreCalled());
 
         $testDoc = null;
         $testDoc = $repository->find($id);
@@ -193,9 +200,9 @@ class SoftDeleteTest extends BaseTest {
         $testDoc->setName('version 2');
         $subscriber->reset();
         $documentManager->flush();
-        
-        $this->assertTrue($subscriber->getSoftDeleteUpdateDeniedCalled());        
-        
+
+        $this->assertTrue($subscriber->getSoftDeleteUpdateDeniedCalled());
+
         $testDoc->restore();
         $subscriber->reset();
 
@@ -203,8 +210,8 @@ class SoftDeleteTest extends BaseTest {
 
         $this->assertFalse($subscriber->getPreDeleteCalled());
         $this->assertFalse($subscriber->getPostDeleteCalled());
-        $this->assertTrue($subscriber->getPreSoftRestoreCalled());
-        $this->assertTrue($subscriber->getPostSoftRestoreCalled());
+        $this->assertTrue($subscriber->getPreRestoreCalled());
+        $this->assertTrue($subscriber->getPostRestoreCalled());
 
         $testDoc = null;
         $testDoc = $repository->find($id);
@@ -219,8 +226,8 @@ class SoftDeleteTest extends BaseTest {
 
         $this->assertTrue($subscriber->getPreDeleteCalled());
         $this->assertFalse($subscriber->getPostDeleteCalled());
-        $this->assertFalse($subscriber->getPreSoftRestoreCalled());
-        $this->assertFalse($subscriber->getPostSoftRestoreCalled());
+        $this->assertFalse($subscriber->getPreRestoreCalled());
+        $this->assertFalse($subscriber->getPostRestoreCalled());
 
         $testDoc = null;
         $testDoc = $repository->find($id);
@@ -243,7 +250,7 @@ class SoftDeleteTest extends BaseTest {
 
         $this->assertFalse($subscriber->getPreDeleteCalled());
         $this->assertFalse($subscriber->getPostDeleteCalled());
-        $this->assertTrue($subscriber->getPreSoftRestoreCalled());
-        $this->assertFalse($subscriber->getPostSoftRestoreCalled());
+        $this->assertTrue($subscriber->getPreRestoreCalled());
+        $this->assertFalse($subscriber->getPostRestoreCalled());
     }
 }
