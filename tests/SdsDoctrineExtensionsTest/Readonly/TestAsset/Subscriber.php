@@ -8,48 +8,43 @@ use SdsDoctrineExtensions\Readonly\Event\EventArgs;
 
 class Subscriber implements EventSubscriber {
 
-    protected $preCalled = false;
-    protected $postCalled = false;
-    protected $restoreInPre = false;
+    protected $calls = array();
+
+    protected $rollbackInPre = false;
 
     public function getSubscribedEvents(){
         return array(
-            ReadonlyEvents::preReadonlyRestore,
-            ReadonlyEvents::postReadonlyRestore
+            ReadonlyEvents::preReadonlyRollback,
+            ReadonlyEvents::postReadonlyRollback
         );
     }
 
     public function reset() {
-        $this->preCalled = false;
-        $this->postCalled = false;
-        $this->restoreInPre = false;
+        $this->calls = array();
+        $this->rollbackInPre = false;
     }
 
-    public function preReadonlyRestore(EventArgs $eventArgs) {
-        $this->preCalled = true;
-        if ($this->restoreInPre) {
+    public function preReadonlyRollback(EventArgs $eventArgs) {
+        $this->calls['preReadonlyRollback'] = $eventArgs;
+        if ($this->rollbackInPre) {
 			$setMethod = 'set'.$eventArgs->getField();
             $eventArgs->getDocument()->$setMethod($eventArgs->getOriginalValue());
         }
     }
 
-    public function postReadonlyRestore(EventArgs $eventArgs) {
-        $this->postCalled = true;
+    public function getRollbackInPre() {
+        return $this->rollbackInPre;
     }
 
-    public function getPreCalled() {
-        return $this->preCalled;
+    public function setRollbackInPre($rollbackInPre) {
+        $this->rollbackInPre = $rollbackInPre;
     }
 
-    public function getPostCalled() {
-        return $this->postCalled;
+    public function getCalls() {
+        return $this->calls;
     }
 
-    public function getRestoreInPre() {
-        return $this->restoreInPre;
-    }
-
-    public function setRestoreInPre($restoreInPre) {
-        $this->restoreInPre = $restoreInPre;
+    public function __call($name, $arguments){
+        $this->calls[$name] = $arguments[0];
     }
 }

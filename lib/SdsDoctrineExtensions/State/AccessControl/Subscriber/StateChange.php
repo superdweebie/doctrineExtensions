@@ -16,6 +16,7 @@ use SdsDoctrineExtensions\AccessControl\AccessController;
 use SdsDoctrineExtensions\State\AccessControl\Event\Events as AccessControlEvents;
 use SdsDoctrineExtensions\State\Event\EventArgs as StateChangeEventArgs;
 use SdsDoctrineExtensions\State\Event\Events as StateEvents;
+use SdsDoctrineExtensions\State\Transition;
 
 /**
  *
@@ -58,8 +59,12 @@ class StateChange implements EventSubscriber, ActiveUserAwareInterface
         $document = $eventArgs->getDocument();
 
         if($document instanceof AccessControlledInterface &&
-            $document instanceof StateAwareInterface &&
-            !AccessController::isActionAllowed($document, Transition::getAction($fromState, $toState), $this->activeUser)
+            !AccessController::isActionAllowed(
+                $document,
+                Transition::getAction($fromState, $toState),
+                $this->activeUser,
+                $fromState
+            )
         ) {
             //stop state change
             $document->setState($fromState);

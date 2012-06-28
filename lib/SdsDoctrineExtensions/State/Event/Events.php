@@ -13,7 +13,6 @@ namespace SdsDoctrineExtensions\State\Event;
  */
 final class Events
 {
-    private function __construct() {}
 
     /**
      * Called before state change. Can be used to roll the state change back

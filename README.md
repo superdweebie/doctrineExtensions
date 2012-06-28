@@ -89,3 +89,58 @@ may be forced to follow the state path of: draft->approved->published
 ##Zone
 
 Allows a document to belong to several zones, and app wide filtering of those zones.
+
+Install
+=======
+
+Add the following to your composer.json:
+
+    "require": {
+        "superdweebie/SdsDoctrineExtensions": "dev-master"
+    }
+
+Usage
+=====
+
+The easiest way to use SdsDoctrineExtensions is to populate a `manifestConfig` with the
+extensions you want to use, and pass it to a `manifest`. For example, this configures
+SoftDelete and Zone:
+
+        $manifestConfig = new ManifestConfig(
+            $myAnnotationReader,
+            array(
+                'SdsDoctrineExtensions\SoftDelete' => null,
+                'SdsDoctrineExtensions\Zone' => null
+            $this->activeUser
+        );
+
+        $manifest = new Manifest($manifestConfig);
+
+You can then use the manifest when you are configuring Doctrine with the following four methods:
+
+        $manifest->getDocuments();
+        $manifest->getFilters();
+        $manifest->getSubscribers();
+        $manifest->getAnnotations();
+
+Exceptions
+==========
+
+Most of the extensions do significant work in Doctrine's onFlush event. When an action is attempted
+which is not allowed, the extensions will not raise an exception. Rather, they will raise an event.
+This means the whole flush process isn't aborted. If you need to raise an exception, then add an
+event listener to catch the event, and raise the exception yourself.
+
+Further Documentation
+=====================
+
+A serious attempt has been made to make the code self documenting. Look inside each extension, and you will
+find information about filters in the filters directory, information about events in the events directory, etc.
+
+All configuration options for each extension can be found in the extension's ExtensionConfig.php
+
+Writing Your Own Extensions
+===========================
+
+You can simply wirte your own extensions that can be loaded with the manifest. The only requirement is are `Extension` and
+`ExtensionConfig` classes.

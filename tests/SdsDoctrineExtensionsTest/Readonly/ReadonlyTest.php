@@ -2,6 +2,7 @@
 
 namespace SdsDoctrineExtensionsTest\Readonly;
 
+use SdsDoctrineExtensions\Readonly\Event\Events;
 use SdsDoctrineExtensionsTest\BaseTest;
 use SdsDoctrineExtensionsTest\Readonly\TestAsset\Document\Simple;
 use SdsDoctrineExtensionsTest\Readonly\TestAsset\Document\SetMethod;
@@ -140,8 +141,9 @@ class ReadonlyTest extends BaseTest {
 
         $documentManager->flush();
 
-        $this->assertFalse($subscriber->getPreCalled());
-        $this->assertFalse($subscriber->getPostCalled());
+        $calls = $subscriber->getCalls();
+        $this->assertFalse(isset($calls[Events::preReadonlyRollback]));
+        $this->assertFalse(isset($calls[Events::postReadonlyRollback]));
 
         $subscriber->reset();
 
@@ -149,17 +151,19 @@ class ReadonlyTest extends BaseTest {
 
         $documentManager->flush();
 
-        $this->assertTrue($subscriber->getPreCalled());
-        $this->assertTrue($subscriber->getPostCalled());
+        $calls = $subscriber->getCalls();
+        $this->assertTrue(isset($calls[Events::preReadonlyRollback]));
+        $this->assertTrue(isset($calls[Events::postReadonlyRollback]));
 
         $subscriber->reset();
-        $subscriber->setRestoreInPre(true);
+        $subscriber->setRollbackInPre(true);
 
         $testDoc->setReadonlyField('readonly-changed');
 
         $documentManager->flush();
 
-        $this->assertTrue($subscriber->getPreCalled());
-        $this->assertFalse($subscriber->getPostCalled());
+        $calls = $subscriber->getCalls();
+        $this->assertTrue(isset($calls[Events::preReadonlyRollback]));
+        $this->assertFalse(isset($calls[Events::postReadonlyRollback]));
     }
 }

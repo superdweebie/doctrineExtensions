@@ -14,8 +14,6 @@ namespace SdsDoctrineExtensions\DoNotHardDelete\Event;
  */
 final class Events
 {
-    private function __construct() {}
-
     /**
      * Fires if delete is attempted on a class with the doNotHardDelete annotation
      */

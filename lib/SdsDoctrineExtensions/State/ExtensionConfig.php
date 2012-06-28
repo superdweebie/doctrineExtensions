@@ -9,6 +9,7 @@ namespace SdsDoctrineExtensions\State;
 use SdsCommon\User\ActiveUserAwareInterface;
 use SdsCommon\User\ActiveUserAwareTrait;
 use SdsDoctrineExtensions\AbstractExtensionConfig;
+use SdsDoctrineExtensions\AccessControl;
 use SdsDoctrineExtensions\AnnotationReaderAwareInterface;
 use SdsDoctrineExtensions\AnnotationReaderAwareTrait;
 
@@ -28,10 +29,19 @@ implements
     use ActiveUserAwareTrait;
 
     /**
+     * Should access control be applied to state changes?
      *
      * @var boolean
      */
     protected $accessControlStateChange = false;
+
+    /**
+     *
+     * @var array
+     */
+    protected $dependencies = array(
+        'SdsDoctrineExtensions\Audit' => null
+    );
 
     /**
      *
@@ -67,7 +77,15 @@ implements
      */
     protected function updateDependencies(){
         if ($this->accessControlStateChange) {
-            $this->addDependency('SdsDoctrineExtensions\AccessControl', null);
+            $accessControlConfig = new AccessControl\ExtensionConfig();
+            $accessControlConfig->setAccessControlCreate(false);
+            $accessControlConfig->setAccessControlRead(false);
+            $accessControlConfig->setAccessControlUpdate(false);
+            $accessControlConfig->setAccessControlDelete(false);
+            $this->addDependency(
+                'SdsDoctrineExtensions\AccessControl',
+                $accessControlConfig
+            );
         } else {
             $this->removeDependency('SdsDoctrineExtensions\AccessControl');
         }

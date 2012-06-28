@@ -12,6 +12,7 @@ use Doctrine\ODM\MongoDB\Events as ODMEvents;
 use SdsCommon\Workflow\WorkflowAwareInterface;
 use SdsDoctrineExtensions\State\Event\Events as StateEvents;
 use SdsDoctrineExtensions\State\Event\EventArgs as StateEventArgs;
+use SdsDoctrineExtensions\Workflow\Event\Events as WorkflowEvents;
 
 /**
  *

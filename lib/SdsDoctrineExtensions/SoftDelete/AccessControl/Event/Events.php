@@ -13,7 +13,6 @@ namespace SdsDoctrineExtensions\SoftDelete\AccessControl\Event;
  */
 final class Events
 {
-    private function __construct() {}
 
     /**
      * Triggered when activeUser attempts to soft delete a document they don't have permission

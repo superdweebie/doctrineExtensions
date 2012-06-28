@@ -8,11 +8,7 @@ use Doctrine\ODM\MongoDB\Event\LifecycleEventArgs;
 
 class Subscriber implements EventSubscriber {
 
-    protected $preDeleteCalled = false;
-    protected $postDeleteCalled = false;
-    protected $preRestoreCalled = false;
-    protected $postRestoreCalled = false;
-    protected $softDeleteUpdateDeniedCalled = false;
+    protected $calls = array();
 
     protected $rollbackDelete = false;
     protected $rollbackRestore = false;
@@ -28,66 +24,46 @@ class Subscriber implements EventSubscriber {
     }
 
     public function reset() {
-        $this->preDeleteCalled = false;
-        $this->postDeleteCalled = false;
-        $this->preRestoreCalled = false;
-        $this->postRestoreCalled = false;
-        $this->softDeleteUpdateDeniedCalled = false;
+        $this->calls = array();
         $this->rollbackDelete = false;
         $this->rollbackRestore = false;
     }
 
     public function preSoftDelete(LifecycleEventArgs $eventArgs) {
-        $this->preDeleteCalled = true;
+        $this->calls[SoftDeleteEvents::preSoftDelete] = $eventArgs;
         if ($this->rollbackDelete) {
             $eventArgs->getDocument()->restore();
         }
     }
 
-    public function postSoftDelete(LifecycleEventArgs $eventArgs) {
-        $this->postDeleteCalled = true;
-    }
-
     public function preRestore(LifecycleEventArgs $eventArgs) {
-        $this->preRestoreCalled = true;
+        $this->calls[SoftDeleteEvents::preRestore] = $eventArgs;
         if ($this->rollbackRestore) {
             $eventArgs->getDocument()->softDelete();
         }
     }
 
-    public function postRestore(LifecycleEventArgs $eventArgs) {
-        $this->postRestoreCalled = true;
-    }
-
-    public function softDeletedUpdateDenied(LifecycleEventArgs $eventArgs) {
-        $this->softDeleteUpdateDeniedCalled = true;
+    public function getRollbackDelete() {
+        return $this->rollbackDelete;
     }
 
     public function setRollbackDelete($rollbackDelete) {
         $this->rollbackDelete = $rollbackDelete;
     }
 
+    public function getRollbackRestore() {
+        return $this->rollbackRestore;
+    }
+
     public function setRollbackRestore($rollbackRestore) {
         $this->rollbackRestore = $rollbackRestore;
     }
 
-    public function getPreDeleteCalled() {
-        return $this->preDeleteCalled;
+    public function getCalls() {
+        return $this->calls;
     }
 
-    public function getPostDeleteCalled() {
-        return $this->postDeleteCalled;
-    }
-
-    public function getpreRestoreCalled() {
-        return $this->preRestoreCalled;
-    }
-
-    public function getpostRestoreCalled() {
-        return $this->postRestoreCalled;
-    }
-
-    public function getSoftDeleteUpdateDeniedCalled() {
-        return $this->softDeleteUpdateDeniedCalled;
+    public function __call($name, $arguments){
+        $this->calls[$name] = $arguments[0];
     }
 }

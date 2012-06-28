@@ -31,7 +31,9 @@ class Extension extends AbstractExtension {
 
         $this->subscribers = array(new Subscriber\State($config->getAnnotationReader()));
         if ($config->getAccessControlStateChange()){
-            $this->subscribers[] = new AccessControl\Subscriber\StateChange($this->getActiveUser());
+            $this->subscribers[] = new AccessControl\Subscriber\StateChange($config->getActiveUser());
         }
+
+        $this->filters = array('state' => 'SdsDoctrineExtensions\State\Filter\State');
     }
 }

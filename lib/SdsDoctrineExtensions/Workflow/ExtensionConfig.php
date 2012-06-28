@@ -16,4 +16,12 @@ use SdsDoctrineExtensions\AbstractExtensionConfig;
  */
 class ExtensionConfig extends AbstractExtensionConfig
 {
+    /**
+     *
+     * @var array
+     */
+    protected $dependencies = array(
+        'SdsDoctrineExtensions\State' => null,
+        'SdsDoctrineExtensions\Readonly' => null
+    );
 }

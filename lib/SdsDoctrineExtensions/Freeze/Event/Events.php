@@ -14,7 +14,6 @@ namespace SdsDoctrineExtensions\Freeze\Event;
  */
 final class Events
 {
-    private function __construct() {}
 
     /**
      * Fires before freeze happens
@@ -35,14 +34,14 @@ final class Events
      * Fires after a frozen document is thawed
      */
     const postThaw = 'postThaw';
-    
+
     /**
      * Fires if an updated is attempted on a frozen object
      */
     const frozenUpdateDenied = 'frozenUpdateDenied';
-    
+
     /**
      * Fires if a delete is attempted on a frozen object
      */
-    const frozenDeleteDenied = 'frozenDeleteDenied';    
+    const frozenDeleteDenied = 'frozenDeleteDenied';
 }

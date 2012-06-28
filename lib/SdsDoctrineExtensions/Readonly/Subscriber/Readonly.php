@@ -82,10 +82,10 @@ class Readonly implements EventSubscriber, AnnotationReaderAwareInterface
                     continue;
                 }
 
-                // Raise preReadonlyRestore
-                if ($eventManager->hasListeners(ReadonlyEvents::preReadonlyRestore)) {
+                // Raise preReadonlyRollback
+                if ($eventManager->hasListeners(ReadonlyEvents::preReadonlyRollback)) {
                     $eventManager->dispatchEvent(
-                        ReadonlyEvents::preReadonlyRestore,
+                        ReadonlyEvents::preReadonlyRollback,
                         new EventArgs($field, $old, $new, $document, $documentManager)
                     );
                     $unitOfWork->recomputeSingleDocumentChangeSet($metadata, $document);
@@ -109,10 +109,10 @@ class Readonly implements EventSubscriber, AnnotationReaderAwareInterface
                 $document->$setMethod($old);
                 $unitOfWork->recomputeSingleDocumentChangeSet($metadata, $document);
 
-                // Raise postReadonlyRestore
-                if ($eventManager->hasListeners(ReadonlyEvents::postReadonlyRestore)) {
+                // Raise postReadonlyRollback
+                if ($eventManager->hasListeners(ReadonlyEvents::postReadonlyRollback)) {
                     $eventManager->dispatchEvent(
-                        ReadonlyEvents::postReadonlyRestore,
+                        ReadonlyEvents::postReadonlyRollback,
                         new EventArgs($field, $old, $new, $document, $documentManager)
                     );
                 }

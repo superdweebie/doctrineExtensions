@@ -2,10 +2,14 @@
 
 namespace SdsDoctrineExtensionsTest\Audit;
 
+use SdsDoctrineExtensions\Audit\Event\EventArgs;
+use SdsDoctrineExtensions\Audit\Event\Events;
 use SdsDoctrineExtensionsTest\BaseTest;
 use SdsDoctrineExtensionsTest\Audit\TestAsset\Document\Simple;
 
 class AuditTest extends BaseTest {
+
+    protected $calls = array();
 
     public function setUp(){
 
@@ -27,8 +31,6 @@ class AuditTest extends BaseTest {
     }
 
     public function testBasicFunction(){
-
-        //$this->markTestIncomplete();
 
         $documentManager = $this->documentManager;
         $testDoc = new Simple();
@@ -66,47 +68,36 @@ class AuditTest extends BaseTest {
 
     public function testEvents() {
 
-//        $subscriber = new Subscriber();
-//
-//        $documentManager = $this->documentManager;
-//        $eventManager = $documentManager->getEventManager();
-//        $eventManager->addEventSubscriber($subscriber);
-//
-//        $testDoc = new Simple();
-//
-//        $testDoc->setReadonlyField('cannot-change');
-//        $testDoc->setMutableField('can-change');
-//
-//        $id = $this->persist($testDoc);
-//
-//        $repository = $documentManager->getRepository(get_class($testDoc));
-//        $testDoc = null;
-//        $testDoc = $repository->find($id);
-//
-//        $testDoc->setMutableField('mutable-changed');
-//
-//        $documentManager->flush();
-//
-//        $this->assertFalse($subscriber->getPreCalled());
-//        $this->assertFalse($subscriber->getPostCalled());
-//
-//        $subscriber->reset();
-//
-//        $testDoc->setReadonlyField('readonly-changed');
-//
-//        $documentManager->flush();
-//
-//        $this->assertTrue($subscriber->getPreCalled());
-//        $this->assertTrue($subscriber->getPostCalled());
-//
-//        $subscriber->reset();
-//        $subscriber->setRestoreInPre(true);
-//
-//        $testDoc->setReadonlyField('readonly-changed');
-//
-//        $documentManager->flush();
-//
-//        $this->assertTrue($subscriber->getPreCalled());
-//        $this->assertFalse($subscriber->getPostCalled());
+        $documentManager = $this->documentManager;
+        $eventManager = $documentManager->getEventManager();
+        $eventManager->addEventListener(Events::auditCreated, $this);
+
+        $testDoc = new Simple();
+
+        $testDoc->setName('version 1');
+
+        $documentManager->persist($testDoc);
+        $documentManager->flush();
+        $id = $testDoc->getId();
+        $documentManager->clear();
+
+        $repository = $documentManager->getRepository(get_class($testDoc));
+        $testDoc = null;
+        $testDoc = $repository->find($id);
+
+        $testDoc->setName('version 2');
+
+        $documentManager->flush();
+
+        $this->assertTrue(isset($this->calls[Events::auditCreated]));
+
+        $eventArgs = $this->calls[Events::auditCreated];
+
+        $this->assertTrue($eventArgs instanceof EventArgs);
+        $this->assertEquals('version 2', $eventArgs->getAudit()->getNewValue());
+    }
+
+    public function __call($name, $arguments){
+        $this->calls[$name] = $arguments[0];
     }
 }

@@ -18,11 +18,11 @@ final class Events
      * Event called just before a changed readonly field is restored to it's
      * original value
      */
-    const preReadonlyRestore = 'preReadonlyRestore';
+    const preReadonlyRollback = 'preReadonlyRollback';
 
     /**
      * Event called just after a changed readonly field is restored to it's
      * original value
      */
-    const postReadonlyRestore = 'postReadonlyRestore';
+    const postReadonlyRollback = 'postReadonlyRollback';
 }

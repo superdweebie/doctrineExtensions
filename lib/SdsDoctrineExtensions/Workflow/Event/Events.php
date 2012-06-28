@@ -13,7 +13,6 @@ namespace SdsDoctrineExtensions\Workflow\Event;
  */
 final class Events
 {
-    private function __construct() {}
 
     /**
      * Called if state change is attempted which has not transition defined

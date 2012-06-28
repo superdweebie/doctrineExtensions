@@ -13,7 +13,6 @@ namespace SdsDoctrineExtensions\Freeze\AccessControl\Event;
  */
 final class Events
 {
-    private function __construct() {}
 
     /**
      * Triggered when activeUser attempts to freeze a document they don't have permission

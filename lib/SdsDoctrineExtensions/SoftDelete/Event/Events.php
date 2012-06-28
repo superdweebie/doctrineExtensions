@@ -14,7 +14,6 @@ namespace SdsDoctrineExtensions\SoftDelete\Event;
  */
 final class Events
 {
-    private function __construct() {}
 
     /**
      * Fires before soft delete happens

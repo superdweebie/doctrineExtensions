@@ -2,6 +2,7 @@
 
 namespace SdsDoctrineExtensionsTest\SoftDelete;
 
+use SdsDoctrineExtensions\SoftDelete\Event\Events;
 use SdsDoctrineExtensionsTest\BaseTest;
 use SdsDoctrineExtensionsTest\SoftDelete\TestAsset\Document\Simple;
 use SdsDoctrineExtensionsTest\SoftDelete\TestAsset\Subscriber;
@@ -171,10 +172,11 @@ class SoftDeleteTest extends BaseTest {
         $id = $testDoc->getId();
         $documentManager->clear();
 
-        $this->assertFalse($subscriber->getPreDeleteCalled());
-        $this->assertFalse($subscriber->getPostDeleteCalled());
-        $this->assertFalse($subscriber->getPreRestoreCalled());
-        $this->assertFalse($subscriber->getPostRestoreCalled());
+        $calls = $subscriber->getCalls();
+        $this->assertFalse(isset($calls[Events::preSoftDelete]));
+        $this->assertFalse(isset($calls[Events::postSoftDelete]));
+        $this->assertFalse(isset($calls[Events::preRestore]));
+        $this->assertFalse(isset($calls[Events::postRestore]));
 
         $repository = $documentManager->getRepository(get_class($testDoc));
         $testDoc = null;
@@ -187,10 +189,11 @@ class SoftDeleteTest extends BaseTest {
 
         $documentManager->flush();
 
-        $this->assertTrue($subscriber->getPreDeleteCalled());
-        $this->assertTrue($subscriber->getPostDeleteCalled());
-        $this->assertFalse($subscriber->getPreRestoreCalled());
-        $this->assertFalse($subscriber->getPostRestoreCalled());
+        $calls = $subscriber->getCalls();
+        $this->assertTrue(isset($calls[Events::preSoftDelete]));
+        $this->assertTrue(isset($calls[Events::postSoftDelete]));
+        $this->assertFalse(isset($calls[Events::preRestore]));
+        $this->assertFalse(isset($calls[Events::postRestore]));
 
         $testDoc = null;
         $testDoc = $repository->find($id);
@@ -201,17 +204,19 @@ class SoftDeleteTest extends BaseTest {
         $subscriber->reset();
         $documentManager->flush();
 
-        $this->assertTrue($subscriber->getSoftDeleteUpdateDeniedCalled());
+        $calls = $subscriber->getCalls();
+        $this->assertTrue(isset($calls[Events::softDeletedUpdateDenied]));
 
         $testDoc->restore();
         $subscriber->reset();
 
         $documentManager->flush();
 
-        $this->assertFalse($subscriber->getPreDeleteCalled());
-        $this->assertFalse($subscriber->getPostDeleteCalled());
-        $this->assertTrue($subscriber->getPreRestoreCalled());
-        $this->assertTrue($subscriber->getPostRestoreCalled());
+        $calls = $subscriber->getCalls();
+        $this->assertFalse(isset($calls[Events::preSoftDelete]));
+        $this->assertFalse(isset($calls[Events::postSoftDelete]));
+        $this->assertTrue(isset($calls[Events::preRestore]));
+        $this->assertTrue(isset($calls[Events::postRestore]));
 
         $testDoc = null;
         $testDoc = $repository->find($id);
@@ -224,10 +229,11 @@ class SoftDeleteTest extends BaseTest {
 
         $documentManager->flush();
 
-        $this->assertTrue($subscriber->getPreDeleteCalled());
-        $this->assertFalse($subscriber->getPostDeleteCalled());
-        $this->assertFalse($subscriber->getPreRestoreCalled());
-        $this->assertFalse($subscriber->getPostRestoreCalled());
+        $calls = $subscriber->getCalls();
+        $this->assertTrue(isset($calls[Events::preSoftDelete]));
+        $this->assertFalse(isset($calls[Events::postSoftDelete]));
+        $this->assertFalse(isset($calls[Events::preRestore]));
+        $this->assertFalse(isset($calls[Events::postRestore]));
 
         $testDoc = null;
         $testDoc = $repository->find($id);
@@ -248,9 +254,10 @@ class SoftDeleteTest extends BaseTest {
 
         $documentManager->flush();
 
-        $this->assertFalse($subscriber->getPreDeleteCalled());
-        $this->assertFalse($subscriber->getPostDeleteCalled());
-        $this->assertTrue($subscriber->getPreRestoreCalled());
-        $this->assertFalse($subscriber->getPostRestoreCalled());
+        $calls = $subscriber->getCalls();
+        $this->assertFalse(isset($calls[Events::preSoftDelete]));
+        $this->assertFalse(isset($calls[Events::postSoftDelete]));
+        $this->assertTrue(isset($calls[Events::preRestore]));
+        $this->assertFalse(isset($calls[Events::postRestore]));
     }
 }
