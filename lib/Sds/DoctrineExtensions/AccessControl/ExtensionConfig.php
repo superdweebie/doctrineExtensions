@@ -32,7 +32,7 @@ class ExtensionConfig extends AbstractExtensionConfig implements
      * @var boolean
      */
     protected $permissionClass = 'Sds\DoctrineExtensions\AccessControl\Model\Permission';
-    
+
     /**
      *
      * @var array
@@ -42,7 +42,7 @@ class ExtensionConfig extends AbstractExtensionConfig implements
         'Sds\DoctrineExtensions\Audit' => null,
         'Sds\DoctrineExtensions\Readonly' => null
     );
-    
+
     /**
      *
      * @var boolean
@@ -137,9 +137,9 @@ class ExtensionConfig extends AbstractExtensionConfig implements
     public function setAccessControlDelete($accessControlDelete) {
         $this->accessControlDelete = (boolean) $accessControlDelete;
     }
-    
+
     /**
-     * 
+     *
      * @return string
      */
     public function getPermissionClass() {
@@ -147,12 +147,12 @@ class ExtensionConfig extends AbstractExtensionConfig implements
     }
 
     /**
-     * 
+     *
      * @param string $permissonClass
      */
     public function setPermissionClass($permissionClass) {
         $this->permissionClass = (string) $permissionClass;
     }
 
-    
+
 }

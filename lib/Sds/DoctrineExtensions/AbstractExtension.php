@@ -22,7 +22,7 @@ abstract class AbstractExtension implements ExtensionInterface {
 
     /**
      *
-     * @var \Sds\DoctrineExtensions\AbstractExtensionConfig
+     * @var \SdsDoctrineExtensions\AbstractExtensionConfig
      */
     protected $config;
 
@@ -52,7 +52,7 @@ abstract class AbstractExtension implements ExtensionInterface {
 
     /**
      *
-     * @param \Sds\DoctrineExtensions\AbstractExtensionConfig $config
+     * @param \SdsDoctrineExtensions\AbstractExtensionConfig $config
      */
     public function __construct($config = null){
         $configClass = $this->configClass;

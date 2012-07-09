@@ -24,8 +24,8 @@ class Extension extends AbstractExtension {
         $config = $this->getConfig();
 
         $this->annotations = array(
-            'Sds\DoctrineExtensions\State\Mapping\Annotation' => __DIR__.'/../../',
-            'Sds\DoctrineExtensions\AccessControl\Mapping\Annotation' => __DIR__.'/../../'
+            'Sds\DoctrineExtensions\State\Mapping\Annotation' => __DIR__.'/../../../',
+            'Sds\DoctrineExtensions\AccessControl\Mapping\Annotation' => __DIR__.'/../../../'
         );
 
         $this->subscribers = array(new Subscriber\State($config->getAnnotationReader()));

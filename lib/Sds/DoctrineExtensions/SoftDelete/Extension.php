@@ -28,8 +28,8 @@ class Extension extends AbstractExtension {
         $activeUser = $config->getActiveUser();
 
         $this->annotations = array(
-            'Sds\DoctrineExtensions\SoftDelete\Mapping\Annotation' => __DIR__.'/../../',
-            'Sds\DoctrineExtensions\AccessControl\Mapping\Annotation' => __DIR__.'/../../'
+            'Sds\DoctrineExtensions\SoftDelete\Mapping\Annotation' => __DIR__.'/../../../',
+            'Sds\DoctrineExtensions\AccessControl\Mapping\Annotation' => __DIR__.'/../../../'
         );
 
         $this->subscribers = array(new Subscriber\SoftDelete($config->getAnnotationReader()));

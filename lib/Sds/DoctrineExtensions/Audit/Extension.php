@@ -24,7 +24,7 @@ class Extension extends AbstractExtension {
         $config = $this->getConfig();
 
         $this->annotations = array(
-            'Sds\DoctrineExtensions\Audit\Mapping\Annotation' => __DIR__.'/../../',
+            'Sds\DoctrineExtensions\Audit\Mapping\Annotation' => __DIR__.'/../../../',
         );
 
         $this->subscribers = array(new AuditSubscriber(

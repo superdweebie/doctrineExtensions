@@ -67,7 +67,7 @@ class Freeze implements EventSubscriber, AnnotationReaderAwareInterface
         $documentManager = $eventArgs->getDocumentManager();
         $unitOfWork = $documentManager->getUnitOfWork();
         $eventManager = $documentManager->getEventManager();
-            
+
         foreach ($unitOfWork->getScheduledDocumentUpdates() AS $document) {
 
             if (!$document instanceof FreezeableInterface) {
@@ -77,17 +77,17 @@ class Freeze implements EventSubscriber, AnnotationReaderAwareInterface
             $metadata = $documentManager->getClassMetadata(get_class($document));
             if (!isset($metadata->freezeField)) {
                 throw new \Exception(sprintf(
-                    'Document class %s implements the FreezeableInterface, but does not have a field annotatated as @freezeField.', 
+                    'Document class %s implements the FreezeableInterface, but does not have a field annotatated as @freezeField.',
                     get_class($document)
                 ));
             }
-                        
+
             $changeSet = $unitOfWork->getDocumentChangeSet($document);
             $field = $metadata->freezeField;
-                        
+
             if (!isset($changeSet[$field])) {
                 if ($document->getFrozen()) {
-                    // Updates to frozen documents are not allowed. Roll them back                    
+                    // Updates to frozen documents are not allowed. Roll them back
                     $unitOfWork->clearDocumentChangeSet(spl_object_hash($document));
 
                     // Raise frozenUpdateDenied
@@ -154,18 +154,18 @@ class Freeze implements EventSubscriber, AnnotationReaderAwareInterface
                 }
             }
         }
-        
+
         foreach ($unitOfWork->getScheduledDocumentDeletions() AS $document) {
 
             if (!$document instanceof FreezeableInterface) {
                 continue;
             }
-            
+
             if (!$document->getFrozen()){
                 continue;
             }
-            
-            // Deletions of frozen documents are not allowed. Roll them back                    
+
+            // Deletions of frozen documents are not allowed. Roll them back
             $documentManager->persist($document);
 
             // Raise frozenDeleteDenied
@@ -174,7 +174,7 @@ class Freeze implements EventSubscriber, AnnotationReaderAwareInterface
                     FreezeEvents::frozenDeleteDenied,
                     new LifecycleEventArgs($document, $documentManager)
                 );
-            }            
-        }        
+            }
+        }
     }
 }

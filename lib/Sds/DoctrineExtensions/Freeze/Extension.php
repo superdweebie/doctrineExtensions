@@ -29,8 +29,8 @@ class Extension extends AbstractExtension {
         $activeUser = $config->getActiveUser();
 
         $this->annotations = array(
-            'Sds\DoctrineExtensions\Freeze\Mapping\Annotation' => __DIR__.'/../../',
-            'Sds\DoctrineExtensions\AccessControl\Mapping\Annotation' => __DIR__.'/../../'
+            'Sds\DoctrineExtensions\Freeze\Mapping\Annotation' => __DIR__.'/../../../',
+            'Sds\DoctrineExtensions\AccessControl\Mapping\Annotation' => __DIR__.'/../../../'
         );
 
         $this->subscribers = array(new FreezeSubscriber($config->getAnnotationReader()));

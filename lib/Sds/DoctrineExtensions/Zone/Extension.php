@@ -23,7 +23,7 @@ class Extension extends AbstractExtension {
         parent::__construct($config);
         $config = $this->getConfig();
 
-        $this->annotations = array('Sds\DoctrineExtensions\Zone\Mapping\Annotation' => __DIR__.'/../../');
+        $this->annotations = array('Sds\DoctrineExtensions\Zone\Mapping\Annotation' => __DIR__.'/../../../');
 
         $this->subscribers = array(new ZoneSubscriber($config->getAnnotationReader()));
 

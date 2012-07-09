@@ -16,7 +16,7 @@ interface ExtensionInterface{
     /**
      * Return the config object
      *
-     * @return \Sds\DoctrineExtensions\AbstractExtensionConfig
+     * @return \SdsDoctrineExtensions\AbstractExtensionConfig
      */
     public function getConfig();
 
