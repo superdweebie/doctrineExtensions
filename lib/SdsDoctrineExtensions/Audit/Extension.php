@@ -17,12 +17,11 @@ use SdsDoctrineExtensions\Audit\Subscriber\Audit as AuditSubscriber;
  */
 class Extension extends AbstractExtension {
 
-    /**
-     *
-     * @param \SdsDoctrineExtensions\Audit\ExtensionConfig $config
-     */
-    public function __construct(ExtensionConfig $config){
-        $this->config = $config;
+    public function __construct($config){
+
+        $this->configClass = __NAMESPACE__ . '\ExtensionConfig';
+        parent::__construct($config);
+        $config = $this->getConfig();
 
         $this->annotations = array(
             'SdsDoctrineExtensions\Audit\Mapping\Annotation' => __DIR__.'/../../',

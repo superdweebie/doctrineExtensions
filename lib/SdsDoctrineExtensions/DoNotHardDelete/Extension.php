@@ -17,12 +17,11 @@ use SdsDoctrineExtensions\DoNotHardDelete\Subscriber\DoNotHardDelete as DoNotHar
  */
 class Extension extends AbstractExtension {
 
-    /**
-     *
-     * @param \SdsDoctrineExtensions\Readonly\ExtensionConfig $config
-     */
-    public function __construct(ExtensionConfig $config){
-        $this->config = $config;
+    public function __construct($config){
+
+        $this->configClass = __NAMESPACE__ . '\ExtensionConfig';
+        parent::__construct($config);
+        $config = $this->getConfig();
 
         $this->annotations = array('SdsDoctrineExtensions\DoNotHardDelete\Mapping\Annotation' => __DIR__.'/../../');
 

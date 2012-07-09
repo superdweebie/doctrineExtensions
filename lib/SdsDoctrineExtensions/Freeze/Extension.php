@@ -20,14 +20,13 @@ use SdsDoctrineExtensions\Freeze\AccessControl\Subscriber\Thaw as AccessControlT
  */
 class Extension extends AbstractExtension {
 
-    /**
-     *
-     * @param \SdsDoctrineExtensions\Readonly\ExtensionConfig $config
-     */
-    public function __construct(ExtensionConfig $config){
-        $activeUser = $config->getActiveUser();
+    public function __construct($config){
 
-        $this->config = $config;
+        $this->configClass = __NAMESPACE__ . '\ExtensionConfig';
+        parent::__construct($config);
+        $config = $this->getConfig();
+
+        $activeUser = $config->getActiveUser();
 
         $this->annotations = array(
             'SdsDoctrineExtensions\Freeze\Mapping\Annotation' => __DIR__.'/../../',

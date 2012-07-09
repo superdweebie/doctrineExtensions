@@ -17,12 +17,11 @@ use SdsDoctrineExtensions\Stamp\Subscriber\Stamp as StampSubscriber;
  */
 class Extension extends AbstractExtension {
 
-    /**
-     *
-     * @param \SdsDoctrineExtensions\Stamp\ExtensionConfig $config
-     */
-    public function __construct(ExtensionConfig $config){
-        $this->config = $config;
+    public function __construct($config){
+
+        $this->configClass = __NAMESPACE__ . '\ExtensionConfig';
+        parent::__construct($config);
+        $config = $this->getConfig();
 
         $this->subscribers = array(new StampSubscriber($config->getActiveUser()));
     }

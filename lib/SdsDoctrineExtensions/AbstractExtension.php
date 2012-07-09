@@ -16,6 +16,12 @@ abstract class AbstractExtension implements ExtensionInterface {
 
     /**
      *
+     * @var string
+     */
+    protected $configClass;
+
+    /**
+     *
      * @var \SdsDoctrineExtensions\AbstractExtensionConfig
      */
     protected $config;
@@ -48,7 +54,17 @@ abstract class AbstractExtension implements ExtensionInterface {
      *
      * @param \SdsDoctrineExtensions\AbstractExtensionConfig $config
      */
-    public function __construct(AbstractExtensionConfig $config){
+    public function __construct($config = null){
+        $configClass = $this->configClass;
+
+        if (is_array($config) ||
+            ($config instanceof \Traversable)
+        ) {
+            $config = new $configClass($config);
+        } elseif (!($config instanceof $configClass) && isset($config)) {
+            throw new \InvalidArgumentException(sprintf('Argument supplied to Extension constructor must be array, implement Traversable, or instance of %s',
+                $configClass));
+        }
         $this->config = $config;
     }
 

@@ -34,18 +34,11 @@ implements
      * @param \Doctrine\Common\Annotations\Reader $annoationReader
      * @param array $extensionConfigs
      */
-    public function __construct(
-        Reader $annoationReader = null,
-        array $extensionConfigs = array(),
-        UserInterface $activeUser = null
-        ){
-        if (isset($annoationReader)) {
-            $this->setAnnotationReader($annoationReader);
-        } else {
+    public function __construct($options = null){
+        parent::__construct($options);
+        if (!isset($this->annotationReader)){
             $this->setAnnotationReader(new AnnotationReader());
         }
-        $this->setExtensionConfigs($extensionConfigs);
-        isset($activeUser) ? $this->setActiveUser($activeUser) : null;
     }
 
     /**

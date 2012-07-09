@@ -19,10 +19,13 @@ class Extension extends AbstractExtension {
 
     /**
      *
-     * @param \SdsDoctrineExtensions\Readonly\ExtensionConfig $config
+     * @param array|\Traversable|\SdsDoctrineExtensions\AccessControl\ExtensionConfig $config
      */
-    public function __construct(ExtensionConfig $config){
-        $this->config = $config;
+    public function __construct($config){
+        
+        $this->configClass = __NAMESPACE__ . '\ExtensionConfig';
+        parent::__construct($config);
+        $config = $this->getConfig();
 
         $this->subscribers = array(new AccessControlSubscriber(
             $config->getAnnotationReader(),

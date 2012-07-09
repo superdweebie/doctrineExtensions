@@ -40,15 +40,18 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
 
     protected function getManifest(array $extensionConfigs){
 
-        $manifestConfig = new ManifestConfig(
-            $this->annotationReader,
-            $extensionConfigs,
-            $this->activeUser
+        $config = array(
+            'AnnotationReader' => $this->annotationReader,
+            'ExtensionConfigs' => $extensionConfigs
         );
+        if (isset($this->activeUser)) {
+            $config['ActiveUser'] = $this->activeUser;
+        }
+        $manifestConfig = new ManifestConfig($config);
 
         return new Manifest($manifestConfig);
     }
-    
+
     protected function configDoctrine(
         array $documents = array(),
         array $filters = array(),

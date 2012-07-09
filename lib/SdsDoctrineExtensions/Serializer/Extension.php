@@ -17,12 +17,11 @@ use SdsDoctrineExtensions\Serializer\Subscriber\Serializer as SerializerSubscrib
  */
 class Extension extends AbstractExtension {
 
-    /**
-     *
-     * @param \SdsDoctrineExtensions\Serializer\ExtensionConfig $config
-     */
-    public function __construct(ExtensionConfig $config){
-        $this->config = $config;
+    public function __construct($config){
+
+        $this->configClass = __NAMESPACE__ . '\ExtensionConfig';
+        parent::__construct($config);
+        $config = $this->getConfig();
 
         $this->annotations = array('SdsDoctrineExtensions\Serializer\Mapping\Annotation' => __DIR__.'/../../');
 

@@ -19,15 +19,13 @@ use SdsDoctrineExtensions\SoftDelete\AccessControl;
  */
 class Extension extends AbstractExtension {
 
-    /**
-     *
-     * @param \SdsDoctrineExtensions\Readonly\ExtensionConfig $config
-     */
-    public function __construct(ExtensionConfig $config){
+    public function __construct($config){
+
+        $this->configClass = __NAMESPACE__ . '\ExtensionConfig';
+        parent::__construct($config);
+        $config = $this->getConfig();
 
         $activeUser = $config->getActiveUser();
-
-        $this->config = $config;
 
         $this->annotations = array(
             'SdsDoctrineExtensions\SoftDelete\Mapping\Annotation' => __DIR__.'/../../',
