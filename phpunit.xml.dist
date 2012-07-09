@@ -11,8 +11,8 @@
          bootstrap="tests/bootstrap.php"
 >
     <testsuites>
-        <testsuite name="SdsDocrineExtensions Test Suite">
-            <directory>./tests/SdsDoctrineExtensionsTest/</directory>
+        <testsuite name="Sds DocrineExtensions Test Suite">
+            <directory>./tests/Sds/DoctrineExtensions/Test/</directory>
         </testsuite>
     </testsuites>
 

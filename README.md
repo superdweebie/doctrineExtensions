@@ -1,7 +1,7 @@
-SdsDoctrineExtensions
+DoctrineExtensions
 =====================
 
-[![Build Status](https://secure.travis-ci.org/superdweebie/SdsDoctrineExtensions.png)](http://travis-ci.org/superdweebie/SdsDoctrineExtensions)
+[![Build Status](https://secure.travis-ci.org/superdweebie/Sds\DoctrineExtensions.png)](http://travis-ci.org/superdweebie/Sds\DoctrineExtensions)
 
 A collection of php 5.4 traits, Documents, Annotations, Subscribers and Filters
 that can be used to extend doctrine.
@@ -96,21 +96,21 @@ Install
 Add the following to your composer.json:
 
     "require": {
-        "superdweebie/SdsDoctrineExtensions": "dev-master"
+        "superdweebie/Sds\DoctrineExtensions": "dev-master"
     }
 
 Usage
 =====
 
-The easiest way to use SdsDoctrineExtensions is to populate a `manifestConfig` with the
+The easiest way to use Sds\DoctrineExtensions is to populate a `manifestConfig` with the
 extensions you want to use, and pass it to a `manifest`. For example, this configures
 SoftDelete and Zone:
 
         $manifestConfig = new ManifestConfig(
             $myAnnotationReader,
             array(
-                'SdsDoctrineExtensions\SoftDelete' => null,
-                'SdsDoctrineExtensions\Zone' => null
+                'Sds\DoctrineExtensions\SoftDelete' => null,
+                'Sds\DoctrineExtensions\Zone' => null
             $this->activeUser
         );
 

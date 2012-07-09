@@ -6,7 +6,7 @@ if (!file_exists($file)) {
 }
 
 $loader = require_once $file;
-$loader->add('SdsDoctrineExtensionsTest', __DIR__);
+$loader->add('Sds\DoctrineExtensions\Test', __DIR__);
 
 use Doctrine\ODM\MongoDB\Mapping\Driver\AnnotationDriver;
 
