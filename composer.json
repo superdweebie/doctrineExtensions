@@ -1,5 +1,5 @@
 {
-    "name": "superdweebie/doctrineExtensions",
+    "name": "superdweebie/doctrine-extensions",
     "description": "Provides php 5.4 extension traits for Doctrine mongo",
     "type": "library",
     "keywords": [
