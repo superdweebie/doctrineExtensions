@@ -66,6 +66,8 @@ abstract class AbstractExtension implements ExtensionInterface {
                 $configClass));
         }
         $this->config = $config;
+
+        $this->annotations = array('Sds\DoctrineExtensions\Annotations' => __DIR__.'/../../');
     }
 
     /**

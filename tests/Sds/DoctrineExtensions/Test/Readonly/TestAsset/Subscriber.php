@@ -3,8 +3,8 @@
 namespace Sds\DoctrineExtensions\Test\Readonly\TestAsset;
 
 use Doctrine\Common\EventSubscriber;
-use Sds\DoctrineExtensions\Readonly\Event\Events as ReadonlyEvents;
-use Sds\DoctrineExtensions\Readonly\Event\EventArgs;
+use Sds\DoctrineExtensions\Readonly\Events as ReadonlyEvents;
+use Sds\DoctrineExtensions\Readonly\EventArgs;
 
 class Subscriber implements EventSubscriber {
 

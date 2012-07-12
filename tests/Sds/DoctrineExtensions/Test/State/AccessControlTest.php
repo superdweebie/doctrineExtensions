@@ -4,7 +4,7 @@ namespace Sds\DoctrineExtensions\Test\State;
 
 use Sds\DoctrineExtensions\AccessControl\Constant\Role;
 use Sds\DoctrineExtensions\AccessControl\Model\Permission;
-use Sds\DoctrineExtensions\State\AccessControl\Event\Events;
+use Sds\DoctrineExtensions\State\AccessControl\Events;
 use Sds\DoctrineExtensions\State\ExtensionConfig;
 use Sds\DoctrineExtensions\State\Transition;
 use Sds\DoctrineExtensions\Test\BaseTest;

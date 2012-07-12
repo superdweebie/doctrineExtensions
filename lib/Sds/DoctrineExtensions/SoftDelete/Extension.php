@@ -7,7 +7,6 @@
 namespace Sds\DoctrineExtensions\SoftDelete;
 
 use Sds\DoctrineExtensions\AbstractExtension;
-use Sds\DoctrineExtensions\SoftDelete\Subscriber;
 use Sds\DoctrineExtensions\SoftDelete\AccessControl;
 
 
@@ -27,20 +26,15 @@ class Extension extends AbstractExtension {
 
         $activeUser = $config->getActiveUser();
 
-        $this->annotations = array(
-            'Sds\DoctrineExtensions\SoftDelete\Mapping\Annotation' => __DIR__.'/../../../',
-            'Sds\DoctrineExtensions\AccessControl\Mapping\Annotation' => __DIR__.'/../../../'
-        );
-
-        $this->subscribers = array(new Subscriber\SoftDelete($config->getAnnotationReader()));
+        $this->subscribers = array(new Subscriber($config->getAnnotationReader()));
         if ($config->getUseSoftDeleteStamps()) {
-            $this->subscribers[] = new Subscriber\SoftStamp($activeUser);
+            $this->subscribers[] = new StampSubscriber($activeUser);
         }
         if ($config->getAccessControlSoftDelete()){
-            $this->subscribers[] = new AccessControl\Subscriber\SoftDelete($activeUser);
+            $this->subscribers[] = new AccessControl\SoftDeleteSubscriber($activeUser);
         }
         if ($config->getAccessControlRestore()){
-            $this->subscribers[] = new AccessControl\Subscriber\Restore($activeUser);
+            $this->subscribers[] = new AccessControl\RestoreSubscriber($activeUser);
         }
 
         $this->filters = array('softDelete' => 'Sds\DoctrineExtensions\SoftDelete\Filter\SoftDelete');

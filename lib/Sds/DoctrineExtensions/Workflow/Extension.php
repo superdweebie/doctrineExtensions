@@ -7,7 +7,6 @@
 namespace Sds\DoctrineExtensions\Workflow;
 
 use Sds\DoctrineExtensions\AbstractExtension;
-use Sds\DoctrineExtensions\Workflow\Subscriber;
 
 /**
  * Defines the resouces this extension provies
@@ -23,7 +22,7 @@ class Extension extends AbstractExtension {
         parent::__construct($config);
         $config = $this->getConfig();
 
-        $this->subscribers = array(new Subscriber\Workflow());
+        $this->subscribers = array(new Subscriber());
 
         $this->documents = array('Sds\DoctrineExtensions\Workflow\Model' => __DIR__.'\..\Model');
     }

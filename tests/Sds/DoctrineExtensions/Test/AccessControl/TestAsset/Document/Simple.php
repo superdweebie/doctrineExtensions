@@ -2,10 +2,12 @@
 
 namespace Sds\DoctrineExtensions\Test\AccessControl\TestAsset\Document;
 
-use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
 use Sds\Common\AccessControl\AccessControlledInterface;
 use Sds\DoctrineExtensions\AccessControl\Behaviour\AccessControlledTrait;
-use Sds\DoctrineExtensions\Readonly\Mapping\Annotation\Readonly as SDS_Readonly;
+
+//Annotation imports
+use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
+use Sds\DoctrineExtensions\Annotations as Sds;
 
 /** @ODM\Document */
 class Simple implements AccessControlledInterface {

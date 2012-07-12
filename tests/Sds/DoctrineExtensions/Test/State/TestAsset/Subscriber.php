@@ -3,8 +3,8 @@
 namespace Sds\DoctrineExtensions\Test\State\TestAsset;
 
 use Doctrine\Common\EventSubscriber;
-use Sds\DoctrineExtensions\State\Event\EventArgs as StateEventArgs;
-use Sds\DoctrineExtensions\State\Event\Events as StateEvents;
+use Sds\DoctrineExtensions\State\EventArgs as StateEventArgs;
+use Sds\DoctrineExtensions\State\Events as StateEvents;
 
 class Subscriber implements EventSubscriber {
 

@@ -2,12 +2,13 @@
 
 namespace Sds\DoctrineExtensions\Test\DoNotHardDelete\TestAsset\Document;
 
+//Annotation imports
 use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
-use Sds\DoctrineExtensions\DoNotHardDelete\Mapping\Annotation\DoNotHardDelete as SDS_DoNotHardDelete;
+use Sds\DoctrineExtensions\Annotations as Sds;
 
 /**
  * @ODM\Document
- * @SDS_DoNotHardDelete
+ * @Sds\DoNotHardDelete
  */
 class NotDeleteable {
 

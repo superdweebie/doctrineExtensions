@@ -7,7 +7,6 @@
 namespace Sds\DoctrineExtensions\Audit;
 
 use Sds\DoctrineExtensions\AbstractExtension;
-use Sds\DoctrineExtensions\Audit\Subscriber\Audit as AuditSubscriber;
 
 /**
  * Defines the resouces this extension provies
@@ -23,11 +22,7 @@ class Extension extends AbstractExtension {
         parent::__construct($config);
         $config = $this->getConfig();
 
-        $this->annotations = array(
-            'Sds\DoctrineExtensions\Audit\Mapping\Annotation' => __DIR__.'/../../../',
-        );
-
-        $this->subscribers = array(new AuditSubscriber(
+        $this->subscribers = array(new Subscriber(
             $config->getAnnotationReader(),
             $config->getActiveUser(),
             $config->getAuditClass()

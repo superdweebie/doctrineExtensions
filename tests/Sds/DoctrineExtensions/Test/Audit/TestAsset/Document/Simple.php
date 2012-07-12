@@ -2,10 +2,12 @@
 
 namespace Sds\DoctrineExtensions\Test\Audit\TestAsset\Document;
 
-use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
-use Sds\DoctrineExtensions\Audit\Mapping\Annotation\Audit as SDS_Audit;
-use Sds\DoctrineExtensions\Audit\Behaviour\AuditedTrait;
 use Sds\Common\Audit\AuditedInterface;
+use Sds\DoctrineExtensions\Audit\Behaviour\AuditedTrait;
+
+//Annotation imports
+use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
+use Sds\DoctrineExtensions\Annotations as Sds;
 
 /** @ODM\Document */
 class Simple implements AuditedInterface {
@@ -19,7 +21,7 @@ class Simple implements AuditedInterface {
 
     /**
      * @ODM\Field(type="string")
-     * @SDS_Audit
+     * @Sds\Audit
      */
     protected $name;
 

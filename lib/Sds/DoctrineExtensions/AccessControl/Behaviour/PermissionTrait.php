@@ -6,8 +6,9 @@
  */
 namespace Sds\DoctrineExtensions\AccessControl\Behaviour;
 
+//Annotation imports
 use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
-use Sds\DoctrineExtensions\Readonly\Mapping\Annotation\Readonly as SDS_Readonly;
+use Sds\DoctrineExtensions\Annotations as Sds;
 
 /**
  * Implements Sds\Common\AccessControl\PermissionInterface
@@ -18,27 +19,37 @@ use Sds\DoctrineExtensions\Readonly\Mapping\Annotation\Readonly as SDS_Readonly;
 trait PermissionTrait
 {
     /**
-    * @ODM\String
-    * @SDS_Readonly
-    */
+     * @ODM\String
+     * @Sds\Readonly
+     * @Sds\UiHints(
+     *     label = "State"
+     * )
+     * @Sds\Validator(class = "Sds\DoctrineExtensions\Validator\Validator\StandardName")
+     */
     protected $state;
 
     /**
-    * @ODM\String
-    * @SDS_Readonly
-    */
+     * @ODM\String
+     * @Sds\Readonly
+     * @Sds\UiHints(
+     *     label = "Action"
+     * )
+     * @Sds\Validator(class = "Sds\DoctrineExtensions\Validator\Validator\StandardName")
+     */
     protected $action;
 
     /**
-    * @ODM\String
-    * @SDS_Readonly
-    */
+     * @ODM\String
+     * @Sds\Readonly
+     * @Sds\UiHints(
+     *     label = "Role"
+     * )
+     * @Sds\Validator(class = "Sds\DoctrineExtensions\Validator\Validator\StandardName")
+     */
     protected $role;
 
     /**
      * @ODM\Boolean
-     *
-     * @var boolean
      */
     protected $stateEqualToParent;
 

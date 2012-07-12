@@ -5,7 +5,7 @@ namespace Sds\DoctrineExtensions\Test\Freeze;
 use Sds\DoctrineExtensions\AccessControl\Constant\Role;
 use Sds\DoctrineExtensions\AccessControl\Model\Permission;
 use Sds\DoctrineExtensions\Freeze\AccessControl\Constant\Action;
-use Sds\DoctrineExtensions\Freeze\AccessControl\Event\Events;
+use Sds\DoctrineExtensions\Freeze\AccessControl\Events;
 use Sds\DoctrineExtensions\Freeze\ExtensionConfig;
 use Sds\DoctrineExtensions\Test\BaseTest;
 use Sds\DoctrineExtensions\Test\Freeze\TestAsset\Document\AccessControlled;

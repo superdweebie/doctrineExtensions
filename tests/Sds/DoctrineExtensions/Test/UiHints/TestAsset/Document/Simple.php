@@ -2,15 +2,16 @@
 
 namespace Sds\DoctrineExtensions\Test\UiHints\TestAsset\Document;
 
+//Annotation imports
 use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
-use Sds\DoctrineExtensions\UiHints\Mapping\Annotation\UiHints as SDS_UiHints;
+use Sds\DoctrineExtensions\Annotations as Sds;
 
 /** @ODM\Document */
 class Simple {
 
     /**
      * @ODM\Id(strategy="UUID")
-     * @SDS_UiHints(
+     * @Sds\UiHints(
      *     hidden = true
      * )
      */
@@ -18,7 +19,7 @@ class Simple {
 
     /**
      * @ODM\Field(type="string")
-     * @SDS_UiHints(
+     * @Sds\UiHints(
      *     label = "Simple Name",
      *     width = 20,
      *     tooltip = "Simple document name",

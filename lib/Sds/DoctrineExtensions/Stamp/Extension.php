@@ -7,7 +7,6 @@
 namespace Sds\DoctrineExtensions\Stamp;
 
 use Sds\DoctrineExtensions\AbstractExtension;
-use Sds\DoctrineExtensions\Stamp\Subscriber\Stamp as StampSubscriber;
 
 /**
  * Defines the resouces this extension provies
@@ -23,6 +22,6 @@ class Extension extends AbstractExtension {
         parent::__construct($config);
         $config = $this->getConfig();
 
-        $this->subscribers = array(new StampSubscriber($config->getActiveUser()));
+        $this->subscribers = array(new Subscriber($config->getActiveUser()));
     }
 }

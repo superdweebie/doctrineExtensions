@@ -7,7 +7,6 @@
 namespace Sds\DoctrineExtensions\Serializer;
 
 use Sds\DoctrineExtensions\AbstractExtension;
-use Sds\DoctrineExtensions\Serializer\Subscriber\Serializer as SerializerSubscriber;
 
 /**
  * Defines the resouces this extension provies
@@ -23,8 +22,6 @@ class Extension extends AbstractExtension {
         parent::__construct($config);
         $config = $this->getConfig();
 
-        $this->annotations = array('Sds\DoctrineExtensions\Serializer\Mapping\Annotation' => __DIR__.'/../../../');
-
-        $this->subscribers = array(new SerializerSubscriber($config->getAnnotationReader()));
+        $this->subscribers = array(new Subscriber($config->getAnnotationReader()));
     }
 }

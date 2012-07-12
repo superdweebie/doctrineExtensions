@@ -2,7 +2,7 @@
 
 namespace Sds\DoctrineExtensions\Test\Workflow;
 
-use Sds\DoctrineExtensions\Workflow\Event\Events;
+use Sds\DoctrineExtensions\Workflow\Events;
 use Sds\DoctrineExtensions\Workflow\Model\Workflow;
 use Sds\DoctrineExtensions\Workflow\Model\Transition;
 use Sds\DoctrineExtensions\Workflow\Workflow as WorkflowHelper;

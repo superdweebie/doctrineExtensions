@@ -19,4 +19,12 @@ use Sds\DoctrineExtensions\AnnotationReaderAwareTrait;
 class ExtensionConfig extends AbstractExtensionConfig implements AnnotationReaderAwareInterface {
 
     use AnnotationReaderAwareTrait;
+
+    /**
+     *
+     * @var array
+     */
+    protected $dependencies = array(
+        'Sds\DoctrineExtensions\Accessor' => null
+    );
 }

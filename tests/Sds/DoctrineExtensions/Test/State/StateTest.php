@@ -2,7 +2,7 @@
 
 namespace Sds\DoctrineExtensions\Test\State;
 
-use Sds\DoctrineExtensions\State\Event\Events;
+use Sds\DoctrineExtensions\State\Events;
 use Sds\DoctrineExtensions\Test\BaseTest;
 use Sds\DoctrineExtensions\Test\State\TestAsset\Document\Simple;
 use Sds\DoctrineExtensions\Test\State\TestAsset\Subscriber;

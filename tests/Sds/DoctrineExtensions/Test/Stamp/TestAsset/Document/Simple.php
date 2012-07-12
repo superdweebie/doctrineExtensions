@@ -2,10 +2,12 @@
 
 namespace Sds\DoctrineExtensions\Test\Stamp\TestAsset\Document;
 
-use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
-use Sds\DoctrineExtensions\Readonly\Mapping\Annotation\Readonly as SDS_Readonly;
 use Sds\DoctrineExtensions\Stamp\Behaviour\StampTrait;
 use Sds\Common\Stamp;
+
+//Annotation imports
+use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
+use Sds\DoctrineExtensions\Annotations as Sds;
 
 /** @ODM\Document */
 class Simple implements

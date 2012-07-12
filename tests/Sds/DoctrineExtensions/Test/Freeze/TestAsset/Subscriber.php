@@ -3,7 +3,7 @@
 namespace Sds\DoctrineExtensions\Test\Freeze\TestAsset;
 
 use Doctrine\Common\EventSubscriber;
-use Sds\DoctrineExtensions\Freeze\Event\Events as FreezeEvents;
+use Sds\DoctrineExtensions\Freeze\Events as FreezeEvents;
 use Doctrine\ODM\MongoDB\Event\LifecycleEventArgs;
 
 class Subscriber implements EventSubscriber {

@@ -7,7 +7,7 @@
 namespace Sds\DoctrineExtensions\Serializer;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
-use Sds\DoctrineExtensions\Serializer\Mapping\MetadataInjector\Serializer as MetadataInjector;
+use Sds\DoctrineExtensions\Accessor\MetadataInjector as AccessorInjector;
 
 /**
  * Provides static methods for serializing documents
@@ -55,9 +55,9 @@ class Serializer {
                 continue;
             }
 
-            if(isset($mapping[MetadataInjector::serializeGetter])
+            if(isset($mapping[AccessorInjector::getter])
             ){
-                $getMethod = $mapping[MetadataInjector::serializeGetter];
+                $getMethod = $mapping[AccessorInjector::getter];
             } else {
                 $getMethod = 'get'.ucfirst($field);
             }

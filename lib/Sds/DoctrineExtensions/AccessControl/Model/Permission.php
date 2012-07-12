@@ -6,11 +6,12 @@
  */
 namespace Sds\DoctrineExtensions\AccessControl\Model;
 
-use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
 use Sds\Common\AccessControl\PermissionInterface;
 use Sds\DoctrineExtensions\AccessControl\Behaviour\PermissionTrait;
-use Sds\DoctrineExtensions\Readonly\Mapping\Annotation\Readonly as SDS_Readonly;
 
+//Annotation imports
+use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
+use Sds\DoctrineExtensions\Annotations as Sds;
 
 /**
  * Implementation of Sds\Common\AccessControl\PermissionInterface

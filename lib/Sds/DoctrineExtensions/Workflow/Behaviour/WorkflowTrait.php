@@ -6,9 +6,12 @@
  */
 namespace Sds\DoctrineExtensions\Workflow\Behaviour;
 
-use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
-use Sds\DoctrineExtensions\Readonly\Mapping\Annotation\Readonly as SDS_Readonly;
 use Sds\DoctrineExtensions\Workflow\Workflow as WorkflowHelper;
+
+//Annotation imports
+use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
+use Sds\DoctrineExtensions\Annotations as Sds;
+
 
 /**
  *
@@ -19,7 +22,7 @@ trait WorkflowTrait {
 
     /**
      * @ODM\Field(type="string")
-     * @SDS_Readonly
+     * @Sds\Readonly
      *
      * @var string
      */
@@ -27,7 +30,7 @@ trait WorkflowTrait {
 
     /**
      * @ODM\Field(type="hash")
-     * @SDS_Readonly
+     * @Sds\Readonly
      *
      * var array
      */
@@ -37,7 +40,7 @@ trait WorkflowTrait {
      * @ODM\EmbedMany(
      *   targetDocument="Sds\DoctrineExtensions\Workflow\Model\Transition"
      * )
-     * @SDS_Readonly
+     * @Sds\Readonly
      *
      * @var array
      */

@@ -7,7 +7,6 @@
 namespace Sds\DoctrineExtensions\AccessControl;
 
 use Sds\DoctrineExtensions\AbstractExtension;
-use Sds\DoctrineExtensions\AccessControl\Subscriber\AccessControl as AccessControlSubscriber;
 
 /**
  * Defines the resouces this extension provies
@@ -22,12 +21,12 @@ class Extension extends AbstractExtension {
      * @param array|\Traversable|\Sds\DoctrineExtensions\AccessControl\ExtensionConfig $config
      */
     public function __construct($config){
-        
+
         $this->configClass = __NAMESPACE__ . '\ExtensionConfig';
         parent::__construct($config);
         $config = $this->getConfig();
 
-        $this->subscribers = array(new AccessControlSubscriber(
+        $this->subscribers = array(new Subscriber(
             $config->getAnnotationReader(),
             $config->getActiveUser(),
             $config->getAccessControlCreate(),

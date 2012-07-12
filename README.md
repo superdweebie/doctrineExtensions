@@ -81,6 +81,10 @@ Allows fields to be annotated with extra metadata which may be helpful to ui ren
 
 Traits for user documents.
 
+##Validator
+
+Optional support for the \Zend\Validator library powered by \Zend\Form\Annotations.
+
 ##Workflow
 
 Allows the enforcement of document state changes to a predefined list of transitions. Ie: documents

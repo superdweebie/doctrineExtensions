@@ -2,7 +2,7 @@
 
 namespace Sds\DoctrineExtensions\Test\SoftDelete;
 
-use Sds\DoctrineExtensions\SoftDelete\Event\Events;
+use Sds\DoctrineExtensions\SoftDelete\Events;
 use Sds\DoctrineExtensions\Test\BaseTest;
 use Sds\DoctrineExtensions\Test\SoftDelete\TestAsset\Document\Simple;
 use Sds\DoctrineExtensions\Test\SoftDelete\TestAsset\Subscriber;

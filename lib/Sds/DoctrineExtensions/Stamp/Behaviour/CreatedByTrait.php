@@ -6,7 +6,9 @@
  */
 namespace Sds\DoctrineExtensions\Stamp\Behaviour;
 
+//Annotation imports
 use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
+use Sds\DoctrineExtensions\Annotations as Sds;
 
 /**
  * Implements \Sds\Common\Stamp\CreatedByInterface
@@ -18,7 +20,7 @@ trait CreatedByTrait {
 
     /**
      * @ODM\Field(type="string")
-     * @SDS_Readonly
+     * @Sds\Readonly
      */
     protected $createdBy;
 

@@ -2,8 +2,9 @@
 
 namespace Sds\DoctrineExtensions\Test\Readonly\TestAsset\Document;
 
+//Annotation imports
 use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
-use Sds\DoctrineExtensions\Readonly\Mapping\Annotation\Readonly as SDS_Readonly;
+use Sds\DoctrineExtensions\Annotations as Sds;
 
 /** @ODM\Document */
 class SetMethod {
@@ -15,13 +16,15 @@ class SetMethod {
 
     /**
      * @ODM\Field(type="string")
-     * @SDS_Readonly(setMethod="good")
+     * @Sds\Readonly
+     * @Sds\Setter("good")
      */
     protected $goodField;
 
     /**
      * @ODM\Field(type="string")
-     * @SDS_Readonly(setMethod="broken")
+     * @Sds\Readonly
+     * @Sds\Setter("broken")
      */
     protected $badField;
 

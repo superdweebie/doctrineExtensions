@@ -2,8 +2,9 @@
 
 namespace Sds\DoctrineExtensions\Test\Readonly\TestAsset\Document;
 
+//Annotation imports
 use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
-use Sds\DoctrineExtensions\Readonly\Mapping\Annotation\Readonly as SDS_Readonly;
+use Sds\DoctrineExtensions\Annotations as Sds;
 
 /** @ODM\Document */
 class Simple {
@@ -15,7 +16,7 @@ class Simple {
 
     /**
      * @ODM\Field(type="string")
-     * @SDS_Readonly
+     * @Sds\Readonly
      */
     protected $readonlyField;
 

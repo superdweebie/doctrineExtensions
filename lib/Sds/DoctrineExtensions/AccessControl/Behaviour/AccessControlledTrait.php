@@ -6,10 +6,11 @@
  */
 namespace Sds\DoctrineExtensions\AccessControl\Behaviour;
 
-use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
-use Sds\DoctrineExtensions\Readonly\Mapping\Annotation\Readonly as SDS_Readonly;
-use Sds\DoctrineExtensions\Audit\Mapping\Annotation\Audit as SDS_Audit;
 use Sds\Common\AccessControl\PermissionInterface;
+
+//Annotation imports
+use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
+use Sds\DoctrineExtensions\Annotations as Sds;
 
 /**
  * Implements Sds\Common\AccessControl\AccessControlledInterface
@@ -22,6 +23,10 @@ trait AccessControlledTrait{
     /**
      * @ODM\EmbedMany(
      *   targetDocument="Sds\DoctrineExtensions\AccessControl\Model\Permission"
+     * )
+     * @Sds\Audit
+     * @Sds\UiHints(
+     *     label = "Permissions"
      * )
      */
     protected $permissions = [];

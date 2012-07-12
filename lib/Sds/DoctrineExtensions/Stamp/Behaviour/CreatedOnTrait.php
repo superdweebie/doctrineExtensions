@@ -6,7 +6,9 @@
  */
 namespace Sds\DoctrineExtensions\Stamp\Behaviour;
 
+//Annotation imports
 use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
+use Sds\DoctrineExtensions\Annotations as Sds;
 
 /**
  * Implements \Sds\Common\Stamp\CreatedOnInterface
@@ -18,7 +20,7 @@ trait CreatedOnTrait {
 
     /**
      * @ODM\Field(type="timestamp")
-     * @SDS_Readonly
+     * @Sds\Readonly
      */
     protected $createdOn;
 

@@ -3,7 +3,7 @@
 namespace Sds\DoctrineExtensions\Test\SoftDelete\TestAsset;
 
 use Doctrine\Common\EventSubscriber;
-use Sds\DoctrineExtensions\SoftDelete\Event\Events as SoftDeleteEvents;
+use Sds\DoctrineExtensions\SoftDelete\Events as SoftDeleteEvents;
 use Doctrine\ODM\MongoDB\Event\LifecycleEventArgs;
 
 class Subscriber implements EventSubscriber {

@@ -2,11 +2,12 @@
 
 namespace Sds\DoctrineExtensions\Test\SoftDelete\TestAsset\Document;
 
-use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
 use Sds\Common\SoftDelete\SoftDeleteableInterface;
-use Sds\DoctrineExtensions\AccessControl\Mapping\Annotation\DoNotAccessControlUpdate as SDS_DoNotAccessControlUpdate;
 use Sds\DoctrineExtensions\SoftDelete\Behaviour\SoftDeleteableTrait;
-use Sds\DoctrineExtensions\SoftDelete\Mapping\Annotation\SoftDeleteField as SDS_SoftDeleteField;
+
+//Annotation imports
+use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
+use Sds\DoctrineExtensions\Annotations as Sds;
 
 /** @ODM\Document */
 class Simple implements SoftDeleteableInterface {

@@ -6,10 +6,12 @@
  */
 namespace Sds\DoctrineExtensions\Workflow\Model;
 
-use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
 use Sds\Common\Workflow\WorkflowInterface;
-use Sds\DoctrineExtensions\Readonly\Mapping\Annotation\Readonly as SDS_Readonly;
 use Sds\DoctrineExtensions\Workflow\Behaviour\WorkflowTrait;
+
+//Annotation imports
+use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
+use Sds\DoctrineExtensions\Annotations as Sds;
 
 /**
  * Implementation of Sds\Common\Workflow\WorkflowInterface

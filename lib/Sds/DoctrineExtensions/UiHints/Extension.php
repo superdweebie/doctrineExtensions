@@ -7,7 +7,6 @@
 namespace Sds\DoctrineExtensions\UiHints;
 
 use Sds\DoctrineExtensions\AbstractExtension;
-use Sds\DoctrineExtensions\UiHints\Subscriber\UiHints as UiHintsSubscriber;
 
 /**
  * Defines the resouces this extension provies
@@ -23,8 +22,6 @@ class Extension extends AbstractExtension {
         parent::__construct($config);
         $config = $this->getConfig();
 
-        $this->annotations = array('Sds\DoctrineExtensions\UiHints\Mapping\Annotation' => __DIR__.'/../../../');
-
-        $this->subscribers = array(new UiHintsSubscriber($config->getAnnotationReader()));
+        $this->subscribers = array(new Subscriber($config->getAnnotationReader()));
     }
 }

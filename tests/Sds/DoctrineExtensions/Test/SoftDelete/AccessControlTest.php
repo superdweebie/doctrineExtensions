@@ -5,7 +5,7 @@ namespace Sds\DoctrineExtensions\Test\SoftDelete;
 use Sds\DoctrineExtensions\AccessControl\Constant\Role;
 use Sds\DoctrineExtensions\AccessControl\Model\Permission;
 use Sds\DoctrineExtensions\SoftDelete\AccessControl\Constant\Action;
-use Sds\DoctrineExtensions\SoftDelete\AccessControl\Event\Events;
+use Sds\DoctrineExtensions\SoftDelete\AccessControl\Events;
 use Sds\DoctrineExtensions\SoftDelete\ExtensionConfig;
 use Sds\DoctrineExtensions\Test\BaseTest;
 use Sds\DoctrineExtensions\Test\SoftDelete\TestAsset\Document\AccessControlled;

@@ -7,7 +7,6 @@
 namespace Sds\DoctrineExtensions\Zone;
 
 use Sds\DoctrineExtensions\AbstractExtension;
-use Sds\DoctrineExtensions\Zone\Subscriber\Zone as ZoneSubscriber;
 
 /**
  * Defines the resouces this extension provies
@@ -23,9 +22,7 @@ class Extension extends AbstractExtension {
         parent::__construct($config);
         $config = $this->getConfig();
 
-        $this->annotations = array('Sds\DoctrineExtensions\Zone\Mapping\Annotation' => __DIR__.'/../../../');
-
-        $this->subscribers = array(new ZoneSubscriber($config->getAnnotationReader()));
+        $this->subscribers = array(new Subscriber($config->getAnnotationReader()));
 
         $this->filters = array('zone' => 'Sds\DoctrineExtensions\Zone\Filter\Zone');
     }

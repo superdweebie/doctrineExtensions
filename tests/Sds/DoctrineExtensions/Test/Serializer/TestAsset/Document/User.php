@@ -2,10 +2,11 @@
 
 namespace Sds\DoctrineExtensions\Test\Serializer\TestAsset\Document;
 
-use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
-use Sds\DoctrineExtensions\Serializer\Mapping\Annotation\DoNotSerialize as SDS_DoNotSerialize;
-use Sds\DoctrineExtensions\Serializer\Mapping\Annotation\SerializeGetter as SDS_SerializeGetter;
 use Doctrine\Common\Collections\ArrayCollection;
+
+//Annotation imports
+use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
+use Sds\DoctrineExtensions\Annotations as Sds;
 
 /** @ODM\Document */
 class User {
@@ -22,7 +23,7 @@ class User {
 
     /**
      * @ODM\Field(type="string")
-     * @SDS_DoNotSerialize
+     * @Sds\DoNotSerialize
      */
     protected $password;
 
@@ -35,7 +36,7 @@ class User {
 
     /**
      * @ODM\Field(type="string")
-     * @SDS_SerializeGetter("location")
+     * @Sds\Getter("location")
      */
     protected $location;
 

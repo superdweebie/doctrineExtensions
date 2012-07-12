@@ -18,6 +18,9 @@
         "superdweebie/common": "master@dev",
         "doctrine/mongodb-odm": "master@dev"
     },
+    "suggest": {
+        "zendframework/zend-validator": "Some traits have zend-validator annotations. By default these are ingnored, but if you want them active, you'll need this package."
+    },
     "autoload": {
         "psr-0": {
             "Sds\\DoctrineExtensions": "lib/"

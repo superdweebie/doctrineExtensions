@@ -2,8 +2,8 @@
 
 namespace Sds\DoctrineExtensions\Test\Audit;
 
-use Sds\DoctrineExtensions\Audit\Event\EventArgs;
-use Sds\DoctrineExtensions\Audit\Event\Events;
+use Sds\DoctrineExtensions\Audit\EventArgs;
+use Sds\DoctrineExtensions\Audit\Events;
 use Sds\DoctrineExtensions\Test\BaseTest;
 use Sds\DoctrineExtensions\Test\Audit\TestAsset\Document\Simple;
 

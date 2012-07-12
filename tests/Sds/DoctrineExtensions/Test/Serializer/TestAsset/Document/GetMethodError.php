@@ -2,8 +2,9 @@
 
 namespace Sds\DoctrineExtensions\Test\Serializer\TestAsset\Document;
 
+//Annotation imports
 use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
-use Sds\DoctrineExtensions\Serializer\Mapping\Annotation\SerializeGetter as SDS_SerializeGetter;
+use Sds\DoctrineExtensions\Annotations as Sds;
 
 /** @ODM\Document */
 class GetMethodError {
@@ -15,7 +16,7 @@ class GetMethodError {
 
     /**
      * @ODM\Field(type="string")
-     * @SDS_SerializeGetter("broken")
+     * @Sds\Getter("broken")
      */
     protected $name;
 

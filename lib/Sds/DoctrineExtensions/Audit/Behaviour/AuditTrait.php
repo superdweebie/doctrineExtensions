@@ -6,8 +6,9 @@
  */
 namespace Sds\DoctrineExtensions\Audit\Behaviour;
 
+//Annotation imports
 use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
-use Sds\DoctrineExtensions\Readonly\Mapping\Annotation\Readonly as SDS_Readonly;
+use Sds\DoctrineExtensions\Annotations as Sds;
 
 /**
  * Implements Sds\Common\Audit\AuditInterface
@@ -19,25 +20,25 @@ trait AuditTrait
 {
     /**
     * @ODM\Field(type="string")
-    * @SDS_Readonly
+    * @Sds\Readonly
     */
     protected $oldValue;
 
     /**
     * @ODM\Field(type="string")
-    * @SDS_Readonly
+    * @Sds\Readonly
     */
     protected $newValue;
 
     /**
     * @ODM\Field(type="timestamp")
-    * @SDS_Readonly
+    * @Sds\Readonly
     */
     protected $changedOn;
 
     /**
     * @ODM\Field(type="string")
-    * @SDS_Readonly
+    * @Sds\Readonly
     */
     protected $changedBy;
 

@@ -6,8 +6,9 @@
  */
 namespace Sds\DoctrineExtensions\Workflow\Behaviour;
 
+//Annotation imports
 use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
-use Sds\DoctrineExtensions\Readonly\Mapping\Annotation\Readonly as SDS_Readonly;
+use Sds\DoctrineExtensions\Annotationa as Sds;
 
 /**
  *
@@ -18,13 +19,13 @@ trait TransitionTrait {
 
     /**
     * @ODM\Field(type="string")
-    * @SDS_Readonly
+    * @Sds\Readonly
     */
     protected $fromState;
 
     /**
     * @ODM\Field(type="string")
-    * @SDS_Readonly
+    * @Sds\Readonly
     */
     protected $toState;
 

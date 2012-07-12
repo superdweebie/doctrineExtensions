@@ -3,7 +3,7 @@
 namespace Sds\DoctrineExtensions\Test\AccessControl;
 
 use Sds\DoctrineExtensions\AccessControl\AccessController;
-use Sds\DoctrineExtensions\AccessControl\Event\Events as AccessControlEvents;
+use Sds\DoctrineExtensions\AccessControl\Events as AccessControlEvents;
 use Sds\DoctrineExtensions\AccessControl\Constant\Action;
 use Sds\DoctrineExtensions\AccessControl\Constant\Role;
 use Sds\DoctrineExtensions\AccessControl\Model\Permission;

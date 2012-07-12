@@ -2,7 +2,7 @@
 
 namespace Sds\DoctrineExtensions\Test\DoNotHardDelete;
 
-use Sds\DoctrineExtensions\DoNotHardDelete\Event\Events;
+use Sds\DoctrineExtensions\DoNotHardDelete\Events;
 use Sds\DoctrineExtensions\Test\BaseTest;
 use Sds\DoctrineExtensions\Test\DoNotHardDelete\TestAsset\Document\Deleteable;
 use Sds\DoctrineExtensions\Test\DoNotHardDelete\TestAsset\Document\NotDeleteable;

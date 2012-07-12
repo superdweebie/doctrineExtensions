@@ -6,10 +6,12 @@
  */
 namespace Sds\DoctrineExtensions\Workflow\Model;
 
-use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
 use Sds\Common\Workflow\TransitionInterface;
-use Sds\DoctrineExtensions\Readonly\Mapping\Annotation\Readonly as SDS_Readonly;
 use Sds\DoctrineExtensions\Workflow\Behaviour\TransitionTrait;
+
+//Annotation imports
+use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
+use Sds\DoctrineExtensions\Annotations as Sds;
 
 /**
  * Implementation of Sds\Common\Workflow\TransitionInterface

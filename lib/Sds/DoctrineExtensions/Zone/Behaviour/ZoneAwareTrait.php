@@ -6,8 +6,9 @@
  */
 namespace Sds\DoctrineExtensions\Zone\Behaviour;
 
+//Annotation imports
 use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
-use Sds\DoctrineExtensions\Zone\Mapping\Annotation\ZonesField as SDS_ZonesField;
+use Sds\DoctrineExtensions\Annotations as Sds;
 
 /**
  * Implements Sds\Common\ZoneAwareObjectTrait
@@ -19,7 +20,7 @@ trait ZoneAwareTrait {
 
     /**
      * @ODM\Field(type="hash")
-     * @SDS_ZonesField
+     * @Sds\ZonesField
      */
     protected $zones = array();
 

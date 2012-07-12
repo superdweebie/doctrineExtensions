@@ -7,7 +7,6 @@
 namespace Sds\DoctrineExtensions\State;
 
 use Sds\DoctrineExtensions\AbstractExtension;
-use Sds\DoctrineExtensions\State\Subscriber;
 
 /**
  * Defines the resouces this extension provies
@@ -23,14 +22,9 @@ class Extension extends AbstractExtension {
         parent::__construct($config);
         $config = $this->getConfig();
 
-        $this->annotations = array(
-            'Sds\DoctrineExtensions\State\Mapping\Annotation' => __DIR__.'/../../../',
-            'Sds\DoctrineExtensions\AccessControl\Mapping\Annotation' => __DIR__.'/../../../'
-        );
-
-        $this->subscribers = array(new Subscriber\State($config->getAnnotationReader()));
+        $this->subscribers = array(new Subscriber($config->getAnnotationReader()));
         if ($config->getAccessControlStateChange()){
-            $this->subscribers[] = new AccessControl\Subscriber\StateChange($config->getActiveUser());
+            $this->subscribers[] = new AccessControl\StateChangeSubscriber($config->getActiveUser());
         }
 
         $this->filters = array('state' => 'Sds\DoctrineExtensions\State\Filter\State');

@@ -40,7 +40,8 @@ class ExtensionConfig extends AbstractExtensionConfig implements
     protected $dependencies = array(
         'Sds\DoctrineExtensions\State' => null,
         'Sds\DoctrineExtensions\Audit' => null,
-        'Sds\DoctrineExtensions\Readonly' => null
+        'Sds\DoctrineExtensions\Readonly' => null,
+        'Sds\DoctrineExtensions\UiHints' => null
     );
 
     /**

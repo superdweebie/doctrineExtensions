@@ -2,7 +2,7 @@
 
 namespace Sds\DoctrineExtensions\Test\Readonly;
 
-use Sds\DoctrineExtensions\Readonly\Event\Events;
+use Sds\DoctrineExtensions\Readonly\Events;
 use Sds\DoctrineExtensions\Test\BaseTest;
 use Sds\DoctrineExtensions\Test\Readonly\TestAsset\Document\Simple;
 use Sds\DoctrineExtensions\Test\Readonly\TestAsset\Document\SetMethod;
