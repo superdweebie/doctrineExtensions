@@ -26,6 +26,23 @@ Permissions optionally support a state attribute also.
 Access Control can be extended to support other actions beyond Create, Read, Update and Delete. Several other
 extensions have extended access control support.
 
+##Accessor
+
+Some other extensions need to use property getter and setter methods. All extensions assume getter and setters
+that follow the standard format:
+
+    getProperty
+    setProperty($value)
+    
+However, this small extension allows you to define non-standard access or methods using property annotations:
+
+    /**
+     *
+     * @Sds\Getter('myGetter')
+     * @Sds\Setter('mySetter')
+     */
+    protected $property
+    
 ##Audit
 
 Will generate embedded audit documents for fields annotated with @audit. Audit documents record changes to the field, who made the
@@ -83,7 +100,18 @@ Traits for user documents.
 
 ##Validator
 
-Optional support for the \Zend\Validator library powered by \Zend\Form\Annotations.
+Provides property level and class level validators. This is not an actual library of validators,
+rather it is the wireing to call the validation library of your choice. Eg:
+
+    /**
+     * @Sds\Validator(class = 'MyValidator', options = (opt1 = 1, opt2 =2))
+     */
+     protected $property
+
+This would pass the options array to the constructor of MyValidator, and then call `$myValidator->isValid()`
+
+Validator is set up to easily use the \Zend\Validator library, however this is easily replaced by writing an
+alternative DocumentValidator class, and specifying it in the ExtensionConfig.
 
 ##Workflow
 
