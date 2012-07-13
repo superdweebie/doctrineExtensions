@@ -21,6 +21,8 @@ trait ZoneAwareTrait {
     /**
      * @ODM\Field(type="hash")
      * @Sds\ZonesField
+     * @Sds\UiHints(label = "Zones")
+     * @Sds\Validator(class = "Sds\DoctrineExtensions\Validator\Validator\StandardNameArray")
      */
     protected $zones = array();
 

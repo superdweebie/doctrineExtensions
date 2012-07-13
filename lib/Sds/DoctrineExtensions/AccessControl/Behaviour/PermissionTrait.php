@@ -8,7 +8,7 @@ namespace Sds\DoctrineExtensions\AccessControl\Behaviour;
 
 //Annotation imports
 use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
-use Sds\DoctrineExtensions\Annotations as Sds;
+use Sds\DoctrineExtensions\Annotation\Annotations as Sds;
 
 /**
  * Implements Sds\Common\AccessControl\PermissionInterface
@@ -20,6 +20,7 @@ trait PermissionTrait
 {
     /**
      * @ODM\String
+     * @ODM\Index
      * @Sds\Readonly
      * @Sds\UiHints(
      *     label = "State"
@@ -30,6 +31,7 @@ trait PermissionTrait
 
     /**
      * @ODM\String
+     * @ODM\Index
      * @Sds\Readonly
      * @Sds\UiHints(
      *     label = "Action"
@@ -40,6 +42,7 @@ trait PermissionTrait
 
     /**
      * @ODM\String
+     * @ODM\Index
      * @Sds\Readonly
      * @Sds\UiHints(
      *     label = "Role"

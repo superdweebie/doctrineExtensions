@@ -22,6 +22,10 @@ trait FreezeableTrait {
      * @ODM\Field(type="boolean")
      * @Sds\FreezeField
      * @Sds\DoNotAccessControlUpdate
+     * @Sds\UiHints(
+     *     label = "Frozen",
+     *     description = "When frozen, this document may not be changed or deleted."
+     * )
      */
     protected $frozen = false;
 

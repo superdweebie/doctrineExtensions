@@ -21,6 +21,7 @@ trait AuditedTrait {
      * @ODM\EmbedMany(
      *   targetDocument="Sds\DoctrineExtensions\Audit\Model\Audit"
      * )
+     * @Sds\UiHints(label = "Audits")
      */
     protected $audits = array();
 

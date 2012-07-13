@@ -22,6 +22,10 @@ trait SoftDeleteableTrait {
      * @ODM\Field(type="boolean")
      * @Sds\SoftDeleteField
      * @Sds\DoNotAccessControlUpdate
+     * @Sds\UiHints(
+     *     label = "Soft Deleted",
+     *     description = "When soft deleted, this document cannot be changed. (However, it can be deleted)"
+     * )
      */
     protected $softDeleted = false;
 

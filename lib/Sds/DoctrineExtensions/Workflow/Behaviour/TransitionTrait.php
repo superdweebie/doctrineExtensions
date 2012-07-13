@@ -18,15 +18,19 @@ use Sds\DoctrineExtensions\Annotationa as Sds;
 trait TransitionTrait {
 
     /**
-    * @ODM\Field(type="string")
-    * @Sds\Readonly
-    */
+     * @ODM\Field(type="string")
+     * @Sds\Readonly
+     * @Sds\UiHints(label = "From State")
+     * @Sds\Validator(class = "Sds\DoctrineExtensions\Validator\Validator\StandardName")
+     */
     protected $fromState;
 
     /**
-    * @ODM\Field(type="string")
-    * @Sds\Readonly
-    */
+     * @ODM\Field(type="string")
+     * @Sds\Readonly
+     * @Sds\UiHints(label = "To State")
+     * @Sds\Validator(class = "Sds\DoctrineExtensions\Validator\Validator\StandardName")
+     */
     protected $toState;
 
     /**

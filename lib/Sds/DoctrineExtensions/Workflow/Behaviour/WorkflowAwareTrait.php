@@ -27,6 +27,7 @@ trait WorkflowAwareTrait {
      *   targetDocument="Sds\DoctrineExtensions\Workflow\Model\Workflow"
      * )
      * @Sds\Readonly
+     * @Sds\UiHints(label = "Workflow")
      */
     protected $workflow = [];
 

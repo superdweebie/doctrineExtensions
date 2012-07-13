@@ -18,6 +18,7 @@ trait ThawedOnTrait {
 
     /**
      * @ODM\Field(type="timestamp")
+     * @Sds\UiHints(label = "Thawed On")
      */
     protected $thawedOn;
 

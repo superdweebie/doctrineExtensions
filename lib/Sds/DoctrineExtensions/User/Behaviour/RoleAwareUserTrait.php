@@ -19,6 +19,8 @@ trait RoleAwareUserTrait {
 
     /**
      * @ODM\Field(type="hash")
+     * @Sds\UiHints(label = "Roles")
+     * @Sds\Validator(class = "Sds\DoctrineExtensions\Validator\Validator\StandardNameArray")
      */
     protected $roles = [];
 

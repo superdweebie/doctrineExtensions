@@ -19,9 +19,12 @@ trait StateAwareTrait{
 
     /**
      * @ODM\Field(type="string")
+     * @ODM\Index
      * @Sds\Audit
      * @Sds\StateField
      * @Sds\DoNotAccessControlUpdate
+     * @Sds\UiHints(label = "State")
+     * @Sds\Validator(class = "Sds\DoctrineExtensions\Validator\Validator\StandardName")
      */
     protected $state;
 

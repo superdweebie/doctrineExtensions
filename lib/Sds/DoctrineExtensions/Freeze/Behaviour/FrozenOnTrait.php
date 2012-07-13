@@ -18,6 +18,7 @@ trait FrozenOnTrait {
 
     /**
      * @ODM\Field(type="timestamp")
+     * @Sds\UiHints(label = "Frozen On")
      */
     protected $frozenOn;
 

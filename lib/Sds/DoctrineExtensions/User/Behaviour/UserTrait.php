@@ -9,7 +9,10 @@ trait UserTrait {
 
     /**
      * @ODM\Field(type="string")
+     * @ODM\Index(unique = true, order = "asc")
      * @SDS_Readonly
+     * @Sds\UiHints(label = "Username")
+     * @Sds\Validator(class = "Sds\DoctrineExtensions\Validator\Validator\StandardName")
      */
     protected $username;
 

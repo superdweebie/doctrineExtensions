@@ -8,7 +8,7 @@ namespace Sds\DoctrineExtensions\Audit\Behaviour;
 
 //Annotation imports
 use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
-use Sds\DoctrineExtensions\Annotations as Sds;
+use Sds\DoctrineExtensions\Annotation\Annotations as Sds;
 
 /**
  * Implements Sds\Common\Audit\AuditInterface
@@ -19,27 +19,32 @@ use Sds\DoctrineExtensions\Annotations as Sds;
 trait AuditTrait
 {
     /**
-    * @ODM\Field(type="string")
-    * @Sds\Readonly
-    */
+     * @ODM\Field(type="string")
+     * @Sds\Readonly
+     * @Sds\UiHints(label = "Old Value")
+     */
     protected $oldValue;
 
     /**
-    * @ODM\Field(type="string")
-    * @Sds\Readonly
-    */
+     * @ODM\Field(type="string")
+     * @Sds\Readonly
+     * @Sds\UiHints(label = "New Value")
+     */
     protected $newValue;
 
     /**
-    * @ODM\Field(type="timestamp")
-    * @Sds\Readonly
-    */
+     * @ODM\Field(type="timestamp")
+     * @Sds\Readonly
+     * @Sds\UiHints(label = "Changed On")
+     */
     protected $changedOn;
 
     /**
-    * @ODM\Field(type="string")
-    * @Sds\Readonly
-    */
+     * @ODM\Field(type="string")
+     * @Sds\Readonly
+     * @Sds\UiHints(label = "Changed by")
+     * @Sds\Validator(class = "Sds\DoctrineExtensions\Validator\Validator\StandardName")
+     */
     protected $changedBy;
 
     /**

@@ -18,6 +18,9 @@ trait RestoredByTrait {
 
     /**
      * @ODM\Field(type="string")
+     * @ODM\Index
+     * @Sds\UiHints(label = "Restored by")
+     * @Sds\Validator(class = "Sds\DoctrineExtensions\Validator\Validator\StandardName")
      */
     protected $restoredBy;
 

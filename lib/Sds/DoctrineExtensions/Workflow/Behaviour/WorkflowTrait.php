@@ -23,6 +23,8 @@ trait WorkflowTrait {
     /**
      * @ODM\Field(type="string")
      * @Sds\Readonly
+     * @Sds\UiHints(label = "Start State")
+     * @Sds\Validator(class = "Sds\DoctrineExtensions\Validator\Validator\StandardName")
      *
      * @var string
      */
@@ -31,6 +33,8 @@ trait WorkflowTrait {
     /**
      * @ODM\Field(type="hash")
      * @Sds\Readonly
+     * @Sds\UiHints(label = "Possible States")
+     * @Sds\Validator(class = "Sds\DoctrineExtensions\Validator\Validator\StandardNameArray")
      *
      * var array
      */
@@ -41,6 +45,7 @@ trait WorkflowTrait {
      *   targetDocument="Sds\DoctrineExtensions\Workflow\Model\Transition"
      * )
      * @Sds\Readonly
+     * @Sds\UiHints(label = "Transitions")
      *
      * @var array
      */
@@ -48,6 +53,7 @@ trait WorkflowTrait {
 
     /**
      * @ODM\Field(type="hash")
+     * @Sds\UiHints(label = "Workflow Variables")
      *
      * @var array
      */

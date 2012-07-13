@@ -18,6 +18,9 @@ trait SoftDeletedByTrait {
 
     /**
      * @ODM\Field(type="string")
+     * @ODM\Index
+     * @Sds\UiHints(label = "Soft Deleted by")
+     * @Sds\Validator(class = "Sds\DoctrineExtensions\Validator\Validator\StandardName")
      */
     protected $softDeletedBy;
 
