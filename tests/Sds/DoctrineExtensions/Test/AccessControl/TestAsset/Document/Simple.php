@@ -7,7 +7,7 @@ use Sds\DoctrineExtensions\AccessControl\Behaviour\AccessControlledTrait;
 
 //Annotation imports
 use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
-use Sds\DoctrineExtensions\Annotations as Sds;
+use Sds\DoctrineExtensions\Annotation\Annotations as Sds;
 
 /** @ODM\Document */
 class Simple implements AccessControlledInterface {

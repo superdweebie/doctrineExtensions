@@ -5,7 +5,7 @@
  */
 namespace Sds\DoctrineExtensions\Validator;
 
-use Doctrine\ODM\MongoDB\DocumentManager;
+use Doctrine\ODM\MongoDB\Mapping\ClassMetadata;
 use Sds\DoctrineExtensions\Accessor\MetadataInjector as AccessorInjector;
 
 /**
@@ -17,25 +17,7 @@ use Sds\DoctrineExtensions\Accessor\MetadataInjector as AccessorInjector;
 class DocumentValidator implements DocumentValidatorInterface
 {
 
-    protected $documentManager;
-
     protected $messages = array();
-
-    /**
-     *
-     * @return \Doctrine\ODM\MongoDB\DocumentManager
-     */
-    public function getDocumentManager() {
-        return $this->documentManager;
-    }
-
-    /**
-     *
-     * @param \Doctrine\ODM\MongoDB\DocumentManager $documentManager
-     */
-    public function setDocumentManager(DocumentManager $documentManager) {
-        $this->documentManager = $documentManager;
-    }
 
     /**
      * Using zend\form\annotation\validator annotations, this method will check if a document
@@ -44,11 +26,9 @@ class DocumentValidator implements DocumentValidatorInterface
      * @param object $document
      * @return boolean
      */
-    public function isValid($document) {
+    public function isValid($document, ClassMetadata $metadata) {
         $this->messages = array();
         $isValid = true;
-
-        $metadata = $this->documentManager->getClassMetadata(get_class($document));
 
         if (!isset($metadata->requiresValidation)) {
             return $isValid;

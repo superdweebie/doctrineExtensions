@@ -20,7 +20,7 @@ abstract class AbstractExtensionConfig {
      *
      * @var array
      */
-    protected $dependencies = array();
+    protected $dependencies = array('Sds\DoctrineExtensions\Annotation' => null);
 
     /**
      *

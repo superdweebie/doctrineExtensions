@@ -4,7 +4,7 @@
  * @package    Sds
  * @license    MIT
  */
-namespace Sds\DoctrineExtensions\Annotations;
+namespace Sds\DoctrineExtensions\Annotation\Annotations;
 
 use Doctrine\Common\Annotations\Annotation;
 
@@ -18,6 +18,10 @@ use Doctrine\Common\Annotations\Annotation;
  * @Target({"PROPERTY"})
  */
 final class UiHints extends Annotation {
+
+    const event = 'annotationUiHints';
+
+    const metadataKey = 'uiHints';
 
     /**
      * Should the UI treat this as a hidden field?

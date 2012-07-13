@@ -11,7 +11,7 @@ use Sds\DoctrineExtensions\Audit\Behaviour\AuditTrait;
 
 //Annotation imports
 use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
-use Sds\DoctrineExtensions\Annotations as Sds;
+use Sds\DoctrineExtensions\Annotation\Annotations as Sds;
 
 /**
  * Standard audit document

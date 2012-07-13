@@ -7,7 +7,7 @@
 namespace Sds\DoctrineExtensions\Serializer;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
-use Sds\DoctrineExtensions\Accessor\MetadataInjector as AccessorInjector;
+use Sds\DoctrineExtensions\Annotation\Annotations as Sds;
 
 /**
  * Provides static methods for serializing documents
@@ -49,22 +49,22 @@ class Serializer {
         $classMetadata = $documentManager->getClassMetadata(get_class($document));
         $return = array();
         foreach ($classMetadata->fieldMappings as $field=>$mapping){
-            if(isset($mapping[MetadataInjector::doNotSerialize]) &&
-                $mapping[MetadataInjector::doNotSerialize]
+            if(isset($mapping[Sds\DoNotSerialize::metadataKey]) &&
+                $mapping[Sds\DoNotSerialize::metadataKey]
             ){
                 continue;
             }
 
-            if(isset($mapping[AccessorInjector::getter])
+            if(isset($mapping[Sds\Getter::metadataKey])
             ){
-                $getMethod = $mapping[AccessorInjector::getter];
+                $getMethod = $mapping[Sds\Getter::metadataKey];
             } else {
                 $getMethod = 'get'.ucfirst($field);
             }
 
             if (!method_exists($document, $getMethod)){
                 throw new \BadMethodCallException(sprintf(
-                    'Method %s not found. This method was defined in the @serializeGetter annotation
+                    'Method %s not found. This method was defined in the @getter annotation
                         to be used for getting a field',
                     $getMethod
                 ));

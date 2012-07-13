@@ -6,16 +6,17 @@
  */
 namespace Sds\DoctrineExtensions\Readonly;
 
+use Doctrine\Common\Annotations\Reader;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ODM\MongoDB\Event\OnFlushEventArgs;
 use Doctrine\ODM\MongoDB\Event\LoadClassMetadataEventArgs;
-use Sds\DoctrineExtensions\Accessor\MetadataInjector as AccessorInjector;
+use Doctrine\ODM\MongoDB\Events as ODMEvents;
 use Sds\DoctrineExtensions\AnnotationReaderAwareTrait;
 use Sds\DoctrineExtensions\AnnotationReaderAwareInterface;
+use Sds\DoctrineExtensions\Annotation\Annotations as Sds;
+use Sds\DoctrineExtensions\Annotation\AnnotationEventArgs;
 use Sds\DoctrineExtensions\Readonly\Events as ReadonlyEvents;
 use Sds\DoctrineExtensions\Readonly\EventArgs;
-use Doctrine\ODM\MongoDB\Events as ODMEvents;
-use Doctrine\Common\Annotations\Reader;
 
 /**
  * Listener enforces readonly annotation
@@ -40,20 +41,19 @@ class Subscriber implements EventSubscriber, AnnotationReaderAwareInterface
      */
     public function getSubscribedEvents(){
         return array(
-            ODMEvents::loadClassMetadata,
+            Sds\Readonly::event,
             ODMEvents::onFlush
         );
     }
 
     /**
      *
-     * @param LoadClassMetadataEventArgs $eventArgs
+     * @param \Sds\DoctrineExtensions\Annotation\AnnotationEventArgs $eventArgs
      */
-    public function loadClassMetadata(LoadClassMetadataEventArgs $eventArgs)
+    public function annotationReadonly(AnnotationEventArgs $eventArgs)
     {
-        $metadata = $eventArgs->getClassMetadata();
-        $metadataInjector = new MetadataInjector($this->annotationReader);
-        $metadataInjector->loadMetadataForClass($metadata);
+        $annotation = $eventArgs->getAnnotation();
+        $eventArgs->getMetadata()->fieldMappings[$eventArgs->getReflection()->getName()][$annotation::metadataKey] = true;
     }
 
     /**
@@ -75,7 +75,7 @@ class Subscriber implements EventSubscriber, AnnotationReaderAwareInterface
                 $new = $change[1];
 
                 // Check for change and readonly annotation
-                if(!isset($metadata->fieldMappings[$field][MetadataInjector::readonly]) ||
+                if(!isset($metadata->fieldMappings[$field][Sds\Readonly::metadataKey]) ||
                     $old == null ||
                     $old == $new
                 ){
@@ -98,17 +98,16 @@ class Subscriber implements EventSubscriber, AnnotationReaderAwareInterface
                     }
                 }
 
-                if(isset($metadata->fieldMappings[$field][AccessorInjector::setter])
+                if(isset($metadata->fieldMappings[$field][Sds\Setter::metadataKey])
                 ){
-                    $setMethod = $metadata->fieldMappings[$field][AccessorInjector::setter];
+                    $setMethod = $metadata->fieldMappings[$field][Sds\Setter::metadataKey];
                 } else {
                     $setMethod = 'set'.ucfirst($field);
                 }
-            
+
                 if (!method_exists($document, $setMethod)){
                     throw new \BadMethodCallException(sprintf(
-                        'Method %s not found. This method was defined in the @readonly annotation
-                            to be used for resetting a property',
+                        'Method %s not found. This method was defined in the @Setter annotation to be used for resetting a property',
                         $setMethod
                     ));
                 }

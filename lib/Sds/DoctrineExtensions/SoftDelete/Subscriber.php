@@ -8,13 +8,14 @@ namespace Sds\DoctrineExtensions\SoftDelete;
 
 use Doctrine\Common\Annotations\Reader;
 use Doctrine\Common\EventSubscriber;
-use Doctrine\ODM\MongoDB\Event\LoadClassMetadataEventArgs;
 use Doctrine\ODM\MongoDB\Event\LifecycleEventArgs;
 use Doctrine\ODM\MongoDB\Event\OnFlushEventArgs;
 use Doctrine\ODM\MongoDB\Events as ODMEvents;
 use Sds\Common\SoftDelete\SoftDeleteableInterface;
 use Sds\DoctrineExtensions\AnnotationReaderAwareTrait;
 use Sds\DoctrineExtensions\AnnotationReaderAwareInterface;
+use Sds\DoctrineExtensions\Annotation\Annotations as Sds;
+use Sds\DoctrineExtensions\Annotation\AnnotationEventArgs;
 use Sds\DoctrineExtensions\SoftDelete\Events as SoftDeleteEvents;
 
 /**
@@ -41,20 +42,20 @@ class Subscriber implements EventSubscriber, AnnotationReaderAwareInterface
      */
     public function getSubscribedEvents(){
         return array(
-            ODMEvents::loadClassMetadata,
+            Sds\SoftDeleteField::event,
             ODMEvents::onFlush
         );
     }
 
     /**
      *
-     * @param LoadClassMetadataEventArgs $eventArgs
+     * @param \Sds\DoctrineExtensions\Annotation\AnnotationEventArgs $eventArgs
      */
-    public function loadClassMetadata(LoadClassMetadataEventArgs $eventArgs)
+    public function annotationSoftDeleteField(AnnotationEventArgs $eventArgs)
     {
-        $metadata = $eventArgs->getClassMetadata();
-        $metadataInjector = new MetadataInjector($this->annotationReader);
-        $metadataInjector->loadMetadataForClass($metadata);
+        $annotation = $eventArgs->getAnnotation();
+        $metadataKey = $annotation::metadataKey;
+        $eventArgs->getMetadata()->$metadataKey = $eventArgs->getReflection()->getName();
     }
 
     /**

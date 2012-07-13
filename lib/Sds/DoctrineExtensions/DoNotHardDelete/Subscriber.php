@@ -11,9 +11,10 @@ use Doctrine\Common\EventSubscriber;
 use Doctrine\ODM\MongoDB\Event\OnFlushEventArgs;
 use Doctrine\ODM\MongoDB\Event\LifecycleEventArgs;
 use Doctrine\ODM\MongoDB\Events as ODMEvents;
-use Doctrine\ODM\MongoDB\Event\LoadClassMetadataEventArgs;
 use Sds\DoctrineExtensions\AnnotationReaderAwareTrait;
 use Sds\DoctrineExtensions\AnnotationReaderAwareInterface;
+use Sds\DoctrineExtensions\Annotation\Annotations as Sds;
+use Sds\DoctrineExtensions\Annotation\AnnotationEventArgs;
 use Sds\DoctrineExtensions\DoNotHardDelete\Events as DoNotHardDeleteEvents;
 
 /**
@@ -41,20 +42,20 @@ class Subscriber implements EventSubscriber, AnnotationReaderAwareInterface
      */
     public function getSubscribedEvents(){
         return array(
-            ODMEvents::loadClassMetadata,
+            Sds\DoNotHardDelete::event,
             ODMEvents::onFlush
         );
     }
 
     /**
      *
-     * @param \Doctrine\ODM\MongoDB\Event\LoadClassMetadataEventArgs $eventArgs
+     * @param \Sds\DoctrineExtensions\Annotation\AnnotationEventArgs $eventArgs
      */
-    public function loadClassMetadata(LoadClassMetadataEventArgs $eventArgs)
+    public function annotationDoNotHardDelete(AnnotationEventArgs $eventArgs)
     {
-        $metadata = $eventArgs->getClassMetadata();
-        $metadataInjector = new MetadataInjector($this->annotationReader);
-        $metadataInjector->loadMetadataForClass($metadata);
+        $annotation = $eventArgs->getAnnotation();
+        $metadataKey = $annotation::metadataKey;
+        $eventArgs->getMetadata()->$metadataKey = true;
     }
 
     /**

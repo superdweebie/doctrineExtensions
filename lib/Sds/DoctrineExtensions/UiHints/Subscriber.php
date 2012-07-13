@@ -6,13 +6,12 @@
  */
 namespace Sds\DoctrineExtensions\UiHints;
 
-
+use Doctrine\Common\Annotations\Reader;
 use Doctrine\Common\EventSubscriber;
-use Doctrine\ODM\MongoDB\Event\LoadClassMetadataEventArgs;
 use Sds\DoctrineExtensions\AnnotationReaderAwareTrait;
 use Sds\DoctrineExtensions\AnnotationReaderAwareInterface;
-use Doctrine\ODM\MongoDB\Events as ODMEvents;
-use Doctrine\Common\Annotations\Reader;
+use Sds\DoctrineExtensions\Annotation\Annotations as Sds;
+use Sds\DoctrineExtensions\Annotation\AnnotationEventArgs;
 
 /**
  * Adds uihints values to classmetadata
@@ -30,7 +29,7 @@ class Subscriber implements EventSubscriber, AnnotationReaderAwareInterface
      */
     public function getSubscribedEvents(){
         return array(
-            ODMEvents::loadClassMetadata
+            Sds\UiHints::event
         );
     }
 
@@ -44,12 +43,11 @@ class Subscriber implements EventSubscriber, AnnotationReaderAwareInterface
 
     /**
      *
-     * @param \Doctrine\ODM\MongoDB\Event\LoadClassMetadataEventArgs $eventArgs
+     * @param \Sds\DoctrineExtensions\Annotation\AnnotationEventArgs $eventArgs
      */
-    public function loadClassMetadata(LoadClassMetadataEventArgs $eventArgs)
+    public function annotationUiHints(AnnotationEventArgs $eventArgs)
     {
-        $metadata = $eventArgs->getClassMetadata();
-        $metadataInjector = new MetadataInjector($this->annotationReader);
-        $metadataInjector->loadMetadataForClass($metadata);
+        $annotation = $eventArgs->getAnnotation();
+        $eventArgs->getMetadata()->fieldMappings[$eventArgs->getReflection()->getName()][$annotation::metadataKey] = get_object_vars($annotation);
     }
 }

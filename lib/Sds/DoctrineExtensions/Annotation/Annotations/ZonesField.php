@@ -4,7 +4,7 @@
  * @package    Sds
  * @license    MIT
  */
-namespace Sds\DoctrineExtensions\Annotations;
+namespace Sds\DoctrineExtensions\Annotation\Annotations;
 
 use Doctrine\Common\Annotations\Annotation;
 
@@ -20,4 +20,7 @@ use Doctrine\Common\Annotations\Annotation;
  */
 final class ZonesField extends Annotation
 {
+    const event = 'annotationZonesField';
+
+    const metadataKey = 'zonesField';
 }

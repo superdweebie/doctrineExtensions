@@ -8,7 +8,6 @@ namespace Sds\DoctrineExtensions\Audit;
 
 use Doctrine\Common\Annotations\Reader;
 use Doctrine\Common\EventSubscriber;
-use Doctrine\ODM\MongoDB\Event\LoadClassMetadataEventArgs;
 use Doctrine\ODM\MongoDB\Event\OnFlushEventArgs;
 use Doctrine\ODM\MongoDB\Events as ODMEvents;
 use Sds\Common\Audit\AuditedInterface;
@@ -17,6 +16,8 @@ use Sds\Common\User\ActiveUserAwareInterface;
 use Sds\Common\User\UserInterface;
 use Sds\DoctrineExtensions\AnnotationReaderAwareTrait;
 use Sds\DoctrineExtensions\AnnotationReaderAwareInterface;
+use Sds\DoctrineExtensions\Annotation\Annotations as Sds;
+use Sds\DoctrineExtensions\Annotation\AnnotationEventArgs;
 use Sds\DoctrineExtensions\Audit\EventArgs;
 use Sds\DoctrineExtensions\Audit\Events as AuditEvents;
 
@@ -64,7 +65,7 @@ class Subscriber implements
      */
     public function getSubscribedEvents(){
         return array(
-            ODMEvents::loadClassMetadata,
+            Sds\Audit::event,
             ODMEvents::onFlush
         );
     }
@@ -87,13 +88,12 @@ class Subscriber implements
 
     /**
      *
-     * @param \Doctrine\ODM\MongoDB\Event\LoadClassMetadataEventArgs $eventArgs
+     * @param \Sds\DoctrineExtensions\Annotation\AnnotationEventArgs $eventArgs
      */
-    public function loadClassMetadata(LoadClassMetadataEventArgs $eventArgs)
+    public function annotationAudit(AnnotationEventArgs $eventArgs)
     {
-        $metadata = $eventArgs->getClassMetadata();
-        $metadataInjector = new MetadataInjector($this->annotationReader);
-        $metadataInjector->loadMetadataForClass($metadata);
+        $annotation = $eventArgs->getAnnotation();
+        $eventArgs->getMetadata()->fieldMappings[$eventArgs->getReflection()->getName()][$annotation::metadataKey] = true;
     }
 
     /**
@@ -114,8 +114,8 @@ class Subscriber implements
             $eventManager = $documentManager->getEventManager();
 
             foreach ($changeSet as $field => $change){
-                if(isset($metadata->fieldMappings[$field][MetadataInjector::audit]) &&
-                    $metadata->fieldMappings[$field][MetadataInjector::audit]
+                if(isset($metadata->fieldMappings[$field][Sds\Audit::metadataKey]) &&
+                    $metadata->fieldMappings[$field][Sds\Audit::metadataKey]
                 ){
                     $old = $change[0];
                     $new = $change[1];

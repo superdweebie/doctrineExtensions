@@ -5,8 +5,7 @@
  */
 namespace Sds\DoctrineExtensions\Validator;
 
-use Doctrine\ODM\MongoDB\DocumentManager;
-use Sds\Common\Validator\ValidatorInterface;
+use Doctrine\ODM\MongoDB\Mapping\ClassMetadata;
 
 /**
  *
@@ -14,19 +13,26 @@ use Sds\Common\Validator\ValidatorInterface;
  * @version $Revision$
  * @author  Tim Roediger <superdweebie@gmail.com>
  */
-interface DocumentValidatorInterface extends ValidatorInterface
+interface DocumentValidatorInterface
 {
 
     /**
+     * Returns true if and only if $value meets the validation requirements
      *
-     * @return \Doctrine\ODM\MongoDB\DocumentManager
+     * If $value fails validation, then this method returns false, and
+     * getMessages() will return an array of messages that explain why the
+     * validation failed.
+     *
+     * @param  document $value
+     * @return boolean
+     * @throws Exception\RuntimeException If validation of $value is impossible
      */
-    public function getDocumentManager();
+    public function isValid($value, ClassMetadata $metadata);
 
     /**
      *
-     * @param \Doctrine\ODM\MongoDB\DocumentManager $documentManager
+     * @return array
      */
-    public function setDocumentManager(DocumentManager $documentManager);
+    public function getMessages();
 
 }

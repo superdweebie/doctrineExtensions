@@ -4,12 +4,12 @@
  * @package    Sds
  * @license    MIT
  */
-namespace Sds\DoctrineExtensions\Annotations;
+namespace Sds\DoctrineExtensions\Annotation\Annotations;
 
 use Doctrine\Common\Annotations\Annotation;
 
 /**
- * Designate a non-standard getter
+ * Indicates that changes to a field should generate audit documents
  *
  * @since   1.0
  * @author  Tim Roediger <superdweebie@gmail.com>
@@ -17,6 +17,9 @@ use Doctrine\Common\Annotations\Annotation;
  * @Annotation
  * @Target({"PROPERTY"})
  */
-final class Getter extends Annotation
+final class Audit extends Annotation
 {
+    const event = 'annotationAudit';
+
+    const metadataKey = 'audit';
 }

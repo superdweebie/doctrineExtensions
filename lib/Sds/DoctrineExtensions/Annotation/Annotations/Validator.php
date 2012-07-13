@@ -4,7 +4,7 @@
  * @package    Sds
  * @license    MIT
  */
-namespace Sds\DoctrineExtensions\Annotations;
+namespace Sds\DoctrineExtensions\Annotation\Annotations;
 
 use Doctrine\Common\Annotations\Annotation;
 
@@ -16,6 +16,10 @@ use Doctrine\Common\Annotations\Annotation;
  * @Target({"CLASS", "PROPERTY"})
  */
 final class Validator extends Annotation {
+
+    const event = 'annotationValidator';
+
+    const metadataKey = 'validator';
 
     /**
      * The FQCN of the validator to use

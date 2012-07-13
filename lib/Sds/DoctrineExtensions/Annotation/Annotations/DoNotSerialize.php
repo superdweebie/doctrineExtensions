@@ -4,12 +4,12 @@
  * @package    Sds
  * @license    MIT
  */
-namespace Sds\DoctrineExtensions\Annotations;
+namespace Sds\DoctrineExtensions\Annotation\Annotations;
 
 use Doctrine\Common\Annotations\Annotation;
 
 /**
- * Indicates that changes to a field should generate audit documents
+ * Mark a field to be skipped during serialization
  *
  * @since   1.0
  * @author  Tim Roediger <superdweebie@gmail.com>
@@ -17,6 +17,9 @@ use Doctrine\Common\Annotations\Annotation;
  * @Annotation
  * @Target({"PROPERTY"})
  */
-final class Audit extends Annotation
+final class DoNotSerialize extends Annotation
 {
+    const event = 'annotationDoNotSerialize';
+
+    const metadataKey = 'doNotSerialize';
 }

@@ -7,11 +7,11 @@
 namespace Sds\DoctrineExtensions\Zone;
 
 use Doctrine\Common\EventSubscriber;
-use Doctrine\ODM\MongoDB\Events as ODMEvents;
+use Doctrine\Common\Annotations\Reader;
 use Sds\DoctrineExtensions\AnnotationReaderAwareTrait;
 use Sds\DoctrineExtensions\AnnotationReaderAwareInterface;
-use Doctrine\ODM\MongoDB\Event\LoadClassMetadataEventArgs;
-use Doctrine\Common\Annotations\Reader;
+use Sds\DoctrineExtensions\Annotation\Annotations as Sds;
+use Sds\DoctrineExtensions\Annotation\AnnotationEventArgs;
 
 /**
  *
@@ -36,18 +36,18 @@ class Subscriber implements EventSubscriber, AnnotationReaderAwareInterface
      */
     public function getSubscribedEvents(){
         return array(
-            ODMEvents::loadClassMetadata
+            Sds\ZonesField::event
         );
     }
 
     /**
      *
-     * @param LoadClassMetadataEventArgs $eventArgs
+     * @param \Sds\DoctrineExtensions\Annotation\EventArgs $eventArgs
      */
-    public function loadClassMetadata(LoadClassMetadataEventArgs $eventArgs)
+    public function annotationZonesField(AnnotationEventArgs $eventArgs)
     {
-        $metadata = $eventArgs->getClassMetadata();
-        $metadataInjector = new MetadataInjector($this->annotationReader);
-        $metadataInjector->loadMetadataForClass($metadata);
+        $annotation = $eventArgs->getAnnotation();
+        $metadataKey = $annotation::metadataKey;
+        $eventArgs->getMetadata()->$metadataKey = $eventArgs->getReflection()->getName();
     }
 }

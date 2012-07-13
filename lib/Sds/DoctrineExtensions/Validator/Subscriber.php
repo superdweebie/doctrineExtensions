@@ -8,11 +8,13 @@ namespace Sds\DoctrineExtensions\Validator;
 
 use Doctrine\Common\Annotations\Reader;
 use Doctrine\Common\EventSubscriber;
-use Doctrine\ODM\MongoDB\Event\LoadClassMetadataEventArgs;
 use Doctrine\ODM\MongoDB\Event\OnFlushEventArgs;
 use Doctrine\ODM\MongoDB\Events as ODMEvents;
 use Sds\DoctrineExtensions\AnnotationReaderAwareTrait;
 use Sds\DoctrineExtensions\AnnotationReaderAwareInterface;
+use Sds\DoctrineExtensions\Annotation\Annotations as Sds;
+use Sds\DoctrineExtensions\Annotation\AnnotationEventArgs;
+use Sds\DoctrineExtensions\Annotation\EventType;
 
 /**
  *
@@ -51,7 +53,7 @@ class Subscriber implements EventSubscriber, AnnotationReaderAwareInterface
      */
     public function getSubscribedEvents(){
         return array(
-            ODMEvents::loadClassMetadata,
+            Sds\Validator::event,
             ODMEvents::onFlush
         );
     }
@@ -68,13 +70,21 @@ class Subscriber implements EventSubscriber, AnnotationReaderAwareInterface
 
     /**
      *
-     * @param \Doctrine\ODM\MongoDB\Event\LoadClassMetadataEventArgs $eventArgs
+     * @param \Sds\DoctrineExtensions\Annotation\AnnotationEventArgs $eventArgs
      */
-    public function loadClassMetadata(LoadClassMetadataEventArgs $eventArgs)
+    public function annotationValidator(AnnotationEventArgs $eventArgs)
     {
-        $metadata = $eventArgs->getClassMetadata();
-        $metadataInjector = new MetadataInjector($this->annotationReader);
-        $metadataInjector->loadMetadataForClass($metadata);
+        $annotation = $eventArgs->getAnnotation();
+        $metadataKey = $annotation::metadataKey;
+        $metadata = $eventArgs->getMetadata();
+        switch ($eventArgs->getEventType()) {
+            case EventType::document :
+                $metadata->$metadataKey[$annotation->class] = $annotation->options;
+                break;
+            case EventType::property :
+                $metadata->fieldMappings[$eventArgs->getReflection()->getName()][$metadataKey][$annotation->class] = $annotation->options;
+                break;
+        }
     }
 
     /**

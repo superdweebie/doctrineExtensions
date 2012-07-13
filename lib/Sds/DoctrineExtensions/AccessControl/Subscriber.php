@@ -9,7 +9,6 @@ namespace Sds\DoctrineExtensions\AccessControl;
 use Doctrine\Common\Annotations\Reader;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ODM\MongoDB\Event\LifecycleEventArgs;
-use Doctrine\ODM\MongoDB\Event\LoadClassMetadataEventArgs;
 use Doctrine\ODM\MongoDB\Event\OnFlushEventArgs;
 use Doctrine\ODM\MongoDB\Events as ODMEvents;
 use Sds\Common\AccessControl\AccessControlledInterface;
@@ -22,6 +21,8 @@ use Sds\DoctrineExtensions\AccessControl\Constant\Action;
 use Sds\DoctrineExtensions\AccessControl\Events as AccessControlEvents;
 use Sds\DoctrineExtensions\AnnotationReaderAwareTrait;
 use Sds\DoctrineExtensions\AnnotationReaderAwareInterface;
+use Sds\DoctrineExtensions\Annotation\Annotations as Sds;
+use Sds\DoctrineExtensions\Annotation\AnnotationEventArgs;
 use Sds\DoctrineExtensions\State\EventArgs as StateEventArgs;
 use Sds\DoctrineExtensions\State\Events as StateEvents;
 
@@ -62,7 +63,7 @@ class Subscriber implements
      */
     public function getSubscribedEvents(){
         return array(
-            ODMEvents::loadClassMetadata,
+            Sds\DoNotAccessControlUpdate::event,
             ODMEvents::onFlush,
             StateEvents::onStateChange
         );
@@ -92,13 +93,12 @@ class Subscriber implements
 
     /**
      *
-     * @param \Doctrine\ODM\MongoDB\Event\LoadClassMetadataEventArgs $eventArgs
+     * @param \Sds\DoctrineExtensions\Annotation\AnnotationEventArgs $eventArgs
      */
-    public function loadClassMetadata(LoadClassMetadataEventArgs $eventArgs)
+    public function annotationDoNotAccessControlUpdate(AnnotationEventArgs $eventArgs)
     {
-        $metadata = $eventArgs->getClassMetadata();
-        $metadataInjector = new MetadataInjector($this->annotationReader);
-        $metadataInjector->loadMetadataForClass($metadata);
+        $annotation = $eventArgs->getAnnotation();
+        $eventArgs->getMetadata()->fieldMappings[$eventArgs->getReflection()->getName()][$annotation::metadataKey] = true;
     }
 
     /**
@@ -148,10 +148,10 @@ class Subscriber implements
                 $metadata = $documentManager->getClassMetadata(get_class($document));
                 $checkPermission = false;
                 foreach ($changeSet as $field => $change) {
-                    if (!isset($metadata->fieldMappings[$field][MetadataInjector::doNotAccessControlUpdate])) {
+                    if (!isset($metadata->fieldMappings[$field][Sds\DoNotAccessControlUpdate::metadataKey])) {
                         $checkPermission = true;
                         break;
-                    } elseif (!$metadata->fieldMappings[$field][MetadataInjector::doNotAccessControlUpdate]) {
+                    } elseif (!$metadata->fieldMappings[$field][Sds\DoNotAccessControlUpdate::metadataKey]) {
                         $checkPermission = true;
                         break;
                     }

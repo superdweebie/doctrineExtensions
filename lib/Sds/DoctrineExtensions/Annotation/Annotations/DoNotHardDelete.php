@@ -4,7 +4,7 @@
  * @package    Sds
  * @license    MIT
  */
-namespace Sds\DoctrineExtensions\Annotations;
+namespace Sds\DoctrineExtensions\Annotation\Annotations;
 
 use Doctrine\Common\Annotations\Annotation;
 
@@ -19,4 +19,7 @@ use Doctrine\Common\Annotations\Annotation;
  */
 final class DoNotHardDelete extends Annotation
 {
+    const event = 'annotationDoNotHardDelete';
+
+    const metadataKey = 'doNotHardDelete';
 }

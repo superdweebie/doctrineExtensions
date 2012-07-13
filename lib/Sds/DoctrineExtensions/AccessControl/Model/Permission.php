@@ -11,7 +11,7 @@ use Sds\DoctrineExtensions\AccessControl\Behaviour\PermissionTrait;
 
 //Annotation imports
 use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
-use Sds\DoctrineExtensions\Annotations as Sds;
+use Sds\DoctrineExtensions\Annotation\Annotations as Sds;
 
 /**
  * Implementation of Sds\Common\AccessControl\PermissionInterface

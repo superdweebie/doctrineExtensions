@@ -8,10 +8,10 @@ namespace Sds\DoctrineExtensions\Accessor;
 
 use Doctrine\Common\Annotations\Reader;
 use Doctrine\Common\EventSubscriber;
-use Doctrine\ODM\MongoDB\Event\LoadClassMetadataEventArgs;
-use Doctrine\ODM\MongoDB\Events as ODMEvents;
 use Sds\DoctrineExtensions\AnnotationReaderAwareTrait;
 use Sds\DoctrineExtensions\AnnotationReaderAwareInterface;
+use Sds\DoctrineExtensions\Annotation\Annotations as Sds;
+use Sds\DoctrineExtensions\Annotation\AnnotationEventArgs;
 
 /**
  *
@@ -28,7 +28,8 @@ class Subscriber implements EventSubscriber, AnnotationReaderAwareInterface
      */
     public function getSubscribedEvents(){
         return array(
-            ODMEvents::loadClassMetadata
+            Sds\Getter::event,
+            Sds\Setter::event
         );
     }
 
@@ -42,12 +43,21 @@ class Subscriber implements EventSubscriber, AnnotationReaderAwareInterface
 
     /**
      *
-     * @param \Doctrine\ODM\MongoDB\Event\LoadClassMetadataEventArgs $eventArgs
+     * @param \Sds\DoctrineExtensions\Annotation\AnnotationEventArgs $eventArgs
      */
-    public function loadClassMetadata(LoadClassMetadataEventArgs $eventArgs)
+    public function annotationGetter(AnnotationEventArgs $eventArgs)
     {
-        $metadata = $eventArgs->getClassMetadata();
-        $metadataInjector = new MetadataInjector($this->annotationReader);
-        $metadataInjector->loadMetadataForClass($metadata);
+        $annotation = $eventArgs->getAnnotation();
+        $eventArgs->getMetadata()->fieldMappings[$eventArgs->getReflection()->getName()][$annotation::metadataKey] = $annotation->value;
+    }
+
+    /**
+     *
+     * @param \Sds\DoctrineExtensions\Annotation\AnnotationEventArgs $eventArgs
+     */
+    public function annotationSetter(AnnotationEventArgs $eventArgs)
+    {
+        $annotation = $eventArgs->getAnnotation();
+        $eventArgs->getMetadata()->fieldMappings[$eventArgs->getReflection()->getName()][$annotation::metadataKey] = $annotation->value;
     }
 }
