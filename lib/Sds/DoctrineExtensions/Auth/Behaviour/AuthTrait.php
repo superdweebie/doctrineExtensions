@@ -8,7 +8,7 @@ namespace Sds\DoctrineExtensions\Auth\Behaviour;
 
 use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
 use Sds\Common\Auth\Crypt;
-use Sds\DoctrineExtensions\Serializer\Mapping\Annotation\DoNotSerialize as SDS_DoNotSerialize;
+use Sds\DoctrineExtensions\Annotation\Annotations as Sds;
 
 /**
  * Implementation of Sds\Common\Auth\AuthInterface
@@ -20,7 +20,9 @@ trait AuthTrait {
 
     /**
      * @ODM\Field(type="string")
-     * @SDS_DoNotSerialize
+     * @Sds\DoNotSerialize
+     * @Sds\UiHints(label = "Password")
+     * @Sds\Validator(class = "Sds\DoctrineExtensions\Validator\Validator\Password")
      */
     protected $password;
 
