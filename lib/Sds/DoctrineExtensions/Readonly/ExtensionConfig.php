@@ -25,6 +25,7 @@ class ExtensionConfig extends AbstractExtensionConfig implements AnnotationReade
      * @var array
      */
     protected $dependencies = array(
+        'Sds\DoctrineExtensions\Annotation' => null,
         'Sds\DoctrineExtensions\Accessor' => null
     );
 }

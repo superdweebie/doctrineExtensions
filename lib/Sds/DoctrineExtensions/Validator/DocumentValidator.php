@@ -6,7 +6,7 @@
 namespace Sds\DoctrineExtensions\Validator;
 
 use Doctrine\ODM\MongoDB\Mapping\ClassMetadata;
-use Sds\DoctrineExtensions\Accessor\MetadataInjector as AccessorInjector;
+use Sds\DoctrineExtensions\Annotation\Annotations as Sds;
 
 /**
  *
@@ -37,15 +37,19 @@ class DocumentValidator implements DocumentValidatorInterface
         // Property level validators
         foreach ($metadata->fieldMappings as $field=>$mapping){
 
-            if(isset($metadata[$field][AccessorInjector::getter])
+            if (!isset($mapping[Sds\Validator::metadataKey])) {
+                continue;
+            }
+
+            if(isset($mapping[Sds\Getter::metadataKey])
             ){
-                $getMethod = $metadata[$field][AccessorInjector::getter];
+                $getMethod = $mapping[Sds\Getter::metadataKey];
             } else {
                 $getMethod = 'get'.ucfirst($field);
             }
             $value = $document->$getMethod();
 
-            foreach ($mapping[MetadataInjector::validator] as $class => $options) {
+            foreach ($mapping[Sds\Validator::metadataKey] as $class => $options) {
                 $validator = new $class($options);
                 if (!$validator->isValid($value)){
                     $this->messages = array_merge($this->messages, $validator->getMessages());
@@ -61,7 +65,11 @@ class DocumentValidator implements DocumentValidatorInterface
 
         // Class level validators
         // These are only executed if all property level validators pass
-        foreach ($metadata->{MetadataInjector::validator} as $class => $options) {
+        if (!isset($metadata->{Sds\Validator::metadataKey})){
+            return $isValid;
+        }
+
+        foreach ($metadata->{Sds\Validator::metadataKey} as $class => $options) {
             $validator = new $class($options);
             if (!$validator->isValid($value)){
                 $this->messages = array_merge($this->messages, $validator->getMessages());

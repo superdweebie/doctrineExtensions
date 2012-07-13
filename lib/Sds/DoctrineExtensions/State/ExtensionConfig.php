@@ -37,14 +37,6 @@ implements
 
     /**
      *
-     * @var array
-     */
-    protected $dependencies = array(
-        'Sds\DoctrineExtensions\Audit' => null
-    );
-
-    /**
-     *
      * @return boolean
      */
     public function getAccessControlStateChange() {

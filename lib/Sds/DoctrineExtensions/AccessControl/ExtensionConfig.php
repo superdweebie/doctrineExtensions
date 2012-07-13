@@ -38,10 +38,8 @@ class ExtensionConfig extends AbstractExtensionConfig implements
      * @var array
      */
     protected $dependencies = array(
+        'Sds\DoctrineExtensions\Annotation' => null,
         'Sds\DoctrineExtensions\State' => null,
-        'Sds\DoctrineExtensions\Audit' => null,
-        'Sds\DoctrineExtensions\Readonly' => null,
-        'Sds\DoctrineExtensions\UiHints' => null
     );
 
     /**

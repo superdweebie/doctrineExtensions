@@ -19,11 +19,4 @@ use Sds\Common\User\ActiveUserAwareTrait;
 class ExtensionConfig extends AbstractExtensionConfig implements ActiveUserAwareInterface {
 
     use ActiveUserAwareTrait;
-
-    /**
-     * {@inheritdoc}
-     */
-    protected $dependencies = array(
-        'Sds\DoctrineExtensions\Readonly' => null
-    );
 }

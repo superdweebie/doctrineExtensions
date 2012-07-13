@@ -65,7 +65,7 @@ class Subscriber implements EventSubscriber, AnnotationReaderAwareInterface
      */
     public function __construct(Reader $annotationReader, DocumentValidatorInterface $documentValidator){
         $this->setAnnotationReader($annotationReader);
-        $this->setValidator($documentValidator);
+        $this->setDocumentValidator($documentValidator);
     }
 
     /**
@@ -85,6 +85,7 @@ class Subscriber implements EventSubscriber, AnnotationReaderAwareInterface
                 $metadata->fieldMappings[$eventArgs->getReflection()->getName()][$metadataKey][$annotation->class] = $annotation->options;
                 break;
         }
+        $metadata->requiresValidation = true;
     }
 
     /**
@@ -96,12 +97,10 @@ class Subscriber implements EventSubscriber, AnnotationReaderAwareInterface
         $documentManager = $eventArgs->getDocumentManager();
         $unitOfWork = $documentManager->getUnitOfWork();
 
-        $this->documentValidator->setDocumentManager($documentManager);
-
         foreach ($unitOfWork->getScheduledDocumentUpdates() AS $document) {
             $metadata = $documentManager->getClassMetadata(get_class($document));
 
-            if (!$this->documentValidator->isValid($document)) {
+            if (!$this->documentValidator->isValid($document, $metadata)) {
 
                 // Updates to invalid documents are not allowed. Roll them back
                 $unitOfWork->clearDocumentChangeSet(spl_object_hash($document));
@@ -112,7 +111,7 @@ class Subscriber implements EventSubscriber, AnnotationReaderAwareInterface
                 if ($eventManager->hasListeners(Events::invalidUpdate)) {
                     $eventManager->dispatchEvent(
                         Events::invalidUpdate,
-                        new EventArgs($document, $documentManager, $this->validator->getMessages())
+                        new EventArgs($document, $documentManager, $this->documentValidator->getMessages())
                     );
                 }
             }
@@ -122,7 +121,7 @@ class Subscriber implements EventSubscriber, AnnotationReaderAwareInterface
         foreach ($unitOfWork->getScheduledDocumentInsertions() as $document) {
             $metadata = $documentManager->getClassMetadata(get_class($document));
 
-            if (!$this->documentValidator->isValid($document)) {
+            if (!$this->documentValidator->isValid($document, $metadata)) {
 
                 //stop creation
                 $unitOfWork->detach($document);
@@ -133,7 +132,7 @@ class Subscriber implements EventSubscriber, AnnotationReaderAwareInterface
                 if ($eventManager->hasListeners(Events::invalidCreate)) {
                     $eventManager->dispatchEvent(
                         Events::invalidCreate,
-                        new EventArgs($document, $documentManager, $this->validator->getMessages())
+                        new EventArgs($document, $documentManager, $this->documentValidator->getMessages())
                     );
                 }
             }
