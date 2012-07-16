@@ -1,6 +1,6 @@
 <?php
 
-namespace Sds\DoctrineExtensions\Test\DescriminatorMap\TestAsset\Document;
+namespace Sds\DoctrineExtensions\Test\DiscriminatorMap\TestAsset\Document;
 
 //Annotation imports
 use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
@@ -9,9 +9,9 @@ use Sds\DoctrineExtensions\Annotation\Annotations as Sds;
 /**
  * @ODM\Document(collection="test")
  * @ODM\DiscriminatorField(fieldName="type")
- * @Sds\DiscriminatorMap("Sds\DoctrineExtensions\Test\DescriminatorMap\TestAsset\DescriminatorMap")
+ * @Sds\DiscriminatorMap("Sds\DoctrineExtensions\Test\DiscriminatorMap\TestAsset\DiscriminatorMap")
  */
-class DocA {
+class DocB {
 
     /**
      * @ODM\Id(strategy="UUID")

@@ -4,7 +4,7 @@
  * @package    Sds
  * @license    MIT
  */
-namespace Sds\DoctrineExtensions\DescriminatorMap;
+namespace Sds\DoctrineExtensions\DiscriminatorMap;
 
 use Doctrine\Common\Annotations\Reader;
 use Doctrine\Common\EventSubscriber;
@@ -37,7 +37,7 @@ class Subscriber implements EventSubscriber, AnnotationReaderAwareInterface
      */
     public function getSubscribedEvents(){
         return array(
-        Sds\DescriminatorMap::event
+        Sds\DiscriminatorMap::event
         );
     }
 
@@ -45,10 +45,10 @@ class Subscriber implements EventSubscriber, AnnotationReaderAwareInterface
      *
      * @param \Sds\DoctrineExtensions\Annotation\AnnotationEventArgs $eventArgs
      */
-    public function annotationDescriminatorMap(AnnotationEventArgs $eventArgs)
+    public function annotationDiscriminatorMap(AnnotationEventArgs $eventArgs)
     {
         $className = $eventArgs->getAnnotation()->value;
         $mapClass = new $className;
-        $eventArgs->getMetadata()->setDescriminatorMap($mapClass->getDescriminatorMap());
+        $eventArgs->getMetadata()->setDiscriminatorMap($mapClass->getDiscriminatorMap());
     }
 }

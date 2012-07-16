@@ -33,7 +33,7 @@ that follow the standard format:
 
     getProperty
     setProperty($value)
-    
+
 However, this small extension allows you to define non-standard access or methods using property annotations:
 
     /**
@@ -42,7 +42,7 @@ However, this small extension allows you to define non-standard access or method
      * @Sds\Setter('mySetter')
      */
     protected $property
-    
+
 ##Audit
 
 Will generate embedded audit documents for fields annotated with @audit. Audit documents record changes to the field, who made the
@@ -55,6 +55,14 @@ Provides a trait for salted string encryption.
 ##DoNotHardDelete
 
 Documents annotated with @DoNotHardDelete cannot be deleted from the database.
+
+##DiscriminatorMap
+
+Rather than defineing a discriminatorMap for every document that uses it, and then having to change the map in many places when there is an update, this extension allows you you use this annotation:
+
+    @Sds\DiscriminatorMap("My\DiscriminatorMap\Class")
+
+The class must implement the DiscriminatorMapInterface, and return the deisred DiscriminatorMap
 
 ##Freeze
 

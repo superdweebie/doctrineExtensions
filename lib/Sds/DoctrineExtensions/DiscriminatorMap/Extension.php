@@ -4,7 +4,7 @@
  * @package    Sds
  * @license    MIT
  */
-namespace Sds\DoctrineExtensions\DescriminatorMap;
+namespace Sds\DoctrineExtensions\DiscriminatorMap;
 
 use Sds\DoctrineExtensions\AbstractExtension;
 

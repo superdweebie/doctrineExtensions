@@ -4,17 +4,17 @@
  * @package    Sds
  * @license    MIT
  */
-namespace Sds\DoctrineExtensions\DescriminatorMap;
+namespace Sds\DoctrineExtensions\DiscriminatorMap;
 
 /**
  *
  * @since   1.0
  * @author  Tim Roediger <superdweebie@gmail.com>
  */
-interface DescriminatorMapInterface{
-    
+interface DiscriminatorMapInterface{
+
     /**
      * @return array
      */
-    public function getDescriminatorMap();
+    public function getDiscriminatorMap();
 }

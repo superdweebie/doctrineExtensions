@@ -9,7 +9,7 @@ namespace Sds\DoctrineExtensions\Annotation\Annotations;
 use Doctrine\Common\Annotations\Annotation;
 
 /**
- * Class with descriminatorMapInterface which will return the descriminatorMap
+ * Class with discriminatorMapInterface which will return the descriminatorMap
  *
  * @since   1.0
  * @author  Tim Roediger <superdweebie@gmail.com>
@@ -17,7 +17,7 @@ use Doctrine\Common\Annotations\Annotation;
  * @Annotation
  * @Target({"CLASS"})
  */
-final class DescriminatorMap extends Annotation
+final class DiscriminatorMap extends Annotation
 {
-    const event = 'annotationDescriminatorMap';
+    const event = 'annotationDiscriminatorMap';
 }
