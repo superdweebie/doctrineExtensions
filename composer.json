@@ -15,8 +15,8 @@
     "minimum-stability": "dev",
     "require": {
         "php": ">=5.4",
-        "superdweebie/common": "master@dev",
-        "doctrine/mongodb-odm": "master@dev"
+        "superdweebie/common": "dev-master",
+        "doctrine/mongodb-odm": "dev-master"
     },
     "suggest": {
         "zendframework/zend-validator": "Some traits have zend-validator annotations. By default these are ingnored, but if you want them active, you'll need this package."
