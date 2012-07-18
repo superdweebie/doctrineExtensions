@@ -1,13 +1,19 @@
 <?php
+/**
+ * @link       http://superdweebie.com
+ * @package    Sds
+ * @license    MIT
+ */
+namespace Sds\DoctrineExtensions\DojoModel\Console\Command;
 
-namespace Sds\DoctrineExtensions\Console\Command;
-
-use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console;
 
 /**
  * Command to generate Dojo modules representing Doctrine documents from your mapping information.
  *
+ * @since   1.0
+ * @author  Tim Roediger <superdweebie@gmail.com>
  */
 class GenerateModelsCommand extends Console\Command\Command
 {
@@ -20,8 +26,9 @@ class GenerateModelsCommand extends Console\Command\Command
         ->setName('odm:generate:dojoModels')
         ->setDescription('Generate Dojo modules representing Doctrine documents from your mapping information.')
         ->setDefinition(array(
-            new InputArgument(
-                'dest-path', InputArgument::REQUIRED, 'The path to generate your document classes.'
+            new InputOption(
+                'dest-path', null, InputOption::VALUE_REQUIRED,
+                'The path Dojo modules should be generated to.'
             ),
         ))
         ->setHelp(<<<EOT

@@ -44,7 +44,7 @@ class Manifest extends AbstractExtension {
     /**
      *
      * @param string $namespace
-     * @param object $extensionConfig
+     * @param array | \Sds\DoctrineExtensions\AbstractConfig $extensionConfig
      * @throws \Exception
      */
     public function addExtension($namespace, $extensionConfig){
@@ -60,7 +60,7 @@ class Manifest extends AbstractExtension {
 
         // Create specific config class if not given
         if (!$extensionConfig instanceof $extensionConfigClass) {
-            $extensionConfig = new $extensionConfigClass;
+            $extensionConfig = new $extensionConfigClass($extensionConfig);
         }
 
         // Inject annotation reader if required, but not given
@@ -74,6 +74,8 @@ class Manifest extends AbstractExtension {
             $extensionConfig->getActiveUser() == null) {
             $extensionConfig->setActiveUser($config->getActiveUser());
         }
+
+        $config->setExtensionConfig($namespace, $extensionConfig);
 
         // Create extension
         $extensionClass = $namespace . '\Extension';
@@ -146,5 +148,27 @@ class Manifest extends AbstractExtension {
             $documents = array_merge($documents, $extension->getDocuments());
         }
         return $documents;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getCliCommands(){
+        $cliCommands = array();
+        foreach ($this->extensions as $extension) {
+            $cliCommands = array_merge($cliCommands, $extension->getCliCommands());
+        }
+        return $cliCommands;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getCliHelpers(){
+        $cliHelpers = array();
+        foreach ($this->extensions as $extension) {
+            $cliHelpers = array_merge($cliHelpers, $extension->getcliHelpers());
+        }
+        return $cliHelpers;
     }
 }
