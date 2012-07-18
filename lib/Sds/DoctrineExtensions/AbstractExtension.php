@@ -52,6 +52,18 @@ abstract class AbstractExtension implements ExtensionInterface {
 
     /**
      *
+     * @var array
+     */
+    protected $cliCommands = array();
+
+    /**
+     *
+     * @var array
+     */
+    protected $cliHelpers = array();
+
+    /**
+     *
      * @param \SdsDoctrineExtensions\AbstractExtensionConfig $config
      */
     public function __construct($config = null){
@@ -103,5 +115,19 @@ abstract class AbstractExtension implements ExtensionInterface {
      */
     public function getDocuments(){
         return $this->documents;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getCliCommands(){
+        return $this->cliCommands;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getCliHelpers(){
+        return $this->cliHelpers;
     }
 }

@@ -74,7 +74,7 @@ EOT
             // Create DocumentGenerator
             $generator = new DojoModelGenerator();
             $generator->setRegenerateDojoModelIfExists($input->getOption('regenerate-models'));
-            
+
             foreach ($metadatas as $metadata) {
                 $output->write(
                     sprintf('Processing document "<info>%s</info>"', $metadata->name) . PHP_EOL

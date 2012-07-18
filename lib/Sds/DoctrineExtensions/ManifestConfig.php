@@ -49,6 +49,11 @@ implements
         return $this->extensionConfigs;
     }
 
+    public function getExtensionConfig($namespace) {
+        $a = $this->extensionConfigs[(string) $namespace];
+        return isset($this->extensionConfigs[(string) $namespace]) ? $this->extensionConfigs[(string) $namespace] : null;
+    }
+
     /**
      *
      * @param array $extensionConfigs
@@ -60,9 +65,9 @@ implements
     /**
      *
      * @param string $namespace
-     * @param \Sds\DoctrineExtensions\AbstractConfig $config
+     * @param array | \Sds\DoctrineExtensions\AbstractConfig $config
      */
-    public function addExtensionConfig($namespace, AbstractExtensionConfig $config) {
+    public function setExtensionConfig($namespace, $config) {
         $this->extensionConfigs[(string) $namespace] = $config;
     }
 }

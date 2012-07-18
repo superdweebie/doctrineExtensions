@@ -4,7 +4,7 @@
  * @package    Sds
  * @license    MIT
  */
-namespace Sds\DoctrineExtensions\Serializer;
+namespace Sds\DoctrineExtensions\DojoModel;
 
 use Doctrine\Common\Annotations\Reader;
 use Doctrine\Common\EventSubscriber;
@@ -15,7 +15,7 @@ use Sds\DoctrineExtensions\Annotation\AnnotationEventArgs;
 use Sds\DoctrineExtensions\ClassNamePropertyTrait;
 
 /**
- * Adds serializer values to classmetadata
+ * Adds dojoModel values to classmetadata
  *
  * @since   1.0
  * @author  Tim Roediger <superdweebie@gmail.com>
@@ -31,9 +31,8 @@ class Subscriber implements EventSubscriber, AnnotationReaderAwareInterface
      */
     public function getSubscribedEvents(){
         return array(
-            Sds\DoNotSerialize::event,
-            Sds\SerializeDiscriminator::event,
-            Sds\SerializeClassName::event
+            Sds\DojoDiscriminator::event,
+            Sds\DojoClassName::event
         );
     }
 
@@ -51,17 +50,7 @@ class Subscriber implements EventSubscriber, AnnotationReaderAwareInterface
      *
      * @param \Sds\DoctrineExtensions\Annotation\AnnotationEventArgs $eventArgs
      */
-    public function annotationDoNotSerialize(AnnotationEventArgs $eventArgs)
-    {
-        $annotation = $eventArgs->getAnnotation();
-        $eventArgs->getMetadata()->fieldMappings[$eventArgs->getReflection()->getName()][$annotation::metadataKey] = true;
-    }
-
-    /**
-     *
-     * @param \Sds\DoctrineExtensions\Annotation\AnnotationEventArgs $eventArgs
-     */
-    public function annotationSerializeDiscriminator(AnnotationEventArgs $eventArgs)
+    public function annotationDojoDiscriminator(AnnotationEventArgs $eventArgs)
     {
         $annotation = $eventArgs->getAnnotation();
         $metadataKey = $annotation::metadataKey;
@@ -72,7 +61,7 @@ class Subscriber implements EventSubscriber, AnnotationReaderAwareInterface
      *
      * @param \Sds\DoctrineExtensions\Annotation\AnnotationEventArgs $eventArgs
      */
-    public function annotationSerializeClassName(AnnotationEventArgs $eventArgs)
+    public function annotationDojoClassName(AnnotationEventArgs $eventArgs)
     {
         $annotation = $eventArgs->getAnnotation();
         $metadataKey = $annotation::metadataKey;

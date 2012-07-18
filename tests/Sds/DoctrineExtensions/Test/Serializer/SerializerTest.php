@@ -3,12 +3,13 @@
 namespace Sds\DoctrineExtensions\Test\Serializer;
 
 use Sds\DoctrineExtensions\Test\BaseTest;
-use Sds\DoctrineExtensions\Serializer\Subscriber\Serializer as SerializerSubscriber;
 use Sds\DoctrineExtensions\Serializer\Serializer;
 use Sds\DoctrineExtensions\Test\Serializer\TestAsset\Document\User;
 use Sds\DoctrineExtensions\Test\Serializer\TestAsset\Document\Group;
 use Sds\DoctrineExtensions\Test\Serializer\TestAsset\Document\Profile;
 use Sds\DoctrineExtensions\Test\Serializer\TestAsset\Document\GetMethodError;
+use Sds\DoctrineExtensions\Test\Serializer\TestAsset\Document\HasDiscriminator;
+use Sds\DoctrineExtensions\Test\Serializer\TestAsset\Document\ClassName;
 
 class SerializerTest extends BaseTest {
 
@@ -33,7 +34,7 @@ class SerializerTest extends BaseTest {
         $user = new User();
         $user->setUsername('superdweebie');
         $user->setPassword('secret'); //uses doNotSerialize annotation
-        $user->setLocation('here'); //uses serializeGetter annotation
+        $user->defineLocation('here'); //uses serializeGetter annotation
         $user->addGroup(new Group('groupA'));
         $user->addGroup(new Group('groupB'));
         $user->setProfile(new Profile('Tim', 'Roediger'));
@@ -65,5 +66,82 @@ class SerializerTest extends BaseTest {
         $errorDoc = new GetMethodError();
         $errorDoc->setName('error');
         Serializer::toArray($errorDoc, $this->documentManager);
+    }
+
+    public function testSerializeDiscriminator() {
+
+        $testDoc = new HasDiscriminator();
+        $testDoc->setName('superdweebie');
+
+        $correct = array(
+            'type' => 'hasDiscriminator',
+            'id' => null,
+            'name' => 'superdweebie',
+        );
+
+        $array = Serializer::toArray($testDoc, $this->documentManager);
+
+        $this->assertEquals($correct, $array);
+    }
+
+    public function testSerializeClassName() {
+
+        $testDoc = new ClassName();
+        $testDoc->setName('superdweebie');
+
+        $correct = array(
+            'className' => 'Sds\DoctrineExtensions\Test\Serializer\TestAsset\Document\ClassName',
+            'id' => null,
+            'name' => 'superdweebie',
+        );
+
+        $array = Serializer::toArray($testDoc, $this->documentManager);
+
+        $this->assertEquals($correct, $array);
+    }
+
+    public function testUnserializer(){
+
+        $data = array(
+            'username' => 'superdweebie',
+            'location' => 'here',
+            'groups' => array(
+                array('name' => 'groupA'),
+                array('name' => 'groupB'),
+            ),
+            'profile' => array(
+                'firstname' => 'Tim',
+                'lastname' => 'Roediger'
+            ),
+        );
+
+        $user = Serializer::fromArray(
+            $data,
+            $this->documentManager,
+            null,
+            'Sds\DoctrineExtensions\Test\Serializer\TestAsset\Document\User'
+        );
+
+        $this->assertTrue($user instanceof User);
+        $this->assertEquals('superdweebie', $user->getUsername());
+        $this->assertEquals('here', $user->location());
+        $this->assertEquals('groupA', $user->getGroups()[0]->getName());
+        $this->assertEquals('groupB', $user->getGroups()[1]->getName());
+        $this->assertEquals('Tim', $user->getProfile()->getFirstname());
+        $this->assertEquals('Roediger', $user->getProfile()->getLastname());
+    }
+
+    public function testUnserializeClassName() {
+
+        $data = array(
+            'className' => 'Sds\DoctrineExtensions\Test\Serializer\TestAsset\Document\ClassName',
+            'id' => null,
+            'name' => 'superdweebie',
+        );
+
+        $testDoc = Serializer::fromArray($data, $this->documentManager);
+
+        $this->assertTrue($testDoc instanceof ClassName);
+        $this->assertEquals('superdweebie', $testDoc->getName());
     }
 }

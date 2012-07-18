@@ -52,10 +52,6 @@ changes, and when the changes were made.
 
 Provides a trait for salted string encryption.
 
-##DoNotHardDelete
-
-Documents annotated with @DoNotHardDelete cannot be deleted from the database.
-
 ##DiscriminatorMap
 
 Rather than defineing a discriminatorMap for every document that uses it, and then having to change the map in many places when there is an update, this extension allows you you use this annotation:
@@ -63,6 +59,16 @@ Rather than defineing a discriminatorMap for every document that uses it, and th
     @Sds\DiscriminatorMap("My\DiscriminatorMap\Class")
 
 The class must implement the DiscriminatorMapInterface, and return the deisred DiscriminatorMap
+
+##DoNotHardDelete
+
+Documents annotated with @DoNotHardDelete cannot be deleted from the database.
+
+##DojoModel
+
+This extension provides an extra command for the Doctrine cli which generates an AMD compatible Dojo module for
+each Document. The Dojo module is like a javascript class definition of your document. It can be used to easily
+create a client side instance of your document which can be passed back to the server as json - such as through a Dojo rest store.
 
 ##Freeze
 

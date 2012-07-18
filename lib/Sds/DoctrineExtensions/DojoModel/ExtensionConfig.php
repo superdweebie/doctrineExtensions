@@ -4,12 +4,13 @@
  * @package    Sds
  * @license    MIT
  */
-namespace Sds\DoctrineExtensions\Serializer;
+namespace Sds\DoctrineExtensions\DojoModel;
 
 use Sds\DoctrineExtensions\AbstractExtensionConfig;
 use Sds\DoctrineExtensions\AnnotationReaderAwareInterface;
 use Sds\DoctrineExtensions\AnnotationReaderAwareTrait;
 use Sds\DoctrineExtensions\ClassNamePropertyTrait;
+
 /**
  * Defines the resouces this extension requires
  *
@@ -21,12 +22,21 @@ class ExtensionConfig extends AbstractExtensionConfig implements AnnotationReade
     use AnnotationReaderAwareTrait;
     use ClassNamePropertyTrait;
 
+    protected $destPath;
+
     /**
      *
-     * @var array
+     * @return string
      */
-    protected $dependencies = array(
-        'Sds\DoctrineExtensions\Annotation' => null,
-        'Sds\DoctrineExtensions\Accessor' => null
-    );
+    public function getDestPath() {
+        return $this->destPath;
+    }
+
+    /**
+     *
+     * @param string $destPath
+     */
+    public function setDestPath($destPath) {
+        $this->destPath = (string) $destPath;
+    }
 }

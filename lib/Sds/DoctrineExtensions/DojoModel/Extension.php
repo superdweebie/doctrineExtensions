@@ -4,9 +4,11 @@
  * @package    Sds
  * @license    MIT
  */
-namespace Sds\DoctrineExtensions\Serializer;
+namespace Sds\DoctrineExtensions\DojoModel;
 
 use Sds\DoctrineExtensions\AbstractExtension;
+use Sds\DoctrineExtensions\DojoModel\Console\Command\GenerateModelsCommand;
+use Sds\DoctrineExtensions\DojoModel\Console\Helper\DestPathHelper;
 
 /**
  * Defines the resouces this extension provies
@@ -26,5 +28,9 @@ class Extension extends AbstractExtension {
             $config->getAnnotationReader(),
             $config->getClassNameProperty()
         ));
+
+        $this->cliCommands = array(new GenerateModelsCommand());
+
+        $this->cliHelpers = array('destPath' => new DestPathHelper($config->getDestPath()));
     }
 }
