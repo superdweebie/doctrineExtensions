@@ -7,6 +7,7 @@
 namespace Sds\DoctrineExtensions\Serializer;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
+use Doctrine\ODM\MongoDB\Mapping\ClassMetadataFactory;
 use Sds\DoctrineExtensions\Annotation\Annotations as Sds;
 
 /**
@@ -48,6 +49,17 @@ class Serializer {
 
         $classMetadata = $documentManager->getClassMetadata(get_class($document));
         $return = array();
+
+        if ( isset($classMetadata->{Sds\SerializeClassName::metadataKey})) {
+            $return[$classMetadata->{Sds\SerializeClassName::metadataKey}] = $classMetadata->name;
+        }
+
+        if ( isset($classMetadata->{Sds\SerializeDiscriminator::metadataKey}) &&
+            $classMetadata->hasDiscriminator()
+        ) {
+            $return[$classMetadata->discriminatorField['name']] = $classMetadata->discriminatorValue;
+        }
+
         foreach ($classMetadata->fieldMappings as $field=>$mapping){
             if(isset($mapping[Sds\DoNotSerialize::metadataKey]) &&
                 $mapping[Sds\DoNotSerialize::metadataKey]
@@ -88,5 +100,110 @@ class Serializer {
             }
         }
         return $return;
+    }
+
+
+    /**
+     * This will create a document from the supplied array.
+     * WARNING: the constructor of the document will not be called.
+     *
+     * @param array $data
+     * @param \Doctrine\ODM\MongoDB\DocumentManager $documentManager
+     * @param string $classNameKey
+     * @param string $className
+     * @return object
+     */
+    public static function fromArray(
+        array $data,
+        DocumentManager $documentManager,
+        $classNameKey = 'className',
+        $className = null
+    ) {
+        return self::unserialize($data, $documentManager, $classNameKey, $className);
+    }
+
+    /**
+     *
+     * @param array $data
+     * @param \Doctrine\ODM\MongoDB\DocumentManager $documentManager
+     * @param string $classNameKey
+     * @param string $className
+     * @return \Sds\DoctrineExtensions\Serializer\className
+     * @throws \Exception
+     * @throws \BadMethodCallException
+     */
+    protected static function unserialize(
+        array $data,
+        DocumentManager $documentManager,
+        $classNameKey = 'className',
+        $className = null
+    ) {
+
+        if (! isset($className) &&
+            ! isset($data[$classNameKey])
+        ) {
+            throw new \Exception(sprintf('Both className and classNameKey %s are not set', $classNameKey));
+        }
+
+        $className = isset($className) ? $className : $data[$classNameKey];
+
+        if (! class_exists($className)){
+            throw new \Exception(sprintf('ClassName %s could not be loaded', $className));
+        }
+
+        $metadata = $documentManager->getClassMetadata($className);
+
+        $reflection = new \ReflectionClass($className);
+        $document = $reflection->newInstanceWithoutConstructor();
+
+        foreach ($metadata->fieldMappings as $field=>$mapping){
+            if (!isset($data[$field])) {
+                continue;
+            }
+
+            if(isset($mapping[Sds\Setter::metadataKey])
+            ){
+                $setMethod = $mapping[Sds\Setter::metadataKey];
+            } else {
+                $setMethod = 'set'.ucfirst($field);
+            }
+
+            if (!method_exists($document, $setMethod)){
+                throw new \BadMethodCallException(sprintf(
+                    'Method %s not found. This method was defined in the @setter annotation
+                        to be used for setting a field',
+                    $setMethod
+                ));
+            }
+
+            if(isset($mapping['embedded'])){
+                switch ($mapping['type']){
+                    case 'one':
+                        $document->$setMethod(self::unserialize(
+                            $data[$field],
+                            $documentManager,
+                            null,
+                            $mapping['targetDocument']
+                        ));
+                        break;
+                    case 'many':
+                        $collection = array();
+                        foreach($data[$field] as $embedData){
+                            $collection[] = self::unserialize(
+                                $embedData,
+                                $documentManager,
+                                null,
+                                $mapping['targetDocument']
+                            );
+                        }
+                        $document->$setMethod($collection);
+                        break;
+                }
+            } else {
+                $document->$setMethod($data[$field]);
+            }
+        }
+
+        return $document;
     }
 }

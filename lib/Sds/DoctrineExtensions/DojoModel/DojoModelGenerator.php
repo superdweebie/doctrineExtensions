@@ -7,6 +7,7 @@
 namespace Sds\DoctrineExtensions\DojoModel;
 
 use Doctrine\ODM\MongoDB\Mapping\ClassMetadata;
+use Sds\DoctrineExtensions\Annotation\Annotations as Sds;
 
 /**
  * Generate Dojo modules representing Doctrine documents from your mapping information.
@@ -89,6 +90,8 @@ class DojoModelGenerator
             'moduleName' => str_replace('\\', '/', $metadata->name),
             'moduleDeclare' => str_replace('\\', '.', $metadata->name),
             'documentClass' => $metadata->name,
+            'className' => $this->populateClassNameTemplate($metadata),
+            'discriminator' => $this->populateDiscriminatorTemplate($metadata),
             'properties' => $this->populatePropertiesTemplate($metadata->fieldMappings)
         ));
         return $module;
@@ -98,6 +101,40 @@ class DojoModelGenerator
 
         $template = file_get_contents(__DIR__ . '/Template/Module.js.template');
         return $this->populateTemplate($template, $strings);
+    }
+
+    protected function populateClassNameTemplate(ClassMetadata $metadata) {
+
+        if (! isset($metadata->{Sds\DojoClassName::metadataKey})) {
+            return null;
+        }
+
+        $template = file_get_contents(__DIR__ . '/Template/ClassName.js.template');
+
+        $populated = $property = $this->populateTemplate($template, array(
+            'name' => $metadata->{Sds\DojoClassName::metadataKey},
+            'value' => str_replace('\\', '\\\\', $metadata->name)
+        ));
+
+        return $populated;
+    }
+
+    protected function populateDiscriminatorTemplate(ClassMetadata $metadata) {
+
+        if ((! isset($metadata->{Sds\DojoDiscriminator::metadataKey})) ||
+            (! $metadata->hasDiscriminator())
+        ) {
+            return null;
+        }
+
+        $template = file_get_contents(__DIR__ . '/Template/Discriminator.js.template');
+
+        $populated = $property = $this->populateTemplate($template, array(
+            'name' => $metadata->discriminatorField['name'],
+            'value' => $metadata->discriminatorValue
+        ));
+
+        return $populated;
     }
 
     protected function populatePropertiesTemplate(array $fieldMappings) {

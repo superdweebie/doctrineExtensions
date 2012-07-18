@@ -4,9 +4,13 @@ namespace Sds\DoctrineExtensions\Test\DojoModel\TestAsset\Document;
 
 //Annotation imports
 use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
+use Sds\DoctrineExtensions\Annotation\Annotations as Sds;
 
-/** @ODM\Document */
-class Simple {
+/**
+ * @ODM\Document
+ * @Sds\DojoClassName
+ */
+class ClassName {
 
     /**
      * @ODM\Id(strategy="UUID")

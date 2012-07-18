@@ -1,12 +1,19 @@
 <?php
 
-namespace Sds\DoctrineExtensions\Test\DojoModel\TestAsset\Document;
+namespace Sds\DoctrineExtensions\Test\Serializer\TestAsset\Document;
 
 //Annotation imports
 use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
+use Sds\DoctrineExtensions\Annotation\Annotations as Sds;
 
-/** @ODM\Document */
-class Simple {
+/**
+ * @ODM\Document
+ * @ODM\InheritanceType("SINGLE_COLLECTION")
+ * @ODM\DiscriminatorField(fieldName="type")
+ * @ODM\DiscriminatorMap({"hasDiscriminator"="Sds\DoctrineExtensions\Test\Serializer\TestAsset\Document\HasDiscriminator"})
+ * @Sds\SerializeDiscriminator
+ */
+class HasDiscriminator {
 
     /**
      * @ODM\Id(strategy="UUID")

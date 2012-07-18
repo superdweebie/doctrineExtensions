@@ -21,7 +21,7 @@ define ([
                 // description:
                 //      Use this to create documents in a browser which can the be passed to a doctrine server for
                 //      persistence
-<properties>
+<className><discriminator><properties>
             }
         );
     }

@@ -46,11 +46,20 @@ class DojoModelTest extends BaseTest {
 
         $this->generator->generate($metadatas, $this->path);
 
-        $desired = file_get_contents(__DIR__ . '/TestAsset/Simple.js');
+        $this->assertEquals(
+            file_get_contents(__DIR__ . '/TestAsset/Simple.js'),
+            file_get_contents($this->path . '/Sds/DoctrineExtensions/Test/DojoModel/TestAsset/Document/Simple.js')
+        );
 
-        $actual = file_get_contents($this->path . '/Sds/DoctrineExtensions/Test/DojoModel/TestAsset/Document/Simple.js');
-        
-        $this->assertEquals($desired, $actual);
+        $this->assertEquals(
+            file_get_contents(__DIR__ . '/TestAsset/HasDiscriminator.js'),
+            file_get_contents($this->path . '/Sds/DoctrineExtensions/Test/DojoModel/TestAsset/Document/HasDiscriminator.js')
+        );
+
+        $this->assertEquals(
+            file_get_contents(__DIR__ . '/TestAsset/ClassName.js'),
+            file_get_contents($this->path . '/Sds/DoctrineExtensions/Test/DojoModel/TestAsset/Document/ClassName.js')
+        );
     }
 
     public function tearDown() {

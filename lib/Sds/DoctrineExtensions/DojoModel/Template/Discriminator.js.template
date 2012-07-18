@@ -1,0 +1,4 @@
+
+                // _<name>: string
+                //      The doctrine discriminator property. Don't change this one!
+                _<name>: '<value>',

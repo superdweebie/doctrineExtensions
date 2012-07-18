@@ -24,7 +24,10 @@ class Extension extends AbstractExtension {
         parent::__construct($config);
         $config = $this->getConfig();
 
-        //$this->subscribers = array(new Subscriber($config->getAnnotationReader()));
+        $this->subscribers = array(new Subscriber(
+            $config->getAnnotationReader(),
+            $config->getClassNameProperty()
+        ));
 
         $this->cliCommands = array(new GenerateModelsCommand());
 

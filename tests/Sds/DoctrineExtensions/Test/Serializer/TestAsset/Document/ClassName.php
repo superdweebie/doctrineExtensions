@@ -1,12 +1,16 @@
 <?php
 
-namespace Sds\DoctrineExtensions\Test\DojoModel\TestAsset\Document;
+namespace Sds\DoctrineExtensions\Test\Serializer\TestAsset\Document;
 
 //Annotation imports
 use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
+use Sds\DoctrineExtensions\Annotation\Annotations as Sds;
 
-/** @ODM\Document */
-class Simple {
+/**
+ * @ODM\Document
+ * @Sds\SerializeClassName
+ */
+class ClassName {
 
     /**
      * @ODM\Id(strategy="UUID")

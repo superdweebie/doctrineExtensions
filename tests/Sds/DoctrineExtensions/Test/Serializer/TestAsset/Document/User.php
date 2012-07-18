@@ -28,7 +28,7 @@ class User {
     protected $password;
 
 
-    /** @ODM\EmbedMany(targetDocument="Phonenumber") */
+    /** @ODM\EmbedMany(targetDocument="Group") */
     protected $groups;
 
     /** @ODM\EmbedOne(targetDocument="Profile") */
@@ -37,6 +37,7 @@ class User {
     /**
      * @ODM\Field(type="string")
      * @Sds\Getter("location")
+     * @Sds\Setter("defineLocation")
      */
     protected $location;
 
@@ -69,13 +70,17 @@ class User {
         return $this->location;
     }
 
-    public function setLocation($location) {
+    public function defineLocation($location) {
         $this->location = $location;
     }
 
     public function getGroups()
     {
         return $this->groups;
+    }
+
+    public function setGroups(array $groups){
+        $this->groups = $groups;
     }
 
     public function addGroup(Group $group)
