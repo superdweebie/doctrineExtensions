@@ -22,15 +22,13 @@ define ([
                 //      Use this to create documents in a browser which can the be passed to a doctrine server for
                 //      persistence
 
-                                // id: custom_id
+                // id: custom_id
                 id: undefined,
-                // name: string
-                name: undefined,
 
+                // name: string
+                name: undefined
 
             }
         );
     }
 );
-
-

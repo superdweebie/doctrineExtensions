@@ -105,11 +105,16 @@ class DojoModelGenerator
         $template = file_get_contents(__DIR__ . '/Template/Property.js.template');
 
         $populated = '';
+        $index = 0;
+        $count = count($fieldMappings);
+
         foreach ($fieldMappings as $name => $mapping) {
+            $index++;
+            $comma = $index == $count ? '' : ',';
             $property = $this->populateTemplate($template, array(
                 'name' => $name,
                 'type' => $mapping['type'],
-                'comma' => ','
+                'comma' => $comma
             ));
             $populated .= $property;
         }
