@@ -28,6 +28,6 @@ class Extension extends AbstractExtension {
 
         $this->cliCommands = array(new GenerateModelsCommand());
 
-        $this->cliHelpers = array(new DestPathHelper($config->getDestPath()));
+        $this->cliHelpers = array('destPath' => new DestPathHelper($config->getDestPath()));
     }
 }
