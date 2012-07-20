@@ -60,22 +60,6 @@ trait WorkflowTrait {
     protected $vars;
 
     /**
-     * {@inheritdoc}
-     */
-    public function __construct(
-        $startState,
-        array $possibleStates,
-        array $transitions,
-        array $vars = array()
-    ){
-        $this->startState = (string) $startState;
-        $this->possibleStates = $possibleStates;
-        $this->transitions = $transitions;
-        $this->vars = $vars;
-        WorkflowHelper::checkIntegrity($this);
-    }
-
-    /**
      * The state the object will be in immediately after creation
      *
      * @return string

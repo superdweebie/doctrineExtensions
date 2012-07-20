@@ -24,4 +24,17 @@ use Sds\DoctrineExtensions\Annotation\Annotations as Sds;
 class Workflow implements WorkflowInterface
 {
     use WorkflowTrait;
+
+    public function __construct(
+        $startState,
+        array $possibleStates,
+        array $transitions,
+        array $vars = array()
+    ){
+        $this->startState = (string) $startState;
+        $this->possibleStates = $possibleStates;
+        $this->transitions = $transitions;
+        $this->vars = $vars;
+        WorkflowHelper::checkIntegrity($this);
+    }
 }
