@@ -23,7 +23,5 @@ class Extension extends AbstractExtension {
         $config = $this->getConfig();
 
         $this->subscribers = array(new Subscriber());
-
-        $this->documents = array('Sds\DoctrineExtensions\Workflow\Model' => __DIR__.'\..\Model');
     }
 }

@@ -10,6 +10,8 @@ use Doctrine\Common\EventSubscriber;
 use Doctrine\ODM\MongoDB\Event\PreFlushEventArgs;
 use Doctrine\ODM\MongoDB\Events as ODMEvents;
 use Sds\Common\Workflow\WorkflowAwareInterface;
+use Sds\DoctrineExtensions\Annotation\Annotations as Sds;
+use Sds\DoctrineExtensions\Annotation\AnnotationEventArgs;
 use Sds\DoctrineExtensions\State\Events as StateEvents;
 use Sds\DoctrineExtensions\State\EventArgs as StateEventArgs;
 use Sds\DoctrineExtensions\Workflow\Events as WorkflowEvents;
@@ -27,10 +29,21 @@ class Subscriber implements EventSubscriber
      */
     public function getSubscribedEvents(){
         return array(
+            Sds\WorkflowClass::event,
             ODMEvents::preFlush,
             StateEvents::preStateChange,
             StateEvents::onStateChange
         );
+    }
+
+    /**
+     *
+     * @param \Sds\DoctrineExtensions\Annotation\AnnotationEventArgs $eventArgs
+     */
+    public function annotationWorkflowClass(AnnotationEventArgs $eventArgs) {
+        $annotation = $eventArgs->getAnnotation();
+        $metadataKey = $annotation::metadataKey;
+        $eventArgs->getMetadata()->$metadataKey = $annotation->value;
     }
 
     /**
@@ -46,7 +59,7 @@ class Subscriber implements EventSubscriber
             if (!$document instanceof WorkflowAwareInterface){
                 continue;
             }
-            $document->setState($document->getWorkflow()->getStartState());
+            $document->setState(WorkflowService::getWorkflow($documentManager->getClassMetadata(get_class($document)))->getStartState());
         }
     }
 
@@ -64,7 +77,7 @@ class Subscriber implements EventSubscriber
         $fromState = $eventArgs->getFromState();
         $toState = $eventArgs->getToState();
 
-        foreach ($document->getWorkflow()->getTransitions() as $transition){
+        foreach (WorkflowService::getWorkflow($eventArgs->getDocumentManager()->getClassMetadata(get_class($document)))->getTransitions() as $transition){
             if ($transition->getFromState() == $fromState &&
                 $transition->getToState() == $toState
             ) {
@@ -98,13 +111,7 @@ class Subscriber implements EventSubscriber
             return;
         }
 
-        // Raise updateWorkflowVars
-        $eventManager = $eventArgs->getDocumentManager()->getEventManager();
-        if ($eventManager->hasListeners(WorkflowEvents::updateWorkflowVars)) {
-            $eventManager->dispatchEvent(
-                WorkflowEvents::updateWorkflowVars,
-                $eventArgs
-            );
-        }
+        // Update workflow
+        WorkflowService::getWorkflow($eventArgs->getDocumentManager()->getClassMetadata(get_class($document)))->update($document);
     }
 }

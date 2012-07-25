@@ -6,7 +6,9 @@
  */
 namespace Sds\DoctrineExtensions\Workflow;
 
+use Doctrine\ODM\MongoDB\Mapping\ClassMetadata;
 use Sds\Common\Workflow\WorkflowInterface;
+use Sds\DoctrineExtensions\Annotation\Annotations as Sds;
 use Sds\DoctrineExtensions\Workflow\Exception\BadWorkflowException;
 
 /**
@@ -15,7 +17,27 @@ use Sds\DoctrineExtensions\Workflow\Exception\BadWorkflowException;
  * @since   1.0
  * @author  Tim Roediger <superdweebie@gmail.com>
  */
-class Workflow {
+class WorkflowService {
+
+    protected static $workflows;
+
+    /**
+     *
+     * @param \Doctrine\ODM\MongoDB\Mapping\ClassMetadata $metadata
+     * @return null|\Sds\DoctrineExtensions\Workflow\workflowClass
+     */
+    public static function getWorkflow(ClassMetadata $metadata){
+        $key = Sds\WorkflowClass::metadataKey;
+        if ( ! isset($metadata->$key)) {
+            return null;
+        }
+        $workflowClass = $metadata->$key;
+
+        if (! isset(self::$workflows[$workflowClass]) ) {
+            self::$workflows[$workflowClass] = new $workflowClass();
+        }
+        return self::$workflows[$workflowClass];
+    }
 
     /**
      * Check that a workflow makes sense

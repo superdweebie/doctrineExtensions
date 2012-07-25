@@ -3,10 +3,9 @@
 namespace Sds\DoctrineExtensions\Test\Workflow;
 
 use Sds\DoctrineExtensions\Workflow\Events;
-use Sds\DoctrineExtensions\Workflow\Model\Workflow;
-use Sds\DoctrineExtensions\Workflow\Model\Transition;
-use Sds\DoctrineExtensions\Workflow\Workflow as WorkflowHelper;
+use Sds\DoctrineExtensions\Workflow\WorkflowService;
 use Sds\DoctrineExtensions\Test\BaseTest;
+use Sds\DoctrineExtensions\Test\Workflow\TestAsset;
 use Sds\DoctrineExtensions\Test\Workflow\TestAsset\Document\Simple;
 
 class WorkflowTest extends BaseTest {
@@ -38,22 +37,10 @@ class WorkflowTest extends BaseTest {
         $eventManager = $documentManager->getEventManager();
 
         $eventManager->addEventListener(Events::transitionDoesNotExist, $this);
-        $eventManager->addEventListener(Events::updateWorkflowVars, $this);
-
-        $workflow = new Workflow(
-            'draft',
-            array('draft', 'approved', 'published'),
-            array(
-                new Transition('draft', 'approved'),
-                new Transition('approved', 'published'),
-                new Transition('published', 'approved')
-            )
-        );
 
         $testDoc = new Simple();
         $testDoc->setName('version 1');
         $testDoc->setState('draft');
-        $testDoc->setWorkflow($workflow);
 
         $documentManager->persist($testDoc);
         $documentManager->flush();
@@ -65,14 +52,15 @@ class WorkflowTest extends BaseTest {
         $testDoc = $repository->find($id);
 
         $this->assertEquals('draft', $testDoc->getState());
+        $this->assertEquals(null, $testDoc->getNumStateChanges());
 
         $testDoc->setState('wrong');
 
         $documentManager->flush();
 
         $this->assertEquals('draft', $testDoc->getState());
+        $this->assertEquals(null, $testDoc->getNumStateChanges());
         $this->assertTrue(isset($this->calls[Events::transitionDoesNotExist]));
-        $this->assertFalse(isset($this->calls[Events::updateWorkflowVars]));
 
         $testDoc->setState('published');
 
@@ -80,8 +68,8 @@ class WorkflowTest extends BaseTest {
         $documentManager->flush();
 
         $this->assertEquals('draft', $testDoc->getState());
+        $this->assertEquals(null, $testDoc->getNumStateChanges());
         $this->assertTrue(isset($this->calls[Events::transitionDoesNotExist]));
-        $this->assertFalse(isset($this->calls[Events::updateWorkflowVars]));
 
         $testDoc->setState('approved');
 
@@ -89,8 +77,9 @@ class WorkflowTest extends BaseTest {
         $documentManager->flush();
 
         $this->assertEquals('approved', $testDoc->getState());
+        $this->assertEquals(1, $testDoc->getNumStateChanges());
         $this->assertFalse(isset($this->calls[Events::transitionDoesNotExist]));
-        $this->assertTrue(isset($this->calls[Events::updateWorkflowVars]));
+
 
         $testDoc->setState('published');
 
@@ -98,8 +87,8 @@ class WorkflowTest extends BaseTest {
         $documentManager->flush();
 
         $this->assertEquals('published', $testDoc->getState());
+        $this->assertEquals(2, $testDoc->getNumStateChanges());
         $this->assertFalse(isset($this->calls[Events::transitionDoesNotExist]));
-        $this->assertTrue(isset($this->calls[Events::updateWorkflowVars]));
     }
 
     /**
@@ -107,16 +96,8 @@ class WorkflowTest extends BaseTest {
      */
     public function testUnreachableState(){
 
-        $workflow = new Workflow(
-            'draft',
-            array('draft', 'approved', 'published'),
-            array(
-                new Transition('draft', 'approved'),
-                new Transition('published', 'approved')
-            )
-        );
-
-        WorkflowHelper::checkIntegrity($workflow);
+        $workflow = new TestAsset\UnreachableStateWorkflow();
+        WorkflowService::checkIntegrity($workflow);
     }
 
     /**
@@ -124,18 +105,8 @@ class WorkflowTest extends BaseTest {
      */
     public function testUnusedTransitions(){
 
-        $workflow = new Workflow(
-            'draft',
-            array('draft', 'approved', 'published'),
-            array(
-                new Transition('draft', 'approved'),
-                new Transition('approved', 'published'),
-                new Transition('published', 'approved'),
-                new Transition('rejected', 'draft')
-            )
-        );
-
-        WorkflowHelper::checkIntegrity($workflow);
+        $workflow = new TestAsset\UnusedTransitionsWorkflow();
+        WorkflowService::checkIntegrity($workflow);
     }
 
     public function __call($name, $arguments){

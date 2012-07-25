@@ -5,11 +5,11 @@ namespace Sds\DoctrineExtensions\Test;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\AnnotationRegistry;
 use Doctrine\Common\EventManager;
+use Doctrine\Common\Persistence\Mapping\Driver\MappingDriverChain;
 use Doctrine\MongoDB\Connection;
 use Doctrine\ODM\MongoDB\Configuration;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\ODM\MongoDB\Mapping\Driver\AnnotationDriver;
-use Doctrine\ODM\MongoDB\Mapping\Driver\DriverChain;
 use Sds\DoctrineExtensions\Manifest;
 use Sds\DoctrineExtensions\ManifestConfig;
 use Sds\DoctrineExtensions\Test\TestAsset\RoleAwareUser;
@@ -70,7 +70,7 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
         $config->setDefaultDB(self::DEFAULT_DB);
 
         //create driver chain
-        $chain  = new DriverChain;
+        $chain  = new MappingDriverChain;
 
         foreach ($documents as $namespace => $path){
             $driver = new AnnotationDriver($this->annotationReader, $path);
