@@ -58,6 +58,46 @@ class SerializerTest extends BaseTest {
         $this->assertEquals($correct, $array);
     }
 
+    public function testApplySerializeMetadataToArray(){
+
+        $array = array(
+            'id' => null,
+            'username' => 'superdweebie',
+            'location' => 'here',
+            'groups' => array(
+                array('name' => 'groupA'),
+                array('name' => 'groupB'),
+            ),
+            'password' => 'secret',
+            'profile' => array(
+                'firstname' => 'Tim',
+                'lastname' => 'Roediger'
+            ),
+        );
+
+        $correct = array(
+            'id' => null,
+            'username' => 'superdweebie',
+            'location' => 'here',
+            'groups' => array(
+                array('name' => 'groupA'),
+                array('name' => 'groupB'),
+            ),
+            'profile' => array(
+                'firstname' => 'Tim',
+                'lastname' => 'Roediger'
+            ),
+        );
+
+        $array = Serializer::ApplySerializeMetadataToArray(
+            $array,
+            'Sds\DoctrineExtensions\Test\Serializer\TestAsset\Document\User',
+            $this->documentManager
+        );
+
+        $this->assertEquals($correct, $array);
+    }
+
     /**
      * @expectedException BadMethodCallException
      */
