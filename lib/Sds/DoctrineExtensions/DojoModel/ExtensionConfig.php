@@ -22,21 +22,21 @@ class ExtensionConfig extends AbstractExtensionConfig implements AnnotationReade
     use AnnotationReaderAwareTrait;
     use ClassNamePropertyTrait;
 
-    protected $destPath;
+    protected $destPaths;
 
     /**
      *
      * @return string
      */
-    public function getDestPath() {
-        return $this->destPath;
+    public function getDestPaths() {
+        return $this->destPaths;
     }
 
     /**
      *
-     * @param string $destPath
+     * @param array $destPath
      */
-    public function setDestPath($destPath) {
-        $this->destPath = (string) $destPath;
+    public function setDestPaths(array $destPaths) {
+        $this->destPaths = $destPaths;
     }
 }

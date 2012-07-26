@@ -7,6 +7,7 @@
 namespace Sds\DoctrineExtensions\DojoModel\Console\Command;
 
 use Doctrine\ODM\MongoDB\Mapping\ClassMetadataFactory;
+use Doctrine\ODM\MongoDB\Tools\Console\MetadataFilter;
 use Sds\DoctrineExtensions\DojoModel\DojoModelGenerator;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console;
@@ -45,7 +46,7 @@ EOT
 
     protected function execute(Console\Input\InputInterface $input, Console\Output\OutputInterface $output)
     {
-        $documentManager = $this->getHelper('dm')->getDocumentManager();
+        $documentManager = $this->getHelper('documentManager')->getDocumentManager();
 
         $metadataFactory = new ClassMetadataFactory();
         $metadataFactory->setConfiguration($documentManager->getConfiguration());
@@ -53,12 +54,29 @@ EOT
 
         $metadatas = $metadataFactory->getAllMetadata();
 
+        // Create DocumentGenerator
+        $generator = new DojoModelGenerator();
+        $generator->setRegenerateDojoModelIfExists($input->getOption('regenerate-models'));
+        $generator->setDocumentManager($this->getHelper('dm')->getDocumentManager());
+        
         // Process destination directory
         $destPath = $input->getOption('dest-path');
-        if ( ! isset($destPath)) {
-            $destPath = $this->getHelper('destPath')->getDestPath();
+        if (isset($destPath)) {
+            $this->generateBatch($metadatas, $destPath, $generator, $output);
+        } else {
+            foreach($this->getHelper('destPaths')->getDestPaths() as $destPath){
+                if (isset($destPath['filter'])) {
+                    $metadatasBatch = MetadataFilter::filter($metadatas, $destPath['filter']);
+                    $this->generateBatch($metadatasBatch, $destPath['path'], $generator, $output);                
+                } else {
+                    $this->generateBatch($metadatas, $destPath['path'], $generator, $output);                
+                }
+            }
         }
-
+    }
+    
+    protected function generateBatch(array $metadatas, $destPath, $generator, $output) {
+        
         if ( ! file_exists($destPath)) {
             throw new \InvalidArgumentException(
                 sprintf("Dojo models destination directory '<info>%s</info>' does not exist.", $destPath)
@@ -68,13 +86,9 @@ EOT
                 sprintf("Dojo models destination directory '<info>%s</info>' does not have write permissions.", $destPath)
             );
         }
-
+        
         if (count($metadatas)) {            
             
-            // Create DocumentGenerator
-            $generator = new DojoModelGenerator();
-            $generator->setRegenerateDojoModelIfExists($input->getOption('regenerate-models'));
-
             foreach ($metadatas as $metadata) {
                 $output->write(
                     sprintf('Processing document "<info>%s</info>"', $metadata->name) . PHP_EOL
@@ -87,7 +101,7 @@ EOT
             // Outputting information message
             $output->write(PHP_EOL . sprintf('Dojo models generated to "<info>%s</INFO>"', $destPath) . PHP_EOL);
         } else {
-            $output->write('No Metadata Classes to process.' . PHP_EOL);
-        }
+            $output->write('No Metadata to process.' . PHP_EOL);
+        }        
     }
 }

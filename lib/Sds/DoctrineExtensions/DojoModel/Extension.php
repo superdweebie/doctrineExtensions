@@ -8,7 +8,7 @@ namespace Sds\DoctrineExtensions\DojoModel;
 
 use Sds\DoctrineExtensions\AbstractExtension;
 use Sds\DoctrineExtensions\DojoModel\Console\Command\GenerateModelsCommand;
-use Sds\DoctrineExtensions\DojoModel\Console\Helper\DestPathHelper;
+use Sds\DoctrineExtensions\DojoModel\Console\Helper\DestPathsHelper;
 
 /**
  * Defines the resouces this extension provies
@@ -31,6 +31,6 @@ class Extension extends AbstractExtension {
 
         $this->cliCommands = array(new GenerateModelsCommand());
 
-        $this->cliHelpers = array('destPath' => new DestPathHelper($config->getDestPath()));
+        $this->cliHelpers = array('destPaths' => new DestPathsHelper($config->getDestPaths()));
     }
 }

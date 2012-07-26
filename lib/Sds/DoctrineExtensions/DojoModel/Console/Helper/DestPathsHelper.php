@@ -13,22 +13,22 @@ use Symfony\Component\Console\Helper\Helper;
  * @since   1.0
  * @author  Tim Roediger <superdweebie@gmail.com>
  */
-class DestPathHelper extends Helper
+class DestPathsHelper extends Helper
 {
-    protected $destPath;
+    protected $destPaths;
 
-    public function __construct($destPath)
+    public function __construct(array $destPaths)
     {
-        $this->destPath = $destPath;
+        $this->destPaths = $destPaths;
     }
 
-    public function getDestPath()
+    public function getDestPaths()
     {
-        return $this->destPath;
+        return $this->destPaths;
     }
 
     public function getName()
     {
-        return 'destPath';
+        return 'destPaths';
     }
 }

@@ -6,6 +6,7 @@
  */
 namespace Sds\DoctrineExtensions\DojoModel;
 
+use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\ODM\MongoDB\Mapping\ClassMetadata;
 use Sds\DoctrineExtensions\Annotation\Annotations as Sds;
 
@@ -24,6 +25,8 @@ class DojoModelGenerator
     /** Whether or not to re-generate document class if it exists already */
     protected $regenerateDojoModelIfExists = true;
 
+    protected $documentManager;
+    
     public function getExtension() {
         return $this->extension;
     }
@@ -40,6 +43,14 @@ class DojoModelGenerator
         $this->regenerateDojoModelIfExists = $regenerateDojoModelIfExists;
     }
 
+    public function getDocumentManager() {
+        return $this->documentManager;
+    }
+
+    public function setDocumentManager(DocumentManager $documentManager) {
+        $this->documentManager = $documentManager;
+    }
+    
     /**
      * Generate and write dojo modules for the given array of ClassMetadataInfo instances
      *
@@ -50,7 +61,9 @@ class DojoModelGenerator
     public function generate(array $metadatas, $outputDirectory)
     {
         foreach ($metadatas as $metadata) {
-            if (! $metadata->isMappedSuperclass) {
+            if (! $metadata->isMappedSuperclass &&
+                ! $metadata->reflClass->isAbstract()
+            ) {
                 $this->writeDojoModel($metadata, $outputDirectory);
             }
         }
@@ -99,6 +112,27 @@ class DojoModelGenerator
         return $module;
     }
 
+    protected function getInheritedMetadataValue(ClassMetadata $metadata, $key){
+        if (isset($metadata->$key)) {
+            return $metadata->$key;
+        } else {
+            if (isset($metadata->parentClasses)) {
+                foreach ($metadata->parentClasses as $parentClass) {
+                    $return = $this->getInheritedMetadataValue(
+                        $this->documentManager->getClassMetadata($parentClass), 
+                        $key
+                    );
+                    if ($return) { 
+                        break;                      
+                    };
+                }
+                return $return; 
+            } else {
+                return null;
+            }
+        }
+    }
+    
     protected function populateModuleTemplate(array $strings) {
 
         $template = file_get_contents(__DIR__ . '/Template/Module.js.template');
@@ -107,14 +141,15 @@ class DojoModelGenerator
 
     protected function populateClassNameTemplate(ClassMetadata $metadata) {
 
-        if (! isset($metadata->{Sds\DojoClassName::metadataKey})) {
+        $name = $this->getInheritedMetadataValue($metadata, Sds\DojoClassName::metadataKey);
+        if (! isset($name)) {
             return null;
         }
 
         $template = file_get_contents(__DIR__ . '/Template/ClassName.js.template');
 
         $populated = $property = $this->populateTemplate($template, array(
-            'name' => $metadata->{Sds\DojoClassName::metadataKey},
+            'name' => $name,
             'value' => str_replace('\\', '\\\\', $metadata->name)
         ));
 
@@ -123,7 +158,8 @@ class DojoModelGenerator
 
     protected function populateDiscriminatorTemplate(ClassMetadata $metadata) {
 
-        if ((! isset($metadata->{Sds\DojoDiscriminator::metadataKey})) ||
+        $discriminator = $this->getInheritedMetadataValue($metadata, Sds\DojoDiscriminator::metadataKey);
+        if ((! isset($discriminator)) ||
             (! $metadata->hasDiscriminator())
         ) {
             return null;
