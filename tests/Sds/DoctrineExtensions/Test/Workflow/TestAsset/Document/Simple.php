@@ -9,7 +9,10 @@ use Sds\DoctrineExtensions\Workflow\Behaviour\WorkflowAwareTrait;
 use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
 use Sds\DoctrineExtensions\Annotation\Annotations as Sds;
 
-/** @ODM\Document */
+/**
+ * @ODM\Document
+ * @Sds\WorkflowClass("Sds\DoctrineExtensions\Test\Workflow\TestAsset\SimpleWorkflow")
+ */
 class Simple implements WorkflowAwareInterface {
 
     use WorkflowAwareTrait;
@@ -24,6 +27,12 @@ class Simple implements WorkflowAwareInterface {
      */
     protected $name;
 
+    /**
+     *
+     * @ODM\Int
+     */
+    protected $numStateChanges;
+
     public function getId() {
         return $this->id;
     }
@@ -34,5 +43,13 @@ class Simple implements WorkflowAwareInterface {
 
     public function setName($name) {
         $this->name = $name;
+    }
+
+    public function getNumStateChanges() {
+        return $this->numStateChanges;
+    }
+
+    public function setNumStateChanges($numStateChanges) {
+        $this->numStateChanges = $numStateChanges;
     }
 }

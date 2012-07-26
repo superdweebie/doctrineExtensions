@@ -18,10 +18,4 @@ final class Events
      * Called if state change is attempted which has not transition defined
      */
     const transitionDoesNotExist = 'transitionDoesNotExist';
-
-    /**
-     * Convienicene event. Called during onStateChange as a trigger to update
-     * workflow vars
-     */
-    const updateWorkflowVars = 'updateWorkflowVars';
 }

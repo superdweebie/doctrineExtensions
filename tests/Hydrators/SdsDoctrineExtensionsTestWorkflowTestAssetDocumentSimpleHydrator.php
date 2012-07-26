@@ -43,19 +43,12 @@ class SdsDoctrineExtensionsTestWorkflowTestAssetDocumentSimpleHydrator implement
             $hydratedData['name'] = $return;
         }
 
-        /** @EmbedOne */
-        if (isset($data['workflow'])) {
-            $embeddedDocument = $data['workflow'];
-            $className = $this->dm->getClassNameFromDiscriminatorValue($this->class->fieldMappings['workflow'], $embeddedDocument);
-            $embeddedMetadata = $this->dm->getClassMetadata($className);
-            $return = $embeddedMetadata->newInstance();
-
-            $embeddedData = $this->dm->getHydratorFactory()->hydrate($return, $embeddedDocument, $hints);
-            $this->unitOfWork->registerManaged($return, null, $embeddedData);
-            $this->unitOfWork->setParentAssociation($return, $this->class->fieldMappings['workflow'], $document, 'workflow');
-
-            $this->class->reflFields['workflow']->setValue($document, $return);
-            $hydratedData['workflow'] = $return;
+        /** @Field(type="int") */
+        if (isset($data['numStateChanges'])) {
+            $value = $data['numStateChanges'];
+            $return = (int) $value;
+            $this->class->reflFields['numStateChanges']->setValue($document, $return);
+            $hydratedData['numStateChanges'] = $return;
         }
 
         /** @Field(type="string") */

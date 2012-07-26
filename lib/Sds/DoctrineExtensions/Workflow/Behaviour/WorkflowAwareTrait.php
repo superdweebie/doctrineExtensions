@@ -21,30 +21,4 @@ use Sds\DoctrineExtensions\Annotations as Sds;
 trait WorkflowAwareTrait {
 
     use StateAwareTrait;
-
-    /**
-     * @ODM\EmbedOne(
-     *   targetDocument="Sds\DoctrineExtensions\Workflow\Model\Workflow"
-     * )
-     * @Sds\Readonly
-     * @Sds\UiHints(label = "Workflow")
-     */
-    protected $workflow = [];
-
-    /**
-     *
-     * @param \Sds\Common\Workflow\WorkflowInterface $workflow
-     */
-    public function setWorkflow(WorkflowInterface $workflow){
-        $this->workflow = $workflow;
-        $this->state = $workflow->getStartState();
-    }
-
-    /**
-     *
-     * @return \Sds\Common\Workflow\WorkflowInterface
-     */
-    public function getWorkflow(){
-        return $this->workflow;
-    }
 }

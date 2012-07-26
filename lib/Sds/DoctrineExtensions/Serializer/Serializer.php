@@ -7,7 +7,7 @@
 namespace Sds\DoctrineExtensions\Serializer;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
-use Doctrine\ODM\MongoDB\Mapping\ClassMetadataFactory;
+use Doctrine\ODM\MongoDB\Mapping\ClassMetadata;
 use Sds\DoctrineExtensions\Annotation\Annotations as Sds;
 
 /**
@@ -39,15 +39,60 @@ class Serializer {
     }
 
     /**
+     * Will take an associative array representing a document, and apply the
+     * serialization metadata rules to that array.
      *
-     * @param object $document
-     * @param DocumentManager $documentManager
+     * @param array $array
+     * @param string $className
+     * @param \Doctrine\ODM\MongoDB\DocumentManager $documentManager
      * @return array
-     * @throws \BadMethodCallException
      */
-    protected static function serialize($document, DocumentManager $documentManager){
+    public static function applySerializeMetadataToArray(array $array, $className, DocumentManager $documentManager) {
 
-        $classMetadata = $documentManager->getClassMetadata(get_class($document));
+        $classMetadata = $documentManager->getClassMetadata($className);
+        $return = array_merge($array, self::serializeClassNameAndDiscriminator($classMetadata));
+
+        foreach ($classMetadata->fieldMappings as $field=>$mapping){
+            if(isset($mapping[Sds\DoNotSerialize::metadataKey]) &&
+                $mapping[Sds\DoNotSerialize::metadataKey]
+            ){
+                if (isset($return[$field])){
+                    unset($return[$field]);
+                }
+                continue;
+            }
+
+            if(isset($mapping['embedded'])){
+                switch ($mapping['type']){
+                    case 'one':
+                        $return[$field] = self::applySerializeMetadataToArray(
+                            $return[$field],
+                            $mapping['targetDocument'],
+                            $documentManager
+                        );
+                        break;
+                    case 'many':
+                        foreach($return[$field] as $index => $embedArray){
+                            $return[$field][$index] = self::applySerializeMetadataToArray(
+                                $embedArray,
+                                $mapping['targetDocument'],
+                                $documentManager
+                            );
+                        }
+                        break;
+                }
+            }
+        }
+
+        return $return;
+    }
+
+    public static function removeSerializeMetadataFromArray(array $array, $className, DocumentManager $documentManager){
+
+    }
+
+    protected static function serializeClassNameAndDiscriminator(ClassMetadata $classMetadata) {
+
         $return = array();
 
         if ( isset($classMetadata->{Sds\SerializeClassName::metadataKey})) {
@@ -59,6 +104,21 @@ class Serializer {
         ) {
             $return[$classMetadata->discriminatorField['name']] = $classMetadata->discriminatorValue;
         }
+
+        return $return;
+    }
+
+    /**
+     *
+     * @param object | array $document
+     * @param DocumentManager $documentManager
+     * @return array
+     * @throws \BadMethodCallException
+     */
+    protected static function serialize($document, DocumentManager $documentManager){
+
+        $classMetadata = $documentManager->getClassMetadata(get_class($document));
+        $return = self::serializeClassNameAndDiscriminator($classMetadata);
 
         foreach ($classMetadata->fieldMappings as $field=>$mapping){
             if(isset($mapping[Sds\DoNotSerialize::metadataKey]) &&
@@ -145,7 +205,7 @@ class Serializer {
             throw new \Exception(sprintf('Both className and classNameKey %s are not set', $classNameKey));
         }
 
-        $className = isset($className) ? $className : $data[$classNameKey];
+        $className = isset($data[$classNameKey]) ? $data[$classNameKey] : $className;
 
         if (! class_exists($className)){
             throw new \Exception(sprintf('ClassName %s could not be loaded', $className));
