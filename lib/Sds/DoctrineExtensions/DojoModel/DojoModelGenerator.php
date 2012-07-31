@@ -26,7 +26,7 @@ class DojoModelGenerator
     protected $regenerateDojoModelIfExists = true;
 
     protected $documentManager;
-    
+
     public function getExtension() {
         return $this->extension;
     }
@@ -50,7 +50,7 @@ class DojoModelGenerator
     public function setDocumentManager(DocumentManager $documentManager) {
         $this->documentManager = $documentManager;
     }
-    
+
     /**
      * Generate and write dojo modules for the given array of ClassMetadataInfo instances
      *
@@ -116,23 +116,23 @@ class DojoModelGenerator
         if (isset($metadata->$key)) {
             return $metadata->$key;
         } else {
-            if (isset($metadata->parentClasses)) {
+            if (count($metadata->parentClasses) > 0) {
                 foreach ($metadata->parentClasses as $parentClass) {
                     $return = $this->getInheritedMetadataValue(
-                        $this->documentManager->getClassMetadata($parentClass), 
+                        $this->documentManager->getClassMetadata($parentClass),
                         $key
                     );
-                    if ($return) { 
-                        break;                      
+                    if ($return) {
+                        break;
                     };
                 }
-                return $return; 
+                return $return;
             } else {
                 return null;
             }
         }
     }
-    
+
     protected function populateModuleTemplate(array $strings) {
 
         $template = file_get_contents(__DIR__ . '/Template/Module.js.template');
