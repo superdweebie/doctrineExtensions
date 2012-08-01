@@ -25,9 +25,10 @@ define ([
                 toJSON: function(){
                     // summary:
                     //     Function to handle serialization
-                    return {
-<jsonFields>
-                    }
+
+                    var json = {};
+<jsonFields>                    
+                    return json;
                 }
             }
         );

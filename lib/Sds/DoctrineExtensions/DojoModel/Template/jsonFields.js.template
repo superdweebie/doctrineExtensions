@@ -1,1 +1,3 @@
-                        "<name>" : this.get('<name>'),
+                    if (this.get('<name>')) {
+                        json['<name>'] = this.get('<name>');
+                    }

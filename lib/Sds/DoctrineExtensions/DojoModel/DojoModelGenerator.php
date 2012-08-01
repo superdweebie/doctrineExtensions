@@ -223,7 +223,7 @@ class DojoModelGenerator
             $populated .= $field;
         }
 
-        return  substr($populated, 0, -2);
+        return $populated;
     }
     
     protected function populateTemplate($template, array $strings) {
