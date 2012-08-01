@@ -107,7 +107,8 @@ class DojoModelGenerator
             'documentClass' => $metadata->name,
             'className' => $this->populateClassNameTemplate($metadata),
             'discriminator' => $this->populateDiscriminatorTemplate($metadata),
-            'properties' => $this->populatePropertiesTemplate($metadata->fieldMappings)
+            'properties' => $this->populatePropertiesTemplate($metadata->fieldMappings),
+            'jsonFields' => $this->populateJsonFieldsTemplate($metadata)
         ));
         return $module;
     }
@@ -180,16 +181,11 @@ class DojoModelGenerator
         $template = file_get_contents(__DIR__ . '/Template/Property.js.template');
 
         $populated = '';
-        $index = 0;
-        $count = count($fieldMappings);
 
         foreach ($fieldMappings as $name => $mapping) {
-            $index++;
-            $comma = $index == $count ? '' : ',';
             $property = $this->populateTemplate($template, array(
                 'name' => $name,
-                'type' => $mapping['type'],
-                'comma' => $comma
+                'type' => $mapping['type']
             ));
             $populated .= $property;
         }
@@ -197,6 +193,39 @@ class DojoModelGenerator
         return $populated;
     }
 
+    protected function populateJsonFieldsTemplate(ClassMetadata $metadata) {
+
+        $template = file_get_contents(__DIR__ . '/Template/jsonFields.js.template');
+
+        $populated = '';
+
+        // Add className
+        $name = $this->getInheritedMetadataValue($metadata, Sds\DojoClassName::metadataKey);
+        if (isset($name)) {
+            $populated .= $this->populateTemplate($template, array(
+                'name' => '_' . $name
+            ));
+        }
+
+        // Add discriminator
+        $discriminator = $this->getInheritedMetadataValue($metadata, Sds\DojoDiscriminator::metadataKey);
+        if (isset($discriminator)) {
+            $populated .= $this->populateTemplate($template, array(
+                'name' =>  '_' . $metadata->discriminatorField['name']
+            ));
+        }
+        
+        // Add fields
+        foreach ($metadata->fieldMappings as $name => $mapping) {
+            $field = $this->populateTemplate($template, array(
+                'name' => $name
+            ));
+            $populated .= $field;
+        }
+
+        return  substr($populated, 0, -2);
+    }
+    
     protected function populateTemplate($template, array $strings) {
 
         $populated = $template;
