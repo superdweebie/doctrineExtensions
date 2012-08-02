@@ -48,17 +48,10 @@ However, this small extension allows you to define non-standard access or method
 Will generate embedded audit documents for fields annotated with @audit. Audit documents record changes to the field, who made the
 changes, and when the changes were made.
 
-##Auth
+##Crypt
 
-Provides a trait for salted string encryption.
-
-##DiscriminatorMap
-
-Rather than defineing a discriminatorMap for every document that uses it, and then having to change the map in many places when there is an update, this extension allows you you use this annotation:
-
-    @Sds\DiscriminatorMap("My\DiscriminatorMap\Class")
-
-The class must implement the DiscriminatorMapInterface, and return the deisred DiscriminatorMap
+Properties annotated with @CryptHash will be hashed before persisting. A class to provide a salt for 
+the hash can be specified. Useful for passwords and other sensitive data.
 
 ##DoNotHardDelete
 
