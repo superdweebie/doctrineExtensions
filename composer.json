@@ -12,6 +12,7 @@
             "email": "superdweebie@gmail.com"
         }
     ],
+    "minimum-stability": "dev",
     "require": {
         "php": ">=5.4",
         "superdweebie/common": "dev-master",
