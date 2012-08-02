@@ -9,7 +9,7 @@ namespace Sds\DoctrineExtensions\Workflow;
 use Doctrine\ODM\MongoDB\Mapping\ClassMetadata;
 use Sds\Common\Workflow\WorkflowInterface;
 use Sds\DoctrineExtensions\Annotation\Annotations as Sds;
-use Sds\DoctrineExtensions\Workflow\Exception\BadWorkflowException;
+use Sds\DoctrineExtensions\Exception;
 
 /**
  * Workflow helper methods
@@ -49,7 +49,7 @@ class WorkflowService {
 
         //check that startState is in possibleStates
         if (!(in_array($workflow->getStartState(), $workflow->getPossibleStates()))){
-            throw new \Exception(sprintf('startState %s is not in possibleStates', $workflow->getStartState()));
+            throw new Exception\BadWorkflowException(sprintf('startState %s is not in possibleStates', $workflow->getStartState()));
         }
 
         //check that every possibleState can be reached from startState via transitions
@@ -81,13 +81,13 @@ class WorkflowService {
         } while (count($visitedStates) > $visitedCount);
 
         if (count($visitedStates) != count($possibleStates)){
-            throw new BadWorkflowException('defined transitions do not allow every possible state to be reached');
+            throw new Exception\BadWorkflowException('defined transitions do not allow every possible state to be reached');
         }
 
         // Check for dead transitions
         foreach ($unusedTransitions as $transition) {
             if (!in_array($transition->getFromstate(), $visitedStates)) {
-                throw new BadWorkflowException(sprintf(
+                throw new Exception\BadWorkflowException(sprintf(
                     'Workflow has a dead transition: %s to %s',
                     $transition->getFromState(),
                     $transition->getToState()

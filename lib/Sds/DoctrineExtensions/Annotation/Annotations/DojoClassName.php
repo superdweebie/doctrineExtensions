@@ -22,4 +22,6 @@ final class DojoClassName extends Annotation
     const event = 'annotationDojoClassName';
 
     const metadataKey = 'dojoClassName';
+    
+    public $value = true;
 }

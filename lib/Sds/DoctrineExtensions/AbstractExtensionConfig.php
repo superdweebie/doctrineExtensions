@@ -6,6 +6,8 @@
  */
 namespace Sds\DoctrineExtensions;
 
+use Sds\DoctrineExtensions\Exception;
+
 /**
  * A base class which extensions configs must extend
  *
@@ -74,7 +76,7 @@ abstract class AbstractExtensionConfig {
     public function setFromArray($options)
     {
         if (!is_array($options) && !$options instanceof Traversable) {
-            throw new \InvalidArgumentException(sprintf(
+            throw new Exception\InvalidArgumentException(sprintf(
                 'Options provided to %s must be an array or Traversable',
                 __METHOD__
             ));

@@ -7,6 +7,7 @@
 namespace Sds\DoctrineExtensions;
 
 use Sds\Common\User\ActiveUserAwareInterface;
+use Sds\DoctrineExtensions\Exception;
 
 /**
  * Pass this class a configuration array with extension namespaces, and then retrieve the
@@ -31,7 +32,6 @@ class Manifest extends AbstractExtension {
     /**
      *
      * @param \Sds\DoctrineExtensions\ManifestConfig $config
-     * @throws \Exception
      */
     public function __construct(ManifestConfig $config) {
         $this->config = $config;
@@ -81,7 +81,7 @@ class Manifest extends AbstractExtension {
         $extensionClass = $namespace . '\Extension';
         $extension = new $extensionClass($extensionConfig);
         if (!$extension instanceof ExtensionInterface) {
-            throw new \Exception(sprintf(
+            throw new Exception\UnexpectedValueException(sprintf(
                 '%s must be an instance of ExtensionInterface, but is not',
                 $extensionClass
             ));

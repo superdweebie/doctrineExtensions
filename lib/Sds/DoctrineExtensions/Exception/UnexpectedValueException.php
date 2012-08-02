@@ -5,13 +5,14 @@
  * @license    MIT
  */
 
-namespace Sds\DoctrineExtensions;
+namespace Sds\DoctrineExtensions\Exception;
 
 /**
  *
  * @since   1.0
+ * @version $Revision$
  * @author  Tim Roediger <superdweebie@gmail.com>
  */
-interface ExceptionInterface
-{}
-
+class UnexpectedValueException extends \UnexpectedValueException implements ExceptionInterface
+{
+}

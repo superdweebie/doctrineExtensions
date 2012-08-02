@@ -12,14 +12,12 @@
             "email": "superdweebie@gmail.com"
         }
     ],
-    "minimum-stability": "dev",
+    "repositories": [{"type": "composer", "url": "http://packages.zendframework.com/"}],
     "require": {
         "php": ">=5.4",
         "superdweebie/common": "dev-master",
-        "doctrine/mongodb-odm": "dev-master"
-    },
-    "suggest": {
-        "zendframework/zend-validator": "Some traits have zend-validator annotations. By default these are ingnored, but if you want them active, you'll need this package."
+        "doctrine/mongodb-odm": "dev-master",
+        "zendframework/zend-validator": "2.0.*"
     },
     "autoload": {
         "psr-0": {

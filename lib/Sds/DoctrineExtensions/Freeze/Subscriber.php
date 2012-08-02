@@ -16,6 +16,7 @@ use Sds\DoctrineExtensions\AnnotationReaderAwareTrait;
 use Sds\DoctrineExtensions\AnnotationReaderAwareInterface;
 use Sds\DoctrineExtensions\Annotation\Annotations as Sds;
 use Sds\DoctrineExtensions\Annotation\AnnotationEventArgs;
+use Sds\DoctrineExtensions\Exception;
 use Sds\DoctrineExtensions\Freeze\Events as FreezeEvents;
 
 /**
@@ -76,7 +77,7 @@ class Subscriber implements EventSubscriber, AnnotationReaderAwareInterface
 
             $metadata = $documentManager->getClassMetadata(get_class($document));
             if (!isset($metadata->freezeField)) {
-                throw new \Exception(sprintf(
+                throw new Exception\DocumentExeption(sprintf(
                     'Document class %s implements the FreezeableInterface, but does not have a field annotatated as @freezeField.',
                     get_class($document)
                 ));

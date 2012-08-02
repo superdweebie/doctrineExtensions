@@ -16,6 +16,7 @@ use Sds\DoctrineExtensions\AnnotationReaderAwareTrait;
 use Sds\DoctrineExtensions\AnnotationReaderAwareInterface;
 use Sds\DoctrineExtensions\Annotation\Annotations as Sds;
 use Sds\DoctrineExtensions\Annotation\AnnotationEventArgs;
+use Sds\DoctrineExtensions\Exception;
 use Sds\DoctrineExtensions\State\Events as StateEvents;
 use Sds\DoctrineExtensions\State\EventArgs as StateChangeEventArgs;
 
@@ -76,7 +77,7 @@ class Subscriber implements EventSubscriber, AnnotationReaderAwareInterface
 
             $metadata = $documentManager->getClassMetadata(get_class($document));
             if (!isset($metadata->stateField)) {
-                throw new \Exception(sprintf(
+                throw new Exception\DocumentException(sprintf(
                     'Document class %s implements the StateAwareInterface, but does not have a field annotatated as @stateField.',
                     get_class($document)
                 ));

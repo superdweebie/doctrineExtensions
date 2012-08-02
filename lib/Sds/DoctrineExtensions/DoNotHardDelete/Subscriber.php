@@ -55,7 +55,7 @@ class Subscriber implements EventSubscriber, AnnotationReaderAwareInterface
     {
         $annotation = $eventArgs->getAnnotation();
         $metadataKey = $annotation::metadataKey;
-        $eventArgs->getMetadata()->$metadataKey = true;
+        $eventArgs->getMetadata()->$metadataKey = (boolean) $annotation->value;
     }
 
     /**

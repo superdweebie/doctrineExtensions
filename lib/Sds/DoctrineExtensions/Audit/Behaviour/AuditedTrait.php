@@ -28,7 +28,6 @@ trait AuditedTrait {
     /**
      *
      * @param \Sds\Common\Audit\AuditInterface $audit
-     * @throws \InvalidArgumentException
      */
     public function addAudit(AuditInterface $audit){
         $this->audits[] = $audit;

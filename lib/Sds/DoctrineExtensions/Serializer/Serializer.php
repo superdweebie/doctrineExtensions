@@ -9,6 +9,7 @@ namespace Sds\DoctrineExtensions\Serializer;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\ODM\MongoDB\Mapping\ClassMetadata;
 use Sds\DoctrineExtensions\Annotation\Annotations as Sds;
+use Sds\DoctrineExtensions\Exception;
 
 /**
  * Provides static methods for serializing documents
@@ -135,7 +136,7 @@ class Serializer {
             }
 
             if (!method_exists($document, $getMethod)){
-                throw new \BadMethodCallException(sprintf(
+                throw new Exception\BadMethodCallException(sprintf(
                     'Method %s not found. This method was defined in the @getter annotation
                         to be used for getting a field',
                     $getMethod
@@ -202,13 +203,13 @@ class Serializer {
         if (! isset($className) &&
             ! isset($data[$classNameKey])
         ) {
-            throw new \Exception(sprintf('Both className and classNameKey %s are not set', $classNameKey));
+            throw new Exception\InvalidArgumentException(sprintf('Both className and classNameKey %s are not set', $classNameKey));
         }
 
         $className = isset($data[$classNameKey]) ? $data[$classNameKey] : $className;
 
         if (! class_exists($className)){
-            throw new \Exception(sprintf('ClassName %s could not be loaded', $className));
+            throw new Exception\ClassNotFoundException(sprintf('ClassName %s could not be loaded', $className));
         }
 
         $metadata = $documentManager->getClassMetadata($className);
@@ -229,7 +230,7 @@ class Serializer {
             }
 
             if (!method_exists($document, $setMethod)){
-                throw new \BadMethodCallException(sprintf(
+                throw new Exception\BadMethodCallException(sprintf(
                     'Method %s not found. This method was defined in the @setter annotation
                         to be used for setting a field',
                     $setMethod

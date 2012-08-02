@@ -15,8 +15,13 @@ class DojoModelTest extends BaseTest {
     public function setUp(){
         parent::setUp();
 
+        $this->path = __DIR__ . '/../../../../DojoModels';
+
         $manifest = $this->getManifest(array('Sds\DoctrineExtensions\DojoModel' => array(
-            'destPath' => __DIR__ . '/../../../../DojoModels'
+            'destPaths' => array(
+                'filter' => '',
+                'path' => $this->path
+            )
         )));
 
         $this->configDoctrine(
@@ -28,8 +33,6 @@ class DojoModelTest extends BaseTest {
             $manifest->getSubscribers(),
             $manifest->getAnnotations()
         );
-
-        $this->path = $manifest->getConfig()->getExtensionConfig('Sds\DoctrineExtensions\DojoModel')->getDestPath();
 
         $this->generator = new DojoModelGenerator();
         $this->generator->setRegenerateDojoModelIfExists(true);

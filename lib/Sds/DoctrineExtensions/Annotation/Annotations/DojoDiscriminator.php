@@ -22,4 +22,6 @@ final class DojoDiscriminator extends Annotation
     const event = 'annotationDojoDiscriminator';
 
     const metadataKey = 'dojoDiscriminator';
+
+    public $value = true;
 }

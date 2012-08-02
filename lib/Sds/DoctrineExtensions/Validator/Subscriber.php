@@ -79,7 +79,7 @@ class Subscriber implements EventSubscriber, AnnotationReaderAwareInterface
         $metadata = $eventArgs->getMetadata();
         switch ($eventArgs->getEventType()) {
             case EventType::document :
-                $metadata->$metadataKey[$annotation->class] = $annotation->options;
+                $metadata->$metadataKey = array($annotation->class => $annotation->options);
                 break;
             case EventType::property :
                 $metadata->fieldMappings[$eventArgs->getReflection()->getName()][$metadataKey][$annotation->class] = $annotation->options;

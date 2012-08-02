@@ -92,7 +92,7 @@ class WorkflowTest extends BaseTest {
     }
 
     /**
-     * @expectedException Sds\DoctrineExtensions\Workflow\Exception\BadWorkflowException
+     * @expectedException Sds\DoctrineExtensions\Exception\BadWorkflowException
      */
     public function testUnreachableState(){
 
@@ -101,7 +101,7 @@ class WorkflowTest extends BaseTest {
     }
 
     /**
-     * @expectedException Sds\DoctrineExtensions\Workflow\Exception\BadWorkflowException
+     * @expectedException Sds\DoctrineExtensions\Exception\BadWorkflowException
      */
     public function testUnusedTransitions(){
 

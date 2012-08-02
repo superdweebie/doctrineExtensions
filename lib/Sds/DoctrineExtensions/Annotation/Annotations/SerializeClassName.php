@@ -22,4 +22,6 @@ final class SerializeClassName extends Annotation
     const event = 'annotationSerializeClassName';
 
     const metadataKey = 'serializeClassName';
+
+    public $value = true;
 }

@@ -6,6 +6,8 @@
  */
 namespace Sds\DoctrineExtensions;
 
+use Sds\DoctrineExtensions\Exception;
+
 /**
  * A base class which extensions may extend
  *
@@ -74,7 +76,7 @@ abstract class AbstractExtension implements ExtensionInterface {
         ) {
             $config = new $configClass($config);
         } elseif (!($config instanceof $configClass) && isset($config)) {
-            throw new \InvalidArgumentException(sprintf('Argument supplied to Extension constructor must be array, implement Traversable, or instance of %s',
+            throw new Exception\InvalidArgumentException(sprintf('Argument supplied to Extension constructor must be array, implement Traversable, or instance of %s',
                 $configClass));
         }
         $this->config = $config;

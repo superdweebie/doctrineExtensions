@@ -22,4 +22,6 @@ final class DoNotHardDelete extends Annotation
     const event = 'annotationDoNotHardDelete';
 
     const metadataKey = 'doNotHardDelete';
+    
+    public $value = true;
 }

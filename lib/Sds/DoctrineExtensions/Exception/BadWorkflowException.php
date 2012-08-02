@@ -4,17 +4,13 @@
  * @package    Sds
  * @license    MIT
  */
-namespace Sds\DoctrineExtensions\DiscriminatorMap;
+namespace Sds\DoctrineExtensions\Exception;
 
 /**
  *
  * @since   1.0
  * @author  Tim Roediger <superdweebie@gmail.com>
  */
-interface DiscriminatorMapInterface{
-
-    /**
-     * @return array
-     */
-    public function getDiscriminatorMap();
+class BadWorkflowException extends \Exception implements ExceptionInterface
+{
 }

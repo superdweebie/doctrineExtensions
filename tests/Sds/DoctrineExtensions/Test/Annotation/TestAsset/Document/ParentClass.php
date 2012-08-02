@@ -1,17 +1,22 @@
 <?php
 
-namespace Sds\DoctrineExtensions\Test\DiscriminatorMap\TestAsset\Document;
+namespace Sds\DoctrineExtensions\Test\Annotation\TestAsset\Document;
 
 //Annotation imports
 use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
 use Sds\DoctrineExtensions\Annotation\Annotations as Sds;
 
 /**
- * @ODM\Document(collection="test")
- * @ODM\DiscriminatorField(fieldName="type")
- * @Sds\DiscriminatorMap("Sds\DoctrineExtensions\Test\DiscriminatorMap\TestAsset\DiscriminatorMap")
+ * @ODM\Document
+ * @Sds\DoNotHardDelete
+ * @Sds\DojoClassName
+ * @Sds\DojoDiscriminator
+ * @Sds\SerializeClassName
+ * @Sds\SerializeDiscriminator
+ * @Sds\Validator(class = "ParentValidator")
+ * @Sds\WorkflowClass("ParentWorkflow")
  */
-class DocA {
+class ParentClass {
 
     /**
      * @ODM\Id(strategy="UUID")
@@ -20,7 +25,6 @@ class DocA {
 
     /**
      * @ODM\Field(type="string")
-     * @Sds\Audit
      */
     protected $name;
 

@@ -22,4 +22,6 @@ final class SerializeDiscriminator extends Annotation
     const event = 'annotationSerializeDiscriminator';
 
     const metadataKey = 'serializeDiscriminator';
+
+    public $value = true;
 }

@@ -50,7 +50,8 @@ class Subscriber implements EventSubscriber, AnnotationReaderAwareInterface
     {
         $metadata = $eventArgs->getClassMetadata();
         $reflClass = $metadata->getReflectionClass();
-        $eventManager = $eventArgs->getDocumentManager()->getEventManager();
+        $documentManager = $eventArgs->getDocumentManager();
+        $eventManager = $documentManager->getEventManager();
 
         //Document annotations
         foreach ($this->annotationReader->getClassAnnotations($reflClass) as $annotation) {
@@ -62,6 +63,29 @@ class Subscriber implements EventSubscriber, AnnotationReaderAwareInterface
                         $annotation::event,
                         new AnnotationEventArgs($metadata, EventType::document, $annotation, $reflClass)
                     );
+                }
+            }
+        }
+
+        //Inherit document annotations from parent classes
+        if (count($metadata->parentClasses) > 0) {
+            foreach ($metadata->parentClasses as $parentClass) {
+                $parentMetadata = $documentManager->getClassMetadata($parentClass);
+                $parentReflClass = $parentMetadata->getReflectionClass();
+
+                foreach ($this->annotationReader->getClassAnnotations($parentReflClass) as $annotation) {
+                    $annotationClass = get_class($annotation);
+                    if (defined($annotationClass . '::event') &&
+                        ! isset($metadata->{$annotation::metadataKey})
+                    ) {
+                        // Raise annotation event
+                        if ($eventManager->hasListeners($annotation::event)) {
+                            $eventManager->dispatchEvent(
+                                $annotation::event,
+                                new AnnotationEventArgs($metadata, EventType::document, $annotation, $parentReflClass)
+                            );
+                        }
+                    }
                 }
             }
         }

@@ -9,12 +9,12 @@ namespace Sds\DoctrineExtensions\Readonly;
 use Doctrine\Common\Annotations\Reader;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ODM\MongoDB\Event\OnFlushEventArgs;
-use Doctrine\ODM\MongoDB\Event\LoadClassMetadataEventArgs;
 use Doctrine\ODM\MongoDB\Events as ODMEvents;
 use Sds\DoctrineExtensions\AnnotationReaderAwareTrait;
 use Sds\DoctrineExtensions\AnnotationReaderAwareInterface;
 use Sds\DoctrineExtensions\Annotation\Annotations as Sds;
 use Sds\DoctrineExtensions\Annotation\AnnotationEventArgs;
+use Sds\DoctrineExtensions\Exception;
 use Sds\DoctrineExtensions\Readonly\Events as ReadonlyEvents;
 use Sds\DoctrineExtensions\Readonly\EventArgs;
 
@@ -59,7 +59,7 @@ class Subscriber implements EventSubscriber, AnnotationReaderAwareInterface
     /**
      *
      * @param OnFlushEventArgs $eventArgs
-     * @throws \BadMethodCallException
+     * @throws Sds\DoctrineExtensions\Exception\BadMethodCallException
      */
     public function onFlush(OnFlushEventArgs $eventArgs)
     {
@@ -106,7 +106,7 @@ class Subscriber implements EventSubscriber, AnnotationReaderAwareInterface
                 }
 
                 if (!method_exists($document, $setMethod)){
-                    throw new \BadMethodCallException(sprintf(
+                    throw new Exception\BadMethodCallException(sprintf(
                         'Method %s not found. This method was defined in the @Setter annotation to be used for resetting a property',
                         $setMethod
                     ));
