@@ -56,11 +56,14 @@ class Subscriber implements EventSubscriber, AnnotationReaderAwareInterface
     {
         $annotation = $eventArgs->getAnnotation();
 
-        if ( ! in_array('Sds\Common\Crypt\SaltInterface', class_implements($annotation->value))) {       
+        if ( ! in_array('Sds\Common\Crypt\SaltInterface', class_implements($annotation->saltClass))) {
         //if (! $annotation->value instanceof SaltInterface) {
-            throw new Exception\DocumentException(sprintf('Class %s given in @CryptHash must implement SaltInterface', $annotation->value));
-        }        
-        $eventArgs->getMetadata()->fieldMappings[$eventArgs->getReflection()->getName()][$annotation::metadataKey] = $annotation->value;
+            throw new Exception\DocumentException(sprintf('Class %s given in @CryptHash must implement SaltInterface', $annotation->saltClass));
+        }
+        $eventArgs->getMetadata()->fieldMappings[$eventArgs->getReflection()->getName()][$annotation::metadataKey] = array(
+            'saltClass' => $annotation->saltClass,
+            'prependSalt' => $annotation->prependSalt
+        );
     }
 
     /**
@@ -80,40 +83,50 @@ class Subscriber implements EventSubscriber, AnnotationReaderAwareInterface
                 $new = $change[1];
 
                 // Check for change and crypthash annotation
-                $saltClass = $metadata->fieldMappings[$field][Sds\CryptHash::metadataKey];
-                if(!isset($saltClass) ||
+                $config = $metadata->fieldMappings[$field][Sds\CryptHash::metadataKey];
+                if(!isset($config) ||
                     $old == null ||
                     $old == $new
                 ){
                     continue;
                 }
-                
-                $setMethod = Accessor::getSetter($metadata, $field, $document);  
-                $document->$setMethod(Hash::hash($saltClass::getSalt(), $new));
+
+                $setMethod = Accessor::getSetter($metadata, $field, $document);
+                if ($config['prependSalt']) {
+                    $setValue = Hash::hashAndPrependSalt($config['saltClass']::getSalt(), $new);
+                } else {
+                    $setValue = Hash::hash($config['saltClass']::getSalt(), $new);
+                }
+                $document->$setMethod($setValue);
                 $unitOfWork->recomputeSingleDocumentChangeSet($metadata, $document);
             }
         }
     }
-    
+
     /**
      *
      * @param \Doctrine\ODM\MongoDB\Event\LifecycleEventArgs $eventArgs
      */
     public function prePersist(LifecycleEventArgs $eventArgs) {
-        $document = $eventArgs->getDocument();  
+        $document = $eventArgs->getDocument();
         $documentManager = $eventArgs->getDocumentManager();
-        $metadata = $documentManager->getClassMetadata(get_class($document));        
-        
-        foreach ($metadata->fieldMappings as $field => $mapping){           
+        $metadata = $documentManager->getClassMetadata(get_class($document));
+
+        foreach ($metadata->fieldMappings as $field => $mapping){
             if ( ! isset($metadata->fieldMappings[$field][Sds\CryptHash::metadataKey])) {
                 continue;
             }
 
-            $getMethod = Accessor::getGetter($metadata, $field, $document);             
-            $setMethod = Accessor::getSetter($metadata, $field, $document);  
-            $saltClass = $metadata->fieldMappings[$field][Sds\CryptHash::metadataKey];            
-            $document->$setMethod(Hash::hash($saltClass::getSalt(), $document->$getMethod()));           
+            $getMethod = Accessor::getGetter($metadata, $field, $document);
+            $setMethod = Accessor::getSetter($metadata, $field, $document);
+            $config = $metadata->fieldMappings[$field][Sds\CryptHash::metadataKey];
+            
+            if ($config['prependSalt']) {
+                $setValue = Hash::hashAndPrependSalt($config['saltClass']::getSalt(), $document->$getMethod());
+            } else {
+                $setValue = Hash::hash($config['saltClass']::getSalt(), $document->$getMethod());
+            }
+            $document->$setMethod($setValue);
         }
     }
-  
 }

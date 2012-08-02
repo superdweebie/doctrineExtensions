@@ -22,12 +22,14 @@ final class CryptHash extends Annotation
     const event = 'annotationCryptHash';
 
     const metadataKey = 'cryptHash';
-    
+
     /**
      * FQCN of a class that implements Sds\Common\Crypt\SaltInterface.
      * Gets the salt used to create the hash
-     * 
+     *
      * @var string
      */
-    public $value = 'Sds\Common\Crypt\Hash';
+    public $saltClass = 'Sds\Common\Crypt\Hash';
+    
+    public $prependSalt = true;
 }
