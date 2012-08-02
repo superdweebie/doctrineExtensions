@@ -16,6 +16,7 @@ class Simple {
 
     /**
      * @ODM\Field(type="string")
+     * @Sds\Required
      * @Sds\Validator(class = "Sds\DoctrineExtensions\Test\Validator\TestAsset\Validator")
      */
     protected $name;

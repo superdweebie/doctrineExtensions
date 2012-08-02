@@ -26,6 +26,10 @@ class Extension extends AbstractExtension {
         if (!isset($documentValidator)) {
             $config->setDocumentValidator(new DocumentValidator());
         }
-        $this->subscribers = array(new Subscriber($config->getAnnotationReader(), $config->getDocumentValidator()));
+        $this->subscribers = array(new Subscriber(
+            $config->getAnnotationReader(),
+            $config->getDocumentValidator(),
+            $config->getValidateOnFlush()
+        ));
     }
 }

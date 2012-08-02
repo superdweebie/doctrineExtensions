@@ -34,6 +34,20 @@ class DocumentValidator implements DocumentValidatorInterface
             return $isValid;
         }
 
+        // Check for required fields
+        foreach ($metadata->fieldMappings as $field=>$mapping){
+
+            if (!isset($mapping[Sds\Required::metadataKey])) {
+                continue;
+            }
+
+            $value = $document->{$this->getGetMethod($field, $mapping)}();
+            if ( ! isset($value)) {
+                $this->messages = array_merge($this->messages, array(sprintf('Required field %s is not complete', $field)));
+                $isValid = false;
+            };
+        }
+
         // Property level validators
         foreach ($metadata->fieldMappings as $field=>$mapping){
 
@@ -41,13 +55,7 @@ class DocumentValidator implements DocumentValidatorInterface
                 continue;
             }
 
-            if(isset($mapping[Sds\Getter::metadataKey])
-            ){
-                $getMethod = $mapping[Sds\Getter::metadataKey];
-            } else {
-                $getMethod = 'get'.ucfirst($field);
-            }
-            $value = $document->$getMethod();
+            $value = $document->{$this->getGetMethod($field, $mapping)}();
 
             foreach ($mapping[Sds\Validator::metadataKey] as $class => $options) {
                 $validator = new $class($options);
@@ -86,5 +94,14 @@ class DocumentValidator implements DocumentValidatorInterface
      */
     public function getMessages() {
         return $this->messages;
+    }
+
+    protected function getGetMethod($field, $mapping){
+        if(isset($mapping[Sds\Getter::metadataKey])
+        ){
+            return $mapping[Sds\Getter::metadataKey];
+        } else {
+            return 'get'.ucfirst($field);
+        }
     }
 }

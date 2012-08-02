@@ -27,6 +27,8 @@ class ExtensionConfig extends AbstractExtensionConfig implements
      */
     protected $documentValidator;
 
+    protected $validateOnFlush = true;
+
     /**
      *
      * @return \Sds\Common\Validator\ValidatorInterface
@@ -41,5 +43,13 @@ class ExtensionConfig extends AbstractExtensionConfig implements
      */
     public function setDocumentValidator(DocumentValidatorInterface $documentValidator) {
         $this->documentValidator = $documentValidator;
+    }
+
+    public function getValidateOnFlush() {
+        return $this->validateOnFlush;
+    }
+
+    public function setValidateOnFlush($validateOnFlush) {
+        $this->validateOnFlush = (boolean) $validateOnFlush;
     }
 }

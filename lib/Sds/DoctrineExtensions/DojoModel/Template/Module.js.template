@@ -27,7 +27,7 @@ define ([
                     //     Function to handle serialization
 
                     var json = {};
-<jsonFields>                    
+<jsonFields>
                     return json;
                 }
             }

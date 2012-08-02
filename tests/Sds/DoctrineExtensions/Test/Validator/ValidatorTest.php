@@ -37,6 +37,27 @@ class ValidatorTest extends BaseTest {
         $this->calls = array();
     }
 
+    public function testRequired(){
+        $documentManager = $this->documentManager;
+
+        $testDoc = new Simple();
+
+        $documentManager->persist($testDoc);
+        $documentManager->flush();
+
+        $this->assertTrue(isset($this->calls[Events::invalidCreate]));
+        $this->assertFalse(isset($this->calls[Events::invalidUpdate]));
+        $this->assertEquals(array('Required field name is not complete', 'invalid name'), $this->calls[Events::invalidCreate][0]->getMessages());
+
+        $id = $testDoc->getId();
+        $documentManager->clear();
+
+        $repository = $documentManager->getRepository(get_class($testDoc));
+        $testDoc = $repository->find($id);
+
+        $this->assertNull($testDoc);
+    }
+
     public function testInvalidCreate(){
 
         $documentManager = $this->documentManager;

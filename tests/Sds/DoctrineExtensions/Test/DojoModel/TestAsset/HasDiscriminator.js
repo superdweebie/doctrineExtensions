@@ -2,7 +2,7 @@
 
 define ([
         'dojo/_base/declare',
-        'dojo/_base/Stateful'
+        'dojo/Stateful'
     ],
     function (
         declare,
@@ -30,8 +30,25 @@ define ([
                 id: undefined,
 
                 // name: string
-                name: undefined
+                name: undefined,
 
+                toJSON: function(){
+                    // summary:
+                    //     Function to handle serialization
+
+                    var json = {};
+                    if (this.get('_type')) {
+                        json['_type'] = this.get('_type');
+                    }
+                    if (this.get('id')) {
+                        json['id'] = this.get('id');
+                    }
+                    if (this.get('name')) {
+                        json['name'] = this.get('name');
+                    }
+
+                    return json;
+                }
             }
         );
     }

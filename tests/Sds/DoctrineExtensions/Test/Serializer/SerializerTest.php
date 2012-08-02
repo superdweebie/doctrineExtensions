@@ -174,7 +174,7 @@ class SerializerTest extends BaseTest {
     public function testUnserializeClassName() {
 
         $data = array(
-            'className' => 'Sds\DoctrineExtensions\Test\Serializer\TestAsset\Document\ClassName',
+            '_className' => 'Sds\DoctrineExtensions\Test\Serializer\TestAsset\Document\ClassName',
             'id' => null,
             'name' => 'superdweebie',
         );

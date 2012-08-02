@@ -31,6 +31,8 @@ class Subscriber implements EventSubscriber, AnnotationReaderAwareInterface
      */
     protected $documentValidator;
 
+    protected $validateOnFlush;
+
     /**
      *
      * @return \Sds\Common\Validator\ValidatorInterface
@@ -47,15 +49,27 @@ class Subscriber implements EventSubscriber, AnnotationReaderAwareInterface
         $this->documentValidator = $documentValidator;
     }
 
+    public function getValidateOnFlush() {
+        return $this->validateOnFlush;
+    }
+
+    public function setValidateOnFlush($validateOnFlush) {
+        $this->validateOnFlush = (boolean) $validateOnFlush;
+    }
+
     /**
      *
      * @return array
      */
     public function getSubscribedEvents(){
-        return array(
+        $events = array(
             Sds\Validator::event,
-            ODMEvents::onFlush
+            Sds\Required::event
         );
+        if ($this->getValidateOnFlush()) {
+            $events[] = ODMEvents::onFlush;
+        }
+        return $events;
     }
 
     /**
@@ -63,9 +77,14 @@ class Subscriber implements EventSubscriber, AnnotationReaderAwareInterface
      * @param \Doctrine\Common\Annotations\Reader $annotationReader
      * @param \Sds\Common\Validator\ValidatorInterface $validator
      */
-    public function __construct(Reader $annotationReader, DocumentValidatorInterface $documentValidator){
+    public function __construct(
+        Reader $annotationReader,
+        DocumentValidatorInterface $documentValidator,
+        $validateOnFlush
+    ){
         $this->setAnnotationReader($annotationReader);
         $this->setDocumentValidator($documentValidator);
+        $this->setValidateOnFlush($validateOnFlush);
     }
 
     /**
@@ -86,6 +105,16 @@ class Subscriber implements EventSubscriber, AnnotationReaderAwareInterface
                 break;
         }
         $metadata->requiresValidation = true;
+    }
+
+    /**
+     *
+     * @param \Sds\DoctrineExtensions\Annotation\EventArgs $eventArgs
+     */
+    public function annotationRequired(AnnotationEventArgs $eventArgs)
+    {
+        $annotation = $eventArgs->getAnnotation();
+        $eventArgs->getMetadata()->fieldMappings[$eventArgs->getReflection()->getName()][$annotation::metadataKey] = (boolean) $annotation->value;
     }
 
     /**
