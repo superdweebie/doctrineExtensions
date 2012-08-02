@@ -177,7 +177,7 @@ class Serializer {
     public static function fromArray(
         array $data,
         DocumentManager $documentManager,
-        $classNameKey = 'className',
+        $classNameKey = '_className',
         $className = null
     ) {
         return self::unserialize($data, $documentManager, $classNameKey, $className);
@@ -196,7 +196,7 @@ class Serializer {
     protected static function unserialize(
         array $data,
         DocumentManager $documentManager,
-        $classNameKey = 'className',
+        $classNameKey = '_className',
         $className = null
     ) {
 
