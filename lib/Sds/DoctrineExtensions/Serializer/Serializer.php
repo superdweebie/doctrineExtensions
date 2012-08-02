@@ -8,6 +8,7 @@ namespace Sds\DoctrineExtensions\Serializer;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\ODM\MongoDB\Mapping\ClassMetadata;
+use Sds\DoctrineExtensions\Accessor\Accessor;
 use Sds\DoctrineExtensions\Annotation\Annotations as Sds;
 use Sds\DoctrineExtensions\Exception;
 
@@ -128,20 +129,7 @@ class Serializer {
                 continue;
             }
 
-            if(isset($mapping[Sds\Getter::metadataKey])
-            ){
-                $getMethod = $mapping[Sds\Getter::metadataKey];
-            } else {
-                $getMethod = 'get'.ucfirst($field);
-            }
-
-            if (!method_exists($document, $getMethod)){
-                throw new Exception\BadMethodCallException(sprintf(
-                    'Method %s not found. This method was defined in the @getter annotation
-                        to be used for getting a field',
-                    $getMethod
-                ));
-            }
+            $getMethod = Accessor::getGetter($classMetadata, $field, $document);            
 
             if(isset($mapping['embedded'])){
                 switch ($mapping['type']){
@@ -225,21 +213,8 @@ class Serializer {
                 continue;
             }
 
-            if(isset($mapping[Sds\Setter::metadataKey])
-            ){
-                $setMethod = $mapping[Sds\Setter::metadataKey];
-            } else {
-                $setMethod = 'set'.ucfirst($field);
-            }
-
-            if (!method_exists($document, $setMethod)){
-                throw new Exception\BadMethodCallException(sprintf(
-                    'Method %s not found. This method was defined in the @setter annotation
-                        to be used for setting a field',
-                    $setMethod
-                ));
-            }
-
+            $setMethod = Accessor::getSetter($metadata, $field, $document);             
+            
             if(isset($mapping['embedded'])){
                 switch ($mapping['type']){
                     case 'one':
