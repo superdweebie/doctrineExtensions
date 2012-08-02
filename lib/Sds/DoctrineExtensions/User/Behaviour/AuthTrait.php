@@ -4,10 +4,9 @@
  * @package    Sds
  * @license    MIT
  */
-namespace Sds\DoctrineExtensions\Auth\Behaviour;
+namespace Sds\DoctrineExtensions\User\Behaviour;
 
 use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
-use Sds\Common\Auth\Crypt;
 use Sds\DoctrineExtensions\Annotation\Annotations as Sds;
 
 /**
@@ -23,6 +22,7 @@ trait AuthTrait {
      * @Sds\DoNotSerialize
      * @Sds\UiHints(label = "Password")
      * @Sds\Validator(class = "Sds\DoctrineExtensions\Validator\Validator\Password")
+     * @Sds\CryptHash
      */
     protected $password;
 
@@ -45,7 +45,7 @@ trait AuthTrait {
      * @param boolean $isGuest
      */
     public function setIsGuest($isGuest) {
-        $this->isGuest = $isGuest;
+        $this->isGuest = (boolean) $isGuest;
     }
 
     /**
@@ -62,6 +62,6 @@ trait AuthTrait {
      * @param string $plaintext
      */
     public function setPassword($plaintext) {
-        $this->password = Crypt::encrypt($plaintext, Crypt::generateSalt(), Crypt::generateSalt());
+        $this->password = (string) $plaintext;
     }
 }
