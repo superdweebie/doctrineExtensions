@@ -15,16 +15,15 @@ use Doctrine\Common\Annotations\Annotation;
  * @Annotation
  * @Target({"CLASS", "PROPERTY"})
  */
-final class Validator extends Annotation {
+final class DojoValidator extends Annotation {
 
-    const event = 'annotationValidator';
+    const event = 'annotationDojoValidator';
 
-    const metadataKey = 'validator';
+    const metadataKey = 'dojoValidator';
 
     /**
-     * The FQCN of the validator to use
-     * Class must implement Sds\Common\Validator\ValidatorInteface
-     * or Zend\Validator\ValidatorInterface
+     * The dojo module name of the validator to use
+     * Class must implement sijit\Common\ValidatorInteface
      *
      * @var string
      */
