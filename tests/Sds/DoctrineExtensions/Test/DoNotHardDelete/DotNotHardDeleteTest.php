@@ -22,8 +22,7 @@ class DoNotHardDeleteTest extends BaseTest {
                 array('Sds\DoctrineExtensions\Test\DoNotHardDelete\TestAsset\Document' => __DIR__ . '/TestAsset/Document')
             ),
             $manifest->getFilters(),
-            $manifest->getSubscribers(),
-            $manifest->getAnnotations()
+            $manifest->getSubscribers()
         );
     }
 

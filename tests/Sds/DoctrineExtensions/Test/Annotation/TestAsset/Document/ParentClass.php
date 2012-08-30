@@ -9,11 +9,9 @@ use Sds\DoctrineExtensions\Annotation\Annotations as Sds;
 /**
  * @ODM\Document
  * @Sds\DoNotHardDelete
- * @Sds\DojoClassName
- * @Sds\DojoDiscriminator
  * @Sds\SerializeClassName
  * @Sds\SerializeDiscriminator
- * @Sds\Validator(class = "ParentValidator")
+ * @Sds\ClassValidators({@Sds\Validator(class = "ParentValidator")})
  * @Sds\WorkflowClass("ParentWorkflow")
  */
 class ParentClass {

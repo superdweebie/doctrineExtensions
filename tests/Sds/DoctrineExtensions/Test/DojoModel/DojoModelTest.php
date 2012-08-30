@@ -30,8 +30,7 @@ class DojoModelTest extends BaseTest {
                 array('Sds\DoctrineExtensions\Test\DojoModel\TestAsset\Document' => __DIR__ . '/TestAsset/Document')
             ),
             $manifest->getFilters(),
-            $manifest->getSubscribers(),
-            $manifest->getAnnotations()
+            $manifest->getSubscribers()
         );
 
         $this->generator = new DojoModelGenerator();
@@ -52,16 +51,6 @@ class DojoModelTest extends BaseTest {
         $this->assertEquals(
             file_get_contents(__DIR__ . '/TestAsset/Simple.js'),
             file_get_contents($this->path . '/Sds/DoctrineExtensions/Test/DojoModel/TestAsset/Document/Simple.js')
-        );
-
-        $this->assertEquals(
-            file_get_contents(__DIR__ . '/TestAsset/HasDiscriminator.js'),
-            file_get_contents($this->path . '/Sds/DoctrineExtensions/Test/DojoModel/TestAsset/Document/HasDiscriminator.js')
-        );
-
-        $this->assertEquals(
-            file_get_contents(__DIR__ . '/TestAsset/ClassName.js'),
-            file_get_contents($this->path . '/Sds/DoctrineExtensions/Test/DojoModel/TestAsset/Document/ClassName.js')
         );
     }
 

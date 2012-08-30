@@ -9,19 +9,23 @@ namespace Sds\DoctrineExtensions\Annotation\Annotations;
 use Doctrine\Common\Annotations\Annotation;
 
 /**
- * Add the discriminator field to generated Dojo model, if it exists
- *
  * @since   1.0
  * @author  Tim Roediger <superdweebie@gmail.com>
  *
  * @Annotation
  * @Target({"CLASS"})
  */
-final class DojoDiscriminator extends Annotation
-{
-    const event = 'annotationDojoDiscriminator';
+final class ClassDojo extends Annotation {
 
-    const metadataKey = 'dojoDiscriminator';
+    const event = 'annotationClassDojo';
 
-    public $value = true;
+    const metadataKey = 'classDojo';
+
+    public $inheritFrom;
+    
+    public $className;
+
+    public $discriminator;
+
+    public $validators;
 }

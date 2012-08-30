@@ -24,8 +24,7 @@ class SerializerTest extends BaseTest {
                 array('Sds\DoctrineExtensions\Test\Serializer\TestAsset\Document' => __DIR__ . '/TestAsset/Document')
             ),
             $manifest->getFilters(),
-            $manifest->getSubscribers(),
-            $manifest->getAnnotations()
+            $manifest->getSubscribers()
         );
     }
 

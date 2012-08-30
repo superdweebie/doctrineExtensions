@@ -22,10 +22,7 @@ trait PermissionTrait
      * @ODM\String
      * @ODM\Index
      * @Sds\Readonly
-     * @Sds\UiHints(
-     *     label = "State"
-     * )
-     * @Sds\Validator(class = "Sds\DoctrineExtensions\Validator\Validator\StandardName")
+     * @Sds\PropertyValidators({@Sds\Validator(class = "Sds\Common\Validator\IdentifierValidator")})
      */
     protected $state;
 
@@ -33,10 +30,7 @@ trait PermissionTrait
      * @ODM\String
      * @ODM\Index
      * @Sds\Readonly
-     * @Sds\UiHints(
-     *     label = "Action"
-     * )
-     * @Sds\Validator(class = "Sds\DoctrineExtensions\Validator\Validator\StandardName")
+     * @Sds\PropertyValidators({@Sds\Validator(class = "Sds\Common\Validator\IdentifierValidator")})
      */
     protected $action;
 
@@ -44,10 +38,7 @@ trait PermissionTrait
      * @ODM\String
      * @ODM\Index
      * @Sds\Readonly
-     * @Sds\UiHints(
-     *     label = "Role"
-     * )
-     * @Sds\Validator(class = "Sds\DoctrineExtensions\Validator\Validator\StandardName")
+     * @Sds\PropertyValidators({@Sds\Validator(class = "Sds\Common\Validator\IdentifierValidator")})
      */
     protected $role;
 

@@ -21,8 +21,7 @@ class ReadonlyTest extends BaseTest {
                 array('Sds\DoctrineExtensions\Test\Readonly\TestAsset\Document' => __DIR__ . '/TestAsset/Document')
             ),
             $manifest->getFilters(),
-            $manifest->getSubscribers(),
-            $manifest->getAnnotations()
+            $manifest->getSubscribers()
         );
     }
 

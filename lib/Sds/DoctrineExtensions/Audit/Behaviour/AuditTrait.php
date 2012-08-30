@@ -21,29 +21,25 @@ trait AuditTrait
     /**
      * @ODM\Field(type="string")
      * @Sds\Readonly
-     * @Sds\UiHints(label = "Old Value")
      */
     protected $oldValue;
 
     /**
      * @ODM\Field(type="string")
      * @Sds\Readonly
-     * @Sds\UiHints(label = "New Value")
      */
     protected $newValue;
 
     /**
      * @ODM\Field(type="timestamp")
      * @Sds\Readonly
-     * @Sds\UiHints(label = "Changed On")
      */
     protected $changedOn;
 
     /**
      * @ODM\Field(type="string")
      * @Sds\Readonly
-     * @Sds\UiHints(label = "Changed by")
-     * @Sds\Validator(class = "Sds\DoctrineExtensions\Validator\Validator\StandardName")
+     * @Sds\PropertyValidators({@Sds\Validator(class = "Sds\Common\Validator\IdentifierValidator")})
      */
     protected $changedBy;
 

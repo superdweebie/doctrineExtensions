@@ -25,9 +25,6 @@ trait AccessControlledTrait{
      *   targetDocument="Sds\DoctrineExtensions\AccessControl\Model\Permission"
      * )
      * @Sds\Audit
-     * @Sds\UiHints(
-     *     label = "Permissions"
-     * )
      */
     protected $permissions = [];
 

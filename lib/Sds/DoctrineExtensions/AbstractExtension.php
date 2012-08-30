@@ -32,12 +32,6 @@ abstract class AbstractExtension implements ExtensionInterface {
      *
      * @var array
      */
-    protected $annotations = array();
-
-    /**
-     *
-     * @var array
-     */
     protected $filters = array();
 
     /**
@@ -80,8 +74,6 @@ abstract class AbstractExtension implements ExtensionInterface {
                 $configClass));
         }
         $this->config = $config;
-
-        $this->annotations = array('Sds\DoctrineExtensions\Annotation\Annotations' => __DIR__.'/../../');
     }
 
     /**
@@ -89,13 +81,6 @@ abstract class AbstractExtension implements ExtensionInterface {
      */
     public function getConfig(){
         return $this->config;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getAnnotations(){
-        return $this->annotations;
     }
 
     /**

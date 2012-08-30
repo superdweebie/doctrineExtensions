@@ -18,7 +18,6 @@ trait SoftDeletedOnTrait {
 
     /**
      * @ODM\Field(type="timestamp")
-     * @Sds\UiHints(label = "Soft Deleted On")
      */
     protected $softDeletedOn;
 

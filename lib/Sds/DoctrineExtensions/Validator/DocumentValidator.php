@@ -6,6 +6,7 @@
 namespace Sds\DoctrineExtensions\Validator;
 
 use Doctrine\ODM\MongoDB\Mapping\ClassMetadata;
+use Sds\DoctrineExtensions\Accessor\Accessor;
 use Sds\DoctrineExtensions\Annotation\Annotations as Sds;
 
 /**
@@ -30,18 +31,14 @@ class DocumentValidator implements DocumentValidatorInterface
         $this->messages = array();
         $isValid = true;
 
-        if (!isset($metadata->requiresValidation)) {
-            return $isValid;
-        }
-
         // Check for required fields
-        foreach ($metadata->fieldMappings as $field=>$mapping){
+        foreach ($metadata->{Sds\Required::metadataKey} as $field => $value){
 
-            if (!isset($mapping[Sds\Required::metadataKey])) {
+            if ( ! $value) {
                 continue;
             }
 
-            $value = $document->{$this->getGetMethod($field, $mapping)}();
+            $value = $document->{Accessor::getGetter($metadata, $field, $document)}();
             if ( ! isset($value)) {
                 $this->messages = array_merge($this->messages, array(sprintf('Required field %s is not complete', $field)));
                 $isValid = false;
@@ -49,39 +46,34 @@ class DocumentValidator implements DocumentValidatorInterface
         }
 
         // Property level validators
-        foreach ($metadata->fieldMappings as $field=>$mapping){
+        if (isset($metadata->{Sds\PropertyValidators::metadataKey})){
+            foreach ($metadata->{Sds\PropertyValidators::metadataKey} as $field => $validators){
+                $value = $document->{Accessor::getGetter($metadata, $field, $document)}();
 
-            if (!isset($mapping[Sds\Validator::metadataKey])) {
-                continue;
-            }
-
-            $value = $document->{$this->getGetMethod($field, $mapping)}();
-
-            foreach ($mapping[Sds\Validator::metadataKey] as $class => $options) {
-                $validator = new $class($options);
-                if (!$validator->isValid($value)){
-                    $this->messages = array_merge($this->messages, $validator->getMessages());
-                    $isValid = false;
+                foreach($validators as $class => $options){
+                    $validator = new $class($options);
+                    if ( ! $validator->isValid($value)){
+                        $this->messages = array_merge($this->messages, $validator->getMessages());
+                        $isValid = false;
+                    }
                 }
             }
         }
 
         // Return early if a property validation has failed
-        if (!$isValid) {
+        if ( ! $isValid) {
             return $isValid;
         }
 
         // Class level validators
         // These are only executed if all property level validators pass
-        if (!isset($metadata->{Sds\Validator::metadataKey})){
-            return $isValid;
-        }
-
-        foreach ($metadata->{Sds\Validator::metadataKey} as $class => $options) {
-            $validator = new $class($options);
-            if (!$validator->isValid($value)){
-                $this->messages = array_merge($this->messages, $validator->getMessages());
-                $isValid = false;
+        if (isset($metadata->{Sds\ClassValidators::metadataKey})){
+            foreach ($metadata->{Sds\ClassValidators::metadataKey} as $class => $options) {
+                $validator = new $class($options);
+                if ( ! $validator->isValid($document)){
+                    $this->messages = array_merge($this->messages, $validator->getMessages());
+                    $isValid = false;
+                }
             }
         }
 
@@ -94,14 +86,5 @@ class DocumentValidator implements DocumentValidatorInterface
      */
     public function getMessages() {
         return $this->messages;
-    }
-
-    protected function getGetMethod($field, $mapping){
-        if(isset($mapping[Sds\Getter::metadataKey])
-        ){
-            return $mapping[Sds\Getter::metadataKey];
-        } else {
-            return 'get'.ucfirst($field);
-        }
     }
 }

@@ -22,8 +22,7 @@ class BlockCipherTest extends BaseTest {
                 array(__NAMESPACE__ . '\TestAsset\Document' => __DIR__ . '/TestAsset/Document')
             ),
             $manifest->getFilters(),
-            $manifest->getSubscribers(),
-            $manifest->getAnnotations()
+            $manifest->getSubscribers()
         );
     }
 

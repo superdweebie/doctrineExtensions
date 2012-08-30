@@ -26,8 +26,7 @@ class WorkflowTest extends BaseTest {
                 array('Sds\DoctrineExtensions\Test\Workflow\TestAsset\Document' => __DIR__ . '/TestAsset/Document')
             ),
             $manifest->getFilters(),
-            $manifest->getSubscribers(),
-            $manifest->getAnnotations()
+            $manifest->getSubscribers()
         );
     }
 

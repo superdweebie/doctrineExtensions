@@ -31,8 +31,8 @@ class Subscriber implements EventSubscriber, AnnotationReaderAwareInterface
      */
     public function getSubscribedEvents(){
         return array(
-            Sds\DojoDiscriminator::event,
-            Sds\DojoClassName::event
+            Sds\ClassDojo::event,
+            Sds\PropertyDojo::event
         );
     }
 
@@ -50,25 +50,70 @@ class Subscriber implements EventSubscriber, AnnotationReaderAwareInterface
      *
      * @param \Sds\DoctrineExtensions\Annotation\AnnotationEventArgs $eventArgs
      */
-    public function annotationDojoDiscriminator(AnnotationEventArgs $eventArgs)
+    public function annotationClassDojo(AnnotationEventArgs $eventArgs)
     {
         $annotation = $eventArgs->getAnnotation();
         $metadataKey = $annotation::metadataKey;
-        $eventArgs->getMetadata()->$metadataKey = (boolean) $annotation->value;
+
+        $dojoMetadata = [];
+        if (isset($annotation->className)){
+            $dojoMetadata['className'] = true;
+            $dojoMetadata['classNameProperty'] = $this->getClassNameProperty();
+        }
+        if (isset($annotation->discriminator)){
+            $dojoMetadata['discriminator'] = true;
+        }
+
+        if (isset($annotation->inheritFrom)){
+            $dojoMetadata['inheritFrom'] = $annotation->inheritFrom;
+        }
+
+        if (isset($annotation->validators)){
+            $dojoMetadata['validators'] = [];
+            foreach ($annotation->validators as $validator){
+                $dojoMetadata['validators'][] = ['module' => $validator->module, 'options' => $validator->options];
+            }
+        }
+        $eventArgs->getMetadata()->$metadataKey = $dojoMetadata;
     }
 
     /**
      *
      * @param \Sds\DoctrineExtensions\Annotation\AnnotationEventArgs $eventArgs
      */
-    public function annotationDojoClassName(AnnotationEventArgs $eventArgs)
+    public function annotationPropertyDojo(AnnotationEventArgs $eventArgs)
     {
         $annotation = $eventArgs->getAnnotation();
-        $metadataKey = $annotation::metadataKey;
-        if ($annotation->value) {
-            $eventArgs->getMetadata()->$metadataKey = $this->classNameProperty;
-        } else {
-            $eventArgs->getMetadata()->$metadataKey = false;
+        $metadata = $eventArgs->getMetadata();
+
+        if ( ! isset($metadata->{$annotation::metadataKey})){
+            $metadata->{$annotation::metadataKey} = [];
         }
+
+        $dojoMetadata = [];
+        if (isset($annotation->inputType)){
+            $dojoMetadata['inputType'] = $annotation->inputType;
+        }
+        if (isset($annotation->required)){
+            $dojoMetadata['required'] = $annotation->required;
+        }
+        if (isset($annotation->title)){
+            $dojoMetadata['title'] = $annotation->title;
+        }
+        if (isset($annotation->tooltip)){
+            $dojoMetadata['tooltip'] = $annotation->tooltip;
+        }
+        if (isset($annotation->description)){
+            $dojoMetadata['description'] = $annotation->description;
+        }
+
+        if (isset($annotation->validators)){
+            $dojoMetadata['validators'] = [];
+            foreach ($annotation->validators as $validator){
+                $dojoMetadata['validators'][] = ['module' => $validator->module, 'options' => $validator->options];
+            }
+        }
+
+        $metadata->{$annotation::metadataKey}[$eventArgs->getReflection()->getName()] = $dojoMetadata;
     }
 }

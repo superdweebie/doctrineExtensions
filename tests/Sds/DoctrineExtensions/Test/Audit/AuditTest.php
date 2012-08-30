@@ -25,8 +25,7 @@ class AuditTest extends BaseTest {
                 array('Sds\DoctrineExtensions\Test\Audit\TestAsset\Document' => __DIR__ . '/TestAsset/Document')
             ),
             $manifest->getFilters(),
-            $manifest->getSubscribers(),
-            $manifest->getAnnotations()
+            $manifest->getSubscribers()
         );
     }
 

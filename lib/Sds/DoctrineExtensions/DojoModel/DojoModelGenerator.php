@@ -102,15 +102,63 @@ class DojoModelGenerator
     public function generateDojoModel(ClassMetadata $metadata) {
 
         $module = $this->populateModuleTemplate(array(
+            'define' => $this->populateDefine($metadata),
+            'imports' => $this->populateImports($metadata),
             'moduleName' => str_replace('\\', '/', $metadata->name),
-            'moduleDeclare' => str_replace('\\', '.', $metadata->name),
+            'moduleDeclare' => str_replace('\\', '/', $metadata->name),
+            'inheritFrom' => $this->populateInheritFrom($metadata),
             'documentClass' => $metadata->name,
             'className' => $this->populateClassNameTemplate($metadata),
             'discriminator' => $this->populateDiscriminatorTemplate($metadata),
             'properties' => $this->populatePropertiesTemplate($metadata->fieldMappings),
-            'jsonFields' => $this->populateJsonFieldsTemplate($metadata)
+            'jsonFields' => $this->populateJsonFieldsTemplate($metadata),
+            'metadata' => $this->populateMetadata($metadata)
         ));
         return $module;
+    }
+
+    protected function populateDefine(ClassMetadata $metadata){
+
+        $return = '';
+
+        if (isset($metadata->{Sds\ClassDojo::metadataKey}) &&
+            isset($metadata->{Sds\ClassDojo::metadataKey}['inheritFrom'])
+        ){
+            foreach ($metadata->{Sds\ClassDojo::metadataKey}['inheritFrom'] as $module){
+                $return .= ", \n        '$module'";
+            }
+        }
+        return $return;
+    }
+
+    protected function populateImports(ClassMetadata $metadata){
+
+        $return = '';
+
+        if (isset($metadata->{Sds\ClassDojo::metadataKey}) &&
+            isset($metadata->{Sds\ClassDojo::metadataKey}['inheritFrom'])
+        ){
+            foreach ($metadata->{Sds\ClassDojo::metadataKey}['inheritFrom'] as $module){
+                $import = str_replace('/', '', ucfirst($module));
+                $return .= ", \n        $import";
+            }
+        }
+        return $return;
+    }
+
+    protected function populateInheritFrom(ClassMetadata $metadata){
+
+        $return = '';
+
+        if (isset($metadata->{Sds\ClassDojo::metadataKey}) &&
+            isset($metadata->{Sds\ClassDojo::metadataKey}['inheritFrom'])
+        ){
+            foreach ($metadata->{Sds\ClassDojo::metadataKey}['inheritFrom'] as $module){
+                $import = str_replace('/', '', ucfirst($module));
+                $return .= ", $import";
+            }
+        }
+        return $return;
     }
 
     protected function populateModuleTemplate(array $strings) {
@@ -121,14 +169,18 @@ class DojoModelGenerator
 
     protected function populateClassNameTemplate(ClassMetadata $metadata) {
 
-        if (! isset($metadata->{Sds\DojoClassName::metadataKey})) {
+        if ( ! (
+            isset($metadata->{Sds\ClassDojo::metadataKey}) &&
+            isset($metadata->{Sds\ClassDojo::metadataKey}['className']) &&
+            $metadata->{Sds\ClassDojo::metadataKey}['className']
+        )) {
             return null;
         }
 
         $template = file_get_contents(__DIR__ . '/Template/ClassName.js.template');
 
         $populated = $property = $this->populateTemplate($template, array(
-            'name' => $metadata->{Sds\DojoClassName::metadataKey},
+            'name' => $metadata->{Sds\ClassDojo::metadataKey}['classNameProperty'],
             'value' => str_replace('\\', '\\\\', $metadata->name)
         ));
 
@@ -137,8 +189,11 @@ class DojoModelGenerator
 
     protected function populateDiscriminatorTemplate(ClassMetadata $metadata) {
 
-        if ((! isset($metadata->{Sds\DojoDiscriminator::metadataKey})) ||
-            (! $metadata->hasDiscriminator())
+        if ( ! (
+               isset($metadata->{Sds\ClassDojo::metadataKey}) &&
+               isset($metadata->{Sds\ClassDojo::metadataKey}['discriminator']) &&
+               $metadata->{Sds\ClassDojo::metadataKey}['discriminator']
+           ) || ! $metadata->hasDiscriminator()
         ) {
             return null;
         }
@@ -177,14 +232,19 @@ class DojoModelGenerator
         $populated = '';
 
         // Add className
-        if (isset($metadata->{Sds\DojoClassName::metadataKey})) {
+        if (isset($metadata->{Sds\ClassDojo::metadataKey}) &&
+            isset($metadata->{Sds\ClassDojo::metadataKey}['className']) &&
+            $metadata->{Sds\ClassDojo::metadataKey}['className']
+        ) {
             $populated .= $this->populateTemplate($template, array(
-                'name' => '_' . $metadata->{Sds\DojoClassName::metadataKey}
+                'name' => '_' . $metadata->{Sds\ClassDojo::metadataKey}['className']
             ));
         }
 
         // Add discriminator
-        if (isset($metadata->{Sds\DojoDiscriminator::metadataKey})
+        if (isset($metadata->{Sds\ClassDojo::metadataKey}) &&
+            isset($metadata->{Sds\ClassDojo::metadataKey}['discriminator']) &&
+            $metadata->{Sds\ClassDojo::metadataKey}['discriminator']
         ) {
             $populated .= $this->populateTemplate($template, array(
                 'name' =>  '_' . $metadata->discriminatorField['name']
@@ -200,6 +260,35 @@ class DojoModelGenerator
         }
 
         return $populated;
+    }
+
+    protected function populateMetadata(ClassMetadata $metadata) {
+
+        $dojoMetadata = [];
+
+        if (isset($metadata->classDojo['validators'])){
+            $dojoMetadata['validators'] = $metadata->classDojo['validators'];
+        }
+
+        $fields = [];
+        foreach ($metadata->fieldMappings as $name => $mapping) {
+            $attributes = [
+                'id' => $name . 'Field',
+                'property' => $name,
+                'title' => ucfirst($name) . ':',
+                'dataType' => $mapping['type']
+            ];
+
+            if (isset($metadata->propertyDojo[$name])){
+                $attributes = array_merge($attributes, $metadata->propertyDojo[$name]);
+            }
+
+            $fields[] = $attributes;
+        }
+
+        $dojoMetadata['fields'] = $fields;
+
+        return trim(preg_replace('/(.+)/', '        $1', json_encode($dojoMetadata, JSON_PRETTY_PRINT)));
     }
 
     protected function populateTemplate($template, array $strings) {

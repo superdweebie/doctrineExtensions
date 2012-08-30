@@ -109,17 +109,6 @@ class Manifest extends AbstractExtension {
     /**
      * {@inheritdoc}
      */
-    public function getAnnotations(){
-        $annotations = array();
-        foreach ($this->extensions as $extension) {
-            $annotations = array_merge($annotations, $extension->getAnnotations());
-        }
-        return $annotations;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function getFilters(){
         $filters = array();
         foreach ($this->extensions as $extension) {

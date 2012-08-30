@@ -63,7 +63,8 @@ class Subscriber implements EventSubscriber, AnnotationReaderAwareInterface
      */
     public function getSubscribedEvents(){
         $events = array(
-            Sds\Validator::event,
+            Sds\ClassValidators::event,
+            Sds\PropertyValidators::event,
             Sds\Required::event
         );
         if ($this->getValidateOnFlush()) {
@@ -91,20 +92,29 @@ class Subscriber implements EventSubscriber, AnnotationReaderAwareInterface
      *
      * @param \Sds\DoctrineExtensions\Annotation\AnnotationEventArgs $eventArgs
      */
-    public function annotationValidator(AnnotationEventArgs $eventArgs)
+    public function annotationClassValidators(AnnotationEventArgs $eventArgs)
     {
         $annotation = $eventArgs->getAnnotation();
-        $metadataKey = $annotation::metadataKey;
         $metadata = $eventArgs->getMetadata();
-        switch ($eventArgs->getEventType()) {
-            case EventType::document :
-                $metadata->$metadataKey = array($annotation->class => $annotation->options);
-                break;
-            case EventType::property :
-                $metadata->fieldMappings[$eventArgs->getReflection()->getName()][$metadataKey][$annotation->class] = $annotation->options;
-                break;
+
+        $metadata->{$annotation::metadataKey} = [];
+        foreach ($annotation->value as $validator){
+            $metadata->{$annotation::metadataKey}[$validator->class] = $validator->options;
         }
-        $metadata->requiresValidation = true;
+    }
+
+    public function annotationPropertyValidators(AnnotationEventArgs $eventArgs)
+    {
+        $annotation = $eventArgs->getAnnotation();
+        $metadata = $eventArgs->getMetadata();
+
+        if ( ! isset($metadata->{$annotation::metadataKey})){
+            $metadata->{$annotation::metadataKey} = [];
+        }
+        $metadata->{$annotation::metadataKey}[$eventArgs->getReflection()->getName()] = [];
+        foreach ($annotation->value as $validator){
+            $metadata->{$annotation::metadataKey}[$eventArgs->getReflection()->getName()][$validator->class] = $validator->options;
+        }
     }
 
     /**
@@ -114,7 +124,11 @@ class Subscriber implements EventSubscriber, AnnotationReaderAwareInterface
     public function annotationRequired(AnnotationEventArgs $eventArgs)
     {
         $annotation = $eventArgs->getAnnotation();
-        $eventArgs->getMetadata()->fieldMappings[$eventArgs->getReflection()->getName()][$annotation::metadataKey] = (boolean) $annotation->value;
+        $metadata = $eventArgs->getMetadata();
+        if ( ! isset($metadata->{$annotation::metadataKey})){
+            $metadata->{$annotation::metadataKey} = [];
+        }
+        $metadata->{$annotation::metadataKey}[$eventArgs->getReflection()->getName()] = (boolean) $annotation->value;
     }
 
     /**

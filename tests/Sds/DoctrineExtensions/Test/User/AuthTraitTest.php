@@ -22,11 +22,10 @@ class AccessControlTest extends BaseTest {
                 array(__NAMESPACE__ . '\TestAsset\Document' => __DIR__ . '/TestAsset/Document')
             ),
             $manifest->getFilters(),
-            $manifest->getSubscribers(),
-            $manifest->getAnnotations()
+            $manifest->getSubscribers()
         );
     }
-    
+
     public function testIsGuest(){
 
         $auth = new AuthTraitDoc();
@@ -47,17 +46,17 @@ class AccessControlTest extends BaseTest {
 
         $this->documentManager->persist($auth);
         $this->documentManager->flush();
-        
+
         $this->assertNotEquals('password', $auth->getPassword());
         $this->assertEquals($auth->getPassword(), Hash::hashPassword($auth, 'password'));
         $this->assertNotEquals($auth->getPassword(), Hash::hashPassword($auth, 'not password'));
-        
+
         $auth->setPassword('new password');
-        
+
         $this->documentManager->flush();
-        
+
         $this->assertNotEquals('new password', $auth->getPassword());
         $this->assertEquals($auth->getPassword(), Hash::hashPassword($auth, 'new password'));
-        $this->assertNotEquals($auth->getPassword(), Hash::hashPassword($auth, 'password'));        
+        $this->assertNotEquals($auth->getPassword(), Hash::hashPassword($auth, 'password'));
     }
 }

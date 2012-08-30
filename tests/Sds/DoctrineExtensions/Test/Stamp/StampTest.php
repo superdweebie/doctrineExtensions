@@ -23,8 +23,7 @@ class StampTest extends BaseTest {
                 array('Sds\DoctrineExtensions\Test\Stamp\TestAsset\Document' => __DIR__ . '/TestAsset/Document')
             ),
             $manifest->getFilters(),
-            $manifest->getSubscribers(),
-            $manifest->getAnnotations()
+            $manifest->getSubscribers()
         );
 
         $this->subscriber = $manifest->getSubscribers()[0];

@@ -19,8 +19,12 @@ trait RoleAwareUserTrait {
 
     /**
      * @ODM\Field(type="hash")
-     * @Sds\UiHints(label = "Roles")
-     * @Sds\Validator(class = "Sds\DoctrineExtensions\Validator\Validator\StandardNameArray")
+     * @Sds\PropertyDojo(
+     *     validators = {
+     *         @Sds\DojoValidator(module = "Sds\Validator\IdentifierArrayValidator")
+     *     }
+     * )
+     * @Sds\PropertyValidators({@Sds\Validator(class = "Sds\Common\Validator\IdentifierArrayValidator")})
      */
     protected $roles = [];
 

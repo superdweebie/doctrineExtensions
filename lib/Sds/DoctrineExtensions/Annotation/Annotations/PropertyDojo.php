@@ -9,40 +9,35 @@ namespace Sds\DoctrineExtensions\Annotation\Annotations;
 use Doctrine\Common\Annotations\Annotation;
 
 /**
- * Information about this property that the UI may find helpful when rendering.
- *
  * @since   1.0
  * @author  Tim Roediger <superdweebie@gmail.com>
  *
  * @Annotation
  * @Target({"PROPERTY"})
  */
-final class UiHints extends Annotation {
+final class PropertyDojo extends Annotation {
 
-    const event = 'annotationUiHints';
+    const event = 'annotationPropertyDojo';
 
-    const metadataKey = 'uiHints';
+    const metadataKey = 'propertyDojo';
+
+    public $validators;
+
+    public $required;
 
     /**
-     * Should the UI treat this as a hidden field?
+     * What type of input should the UI use?
      *
      * @var boolean
      */
-    public $hidden = false;
+    public $inputType;
 
     /**
      * What should this field be called in the UI?
      *
      * @var string
      */
-    public $label;
-
-    /**
-     * How wide should an input for this field be?
-     *
-     * @var int
-     */
-    public $width;
+    public $title;
 
     /**
      * Short description of this field.

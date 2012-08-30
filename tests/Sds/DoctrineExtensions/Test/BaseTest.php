@@ -55,8 +55,7 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
     protected function configDoctrine(
         array $documents = array(),
         array $filters = array(),
-        array $subscribers = array(),
-        array $annotations = array()
+        array $subscribers = array()
     ){
 
         $config = new Configuration();
@@ -90,7 +89,9 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
         }
 
         //register annotations
-        AnnotationRegistry::registerAutoloadNamespaces($annotations);
+        AnnotationRegistry::registerLoader(function($className) {
+            return class_exists($className);
+        });
 
         $conn = new Connection(null, array(), $config);
         $this->documentManager = DocumentManager::create($conn, $config, $eventManager);

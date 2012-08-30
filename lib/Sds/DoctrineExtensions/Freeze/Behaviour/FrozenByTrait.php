@@ -19,8 +19,7 @@ trait FrozenByTrait {
     /**
      * @ODM\Field(type="string")
      * @ODM\Index
-     * @Sds\UiHints(label = "Frozen by")
-     * @Sds\Validator(class = "Sds\DoctrineExtensions\Validator\Validator\StandardName")
+     * @Sds\PropertyValidators({@Sds\Validator(class = "Sds\Common\Validator\IdentifierValidator")})
      */
     protected $frozenBy;
 

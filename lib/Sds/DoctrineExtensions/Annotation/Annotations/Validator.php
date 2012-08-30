@@ -13,18 +13,12 @@ use Doctrine\Common\Annotations\Annotation;
  * @author  Tim Roediger <superdweebie@gmail.com>
  *
  * @Annotation
- * @Target({"CLASS", "PROPERTY"})
  */
 final class Validator extends Annotation {
-
-    const event = 'annotationValidator';
-
-    const metadataKey = 'validator';
 
     /**
      * The FQCN of the validator to use
      * Class must implement Sds\Common\Validator\ValidatorInteface
-     * or Zend\Validator\ValidatorInterface
      *
      * @var string
      */

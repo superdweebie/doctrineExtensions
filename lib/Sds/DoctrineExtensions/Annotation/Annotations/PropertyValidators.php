@@ -13,20 +13,13 @@ use Doctrine\Common\Annotations\Annotation;
  * @author  Tim Roediger <superdweebie@gmail.com>
  *
  * @Annotation
+ * @Target({"PROPERTY"})
  */
-final class DojoValidator extends Annotation {
+final class PropertyValidators extends Annotation {
 
-    /**
-     * The dojo module name of the validator to use
-     *
-     * @var string
-     */
-    public $module;
+    const event = 'annotationPropertyValidators';
 
-    /**
-     * An array of options to be passed to the class constructor
-     *
-     * @var array
-     */
-    public $options;
+    const metadataKey = 'propertyValidators';
+
+    public $value = array();
 }

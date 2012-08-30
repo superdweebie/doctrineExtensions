@@ -18,8 +18,7 @@ class ZoneTest extends BaseTest {
                 array('Sds\DoctrineExtensions\Test\Zone\TestAsset\Document' => __DIR__ . '/TestAsset/Document')
             ),
             $manifest->getFilters(),
-            $manifest->getSubscribers(),
-            $manifest->getAnnotations()
+            $manifest->getSubscribers()
         );
     }
 

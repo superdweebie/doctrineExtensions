@@ -21,15 +21,6 @@ interface ExtensionInterface{
     public function getConfig();
 
     /**
-     * Return an array of annotation namespaces
-     * Array key must be the namespace
-     * Array value must the the path
-     *
-     * @return array
-     */
-    public function getAnnotations();
-
-    /**
      * Return an array of filter class names
      *
      * @return array

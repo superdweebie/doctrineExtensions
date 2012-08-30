@@ -32,8 +32,7 @@ class AnnotationInheritaceTest extends BaseTest {
                 array('Sds\DoctrineExtensions\Test\Annotation\TestAsset\Document' => __DIR__ . '/TestAsset/Document')
             ),
             $manifest->getFilters(),
-            $manifest->getSubscribers(),
-            $manifest->getAnnotations()
+            $manifest->getSubscribers()
         );
     }
 
@@ -44,11 +43,9 @@ class AnnotationInheritaceTest extends BaseTest {
         $metadata = $documentManager->getClassMetadata(get_class(new ChildA));
 
         $this->assertTrue($metadata->{Sds\DoNotHardDelete::metadataKey});
-        $this->assertEquals('className', $metadata->{Sds\DojoClassName::metadataKey});
-        $this->assertTrue($metadata->{Sds\DojoDiscriminator::metadataKey});
         $this->assertEquals('className', $metadata->{Sds\SerializeClassName::metadataKey});
         $this->assertTrue($metadata->{Sds\SerializeDiscriminator::metadataKey});
-        $this->assertEquals(array('ParentValidator' => []), $metadata->{Sds\Validator::metadataKey});
+        $this->assertEquals(array('ParentValidator' => []), $metadata->{Sds\ClassValidators::metadataKey});
         $this->assertEquals('ParentWorkflow', $metadata->{Sds\WorkflowClass::metadataKey});
     }
 
@@ -59,11 +56,9 @@ class AnnotationInheritaceTest extends BaseTest {
         $metadata = $documentManager->getClassMetadata(get_class(new ChildB));
 
         $this->assertFalse($metadata->{Sds\DoNotHardDelete::metadataKey});
-        $this->assertFalse($metadata->{Sds\DojoClassName::metadataKey});
-        $this->assertFalse($metadata->{Sds\DojoDiscriminator::metadataKey});
         $this->assertFalse($metadata->{Sds\SerializeClassName::metadataKey});
         $this->assertFalse($metadata->{Sds\SerializeDiscriminator::metadataKey});
-        $this->assertEquals(array('ChildBValidator' => []), $metadata->{Sds\Validator::metadataKey});
+        $this->assertEquals(array('ChildBValidator' => []), $metadata->{Sds\ClassValidators::metadataKey});
         $this->assertEquals('ChildBWorkflow', $metadata->{Sds\WorkflowClass::metadataKey});
     }
 }

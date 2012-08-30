@@ -11,8 +11,15 @@ trait UserTrait {
      * @ODM\Field(type="string")
      * @ODM\Index(unique = true, order = "asc")
      * @Sds\Readonly
-     * @Sds\UiHints(label = "Username")
-     * @Sds\Validator(class = "Sds\DoctrineExtensions\Validator\Validator\StandardName")
+     * @Sds\Required
+     * @Sds\PropertyValidators({
+     *     @Sds\Validator(class = "Sds\Common\Validator\IdentifierValidator")
+     * })
+     * @Sds\PropertyDojo(
+     *     validators = {
+     *         @Sds\DojoValidator(module = "Sds\Validator\IdentiferValidator")
+     *     }
+     * )
      */
     protected $username;
 

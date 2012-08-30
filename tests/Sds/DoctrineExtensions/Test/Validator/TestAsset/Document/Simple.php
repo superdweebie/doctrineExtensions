@@ -6,7 +6,12 @@ namespace Sds\DoctrineExtensions\Test\Validator\TestAsset\Document;
 use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
 use Sds\DoctrineExtensions\Annotation\Annotations as Sds;
 
-/** @ODM\Document */
+/**
+ * @ODM\Document
+ * @Sds\ClassValidators({
+ *     @Sds\Validator(class = "Sds\DoctrineExtensions\Test\Validator\TestAsset\ClassValidator")
+ * })
+ */
 class Simple {
 
     /**
@@ -17,7 +22,10 @@ class Simple {
     /**
      * @ODM\Field(type="string")
      * @Sds\Required
-     * @Sds\Validator(class = "Sds\DoctrineExtensions\Test\Validator\TestAsset\Validator")
+     * @Sds\PropertyValidators({
+     *     @Sds\Validator(class = "Sds\DoctrineExtensions\Test\Validator\TestAsset\PropertyValidator1"),
+     *     @Sds\Validator(class = "Sds\DoctrineExtensions\Test\Validator\TestAsset\PropertyValidator2")
+     * })
      */
     protected $name;
 

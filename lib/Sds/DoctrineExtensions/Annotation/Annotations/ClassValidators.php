@@ -9,19 +9,17 @@ namespace Sds\DoctrineExtensions\Annotation\Annotations;
 use Doctrine\Common\Annotations\Annotation;
 
 /**
- * Add the class name to generated Dojo model
- *
  * @since   1.0
  * @author  Tim Roediger <superdweebie@gmail.com>
  *
  * @Annotation
  * @Target({"CLASS"})
  */
-final class DojoClassName extends Annotation
-{
-    const event = 'annotationDojoClassName';
+final class ClassValidators extends Annotation {
 
-    const metadataKey = 'dojoClassName';
-    
-    public $value = true;
+    const event = 'annotationClassValidators';
+
+    const metadataKey = 'classValidators';
+
+    public $value = array();
 }

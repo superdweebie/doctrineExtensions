@@ -18,7 +18,6 @@ trait RestoredOnTrait {
 
     /**
      * @ODM\Field(type="timestamp")
-     * @Sds\UiHints(label = "Restored On")
      */
     protected $restoredOn;
 

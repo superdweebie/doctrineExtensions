@@ -20,8 +20,13 @@ trait AuthTrait {
     /**
      * @ODM\Field(type="string")
      * @Sds\DoNotSerialize
-     * @Sds\UiHints(label = "Password")
-     * @Sds\Validator(class = "Sds\DoctrineExtensions\Validator\Validator\Password")
+     * @Sds\PropertyDojo(
+     *     inputType = "password",
+     *     validators = {
+     *         @Sds\DojoValidator(module = "Sds\Validator\PasswordValidator")
+     *     }
+     * )
+     * @Sds\PropertyValidators({@Sds\Validator(class = "Sds\Common\Validator\PasswordValidator")})
      * @Sds\CryptHash
      */
     protected $password;
