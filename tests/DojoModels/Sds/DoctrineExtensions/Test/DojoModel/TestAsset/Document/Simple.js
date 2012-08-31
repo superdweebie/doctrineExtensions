@@ -73,15 +73,15 @@ define ([
                     }
                 }
             ],
-            "fields": [
-                {
+            "fields": {
+                "id": {
                     "id": "idField",
                     "property": "id",
                     "title": "Id:",
                     "dataType": "custom_id",
                     "inputType": "hidden"
                 },
-                {
+                "name": {
                     "id": "nameField",
                     "property": "name",
                     "title": "NAME",
@@ -103,7 +103,7 @@ define ([
                         }
                     ]
                 }
-            ]
+            }
         };
 
         return model;

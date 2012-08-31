@@ -21,7 +21,7 @@ trait RoleAwareUserTrait {
      * @ODM\Field(type="hash")
      * @Sds\PropertyDojo(
      *     validators = {
-     *         @Sds\DojoValidator(module = "Sds\Validator\IdentifierArrayValidator")
+     *         @Sds\DojoValidator(module = "Sds/Validator/IdentifierArrayValidator")
      *     }
      * )
      * @Sds\PropertyValidators({@Sds\Validator(class = "Sds\Common\Validator\IdentifierArrayValidator")})

@@ -22,8 +22,9 @@ trait AuthTrait {
      * @Sds\DoNotSerialize
      * @Sds\PropertyDojo(
      *     inputType = "password",
+     *     required = true,
      *     validators = {
-     *         @Sds\DojoValidator(module = "Sds\Validator\PasswordValidator")
+     *         @Sds\DojoValidator(module = "Sds/Validator/PasswordValidator")
      *     }
      * )
      * @Sds\PropertyValidators({@Sds\Validator(class = "Sds\Common\Validator\PasswordValidator")})

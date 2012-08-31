@@ -283,7 +283,7 @@ class DojoModelGenerator
                 $attributes = array_merge($attributes, $metadata->propertyDojo[$name]);
             }
 
-            $fields[] = $attributes;
+            $fields[$name] = $attributes;
         }
 
         $dojoMetadata['fields'] = $fields;
