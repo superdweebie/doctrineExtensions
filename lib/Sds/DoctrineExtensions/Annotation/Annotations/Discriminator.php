@@ -9,19 +9,22 @@ namespace Sds\DoctrineExtensions\Annotation\Annotations;
 use Doctrine\Common\Annotations\Annotation;
 
 /**
- * Add the class name field to serialization
+ * May be used in two contexts:
+ *
+ *     Dojo class annotation
+ *         If true, will add the discriminator to the generated Dojo Model
+ *
+ *     Serializer class annotation
+ *         If true, the serializer will add the discriminator field to serialization
+ *
  *
  * @since   1.0
  * @author  Tim Roediger <superdweebie@gmail.com>
  *
  * @Annotation
- * @Target({"CLASS"})
  */
-final class SerializeClassName extends Annotation
+final class Discriminator extends Annotation
 {
-    const event = 'annotationSerializeClassName';
-
-    const metadataKey = 'serializeClassName';
 
     public $value = true;
 }

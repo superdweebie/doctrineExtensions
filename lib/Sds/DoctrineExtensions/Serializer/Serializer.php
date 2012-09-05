@@ -55,14 +55,15 @@ class Serializer {
         $return = array_merge($array, self::serializeClassNameAndDiscriminator($classMetadata));
 
         foreach ($classMetadata->fieldMappings as $field=>$mapping){
-            if(isset($mapping[Sds\DoNotSerialize::metadataKey]) &&
-                $mapping[Sds\DoNotSerialize::metadataKey]
+
+            if (isset($classMetadata->serializer['fields'][$field]['ignore']) &&
+                $classMetadata->serializer['fields'][$field]['ignore']
             ){
                 if (isset($return[$field])){
                     unset($return[$field]);
                 }
                 continue;
-            }
+            }            
 
             if(isset($mapping['embedded'])){
                 switch ($mapping['type']){
@@ -97,11 +98,14 @@ class Serializer {
 
         $return = array();
 
-        if ( isset($classMetadata->{Sds\SerializeClassName::metadataKey})) {
-            $return[$classMetadata->{Sds\SerializeClassName::metadataKey}] = $classMetadata->name;
+        if (isset($classMetadata->serializer['className']) &&
+            $classMetadata->serializer['className']
+        ) {
+            $return[$classMetadata->serializer['classNameProperty']] = $classMetadata->name;
         }
 
-        if ( isset($classMetadata->{Sds\SerializeDiscriminator::metadataKey}) &&
+        if (isset($classMetadata->serializer['discriminator']) &&
+            $classMetadata->serializer['discriminator'] &&
             $classMetadata->hasDiscriminator()
         ) {
             $return[$classMetadata->discriminatorField['name']] = $classMetadata->discriminatorValue;
@@ -123,13 +127,14 @@ class Serializer {
         $return = self::serializeClassNameAndDiscriminator($classMetadata);
 
         foreach ($classMetadata->fieldMappings as $field=>$mapping){
-            if(isset($mapping[Sds\DoNotSerialize::metadataKey]) &&
-                $mapping[Sds\DoNotSerialize::metadataKey]
+
+            if (isset($classMetadata->serializer['fields'][$field]['ignore']) &&
+                $classMetadata->serializer['fields'][$field]['ignore']
             ){
-                continue;
+               continue;
             }
 
-            $getMethod = Accessor::getGetter($classMetadata, $field, $document);            
+            $getMethod = Accessor::getGetter($classMetadata, $field, $document);
 
             if(isset($mapping['embedded'])){
                 switch ($mapping['type']){
@@ -213,8 +218,8 @@ class Serializer {
                 continue;
             }
 
-            $setMethod = Accessor::getSetter($metadata, $field, $document);             
-            
+            $setMethod = Accessor::getSetter($metadata, $field, $document);
+
             if(isset($mapping['embedded'])){
                 switch ($mapping['type']){
                     case 'one':

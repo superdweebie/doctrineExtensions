@@ -32,7 +32,7 @@ class SerializerTest extends BaseTest {
 
         $user = new User();
         $user->setUsername('superdweebie');
-        $user->setPassword('secret'); //uses doNotSerialize annotation
+        $user->setPassword('secret'); //uses Serialize Ignore annotation
         $user->defineLocation('here'); //uses serializeGetter annotation
         $user->addGroup(new Group('groupA'));
         $user->addGroup(new Group('groupB'));

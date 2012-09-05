@@ -19,7 +19,7 @@ trait SoftDeletedByTrait {
     /**
      * @ODM\Field(type="string")
      * @ODM\Index
-     * @Sds\PropertyValidators({@Sds\Validator(class = "Sds\Common\Validator\IdentifierValidator")})
+     * @Sds\ValidatorGroup(@Sds\Validator(class = "Sds\Common\Validator\IdentifierValidator"))
      */
     protected $softDeletedBy;
 

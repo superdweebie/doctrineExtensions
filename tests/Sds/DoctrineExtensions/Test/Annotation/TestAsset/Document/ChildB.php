@@ -9,10 +9,17 @@ use Sds\DoctrineExtensions\Annotation\Annotations as Sds;
 /**
  * @ODM\Document
  * @Sds\DoNotHardDelete(false)
- * @Sds\SerializeClassName(false)
- * @Sds\SerializeDiscriminator(false)
- * @Sds\ClassValidators({@Sds\Validator(class ="ChildBValidator")})
+ * @Sds\Serializer(
+ *     @Sds\ClassName(false),
+ *     @Sds\Discriminator(false)
+ * )
+ * @Sds\ValidatorGroup(@Sds\Validator(class ="ChildBValidator"))
  * @Sds\WorkflowClass("ChildBWorkflow")
  */
 class ChildB extends ParentClass {
+
+    /**
+     * @Sds\Serializer(@Sds\Ignore(false))
+     */
+    protected $name;
 }

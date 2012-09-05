@@ -11,15 +11,15 @@ trait UserTrait {
      * @ODM\Field(type="string")
      * @ODM\Index(unique = true, order = "asc")
      * @Sds\Readonly
-     * @Sds\Required
-     * @Sds\PropertyValidators({
+     * @Sds\ValidatorGroup(
+     *     @Sds\Required,
      *     @Sds\Validator(class = "Sds\Common\Validator\IdentifierValidator")
-     * })
-     * @Sds\PropertyDojo(
-     *     required = true,
-     *     validators = {
-     *         @Sds\DojoValidator(module = "Sds/Validator/IdentifierValidator")
-     *     }
+     * )
+     * @Sds\Dojo(
+     *     @Sds\ValidatorGroup(
+     *         @Sds\Required,
+     *         @Sds\DojoValidator(module = "Sds/Common/Validator/IdentifierValidator")
+     *     )
      * )
      */
     protected $username;

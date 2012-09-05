@@ -23,7 +23,7 @@ trait StateAwareTrait{
      * @Sds\Audit
      * @Sds\StateField
      * @Sds\DoNotAccessControlUpdate
-     * @Sds\PropertyValidators({@Sds\Validator(class = "Sds\Common\Validator\IdentifierValidator")})
+     * @Sds\ValidatorGroup(@Sds\Validator(class = "Sds\Common\Validator\IdentifierValidator"))
      */
     protected $state;
 

@@ -31,8 +31,7 @@ class Subscriber implements EventSubscriber, AnnotationReaderAwareInterface
      */
     public function getSubscribedEvents(){
         return array(
-            Sds\ClassDojo::event,
-            Sds\PropertyDojo::event
+            Sds\Dojo::event
         );
     }
 
@@ -50,70 +49,64 @@ class Subscriber implements EventSubscriber, AnnotationReaderAwareInterface
      *
      * @param \Sds\DoctrineExtensions\Annotation\AnnotationEventArgs $eventArgs
      */
-    public function annotationClassDojo(AnnotationEventArgs $eventArgs)
+    public function annotationDojo(AnnotationEventArgs $eventArgs)
     {
         $annotation = $eventArgs->getAnnotation();
-        $metadataKey = $annotation::metadataKey;
 
         $dojoMetadata = [];
-        if (isset($annotation->className)){
-            $dojoMetadata['className'] = true;
-            $dojoMetadata['classNameProperty'] = $this->getClassNameProperty();
-        }
-        if (isset($annotation->discriminator)){
-            $dojoMetadata['discriminator'] = true;
-        }
 
-        if (isset($annotation->inheritFrom)){
-            $dojoMetadata['inheritFrom'] = $annotation->inheritFrom;
-        }
-
-        if (isset($annotation->validators)){
-            $dojoMetadata['validators'] = [];
-            foreach ($annotation->validators as $validator){
-                $dojoMetadata['validators'][] = ['module' => $validator->module, 'options' => $validator->options];
+        if (is_array($annotation->value)){
+            foreach ($annotation->value as $subAnnotation){
+                $dojoMetadata = $this->processAnnotation($subAnnotation, $dojoMetadata);
             }
+        } else {
+            $dojoMetadata = $this->processAnnotation($annotation->value, $dojoMetadata);
         }
-        $eventArgs->getMetadata()->$metadataKey = $dojoMetadata;
+
+        switch ($eventArgs->getEventType()){
+            case 'document':
+                $dojoMetadata['classNameProperty'] = $this->getClassNameProperty();
+                $eventArgs->getMetadata()->dojo = $dojoMetadata;
+                break;
+            case 'property':
+                $eventArgs->getMetadata()->dojo['fields'][$eventArgs->getReflection()->getName()] = $dojoMetadata;
+                break;
+        }
     }
 
-    /**
-     *
-     * @param \Sds\DoctrineExtensions\Annotation\AnnotationEventArgs $eventArgs
-     */
-    public function annotationPropertyDojo(AnnotationEventArgs $eventArgs)
-    {
-        $annotation = $eventArgs->getAnnotation();
-        $metadata = $eventArgs->getMetadata();
+    protected function processAnnotation($annotation, $dojoMetadata){
 
-        if ( ! isset($metadata->{$annotation::metadataKey})){
-            $metadata->{$annotation::metadataKey} = [];
-        }
-
-        $dojoMetadata = [];
-        if (isset($annotation->inputType)){
-            $dojoMetadata['inputType'] = $annotation->inputType;
-        }
-        if (isset($annotation->required)){
-            $dojoMetadata['required'] = $annotation->required;
-        }
-        if (isset($annotation->title)){
-            $dojoMetadata['title'] = $annotation->title;
-        }
-        if (isset($annotation->tooltip)){
-            $dojoMetadata['tooltip'] = $annotation->tooltip;
-        }
-        if (isset($annotation->description)){
-            $dojoMetadata['description'] = $annotation->description;
-        }
-
-        if (isset($annotation->validators)){
-            $dojoMetadata['validators'] = [];
-            foreach ($annotation->validators as $validator){
-                $dojoMetadata['validators'][] = ['module' => $validator->module, 'options' => $validator->options];
-            }
+        switch (true){
+            case ($annotation instanceof Sds\ClassName):
+                $dojoMetadata['className'] = $annotation->value;
+                break;
+            case ($annotation instanceOf Sds\Discriminator):
+                $dojoMetadata['discriminator'] = $annotation->value;
+                break;
+            case ($annotation instanceOf Sds\InheritFrom):
+                $dojoMetadata['inheritFrom'] = $annotation->value;
+                break;
+            case ($annotation instanceOf Sds\Metadata):
+                $dojoMetadata['metadata'] = $annotation->value;
+                break;
+            case ($annotation instanceOf Sds\ValidatorGroup):
+                $dojoMetadata['validatorGroup'] = [];
+                foreach($annotation->value as $validator){
+                    switch (true){
+                        case ($validator instanceof Sds\Validator):
+                            $dojoMetadata['validatorGroup'][] = [
+                                'module' => $validator->class,
+                                'options' => $validator->options
+                            ];
+                            break;
+                        case ($validator instanceof Sds\Required):
+                            $dojoMetadata['required'] = $validator->value;
+                            break;
+                    }
+                }
+                break;
         }
 
-        $metadata->{$annotation::metadataKey}[$eventArgs->getReflection()->getName()] = $dojoMetadata;
+        return $dojoMetadata;
     }
 }

@@ -19,15 +19,20 @@ trait AuthTrait {
 
     /**
      * @ODM\Field(type="string")
-     * @Sds\DoNotSerialize
-     * @Sds\PropertyDojo(
-     *     inputType = "password",
-     *     required = true,
-     *     validators = {
-     *         @Sds\DojoValidator(module = "Sds/Validator/PasswordValidator")
-     *     }
+     * @Sds\Serializer(@Sds\Ignore)
+     * @Sds\Dojo(
+     *     @Sds\Metadata({
+     *         "inputType" = "password"
+     *     }),
+     *     @Sds\ValidatorGroup(
+     *         @Sds\Required,
+     *         @Sds\Validator(class = "Sds/Common/Validator/PasswordValidator")
+     *     )
      * )
-     * @Sds\PropertyValidators({@Sds\Validator(class = "Sds\Common\Validator\PasswordValidator")})
+     * @Sds\ValidatorGroup(
+     *     @Sds\Required,
+     *     @Sds\Validator(class = "Sds\Common\Validator\PasswordValidator")
+     * )
      * @Sds\CryptHash
      */
     protected $password;

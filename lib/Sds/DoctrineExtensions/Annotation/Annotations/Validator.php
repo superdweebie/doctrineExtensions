@@ -12,6 +12,8 @@ use Doctrine\Common\Annotations\Annotation;
  * @since   1.0
  * @author  Tim Roediger <superdweebie@gmail.com>
  *
+ * Defines a validator to be used. Must be used in the context of a ValidatorGroup annotation
+ *
  * @Annotation
  */
 final class Validator extends Annotation {
@@ -19,6 +21,10 @@ final class Validator extends Annotation {
     /**
      * The FQCN of the validator to use
      * Class must implement Sds\Common\Validator\ValidatorInteface
+     *
+     * In the context of a Dojo annotation, class must be
+     * the a module name. The module must inherit from
+     * the Sds\Common\Validator\BaseValidator module
      *
      * @var string
      */
@@ -29,5 +35,5 @@ final class Validator extends Annotation {
      *
      * @var array
      */
-    public $options = array();
+    public $options;
 }

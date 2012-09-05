@@ -22,7 +22,7 @@ trait PermissionTrait
      * @ODM\String
      * @ODM\Index
      * @Sds\Readonly
-     * @Sds\PropertyValidators({@Sds\Validator(class = "Sds\Common\Validator\IdentifierValidator")})
+     * @Sds\ValidatorGroup(@Sds\Validator(class = "Sds\Common\Validator\IdentifierValidator"))
      */
     protected $state;
 
@@ -30,7 +30,7 @@ trait PermissionTrait
      * @ODM\String
      * @ODM\Index
      * @Sds\Readonly
-     * @Sds\PropertyValidators({@Sds\Validator(class = "Sds\Common\Validator\IdentifierValidator")})
+     * @Sds\ValidatorGroup({@Sds\Validator(class = "Sds\Common\Validator\IdentifierValidator")})
      */
     protected $action;
 
@@ -38,7 +38,7 @@ trait PermissionTrait
      * @ODM\String
      * @ODM\Index
      * @Sds\Readonly
-     * @Sds\PropertyValidators({@Sds\Validator(class = "Sds\Common\Validator\IdentifierValidator")})
+     * @Sds\ValidatorGroup({@Sds\Validator(class = "Sds\Common\Validator\IdentifierValidator")})
      */
     protected $role;
 

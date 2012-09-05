@@ -39,7 +39,7 @@ trait AuditTrait
     /**
      * @ODM\Field(type="string")
      * @Sds\Readonly
-     * @Sds\PropertyValidators({@Sds\Validator(class = "Sds\Common\Validator\IdentifierValidator")})
+     * @Sds\ValidatorGroup(@Sds\Validator(class = "Sds\Common\Validator\IdentifierValidator"))
      */
     protected $changedBy;
 

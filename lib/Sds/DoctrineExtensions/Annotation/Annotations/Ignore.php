@@ -9,19 +9,16 @@ namespace Sds\DoctrineExtensions\Annotation\Annotations;
 use Doctrine\Common\Annotations\Annotation;
 
 /**
- * Add the discriminator field to serialization, if it exists
+ * Mark a field to be skipped during serialization. Must be used in the context
+ * of the Serializer annotation
  *
  * @since   1.0
  * @author  Tim Roediger <superdweebie@gmail.com>
  *
  * @Annotation
- * @Target({"CLASS"})
  */
-final class SerializeDiscriminator extends Annotation
+final class Ignore extends Annotation
 {
-    const event = 'annotationSerializeDiscriminator';
-
-    const metadataKey = 'serializeDiscriminator';
 
     public $value = true;
 }

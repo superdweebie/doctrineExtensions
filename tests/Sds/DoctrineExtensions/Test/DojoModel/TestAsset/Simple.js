@@ -2,14 +2,14 @@
 
 define ([
         'dojo/_base/declare',
-        'dojo/Stateful', 
-        'me/myModule1', 
+        'dojo/Stateful',
+        'me/myModule1',
         'me/myModule2'
     ],
     function (
         declare,
-        Stateful, 
-        MemyModule1, 
+        Stateful,
+        MemyModule1,
         MemyModule2
     ){
         // module:
@@ -41,8 +41,8 @@ define ([
                     //     Function to handle serialization
 
                     var json = {};
-                    if (this.get('_1')) {
-                        json['_1'] = this.get('_1');
+                    if (this.get('_className')) {
+                        json['_className'] = this.get('_className');
                     }
                     if (this.get('_')) {
                         json['_'] = this.get('_');
@@ -60,7 +60,7 @@ define ([
         );
 
         model.metadata = {
-            "validators": [
+            "validatorGroup": [
                 {
                     "module": "Sds\\Test\\ClassValidator1",
                     "options": null
@@ -87,9 +87,7 @@ define ([
                     "title": "NAME",
                     "dataType": "string",
                     "required": true,
-                    "tooltip": "The simple's name",
-                    "description": "This is a longer description",
-                    "validators": [
+                    "validatorGroup": [
                         {
                             "module": "Sds\\Test\\NameValidator1",
                             "options": null
@@ -101,7 +99,9 @@ define ([
                                 "option2": "b"
                             }
                         }
-                    ]
+                    ],
+                    "tooltip": "The simple's name",
+                    "description": "This is a longer description"
                 }
             }
         };

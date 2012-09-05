@@ -8,7 +8,7 @@ use Sds\DoctrineExtensions\Annotation\Annotations as Sds;
 
 /**
  * @ODM\Document
- * @Sds\SerializeClassName
+ * @Sds\Serializer(@Sds\ClassName)
  */
 class ClassName {
 

@@ -31,26 +31,23 @@ class DocumentValidator implements DocumentValidatorInterface
         $this->messages = array();
         $isValid = true;
 
-        // Check for required fields
-        foreach ($metadata->{Sds\Required::metadataKey} as $field => $value){
-
-            if ( ! $value) {
-                continue;
-            }
+        // Property level validators
+        foreach ($metadata->validator['fields'] as $field => $validatorMetadata){
 
             $value = $document->{Accessor::getGetter($metadata, $field, $document)}();
-            if ( ! isset($value)) {
+
+            // Check for required fields
+            if (isset($validatorMetadata['required']) &&
+                $validatorMetadata['required'] &&
+                ! isset($value)
+            ) {
                 $this->messages = array_merge($this->messages, array(sprintf('Required field %s is not complete', $field)));
                 $isValid = false;
             };
-        }
 
-        // Property level validators
-        if (isset($metadata->{Sds\PropertyValidators::metadataKey})){
-            foreach ($metadata->{Sds\PropertyValidators::metadataKey} as $field => $validators){
-                $value = $document->{Accessor::getGetter($metadata, $field, $document)}();
-
-                foreach($validators as $class => $options){
+            // Test other validators
+            if (isset($validatorMetadata['validatorGroup'])){
+                foreach ($validatorMetadata['validatorGroup'] as $class => $options){
                     $validator = new $class($options);
                     if ( ! $validator->isValid($value)){
                         $this->messages = array_merge($this->messages, $validator->getMessages());
@@ -60,15 +57,9 @@ class DocumentValidator implements DocumentValidatorInterface
             }
         }
 
-        // Return early if a property validation has failed
-        if ( ! $isValid) {
-            return $isValid;
-        }
-
         // Class level validators
-        // These are only executed if all property level validators pass
-        if (isset($metadata->{Sds\ClassValidators::metadataKey})){
-            foreach ($metadata->{Sds\ClassValidators::metadataKey} as $class => $options) {
+        if (isset($metadata->validator['validatorGroup'])){
+            foreach ($metadata->validator['validatorGroup'] as $class => $options){
                 $validator = new $class($options);
                 if ( ! $validator->isValid($document)){
                     $this->messages = array_merge($this->messages, $validator->getMessages());
@@ -76,7 +67,7 @@ class DocumentValidator implements DocumentValidatorInterface
                 }
             }
         }
-
+            
         return $isValid;
     }
 

@@ -31,9 +31,7 @@ class Subscriber implements EventSubscriber, AnnotationReaderAwareInterface
      */
     public function getSubscribedEvents(){
         return array(
-            Sds\DoNotSerialize::event,
-            Sds\SerializeDiscriminator::event,
-            Sds\SerializeClassName::event
+            Sds\Serializer::event
         );
     }
 
@@ -51,35 +49,45 @@ class Subscriber implements EventSubscriber, AnnotationReaderAwareInterface
      *
      * @param \Sds\DoctrineExtensions\Annotation\AnnotationEventArgs $eventArgs
      */
-    public function annotationDoNotSerialize(AnnotationEventArgs $eventArgs)
+    public function annotationSerializer(AnnotationEventArgs $eventArgs)
     {
         $annotation = $eventArgs->getAnnotation();
-        $eventArgs->getMetadata()->fieldMappings[$eventArgs->getReflection()->getName()][$annotation::metadataKey] = true;
-    }
 
-    /**
-     *
-     * @param \Sds\DoctrineExtensions\Annotation\AnnotationEventArgs $eventArgs
-     */
-    public function annotationSerializeDiscriminator(AnnotationEventArgs $eventArgs)
-    {
-        $annotation = $eventArgs->getAnnotation();
-        $metadataKey = $annotation::metadataKey;
-        $eventArgs->getMetadata()->$metadataKey = (boolean) $annotation->value;
-    }
+        $serializerMetadata = [];
 
-    /**
-     *
-     * @param \Sds\DoctrineExtensions\Annotation\AnnotationEventArgs $eventArgs
-     */
-    public function annotationSerializeClassName(AnnotationEventArgs $eventArgs)
-    {
-        $annotation = $eventArgs->getAnnotation();
-        $metadataKey = $annotation::metadataKey;
-        if ($annotation->value) {
-            $eventArgs->getMetadata()->$metadataKey = $this->classNameProperty;
+        if (is_array($annotation->value)){
+            foreach ($annotation->value as $subAnnotation){
+                $serializerMetadata = $this->processAnnotation($subAnnotation, $serializerMetadata);
+            }
         } else {
-            $eventArgs->getMetadata()->$metadataKey = false;
+            $serializerMetadata = $this->processAnnotation($annotation->value, $serializerMetadata);
         }
+
+        switch ($eventArgs->getEventType()){
+            case 'document':
+                $serializerMetadata['classNameProperty'] = $this->getClassNameProperty();
+                $eventArgs->getMetadata()->serializer = $serializerMetadata;
+                break;
+            case 'property':
+                $eventArgs->getMetadata()->serializer['fields'][$eventArgs->getReflection()->getName()] = $serializerMetadata;
+                break;
+        }
+    }
+
+    protected function processAnnotation($annotation, $serializerMetadata){
+
+        switch (true){
+            case ($annotation instanceof Sds\ClassName):
+                $serializerMetadata['className'] = (boolean) $annotation->value;
+                break;
+            case ($annotation instanceOf Sds\Discriminator):
+                $serializerMetadata['discriminator'] = (boolean) $annotation->value;
+                break;
+            case ($annotation instanceOf Sds\Ignore):
+                $serializerMetadata['ignore'] = (boolean) $annotation->value;
+                break;
+        }
+
+        return $serializerMetadata;
     }
 }

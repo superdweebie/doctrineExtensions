@@ -63,9 +63,7 @@ class Subscriber implements EventSubscriber, AnnotationReaderAwareInterface
      */
     public function getSubscribedEvents(){
         $events = array(
-            Sds\ClassValidators::event,
-            Sds\PropertyValidators::event,
-            Sds\Required::event
+            Sds\ValidatorGroup::event
         );
         if ($this->getValidateOnFlush()) {
             $events[] = ODMEvents::onFlush;
@@ -92,43 +90,44 @@ class Subscriber implements EventSubscriber, AnnotationReaderAwareInterface
      *
      * @param \Sds\DoctrineExtensions\Annotation\AnnotationEventArgs $eventArgs
      */
-    public function annotationClassValidators(AnnotationEventArgs $eventArgs)
+    public function annotationValidatorGroup(AnnotationEventArgs $eventArgs)
     {
         $annotation = $eventArgs->getAnnotation();
-        $metadata = $eventArgs->getMetadata();
 
-        $metadata->{$annotation::metadataKey} = [];
-        foreach ($annotation->value as $validator){
-            $metadata->{$annotation::metadataKey}[$validator->class] = $validator->options;
+        $validatorMetadata = [];
+
+        if (is_array($annotation->value)){
+            foreach ($annotation->value as $subAnnotation){
+                $validatorMetadata = $this->processAnnotation($subAnnotation, $validatorMetadata);
+            }
+        } else {
+            $validatorMetadata = $this->processAnnotation($annotation->value, $validatorMetadata);
+        }
+
+        switch ($eventArgs->getEventType()){
+            case 'document':
+                $eventArgs->getMetadata()->validator = $validatorMetadata;
+                break;
+            case 'property':
+                $eventArgs->getMetadata()->validator['fields'][$eventArgs->getReflection()->getName()] = $validatorMetadata;
+                break;
         }
     }
 
-    public function annotationPropertyValidators(AnnotationEventArgs $eventArgs)
-    {
-        $annotation = $eventArgs->getAnnotation();
-        $metadata = $eventArgs->getMetadata();
+    protected function processAnnotation($annotation, $validatorMetadata){
 
-        if ( ! isset($metadata->{$annotation::metadataKey})){
-            $metadata->{$annotation::metadataKey} = [];
-        }
-        $metadata->{$annotation::metadataKey}[$eventArgs->getReflection()->getName()] = [];
-        foreach ($annotation->value as $validator){
-            $metadata->{$annotation::metadataKey}[$eventArgs->getReflection()->getName()][$validator->class] = $validator->options;
-        }
-    }
+        switch (true){
+            case ($annotation instanceof Sds\Validator):
+                $validatorMetadata['validatorGroup'][$annotation->class] = $annotation->options;
+                break;
+            case ($annotation instanceof Sds\Required):
+                $validatorMetadata['required'] = $annotation->value;
+                break;
+            default:
 
-    /**
-     *
-     * @param \Sds\DoctrineExtensions\Annotation\EventArgs $eventArgs
-     */
-    public function annotationRequired(AnnotationEventArgs $eventArgs)
-    {
-        $annotation = $eventArgs->getAnnotation();
-        $metadata = $eventArgs->getMetadata();
-        if ( ! isset($metadata->{$annotation::metadataKey})){
-            $metadata->{$annotation::metadataKey} = [];
         }
-        $metadata->{$annotation::metadataKey}[$eventArgs->getReflection()->getName()] = (boolean) $annotation->value;
+
+        return $validatorMetadata;
     }
 
     /**
