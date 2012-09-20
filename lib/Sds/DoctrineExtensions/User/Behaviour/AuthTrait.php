@@ -22,7 +22,7 @@ trait AuthTrait {
      * @Sds\Serializer(@Sds\Ignore)
      * @Sds\Dojo(
      *     @Sds\Metadata({
-     *         "inputType" = "password"
+     *         "type" = "password"
      *     }),
      *     @Sds\ValidatorGroup(
      *         @Sds\Required,

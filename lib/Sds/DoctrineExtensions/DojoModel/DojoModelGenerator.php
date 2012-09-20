@@ -279,7 +279,7 @@ class DojoModelGenerator
             $attributes = [
                 'id' => $name . 'Field',
                 'property' => $name,
-                'title' => ucfirst($name) . ':',
+                'label' => ucfirst($name) . ':',
                 'dataType' => $mapping['type']
             ];
 

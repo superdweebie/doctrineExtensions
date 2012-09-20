@@ -18,7 +18,7 @@ trait UserTrait {
      * @Sds\Dojo(
      *     @Sds\ValidatorGroup(
      *         @Sds\Required,
-     *         @Sds\DojoValidator(module = "Sds/Common/Validator/IdentifierValidator")
+     *         @Sds\Validator(class = "Sds/Common/Validator/IdentifierValidator")
      *     )
      * )
      */

@@ -62,11 +62,11 @@ define ([
         model.metadata = {
             "validatorGroup": [
                 {
-                    "module": "Sds\\Test\\ClassValidator1",
+                    "class": "Sds\\Test\\ClassValidator1",
                     "options": null
                 },
                 {
-                    "module": "Sds\\Test\\ClassValidator2",
+                    "class": "Sds\\Test\\ClassValidator2",
                     "options": {
                         "option1": "a",
                         "option2": "b"
@@ -77,29 +77,30 @@ define ([
                 "id": {
                     "id": "idField",
                     "property": "id",
-                    "title": "Id:",
+                    "label": "Id:",
                     "dataType": "custom_id",
                     "inputType": "hidden"
                 },
                 "name": {
                     "id": "nameField",
                     "property": "name",
-                    "title": "NAME",
+                    "label": "Name:",
                     "dataType": "string",
                     "required": true,
                     "validatorGroup": [
                         {
-                            "module": "Sds\\Test\\NameValidator1",
+                            "class": "Sds\\Test\\NameValidator1",
                             "options": null
                         },
                         {
-                            "module": "Sds\\Test\\NameValidator2",
+                            "class": "Sds\\Test\\NameValidator2",
                             "options": {
                                 "option1": "b",
                                 "option2": "b"
                             }
                         }
                     ],
+                    "title": "NAME",
                     "tooltip": "The simple's name",
                     "description": "This is a longer description"
                 }

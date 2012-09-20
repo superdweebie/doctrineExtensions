@@ -95,7 +95,7 @@ class Subscriber implements EventSubscriber, AnnotationReaderAwareInterface
                     switch (true){
                         case ($validator instanceof Sds\Validator):
                             $dojoMetadata['validatorGroup'][] = [
-                                'module' => $validator->class,
+                                'class' => $validator->class,
                                 'options' => $validator->options
                             ];
                             break;
