@@ -121,7 +121,11 @@ class Subscriber implements EventSubscriber, AnnotationReaderAwareInterface
                 $validatorMetadata['validatorGroup'][$annotation->class] = $annotation->options;
                 break;
             case ($annotation instanceof Sds\Required):
-                $validatorMetadata['required'] = $annotation->value;
+                if ($annotation->value){
+                    $validatorMetadata['validatorGroup']['Sds\Common\Validator\RequiredValidator'] = null;
+                } else {
+                    $validatorMetadata['validatorGroup']['Sds\Common\Validator\NotRequiredValidator'] = null;
+                }
                 break;
             default:
 

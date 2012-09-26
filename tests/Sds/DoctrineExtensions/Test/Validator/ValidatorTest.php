@@ -46,7 +46,7 @@ class ValidatorTest extends BaseTest {
 
         $this->assertTrue(isset($this->calls[Events::invalidCreate]));
         $this->assertFalse(isset($this->calls[Events::invalidUpdate]));
-        $this->assertEquals(array('Required field name is not complete', 'invalid name 1', 'invalid name 2'), $this->calls[Events::invalidCreate][0]->getMessages());
+        $this->assertEquals(array('This value is required.'), $this->calls[Events::invalidCreate][0]->getMessages());
 
         $id = $testDoc->getId();
         $documentManager->clear();
