@@ -110,7 +110,7 @@ class DojoModelGenerator
             'documentClass' => $metadata->name,
             'className' => $this->populateClassNameTemplate($metadata),
             'discriminator' => $this->populateDiscriminatorTemplate($metadata),
-            'properties' => $this->populatePropertiesTemplate($metadata->fieldMappings),
+            'properties' => $this->populatePropertiesTemplate($metadata),
             'jsonFields' => $this->populateJsonFieldsTemplate($metadata),
             'metadata' => $this->populateMetadata($metadata)
         ));
@@ -208,13 +208,21 @@ class DojoModelGenerator
         return $populated;
     }
 
-    protected function populatePropertiesTemplate(array $fieldMappings) {
+    protected function populatePropertiesTemplate(ClassMetadata $metadata) {
 
         $template = file_get_contents(__DIR__ . '/Template/Property.js.template');
 
         $populated = '';
 
-        foreach ($fieldMappings as $name => $mapping) {
+        foreach ($metadata->fieldMappings as $name => $mapping) {
+
+            if (isset($metadata->dojo['fields'][$name]) &&
+                isset($metadata->dojo['fields'][$name]['ignore']) &&
+                $metadata->dojo['fields'][$name]['ignore']
+            ) {
+                continue;
+            }
+
             $property = $this->populateTemplate($template, array(
                 'name' => $name,
                 'type' => $mapping['type']
@@ -253,6 +261,13 @@ class DojoModelGenerator
 
         // Add fields
         foreach ($metadata->fieldMappings as $name => $mapping) {
+            if (isset($metadata->dojo['fields'][$name]) &&
+                isset($metadata->dojo['fields'][$name]['ignore']) &&
+                $metadata->dojo['fields'][$name]['ignore']
+            ) {
+                continue;
+            }
+
             $field = $this->populateTemplate($template, array(
                 'name' => $name
             ));
@@ -276,16 +291,20 @@ class DojoModelGenerator
 
         $fields = [];
         foreach ($metadata->fieldMappings as $name => $mapping) {
+
+            if (isset($metadata->dojo['fields'][$name]) &&
+                isset($metadata->dojo['fields'][$name]['ignore']) &&
+                $metadata->dojo['fields'][$name]['ignore']
+            ) {
+                continue;
+            }
+
             $attributes = [
                 'id' => $name . 'Field',
                 'property' => $name,
                 'label' => ucfirst($name) . ':',
                 'dataType' => $mapping['type']
             ];
-
-            if (isset($metadata->dojo['fields'][$name]['required'])){
-                $attributes['required'] = $metadata->dojo['fields'][$name]['required'];
-            }
 
             if (isset($metadata->dojo['fields'][$name]['validatorGroup'])){
                 $attributes['validatorGroup'] = $metadata->dojo['fields'][$name]['validatorGroup'];

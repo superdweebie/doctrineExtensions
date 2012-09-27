@@ -46,7 +46,7 @@ class ValidatorTest extends BaseTest {
 
         $this->assertTrue(isset($this->calls[Events::invalidCreate]));
         $this->assertFalse(isset($this->calls[Events::invalidUpdate]));
-        $this->assertEquals(array('This value is required.'), $this->calls[Events::invalidCreate][0]->getMessages());
+        $this->assertEquals(array('Field "name": This value is required.'), $this->calls[Events::invalidCreate][0]->getMessages());
 
         $id = $testDoc->getId();
         $documentManager->clear();
@@ -69,7 +69,7 @@ class ValidatorTest extends BaseTest {
 
         $this->assertTrue(isset($this->calls[Events::invalidCreate]));
         $this->assertFalse(isset($this->calls[Events::invalidUpdate]));
-        $this->assertEquals(array('invalid name 1', 'invalid name 2'), $this->calls[Events::invalidCreate][0]->getMessages());
+        $this->assertEquals(array('Field "name": invalid name 1', 'Field "name": invalid name 2'), $this->calls[Events::invalidCreate][0]->getMessages());
 
         $id = $testDoc->getId();
         $documentManager->clear();
@@ -122,7 +122,7 @@ class ValidatorTest extends BaseTest {
 
         $this->assertFalse(isset($this->calls[Events::invalidCreate]));
         $this->assertTrue(isset($this->calls[Events::invalidUpdate]));
-        $this->assertEquals(array('invalid name 1', 'invalid name 2'), $this->calls[Events::invalidUpdate][0]->getMessages());
+        $this->assertEquals(array('Field "name": invalid name 1', 'Field "name": invalid name 2'), $this->calls[Events::invalidUpdate][0]->getMessages());
 
         $documentManager->clear();
         $testDoc = $repository->find($id);

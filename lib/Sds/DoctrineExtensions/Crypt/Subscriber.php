@@ -61,6 +61,7 @@ class Subscriber implements EventSubscriber, AnnotationReaderAwareInterface
             throw new Exception\DocumentException(sprintf('Class %s given in @CryptHash must implement SaltInterface', $annotation->saltClass));
         }
         $eventArgs->getMetadata()->{$annotation::metadataKey}[$eventArgs->getReflection()->getName()] = array(
+            'hashClass' => $annotation->hashClass,
             'saltClass' => $annotation->saltClass,
             'prependSalt' => $annotation->prependSalt
         );
@@ -109,34 +110,22 @@ class Subscriber implements EventSubscriber, AnnotationReaderAwareInterface
                     continue;
                 }
 
+                if ( ! isset($new) || $new == ''){
+                    continue;
+                }
+
                 $requireRecompute = false;
 
-                // Check for crypthash annotation
                 if(isset($metadata->{Sds\CryptHash::metadataKey}) &&
                    isset($metadata->{Sds\CryptHash::metadataKey}[$field])
                 ){
-                    $config = $metadata->{Sds\CryptHash::metadataKey}[$field];
-
-                    $setMethod = Accessor::getSetter($metadata, $field, $document);
-                    if ($config['prependSalt']) {
-                        $setValue = Hash::hashAndPrependSalt($config['saltClass']::getSalt(), $new);
-                    } else {
-                        $setValue = Hash::hash($config['saltClass']::getSalt(), $new);
-                    }
-                    $document->$setMethod($setValue);
+                    HashService::hashField($field, $document, $metadata);
                     $requireRecompute = true;
-                }
 
-                // Check for cryptblockcipher annotation
-                if(isset($metadata->{Sds\CryptBlockCipher::metadataKey}) &&
+                } elseif (isset($metadata->{Sds\CryptBlockCipher::metadataKey}) &&
                    isset($metadata->{Sds\CryptBlockCipher::metadataKey}[$field])
                 ){
-                    $config = $metadata->{Sds\CryptBlockCipher::metadataKey}[$field];
-
-                    $getMethod = Accessor::getGetter($metadata, $field, $document);
-                    $setMethod = Accessor::getSetter($metadata, $field, $document);
-
-                    $document->$setMethod($config['blockCipherClass']::encrypt($document->$getMethod(), $config['keyClass']::getKey()));
+                    BlockCipherService::encryptField($field, $document, $metadata);
                     $requireRecompute = true;
                 }
 
@@ -158,18 +147,14 @@ class Subscriber implements EventSubscriber, AnnotationReaderAwareInterface
 
         if (isset($metadata->{Sds\CryptHash::metadataKey})) {
             foreach ($metadata->{Sds\CryptHash::metadataKey} as $field => $config){
-                $getMethod = Accessor::getGetter($metadata, $field, $document);
-                $setMethod = Accessor::getSetter($metadata, $field, $document);
-
-                if ($config['prependSalt']) {
-                    $setValue = Hash::hashAndPrependSalt($config['saltClass']::getSalt(), $document->$getMethod());
-                } else {
-                    $setValue = Hash::hash($config['saltClass']::getSalt(), $document->$getMethod());
-                }
-                $document->$setMethod($setValue);
+                HashService::hashField($field, $document, $metadata);
             }
         }
 
-        BlockCipherService::encryptDocument($document, $metadata);
+        if (isset($metadata->{Sds\CryptBlockCipher::metadataKey})) {
+            foreach ($metadata->{Sds\CryptBlockCipher::metadataKey} as $field => $config){
+                BlockCipherService::encryptField($field, $document, $metadata);
+            }
+        }
     }
 }

@@ -105,6 +105,9 @@ class Subscriber implements EventSubscriber, AnnotationReaderAwareInterface
                     }
                 }
                 break;
+            case ($annotation instanceOf Sds\Ignore):
+                $dojoMetadata['ignore'] = $annotation->value;
+                break;
         }
 
         return $dojoMetadata;
