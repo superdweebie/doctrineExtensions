@@ -3,11 +3,14 @@ language: php
 php:
   - 5.4
 
+env:
+  - MONGO_VERSION=1.2.12
+
+services: mongodb
+
 before_script:
-  - wget http://pecl.php.net/get/mongo-1.2.12.tgz
-  - tar -xzf mongo-1.2.12.tgz
-  - sh -c "cd mongo-1.2.12 && phpize && ./configure --enable-mongo && make && sudo make install"
-  - echo "extension=mongo.so" >> `php --ini | grep "Loaded Configuration" | sed -e "s|.*:\s*||"`
+  - pecl -q install mongo-${MONGO_VERSION} && echo "extension=mongo.so" >> `php --ini | grep "Loaded Configuration" | sed -e "s|.*:\s*||"`
+  - git submodule update --init
   - cp .travis/composer.json ./    
   - wget -nc http://getcomposer.org/composer.phar
   - php composer.phar install
