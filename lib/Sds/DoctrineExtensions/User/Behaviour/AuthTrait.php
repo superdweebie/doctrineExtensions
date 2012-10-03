@@ -38,28 +38,6 @@ trait AuthTrait {
     protected $password;
 
     /**
-     *
-     * @var boolean
-     */
-    protected $isGuest;
-
-    /**
-     *
-     * @return boolean
-     */
-    public function getIsGuest() {
-        return $this->isGuest;
-    }
-
-    /**
-     *
-     * @param boolean $isGuest
-     */
-    public function setIsGuest($isGuest) {
-        $this->isGuest = (boolean) $isGuest;
-    }
-
-    /**
      * Returns encrypted password
      *
      * @return string

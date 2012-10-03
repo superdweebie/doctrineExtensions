@@ -26,18 +26,6 @@ class AccessControlTest extends BaseTest {
         );
     }
 
-    public function testIsGuest(){
-
-        $auth = new AuthTraitDoc();
-        $auth->setIsGuest(true);
-
-        $this->assertTrue($auth->getIsGuest());
-
-        $auth->setIsGuest(false);
-
-        $this->assertFalse($auth->getIsGuest());
-    }
-
     public function testPassword(){
 
         $auth = new AuthTraitDoc();
