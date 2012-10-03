@@ -16,8 +16,8 @@ use Sds\DoctrineExtensions\Annotation\Annotations as Sds;
  *         "me/myModule2"
  *     }),
  *     @Sds\ValidatorGroup(
- *         @Sds\Validator(class = "Sds\Test\ClassValidator1"),
- *         @Sds\Validator(class = "Sds\Test\ClassValidator2", options = {"option1" = "a", "option2" = "b"})
+ *         @Sds\Validator(class = "Sds/Test/ClassValidator1"),
+ *         @Sds\Validator(class = "Sds/Test/ClassValidator2", options = {"option1" = "a", "option2" = "b"})
  *     )
  * )
  */
@@ -41,14 +41,24 @@ class Simple {
      *         "tooltip" = "The simple's name",
      *         "description" = "This is a longer description"
      *     }),
-     *     @Sds\validatorGroup(
+     *     @Sds\ValidatorGroup(
      *         @Sds\Required,
-     *         @Sds\Validator(class = "Sds\Test\NameValidator1"),
-     *         @Sds\Validator(class = "Sds\Test\NameValidator2", options = {"option1" = "b", "option2" = "b"})
+     *         @Sds\Validator(class = "Sds/Test/NameValidator1"),
+     *         @Sds\Validator(class = "Sds/Test/NameValidator2", options = {"option1" = "b", "option2" = "b"})
      *     )
      * )
      */
     protected $name;
+
+    /**
+     * @ODM\Field(type="string")
+     * @Sds\Dojo(
+     *     @Sds\ValidatorGroup(
+     *         @Sds\Validator(class = "Sds/Test/CountryValidator1")
+     *     )
+     * )
+     */
+    protected $country;
 
     public function getId() {
         return $this->id;
@@ -60,5 +70,13 @@ class Simple {
 
     public function setName($name) {
         $this->name = (string) $name;
+    }
+
+    public function getCountry() {
+        return $this->country;
+    }
+
+    public function setCountry($country) {
+        $this->country = $country;
     }
 }

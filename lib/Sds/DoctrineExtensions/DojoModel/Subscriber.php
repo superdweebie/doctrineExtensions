@@ -12,6 +12,7 @@ use Sds\DoctrineExtensions\AnnotationReaderAwareTrait;
 use Sds\DoctrineExtensions\AnnotationReaderAwareInterface;
 use Sds\DoctrineExtensions\Annotation\Annotations as Sds;
 use Sds\DoctrineExtensions\Annotation\AnnotationEventArgs;
+use Sds\DoctrineExtensions\Annotation\EventType;
 use Sds\DoctrineExtensions\ClassNamePropertyTrait;
 
 /**
@@ -57,10 +58,10 @@ class Subscriber implements EventSubscriber, AnnotationReaderAwareInterface
 
         if (is_array($annotation->value)){
             foreach ($annotation->value as $subAnnotation){
-                $dojoMetadata = $this->processAnnotation($subAnnotation, $dojoMetadata);
+                $dojoMetadata = $this->processAnnotation($subAnnotation, $dojoMetadata, $eventArgs->getEventType());
             }
         } else {
-            $dojoMetadata = $this->processAnnotation($annotation->value, $dojoMetadata);
+            $dojoMetadata = $this->processAnnotation($annotation->value, $dojoMetadata, $eventArgs->getEventType());
         }
 
         switch ($eventArgs->getEventType()){
@@ -74,7 +75,7 @@ class Subscriber implements EventSubscriber, AnnotationReaderAwareInterface
         }
     }
 
-    protected function processAnnotation($annotation, $dojoMetadata){
+    protected function processAnnotation($annotation, $dojoMetadata, $context){
 
         switch (true){
             case ($annotation instanceof Sds\ClassName):
@@ -91,7 +92,15 @@ class Subscriber implements EventSubscriber, AnnotationReaderAwareInterface
                 break;
             case ($annotation instanceOf Sds\ValidatorGroup):
                 $dojoMetadata['validatorGroup'] = [];
-                foreach($annotation->value as $validator){
+                $requiredValidatorAdded = false;
+
+                if (is_array($annotation->value)){
+                    $validators = $annotation->value;
+                } else {
+                    $validators = [$annotation->value];
+                }
+
+                foreach($validators as $validator){
                     switch (true){
                         case ($validator instanceof Sds\Validator):
                             $dojoMetadata['validatorGroup'][] = [
@@ -100,9 +109,21 @@ class Subscriber implements EventSubscriber, AnnotationReaderAwareInterface
                             ];
                             break;
                         case ($validator instanceof Sds\Required):
-                            $dojoMetadata['required'] = $validator->value;
+                            if ($validator->value){
+                                $dojoMetadata['validatorGroup'][] = [
+                                    'class' => 'Sds/Common/Validator/RequiredValidator'
+                                ];
+                            } else {
+                                $dojoMetadata['validatorGroup'][] = [
+                                    'class' => 'Sds/Common/Validator/NotRequiredValidator'
+                                ];
+                            }
+                            $requiredValidatorAdded = true;
                             break;
                     }
+                }
+                if ( ! $requiredValidatorAdded && $context == EventType::property){
+                    array_unshift($dojoMetadata['validatorGroup'], ['class' => 'Sds/Common/Validator/NotRequiredValidator']);
                 }
                 break;
             case ($annotation instanceOf Sds\Ignore):

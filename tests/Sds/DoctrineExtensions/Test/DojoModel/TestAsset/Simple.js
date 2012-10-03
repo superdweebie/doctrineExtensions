@@ -36,6 +36,9 @@ define ([
                 // name: string
                 name: undefined,
 
+                // country: string
+                country: undefined,
+
                 toJSON: function(){
                     // summary:
                     //     Function to handle serialization
@@ -53,6 +56,9 @@ define ([
                     if (this.get('name')) {
                         json['name'] = this.get('name');
                     }
+                    if (this.get('country')) {
+                        json['country'] = this.get('country');
+                    }
 
                     return json;
                 }
@@ -62,11 +68,11 @@ define ([
         model.metadata = {
             "validatorGroup": [
                 {
-                    "class": "Sds\\Test\\ClassValidator1",
+                    "class": "Sds\/Test\/ClassValidator1",
                     "options": null
                 },
                 {
-                    "class": "Sds\\Test\\ClassValidator2",
+                    "class": "Sds\/Test\/ClassValidator2",
                     "options": {
                         "option1": "a",
                         "option2": "b"
@@ -86,14 +92,16 @@ define ([
                     "property": "name",
                     "label": "Name:",
                     "dataType": "string",
-                    "required": true,
                     "validatorGroup": [
                         {
-                            "class": "Sds\\Test\\NameValidator1",
+                            "class": "Sds\/Common\/Validator\/RequiredValidator"
+                        },
+                        {
+                            "class": "Sds\/Test\/NameValidator1",
                             "options": null
                         },
                         {
-                            "class": "Sds\\Test\\NameValidator2",
+                            "class": "Sds\/Test\/NameValidator2",
                             "options": {
                                 "option1": "b",
                                 "option2": "b"
@@ -103,6 +111,21 @@ define ([
                     "title": "NAME",
                     "tooltip": "The simple's name",
                     "description": "This is a longer description"
+                },
+                "country": {
+                    "id": "countryField",
+                    "property": "country",
+                    "label": "Country:",
+                    "dataType": "string",
+                    "validatorGroup": [
+                        {
+                            "class": "Sds\/Common\/Validator\/NotRequiredValidator"
+                        },
+                        {
+                            "class": "Sds\/Test\/CountryValidator1",
+                            "options": null
+                        }
+                    ]
                 }
             }
         };
