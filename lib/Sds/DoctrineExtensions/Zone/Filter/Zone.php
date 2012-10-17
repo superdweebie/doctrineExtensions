@@ -79,12 +79,12 @@ class Zone extends BsonFilter
      */
     public function addFilterCriteria(ClassMetadata $targetMetadata)
     {
-        if (isset($targetMetadata->zonesField) &&
+        if (isset($targetMetadata->zones) &&
             count($this->parameters['zones'])
         ) {
             $operator = $this->parameters['includeZoneList'] ? '$in' : '$nin';
             return array(
-                $targetMetadata->zonesField => array($operator => $this->parameters['zones'])
+                $targetMetadata->zones => array($operator => $this->parameters['zones'])
             );
         }
         return array();

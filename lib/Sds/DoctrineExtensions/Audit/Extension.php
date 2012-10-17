@@ -6,6 +6,7 @@
  */
 namespace Sds\DoctrineExtensions\Audit;
 
+use Sds\Common\Identity\IdentityInterface;
 use Sds\DoctrineExtensions\AbstractExtension;
 
 /**
@@ -22,9 +23,16 @@ class Extension extends AbstractExtension {
         parent::__construct($config);
         $config = $this->getConfig();
 
+        if ($config->getIdentityName() == null){
+            $identity = $config->getIdentity();
+            if ($identity instanceof IdentityInterface){
+                $config->setIdentityName($identity->getName());
+            }
+        }
+
         $this->subscribers = array(new Subscriber(
             $config->getAnnotationReader(),
-            $config->getActiveUser(),
+            $config->getIdentityName(),
             $config->getAuditClass()
         ));
 

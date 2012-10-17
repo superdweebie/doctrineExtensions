@@ -21,5 +21,5 @@ final class Audit extends Annotation
 {
     const event = 'annotationAudit';
 
-    const metadataKey = 'audit';
+    public $value = true;
 }

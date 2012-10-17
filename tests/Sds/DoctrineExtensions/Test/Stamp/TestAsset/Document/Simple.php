@@ -2,7 +2,7 @@
 
 namespace Sds\DoctrineExtensions\Test\Stamp\TestAsset\Document;
 
-use Sds\DoctrineExtensions\Stamp\Behaviour\StampTrait;
+use Sds\DoctrineExtensions\Stamp\DataModel\StampTrait;
 use Sds\Common\Stamp;
 
 //Annotation imports

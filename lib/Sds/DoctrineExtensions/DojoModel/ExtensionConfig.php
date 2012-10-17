@@ -7,8 +7,6 @@
 namespace Sds\DoctrineExtensions\DojoModel;
 
 use Sds\DoctrineExtensions\AbstractExtensionConfig;
-use Sds\DoctrineExtensions\AnnotationReaderAwareInterface;
-use Sds\DoctrineExtensions\AnnotationReaderAwareTrait;
 use Sds\DoctrineExtensions\ClassNamePropertyTrait;
 
 /**
@@ -17,9 +15,8 @@ use Sds\DoctrineExtensions\ClassNamePropertyTrait;
  * @since   1.0
  * @author  Tim Roediger <superdweebie@gmail.com>
  */
-class ExtensionConfig extends AbstractExtensionConfig implements AnnotationReaderAwareInterface {
+class ExtensionConfig extends AbstractExtensionConfig {
 
-    use AnnotationReaderAwareTrait;
     use ClassNamePropertyTrait;
 
     protected $destPaths;

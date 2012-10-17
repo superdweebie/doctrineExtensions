@@ -14,19 +14,19 @@ namespace Sds\DoctrineExtensions\AccessControl;
 final class Events
 {
     /**
-     * Triggered when activeUser attempts to create a document they don't have permission
+     * Triggered when identity attempts to create a document they don't have permission
      * for
      */
     const createDenied = 'createDenied';
 
     /**
-     * Triggers when activeUser attempts to update a document they don't have permission
+     * Triggers when identity attempts to update a document they don't have permission
      * for
      */
     const updateDenied = 'updateDenied';
 
     /**
-     * Triggers wehn activeUser attempts to delete a document they don't have permission
+     * Triggers wehn identity attempts to delete a document they don't have permission
      * for
      */
     const deleteDenied = 'deleteDenied';

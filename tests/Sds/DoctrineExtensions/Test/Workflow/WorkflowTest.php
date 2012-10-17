@@ -3,9 +3,7 @@
 namespace Sds\DoctrineExtensions\Test\Workflow;
 
 use Sds\DoctrineExtensions\Workflow\Events;
-use Sds\DoctrineExtensions\Workflow\WorkflowService;
 use Sds\DoctrineExtensions\Test\BaseTest;
-use Sds\DoctrineExtensions\Test\Workflow\TestAsset;
 use Sds\DoctrineExtensions\Test\Workflow\TestAsset\Document\Simple;
 
 class WorkflowTest extends BaseTest {
@@ -16,7 +14,7 @@ class WorkflowTest extends BaseTest {
 
         parent::setUp();
 
-        $this->configActiveUser();
+        $this->configIdentity();
 
         $manifest = $this->getManifest(array('Sds\DoctrineExtensions\Workflow' => null));
 
@@ -88,24 +86,6 @@ class WorkflowTest extends BaseTest {
         $this->assertEquals('published', $testDoc->getState());
         $this->assertEquals(2, $testDoc->getNumStateChanges());
         $this->assertFalse(isset($this->calls[Events::transitionDoesNotExist]));
-    }
-
-    /**
-     * @expectedException Sds\DoctrineExtensions\Exception\BadWorkflowException
-     */
-    public function testUnreachableState(){
-
-        $workflow = new TestAsset\UnreachableStateWorkflow();
-        WorkflowService::checkIntegrity($workflow);
-    }
-
-    /**
-     * @expectedException Sds\DoctrineExtensions\Exception\BadWorkflowException
-     */
-    public function testUnusedTransitions(){
-
-        $workflow = new TestAsset\UnusedTransitionsWorkflow();
-        WorkflowService::checkIntegrity($workflow);
     }
 
     public function __call($name, $arguments){

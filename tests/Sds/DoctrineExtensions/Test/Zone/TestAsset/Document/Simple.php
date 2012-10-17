@@ -4,7 +4,7 @@ namespace Sds\DoctrineExtensions\Test\Zone\TestAsset\Document;
 
 use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
 use Sds\DoctrineExtensions\Annotation\Annotations as Sds;
-use Sds\DoctrineExtensions\Zone\Behaviour\ZoneAwareTrait;
+use Sds\DoctrineExtensions\Zone\DataModel\ZoneAwareTrait;
 use Sds\Common\Zone\ZoneAwareInterface;
 
 /** @ODM\Document */

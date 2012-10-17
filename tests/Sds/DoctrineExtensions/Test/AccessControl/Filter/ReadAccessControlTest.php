@@ -9,15 +9,15 @@ class ReadAccessControlTest extends BaseTest {
 
     public function setUp(){
         parent::setUp();
-        $this->configActiveUser(true);
+        $this->configIdentity(true);
         $this->configDoctrine();
     }
 
-    public function testGetActiveUser(){
+    public function testGetIdentity(){
 
         $filter = new ReadAccessControl($this->documentManager);
-        $filter->setActiveUser($this->activeUser);
+        $filter->setRoles($this->identity->getRoles());
 
-        $this->assertEquals($this->activeUser, $filter->getActiveUser());
+        $this->assertEquals($this->identity->getRoles(), $filter->getRoles());
     }
 }

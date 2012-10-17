@@ -12,10 +12,10 @@ class StampTest extends BaseTest {
 
         parent::setUp();
 
-        $this->configActiveUser();
+        $this->configIdentity();
 
         $extensionConfig = new ExtensionConfig();
-        $extensionConfig->setUseSoftDeleteStamps(true);
+        $extensionConfig->setEnableSoftDeleteStamps(true);
         $manifest = $this->getManifest(array('Sds\DoctrineExtensions\SoftDelete' => $extensionConfig));
 
         $this->configDoctrine(

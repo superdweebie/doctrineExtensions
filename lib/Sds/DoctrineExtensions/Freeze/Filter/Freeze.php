@@ -25,21 +25,21 @@ class Freeze extends BsonFilter
      * @var array
      */
     protected $parameters = array('frozen' => false);
-    
+
     /**
      * Set the filter to return only documents which are not frozen
      */
     public function onlyNotFrozen(){
         $this->parameters['frozen'] = false;
     }
-    
+
     /**
      * Set the filter to return only documents which are frozen
      */
     public function onlyFrozen(){
         $this->parameters['frozen'] = true;
     }
-    
+
     /**
      *
      * @param \Doctrine\ODM\MongoDB\Mapping\ClassMetadata $targetMetadata
@@ -47,8 +47,8 @@ class Freeze extends BsonFilter
      */
     public function addFilterCriteria(ClassMetadata $targetMetadata)
     {
-        if (isset($targetMetadata->freezeField)) {
-            return array($targetMetadata->freezeField => $this->parameters['frozen']);
+        if (isset($targetMetadata->freeze)) {
+            return array($targetMetadata->freeze => $this->parameters['frozen']);
         }
         return array();
     }

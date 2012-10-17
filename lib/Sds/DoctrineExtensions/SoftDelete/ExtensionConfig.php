@@ -7,11 +7,8 @@
 namespace Sds\DoctrineExtensions\SoftDelete;
 
 use Sds\DoctrineExtensions\AbstractExtensionConfig;
-use Sds\DoctrineExtensions\AccessControl;
-use Sds\DoctrineExtensions\AnnotationReaderAwareInterface;
-use Sds\DoctrineExtensions\AnnotationReaderAwareTrait;
-use Sds\Common\User\ActiveUserAwareInterface;
-use Sds\Common\User\ActiveUserAwareTrait;
+use Sds\DoctrineExtensions\IdentityNameExtensionConfigTrait;
+use Sds\DoctrineExtensions\RolesExtensionConfigTrait;
 
 /**
  * Defines the resouces this extension requires
@@ -19,13 +16,11 @@ use Sds\Common\User\ActiveUserAwareTrait;
  * @since   1.0
  * @author  Tim Roediger <superdweebie@gmail.com>
  */
-class ExtensionConfig extends AbstractExtensionConfig implements
-    AnnotationReaderAwareInterface,
-    ActiveUserAwareInterface
+class ExtensionConfig extends AbstractExtensionConfig
 {
 
-    use AnnotationReaderAwareTrait;
-    use ActiveUserAwareTrait;
+    use IdentityNameExtensionConfigTrait;
+    use RolesExtensionConfigTrait;
 
     /**
      * Flag if the SoftDelete\Subscriber\Stamp should be registed to stamp
@@ -33,100 +28,54 @@ class ExtensionConfig extends AbstractExtensionConfig implements
      *
      * @var boolean
      */
-    protected $useSoftDeleteStamps = false;
+    protected $enableSoftDeleteStamps = false;
 
     /**
      *
      * @var boolean
      */
-    protected $accessControlSoftDelete = false;
-
-    /**
-     *
-     * @var boolean
-     */
-    protected $accessControlRestore = false;
+    protected $enableAccessControl = false;
 
     /**
      *
      * @return boolean
      */
-    public function getUseSoftDeleteStamps() {
-        return $this->useSoftDeleteStamps;
+    public function getEnableSoftDeleteStamps() {
+        return $this->enableSoftDeleteStamps;
     }
 
     /**
      *
-     * @param boolean $useSoftDeleteStamps
+     * @param boolean $enableSoftDeleteStamps
      */
-    public function setUseSoftDeleteStamps($useSoftDeleteStamps) {
-        $this->useSoftDeleteStamps = (boolean) $useSoftDeleteStamps;
+    public function setEnableSoftDeleteStamps($enableSoftDeleteStamps) {
+        $this->enableSoftDeleteStamps = (boolean) $enableSoftDeleteStamps;
     }
 
     /**
      *
      * @return boolean
      */
-    public function getAccessControlSoftDelete() {
-        return $this->accessControlSoftDelete;
+    public function getEnableAccessControl() {
+        return $this->enableAccessControl;
     }
 
     /**
      *
-     * @param boolean $accessControlSoftDelete
+     * @param boolean $enableAccessControl
      */
-    public function setAccessControlSoftDelete($accessControlSoftDelete) {
-        $this->accessControlSoftDelete = $accessControlSoftDelete;
-        $this->updateRequiredRoleAwareUser();
+    public function setEnableAccessControl($enableAccessControl) {
+        $this->enableAccessControl = (boolean) $enableAccessControl;
         $this->updateDependencies();
-    }
-
-    /**
-     *
-     * @return boolean
-     */
-    public function getAccessControlRestore() {
-        return $this->accessControlRestore;
-    }
-
-    /**
-     *
-     * @param boolean $accessControlRestore
-     */
-    public function setAccessControlRestore($accessControlRestore) {
-        $this->accessControlRestore = $accessControlRestore;
-        $this->updateRequiredRoleAwareUser();
-        $this->updateDependencies();
-    }
-
-    /**
-     *
-     */
-    protected function updateRequiredRoleAwareUser(){
-        if ($this->accessControlSoftDelete ||
-            $this->accessControlRestore
-        ) {
-            $this->setRequireRoleAwareUser(true);
-        } else {
-            $this->setRequireRoleAwareUser(false);
-        }
     }
 
     /**
      *
      */
     protected function updateDependencies(){
-        if ($this->accessControlSoftDelete ||
-            $this->accessControlRestore
-        ) {
-            $accessControlConfig = new AccessControl\ExtensionConfig();
-            $accessControlConfig->setAccessControlCreate(false);
-            $accessControlConfig->setAccessControlRead(false);
-            $accessControlConfig->setAccessControlUpdate(false);
-            $accessControlConfig->setAccessControlDelete(false);
+        if ($this->enableAccessControl) {
             $this->addDependency(
-                'Sds\DoctrineExtensions\AccessControl',
-                $accessControlConfig
+                'Sds\DoctrineExtensions\AccessControl'
             );
         } else {
             $this->removeDependency('Sds\DoctrineExtensions\AccessControl');

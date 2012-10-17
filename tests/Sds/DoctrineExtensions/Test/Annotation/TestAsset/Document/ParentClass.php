@@ -14,7 +14,7 @@ use Sds\DoctrineExtensions\Annotation\Annotations as Sds;
  *     @Sds\Discriminator
  * )
  * @Sds\ValidatorGroup(@Sds\Validator(class = "ParentValidator"))
- * @Sds\WorkflowClass("ParentWorkflow")
+ * @Sds\Workflow("ParentWorkflow")
  */
 class ParentClass {
 

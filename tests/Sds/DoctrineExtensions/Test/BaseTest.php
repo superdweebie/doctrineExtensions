@@ -12,8 +12,8 @@ use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\ODM\MongoDB\Mapping\Driver\AnnotationDriver;
 use Sds\DoctrineExtensions\Manifest;
 use Sds\DoctrineExtensions\ManifestConfig;
-use Sds\DoctrineExtensions\Test\TestAsset\RoleAwareUser;
-use Sds\DoctrineExtensions\Test\TestAsset\User;
+use Sds\DoctrineExtensions\Test\TestAsset\RoleAwareIdentity;
+use Sds\DoctrineExtensions\Test\TestAsset\Identity;
 
 abstract class BaseTest extends \PHPUnit_Framework_TestCase
 {
@@ -26,26 +26,26 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
 
     protected $annotationReader;
 
-    protected $activeUser;
+    protected $identity;
 
     public function setUp(){
         $this->annotationReader = new AnnotationReader();
     }
 
-    protected function configActiveUser($configRoleAwareUser = false){
-        $user = $configRoleAwareUser ? new RoleAwareUser() : new User();
-        $user->setUsername('toby');
-        $this->activeUser = $user;
+    protected function configIdentity($configRoleAwareIdentity = false){
+        $identity = $configRoleAwareIdentity ? new RoleAwareIdentity() : new Identity();
+        $identity->setName('toby');
+        $this->identity = $identity;
     }
 
     protected function getManifest(array $extensionConfigs){
 
         $config = array(
-            'AnnotationReader' => $this->annotationReader,
-            'ExtensionConfigs' => $extensionConfigs
+            'annotationReader' => $this->annotationReader,
+            'extensionConfigs' => $extensionConfigs
         );
-        if (isset($this->activeUser)) {
-            $config['ActiveUser'] = $this->activeUser;
+        if (isset($this->identity)) {
+            $config['identity'] = $this->identity;
         }
         $manifestConfig = new ManifestConfig($config);
 

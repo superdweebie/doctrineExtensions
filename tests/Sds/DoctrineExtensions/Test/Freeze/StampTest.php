@@ -12,10 +12,10 @@ class StampTest extends BaseTest {
 
         parent::setUp();
 
-        $this->configActiveUser();
+        $this->configIdentity();
 
         $extensionConfig = new ExtensionConfig();
-        $extensionConfig->setUseFreezeStamps(true);
+        $extensionConfig->setEnableFreezeStamps(true);
         $manifest = $this->getManifest(array('Sds\DoctrineExtensions\Freeze' => $extensionConfig));
 
         $this->configDoctrine(

@@ -7,8 +7,7 @@
 namespace Sds\DoctrineExtensions\Stamp;
 
 use Sds\DoctrineExtensions\AbstractExtensionConfig;
-use Sds\Common\User\ActiveUserAwareInterface;
-use Sds\Common\User\ActiveUserAwareTrait;
+use Sds\DoctrineExtensions\IdentityNameExtensionConfigTrait;
 
 /**
  * Defines the resouces this extension requires
@@ -16,7 +15,7 @@ use Sds\Common\User\ActiveUserAwareTrait;
  * @since   1.0
  * @author  Tim Roediger <superdweebie@gmail.com>
  */
-class ExtensionConfig extends AbstractExtensionConfig implements ActiveUserAwareInterface {
+class ExtensionConfig extends AbstractExtensionConfig {
 
-    use ActiveUserAwareTrait;
+    use IdentityNameExtensionConfigTrait;
 }

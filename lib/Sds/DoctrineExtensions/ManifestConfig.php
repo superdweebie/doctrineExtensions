@@ -6,20 +6,11 @@
  */
 namespace Sds\DoctrineExtensions;
 
-use Doctrine\Common\Annotations\Reader;
 use Doctrine\Common\Annotations\AnnotationReader;
-use Sds\Common\User\ActiveUserAwareInterface;
-use Sds\Common\User\ActiveUserAwareTrait;
-use Sds\Common\User\UserInterface;
 
 class ManifestConfig extends AbstractExtensionConfig
-implements
-    AnnotationReaderAwareInterface,
-    ActiveUserAwareInterface
 {
 
-    use AnnotationReaderAwareTrait;
-    use ActiveUserAwareTrait;
 
     /**
      * Keys are extension namespaces

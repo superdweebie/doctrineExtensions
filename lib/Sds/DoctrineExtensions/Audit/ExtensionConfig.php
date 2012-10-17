@@ -7,10 +7,6 @@
 namespace Sds\DoctrineExtensions\Audit;
 
 use Sds\DoctrineExtensions\AbstractExtensionConfig;
-use Sds\DoctrineExtensions\AnnotationReaderAwareInterface;
-use Sds\DoctrineExtensions\AnnotationReaderAwareTrait;
-use Sds\Common\User\ActiveUserAwareInterface;
-use Sds\Common\User\ActiveUserAwareTrait;
 
 /**
  * Defines the resouces this extension requires
@@ -18,20 +14,21 @@ use Sds\Common\User\ActiveUserAwareTrait;
  * @since   1.0
  * @author  Tim Roediger <superdweebie@gmail.com>
  */
-class ExtensionConfig extends AbstractExtensionConfig implements
-    AnnotationReaderAwareInterface,
-    ActiveUserAwareInterface
+class ExtensionConfig extends AbstractExtensionConfig
 {
 
-    use AnnotationReaderAwareTrait;
-    use ActiveUserAwareTrait;
+    /**
+     *
+     * @var string
+     */
+    protected $identityName;
 
     /**
      * Defines the audit class to use
      *
      * @var boolean
      */
-    protected $auditClass = 'Sds\DoctrineExtensions\Audit\Model\Audit';
+    protected $auditClass = 'Sds\DoctrineExtensions\Audit\DataModel\Audit';
 
     /**
      *
@@ -47,5 +44,21 @@ class ExtensionConfig extends AbstractExtensionConfig implements
      */
     public function setAuditClass($auditClass) {
         $this->auditClass = (string) $auditClass;
+    }
+
+    /**
+     *
+     * @return string
+     */
+    public function getIdentityName() {
+        return $this->identityName;
+    }
+
+    /**
+     *
+     * @param string $identityName
+     */
+    public function setIdentityName($identityName) {
+        $this->identityName = (string) $identityName;
     }
 }

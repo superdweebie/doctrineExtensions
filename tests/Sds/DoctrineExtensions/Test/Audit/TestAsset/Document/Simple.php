@@ -3,7 +3,7 @@
 namespace Sds\DoctrineExtensions\Test\Audit\TestAsset\Document;
 
 use Sds\Common\Audit\AuditedInterface;
-use Sds\DoctrineExtensions\Audit\Behaviour\AuditedTrait;
+use Sds\DoctrineExtensions\Audit\DataModel\AuditedTrait;
 
 //Annotation imports
 use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;

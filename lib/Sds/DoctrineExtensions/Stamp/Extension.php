@@ -22,6 +22,6 @@ class Extension extends AbstractExtension {
         parent::__construct($config);
         $config = $this->getConfig();
 
-        $this->subscribers = array(new Subscriber($config->getActiveUser()));
+        $this->subscribers = array(new Subscriber($config->getIdentityName()));
     }
 }

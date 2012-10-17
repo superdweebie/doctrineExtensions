@@ -17,15 +17,15 @@ final class Events
     /**
      * Called before state change. Can be used to roll the state change back
      */
-    const preStateChange = 'preStateChange';
+    const preTransition = 'preTransition';
 
     /**
      * Called during state change. Can be used to update the workflow vars
      */
-    const onStateChange = 'onStateChange';
+    const onTransition = 'onTransition';
 
     /**
      * Called after state change complete
      */
-    const postStateChange = 'postStateChange';
+    const postTransition = 'postTransition';
 }

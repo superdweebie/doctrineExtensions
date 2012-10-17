@@ -6,6 +6,7 @@
  */
 namespace Sds\DoctrineExtensions\AccessControl;
 
+use Sds\Common\AccessControl\AccessControlIdentityInterface;
 use Sds\DoctrineExtensions\AbstractExtension;
 
 /**
@@ -28,15 +29,10 @@ class Extension extends AbstractExtension {
 
         $this->subscribers = array(new Subscriber(
             $config->getAnnotationReader(),
-            $config->getActiveUser(),
-            $config->getAccessControlCreate(),
-            $config->getAccessControlUpdate(),
-            $config->getAccessControlDelete()
+            $config->getRoles()
         ));
 
-        if ($config->getAccessControlRead()){
-            $this->filters = array('readAccessControl' => 'Sds\DoctrineExtensions\AccessControl\Filter\ReadAccessControl');
-        }
+        $this->filters = array('readAccessControl' => 'Sds\DoctrineExtensions\AccessControl\Filter\ReadAccessControl');
 
         $reflection = new \ReflectionClass($config->getPermissionClass());
         $this->documents = array($reflection->getNamespaceName() => dirname($reflection->getFileName()));

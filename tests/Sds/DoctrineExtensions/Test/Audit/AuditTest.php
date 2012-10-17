@@ -15,7 +15,7 @@ class AuditTest extends BaseTest {
 
         parent::setUp();
 
-        $this->configActiveUser();
+        $this->configIdentity();
 
         $manifest = $this->getManifest(array('Sds\DoctrineExtensions\Audit' => null));
 

@@ -8,12 +8,12 @@ namespace Sds\DoctrineExtensions\AccessControl\Filter;
 
 use Doctrine\ODM\MongoDB\Mapping\ClassMetadata;
 use Doctrine\ODM\MongoDB\Query\Filter\BsonFilter;
-use Sds\Common\User\RoleAwareUserInterface;
-use Sds\DoctrineExtensions\AccessControl\Constant\Action;
+use Sds\Common\AccessControl\Constant\Action;
+use Sds\DoctrineExtensions\AccessControl\AccessController;
 
 /**
  * When this filter is enabled, will filter out all documents
- * the activeUser does not have permission to read.
+ * the active identity does not have permission to read.
  *
  * @since   1.0
  * @author  Tim Roediger <superdweebie@gmail.com>
@@ -23,34 +23,34 @@ class ReadAccessControl extends BsonFilter
 
     /**
      *
-     * @param \Sds\Common\AccessControl\RoleAwareUserInterface $activeUser
+     * @param array $roles
      */
-    public function setActiveUser(RoleAwareUserInterface $activeUser){
-        $this->parameters['activeUser'] = $activeUser;
+    public function setRoles(array $roles = []){
+        $this->parameters['roles'] = $roles;
     }
 
     /**
      *
-     * @return \Sds\Common\AccessControl\RoleAwareUserInterface
+     * @return array
      */
-    public function getActiveUser(){
-        return isset($this->parameters['activeUser']) ? $this->parameters['activeUser'] : null;
+    public function getRoles(){
+        return isset($this->parameters['roles']) ? $this->parameters['roles'] : null;
     }
 
     /**
      *
      * @param \Doctrine\ODM\MongoDB\Mapping\ClassMetadata $targetDocument
-     * @return type
+     * @return array
      */
     public function addFilterCriteria(ClassMetadata $targetDocument)
     {
-        if($targetDocument->reflClass->implementsInterface('Sds\Common\AccessControl\AccessControlledInterface')){
+        if (AccessController::isAccessControlEnabled($targetDocument, Action::read)){
             $return = array(
                 'permissions' => array(
                     '$elemMatch' => array(
                         'action' => Action::read,
                         'role' => array(
-                            '$in' => $this->parameters['activeUser']->getRoles()
+                            '$in' => $this->parameters['roles']
                         )
                     )
                 )

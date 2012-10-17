@@ -4,14 +4,20 @@ namespace Sds\DoctrineExtensions\Test\State\TestAsset\Document;
 
 use Sds\Common\AccessControl\AccessControlledInterface;
 use Sds\Common\State\StateAwareInterface;
-use Sds\DoctrineExtensions\AccessControl\Behaviour\AccessControlledTrait;
-use Sds\DoctrineExtensions\State\Behaviour\StateAwareTrait;
+use Sds\DoctrineExtensions\AccessControl\DataModel\AccessControlledTrait;
+use Sds\DoctrineExtensions\State\DataModel\StateAwareTrait;
 
 //Annotation imports
 use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
 use Sds\DoctrineExtensions\Annotation\Annotations as Sds;
 
-/** @ODM\Document */
+/**
+ * @ODM\Document
+ * @Sds\AccessControl(
+ *     @Sds\AccessControl\DefaultValue(false),
+ *     @Sds\AccessControl\DefaultTransition(true)
+ * )
+ */
 class AccessControlled implements StateAwareInterface, AccessControlledInterface {
 
     use StateAwareTrait;

@@ -7,13 +7,14 @@
 namespace Sds\DoctrineExtensions\Workflow;
 
 use Doctrine\Common\EventSubscriber;
+use Doctrine\Common\Persistence\Mapping\ClassMetadata;
 use Doctrine\ODM\MongoDB\Event\PreFlushEventArgs;
 use Doctrine\ODM\MongoDB\Events as ODMEvents;
 use Sds\Common\Workflow\WorkflowAwareInterface;
 use Sds\DoctrineExtensions\Annotation\Annotations as Sds;
 use Sds\DoctrineExtensions\Annotation\AnnotationEventArgs;
 use Sds\DoctrineExtensions\State\Events as StateEvents;
-use Sds\DoctrineExtensions\State\EventArgs as StateEventArgs;
+use Sds\DoctrineExtensions\State\EventArgs as TransitionEventArgs;
 use Sds\DoctrineExtensions\Workflow\Events as WorkflowEvents;
 
 /**
@@ -23,16 +24,19 @@ use Sds\DoctrineExtensions\Workflow\Events as WorkflowEvents;
  */
 class Subscriber implements EventSubscriber
 {
+
+    protected $workflows = [];
+
     /**
      *
      * @return array
      */
     public function getSubscribedEvents(){
         return array(
-            Sds\WorkflowClass::event,
+            Sds\Workflow::event,
             ODMEvents::preFlush,
-            StateEvents::preStateChange,
-            StateEvents::onStateChange
+            StateEvents::preTransition,
+            StateEvents::onTransition
         );
     }
 
@@ -40,10 +44,8 @@ class Subscriber implements EventSubscriber
      *
      * @param \Sds\DoctrineExtensions\Annotation\AnnotationEventArgs $eventArgs
      */
-    public function annotationWorkflowClass(AnnotationEventArgs $eventArgs) {
-        $annotation = $eventArgs->getAnnotation();
-        $metadataKey = $annotation::metadataKey;
-        $eventArgs->getMetadata()->$metadataKey = $annotation->value;
+    public function annotationWorkflow(AnnotationEventArgs $eventArgs) {
+        $eventArgs->getMetadata()->workflow = $eventArgs->getAnnotation()->value;
     }
 
     /**
@@ -59,7 +61,7 @@ class Subscriber implements EventSubscriber
             if (!$document instanceof WorkflowAwareInterface){
                 continue;
             }
-            $document->setState(WorkflowService::getWorkflow($documentManager->getClassMetadata(get_class($document)))->getStartState());
+            $document->setState($this->getWorkflow($documentManager->getClassMetadata(get_class($document)))->getStartState());
         }
     }
 
@@ -67,17 +69,17 @@ class Subscriber implements EventSubscriber
      *
      * @param \Sds\DoctrineExtensions\State\Event\EventArgs $eventArgs
      */
-    public function preStateChange(StateEventArgs $eventArgs) {
+    public function preTransition(TransitionEventArgs $eventArgs) {
         $document = $eventArgs->getDocument();
 
         if (!$document instanceof WorkflowAwareInterface){
             return;
         }
 
-        $fromState = $eventArgs->getFromState();
-        $toState = $eventArgs->getToState();
+        $fromState = $eventArgs->getTransition()->getFromState();
+        $toState = $eventArgs->getTransition()->getToState();
 
-        foreach (WorkflowService::getWorkflow($eventArgs->getDocumentManager()->getClassMetadata(get_class($document)))->getTransitions() as $transition){
+        foreach ($this->getWorkflow($eventArgs->getDocumentManager()->getClassMetadata(get_class($document)))->getTransitions() as $transition){
             if ($transition->getFromState() == $fromState &&
                 $transition->getToState() == $toState
             ) {
@@ -103,7 +105,7 @@ class Subscriber implements EventSubscriber
      *
      * @param \Sds\DoctrineExtensions\State\Event\EventArgs $eventArgs
      */
-    public function onStateChange(StateEventArgs $eventArgs) {
+    public function onTransition(TransitionEventArgs $eventArgs) {
 
         $document = $eventArgs->getDocument();
 
@@ -112,6 +114,23 @@ class Subscriber implements EventSubscriber
         }
 
         // Update workflow
-        WorkflowService::getWorkflow($eventArgs->getDocumentManager()->getClassMetadata(get_class($document)))->update($document);
+        $this->getWorkflow($eventArgs->getDocumentManager()->getClassMetadata(get_class($document)))->update($document);
+    }
+
+    /**
+     *
+     * @param \Doctrine\ODM\MongoDB\Mapping\ClassMetadata $metadata
+     * @return null|\Sds\Common\Workflow\WorkflowInterface
+     */
+    protected function getWorkflow(ClassMetadata $metadata){
+        if ( ! isset($metadata->workflow)) {
+            return null;
+        }
+        $workflowClass = $metadata->workflow;
+
+        if (! isset($this->workflows[$workflowClass]) ) {
+            $this->workflows[$workflowClass] = new $workflowClass();
+        }
+        return $this->workflows[$workflowClass];
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace Sds\DoctrineExtensions\Test\Readonly;
+namespace Sds\DoctrineExtensions\Test\Stamp;
 
 use Sds\DoctrineExtensions\Test\BaseTest;
 use Sds\DoctrineExtensions\Test\Stamp\TestAsset\Document\Simple;
@@ -13,7 +13,7 @@ class StampTest extends BaseTest {
 
         parent::setUp();
 
-        $this->configActiveUser();
+        $this->configIdentity();
 
         $manifest = $this->getManifest(array('Sds\DoctrineExtensions\Stamp' => null));
 
@@ -50,8 +50,8 @@ class StampTest extends BaseTest {
         $this->assertNull($testDoc->getUpdatedBy());
         $this->assertNull($testDoc->getUpdatedOn());
 
-        $this->activeUser->setUsername('lucy');
-        $this->subscriber->setActiveUser($this->activeUser);
+        $this->identity->setName('lucy');
+        $this->subscriber->setIdentityName($this->identity->getName());
 
         $testDoc->setName('version2');
 

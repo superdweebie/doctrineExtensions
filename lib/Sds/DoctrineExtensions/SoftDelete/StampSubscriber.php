@@ -41,7 +41,7 @@ class StampSubscriber extends AbstractStampSubscriber {
         $recomputeChangeSet = false;
         $document = $eventArgs->getDocument();
         if($document instanceof SoftDeletedByInterface){
-            $document->setSoftDeletedBy($this->activeUser->getUsername());
+            $document->setSoftDeletedBy($this->identityName);
             $recomputeChangeSet = true;
         }
         if($document instanceof SoftDeletedOnInterface){
@@ -61,7 +61,7 @@ class StampSubscriber extends AbstractStampSubscriber {
         $recomputeChangeSet = false;
         $document = $eventArgs->getDocument();
         if($document instanceof RestoredByInterface){
-            $document->setRestoredBy($this->activeUser->getUsername());
+            $document->setRestoredBy($this->identityName);
             $recomputeChangeSet = true;
         }
         if($document instanceof RestoredOnInterface){

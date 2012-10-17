@@ -43,7 +43,7 @@ class Subscriber implements EventSubscriber, AnnotationReaderAwareInterface
      */
     public function getSubscribedEvents(){
         return array(
-            Sds\FreezeField::event,
+            Sds\Freeze::event,
             ODMEvents::onFlush
         );
     }
@@ -52,11 +52,9 @@ class Subscriber implements EventSubscriber, AnnotationReaderAwareInterface
      *
      * @param \Sds\DoctrineExtensions\Annotation\AnnotationEventArgs $eventArgs
      */
-    public function annotationFreezeField(AnnotationEventArgs $eventArgs)
+    public function annotationFreeze(AnnotationEventArgs $eventArgs)
     {
-        $annotation = $eventArgs->getAnnotation();
-        $metadataKey = $annotation::metadataKey;
-        $eventArgs->getMetadata()->$metadataKey = $eventArgs->getReflection()->getName();
+        $eventArgs->getMetadata()->freeze = $eventArgs->getReflection()->getName();
     }
 
     /**
@@ -76,7 +74,7 @@ class Subscriber implements EventSubscriber, AnnotationReaderAwareInterface
             }
 
             $metadata = $documentManager->getClassMetadata(get_class($document));
-            if (!isset($metadata->freezeField)) {
+            if (!isset($metadata->freeze)) {
                 throw new Exception\DocumentExeption(sprintf(
                     'Document class %s implements the FreezeableInterface, but does not have a field annotatated as @freezeField.',
                     get_class($document)
@@ -84,7 +82,7 @@ class Subscriber implements EventSubscriber, AnnotationReaderAwareInterface
             }
 
             $changeSet = $unitOfWork->getDocumentChangeSet($document);
-            $field = $metadata->freezeField;
+            $field = $metadata->freeze;
 
             if (!isset($changeSet[$field])) {
                 if ($document->getFrozen()) {

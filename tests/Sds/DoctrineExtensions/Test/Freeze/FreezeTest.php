@@ -12,7 +12,7 @@ class FreezeTest extends BaseTest {
 
         parent::setUp();
 
-        $this->configActiveUser();
+        $this->configIdentity();
 
         $manifest = $this->getManifest(array('Sds\DoctrineExtensions\Freeze' => null));
 

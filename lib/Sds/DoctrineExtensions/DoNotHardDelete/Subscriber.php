@@ -53,9 +53,7 @@ class Subscriber implements EventSubscriber, AnnotationReaderAwareInterface
      */
     public function annotationDoNotHardDelete(AnnotationEventArgs $eventArgs)
     {
-        $annotation = $eventArgs->getAnnotation();
-        $metadataKey = $annotation::metadataKey;
-        $eventArgs->getMetadata()->$metadataKey = (boolean) $annotation->value;
+        $eventArgs->getMetadata()->doNotHardDelete = $eventArgs->getAnnotation()->value;
     }
 
     /**

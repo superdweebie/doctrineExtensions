@@ -6,13 +6,8 @@
  */
 namespace Sds\DoctrineExtensions\Freeze\AccessControl;
 
-use Doctrine\Common\EventSubscriber;
 use Doctrine\ODM\MongoDB\Event\LifecycleEventArgs;
-use Sds\Common\AccessControl\AccessControlledInterface;
-use Sds\Common\State\StateAwareInterface;
-use Sds\Common\User\ActiveUserAwareInterface;
-use Sds\Common\User\ActiveUserAwareTrait;
-use Sds\Common\User\RoleAwareUserInterface;
+use Sds\DoctrineExtensions\AccessControl\AbstractAccessControlSubscriber;
 use Sds\DoctrineExtensions\AccessControl\AccessController;
 use Sds\DoctrineExtensions\Freeze\AccessControl\Events as AccessControlEvents;
 use Sds\DoctrineExtensions\Freeze\AccessControl\Constant\Action;
@@ -23,9 +18,8 @@ use Sds\DoctrineExtensions\Freeze\Events as FreezeEvents;
  * @since   1.0
  * @author  Tim Roediger <superdweebie@gmail.com>
  */
-class ThawSubscriber implements EventSubscriber, ActiveUserAwareInterface
+class ThawSubscriber extends AbstractAccessControlSubscriber
 {
-    use ActiveUserAwareTrait;
 
     /**
      *
@@ -39,25 +33,15 @@ class ThawSubscriber implements EventSubscriber, ActiveUserAwareInterface
 
     /**
      *
-     * @param \Sds\Common\AccessControl\RoleAwareUserInterface $activeUser
-     */
-    public function __construct(
-        RoleAwareUserInterface $activeUser
-    ) {
-        $this->setRequireRoleAwareUser(true);
-        $this->setActiveUser($activeUser);
-    }
-
-    /**
-     *
      * @param \Doctrine\ODM\MongoDB\Event\OnFlushEventArgs $eventArgs
      */
     public function preThaw(LifecycleEventArgs $eventArgs)
     {
         $document = $eventArgs->getDocument();
+        $documentManager = $eventArgs->getDocumentManager();
 
-        if($document instanceof AccessControlledInterface &&
-            !AccessController::isActionAllowed($document, Action::thaw, $this->activeUser)
+        if ( AccessController::isAccessControlEnabled($documentManager->getClassMetadata(get_class($document)), Action::thaw) &&
+            !AccessController::isActionAllowed($document, Action::thaw, $this->roles)
         ) {
             //stop freeze
             $document->freeze();

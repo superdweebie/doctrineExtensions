@@ -2,7 +2,7 @@
 
 namespace Sds\DoctrineExtensions\Test\Freeze\TestAsset\Document;
 
-use Sds\DoctrineExtensions\Freeze\Behaviour\FreezeableTrait;
+use Sds\DoctrineExtensions\Freeze\DataModel\FreezeableTrait;
 use Sds\Common\Freeze\FreezeableInterface;
 
 //Annotation imports

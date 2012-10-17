@@ -13,7 +13,7 @@ class StateTest extends BaseTest {
 
         parent::setUp();
 
-        $this->configActiveUser();
+        $this->configIdentity();
 
         $manifest = $this->getManifest(array('Sds\DoctrineExtensions\State' => null));
 
@@ -132,9 +132,9 @@ class StateTest extends BaseTest {
         $documentManager->clear();
 
         $calls = $subscriber->getCalls();
-        $this->assertFalse(isset($calls[Events::preStateChange]));
-        $this->assertFalse(isset($calls[Events::onStateChange]));
-        $this->assertFalse(isset($calls[Events::postStateChange]));
+        $this->assertFalse(isset($calls[Events::preTransition]));
+        $this->assertFalse(isset($calls[Events::onTransition]));
+        $this->assertFalse(isset($calls[Events::postTransition]));
 
         $repository = $documentManager->getRepository(get_class($testDoc));
         $testDoc = $repository->find($id);
@@ -145,23 +145,23 @@ class StateTest extends BaseTest {
         $documentManager->flush();
 
         $calls = $subscriber->getCalls();
-        $this->assertTrue(isset($calls[Events::preStateChange]));
-        $this->assertTrue(isset($calls[Events::onStateChange]));
-        $this->assertTrue(isset($calls[Events::postStateChange]));
+        $this->assertTrue(isset($calls[Events::preTransition]));
+        $this->assertTrue(isset($calls[Events::onTransition]));
+        $this->assertTrue(isset($calls[Events::postTransition]));
 
         $documentManager->clear();
         $testDoc = $repository->find($id);
 
         $testDoc->setState('state3');
         $subscriber->reset();
-        $subscriber->setRollbackStateChange(true);
+        $subscriber->setRollbackTransition(true);
 
         $documentManager->flush();
 
         $calls = $subscriber->getCalls();
-        $this->assertTrue(isset($calls[Events::preStateChange]));
-        $this->assertFalse(isset($calls[Events::onStateChange]));
-        $this->assertFalse(isset($calls[Events::postStateChange]));
+        $this->assertTrue(isset($calls[Events::preTransition]));
+        $this->assertFalse(isset($calls[Events::onTransition]));
+        $this->assertFalse(isset($calls[Events::postTransition]));
 
         $this->assertEquals('state2', $testDoc->getState());
     }

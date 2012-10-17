@@ -106,7 +106,7 @@ class Subscriber implements EventSubscriber, AnnotationReaderAwareInterface
 
         switch ($eventArgs->getEventType()){
             case 'document':
-                $eventArgs->getMetadata()->validator = $validatorMetadata;
+                $eventArgs->getMetadata()->validator['validatorGroup'] = $validatorMetadata['validatorGroup'];
                 break;
             case 'property':
                 $eventArgs->getMetadata()->validator['fields'][$eventArgs->getReflection()->getName()] = $validatorMetadata;

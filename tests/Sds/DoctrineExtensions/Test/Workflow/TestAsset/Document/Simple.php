@@ -3,7 +3,7 @@
 namespace Sds\DoctrineExtensions\Test\Workflow\TestAsset\Document;
 
 use Sds\Common\Workflow\WorkflowAwareInterface;
-use Sds\DoctrineExtensions\Workflow\Behaviour\WorkflowAwareTrait;
+use Sds\DoctrineExtensions\Workflow\DataModel\WorkflowAwareTrait;
 
 //Annotaion imports
 use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
@@ -11,7 +11,7 @@ use Sds\DoctrineExtensions\Annotation\Annotations as Sds;
 
 /**
  * @ODM\Document
- * @Sds\WorkflowClass("Sds\DoctrineExtensions\Test\Workflow\TestAsset\SimpleWorkflow")
+ * @Sds\Workflow("Sds\DoctrineExtensions\Test\Workflow\TestAsset\SimpleWorkflow")
  */
 class Simple implements WorkflowAwareInterface {
 

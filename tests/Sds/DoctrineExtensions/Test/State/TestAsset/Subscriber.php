@@ -10,34 +10,34 @@ class Subscriber implements EventSubscriber {
 
     protected $calls = array();
 
-    protected $rollbackStateChange = false;
+    protected $rollbackTransition = false;
 
     public function getSubscribedEvents(){
         return array(
-            StateEvents::preStateChange,
-            StateEvents::onStateChange,
-            StateEvents::postStateChange
+            StateEvents::preTransition,
+            StateEvents::onTransition,
+            StateEvents::postTransition
         );
     }
 
     public function reset() {
         $this->calls = array();
-        $this->rollbackStateChange = false;
+        $this->rollbackTransition = false;
     }
 
-    public function preStateChange(StateEventArgs $eventArgs) {
-        $this->calls['preStateChange'] = $eventArgs;
-        if ($this->rollbackStateChange) {
-            $eventArgs->getDocument()->setState($eventArgs->getFromState());
+    public function preTransition(StateEventArgs $eventArgs) {
+        $this->calls['preTransition'] = $eventArgs;
+        if ($this->rollbackTransition) {
+            $eventArgs->getDocument()->setState($eventArgs->getTransition()->getFromState());
         }
     }
 
-    public function getRollbackStateChange() {
-        return $this->rollbackStateChange;
+    public function getRollbackTransition() {
+        return $this->rollbackTransition;
     }
 
-    public function setRollbackStateChange($rollbackStateChange) {
-        $this->rollbackStateChange = $rollbackStateChange;
+    public function setRollbackTransition($rollbackTransition) {
+        $this->rollbackTransition = $rollbackTransition;
     }
 
     public function getCalls() {

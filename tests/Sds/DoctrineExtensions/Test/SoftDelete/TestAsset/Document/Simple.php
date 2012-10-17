@@ -3,7 +3,7 @@
 namespace Sds\DoctrineExtensions\Test\SoftDelete\TestAsset\Document;
 
 use Sds\Common\SoftDelete\SoftDeleteableInterface;
-use Sds\DoctrineExtensions\SoftDelete\Behaviour\SoftDeleteableTrait;
+use Sds\DoctrineExtensions\SoftDelete\DataModel\SoftDeleteableTrait;
 
 //Annotation imports
 use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;

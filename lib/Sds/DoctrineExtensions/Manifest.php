@@ -6,7 +6,7 @@
  */
 namespace Sds\DoctrineExtensions;
 
-use Sds\Common\User\ActiveUserAwareInterface;
+use Sds\Common\Identity\IdentityAwareInterface;
 use Sds\DoctrineExtensions\Exception;
 
 /**
@@ -64,15 +64,13 @@ class Manifest extends AbstractExtension {
         }
 
         // Inject annotation reader if required, but not given
-        if ($extensionConfig instanceof AnnotationReaderAwareInterface &&
-            $extensionConfig->getAnnotationReader() == null) {
+        if ($extensionConfig->getAnnotationReader() == null) {
             $extensionConfig->setAnnotationReader($config->getAnnotationReader());
         }
 
-        //Inject active user if required, but not given
-        if ($extensionConfig instanceof ActiveUserAwareInterface &&
-            $extensionConfig->getActiveUser() == null) {
-            $extensionConfig->setActiveUser($config->getActiveUser());
+        //Inject active identity if required, but not given
+        if ($extensionConfig->getIdentity() == null) {
+            $extensionConfig->setIdentity($config->getIdentity());
         }
 
         $config->setExtensionConfig($namespace, $extensionConfig);

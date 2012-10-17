@@ -7,11 +7,8 @@
 namespace Sds\DoctrineExtensions\Freeze;
 
 use Sds\DoctrineExtensions\AbstractExtensionConfig;
-use Sds\DoctrineExtensions\AccessControl;
-use Sds\DoctrineExtensions\AnnotationReaderAwareInterface;
-use Sds\DoctrineExtensions\AnnotationReaderAwareTrait;
-use Sds\Common\User\ActiveUserAwareInterface;
-use Sds\Common\User\ActiveUserAwareTrait;
+use Sds\DoctrineExtensions\IdentityNameExtensionConfigTrait;
+use Sds\DoctrineExtensions\RolesExtensionConfigTrait;
 
 /**
  * Defines the resouces this extension requires
@@ -19,113 +16,67 @@ use Sds\Common\User\ActiveUserAwareTrait;
  * @since   1.0
  * @author  Tim Roediger <superdweebie@gmail.com>
  */
-class ExtensionConfig extends AbstractExtensionConfig implements
-    AnnotationReaderAwareInterface,
-    ActiveUserAwareInterface
+class ExtensionConfig extends AbstractExtensionConfig
 {
-    use AnnotationReaderAwareTrait;
-    use ActiveUserAwareTrait;
+
+    use IdentityNameExtensionConfigTrait;
+    use RolesExtensionConfigTrait;
 
     /**
-     * Flag if the Freeze\Subscriber\Stamp should be registed to stamp
+     * Flag if the Freeze\StampSubscriber should be registed to stamp
      * documents on Freeze and Thaw events
      *
      * @var boolean
      */
-    protected $useFreezeStamps = false;
+    protected $enableFreezeStamps = false;
 
     /**
+     * Should access control be applied to freeze and thaw?
      *
      * @var boolean
      */
-    protected $accessControlFreeze = false;
-
-    /**
-     *
-     * @var boolean
-     */
-    protected $accessControlThaw = false;
+    protected $enableAccessControl = false;
 
     /**
      *
      * @return boolean
      */
-    public function getUseFreezeStamps() {
-        return $this->useFreezeStamps;
+    public function getEnableFreezeStamps() {
+        return $this->enableFreezeStamps;
     }
 
     /**
      *
-     * @param boolean $useFreezeStamps
+     * @param boolean $enableFreezeStamps
      */
-    public function setUseFreezeStamps($useFreezeStamps) {
-        $this->useFreezeStamps = (boolean) $useFreezeStamps;
+    public function setEnableFreezeStamps($enableFreezeStamps) {
+        $this->enableFreezeStamps = (boolean) $enableFreezeStamps;
     }
 
     /**
      *
      * @return boolean
      */
-    public function getAccessControlFreeze() {
-        return $this->accessControlFreeze;
+    public function getEnableAccessControl() {
+        return $this->enableAccessControl;
     }
 
     /**
      *
-     * @param boolean $accessControlFreeze
+     * @param boolean $enableAccessControl
      */
-    public function setAccessControlFreeze($accessControlFreeze) {
-        $this->accessControlFreeze = $accessControlFreeze;
-        $this->updateRequiredRoleAwareUser();
+    public function setEnableAccessControl($enableAccessControl) {
+        $this->enableAccessControl = (boolean) $enableAccessControl;
         $this->updateDependencies();
-    }
-
-    /**
-     *
-     * @return boolean
-     */
-    public function getAccessControlThaw() {
-        return $this->accessControlThaw;
-    }
-
-    /**
-     *
-     * @param boolean $accessControlThaw
-     */
-    public function setAccessControlThaw($accessControlThaw) {
-        $this->accessControlThaw = $accessControlThaw;
-        $this->updateRequiredRoleAwareUser();
-        $this->updateDependencies();
-    }
-
-    /**
-     *
-     */
-    protected function updateRequiredRoleAwareUser(){
-        if ($this->accessControlFreeze ||
-            $this->accessControlThaw
-        ) {
-            $this->setRequireRoleAwareUser(true);
-        } else {
-            $this->setRequireRoleAwareUser(false);
-        }
     }
 
     /**
      *
      */
     protected function updateDependencies(){
-        if ($this->accessControlFreeze ||
-            $this->accessControlThaw
-        ) {
-            $accessControlConfig = new AccessControl\ExtensionConfig();
-            $accessControlConfig->setAccessControlCreate(false);
-            $accessControlConfig->setAccessControlRead(false);
-            $accessControlConfig->setAccessControlUpdate(false);
-            $accessControlConfig->setAccessControlDelete(false);
+        if ($this->enableAccessControl) {
             $this->addDependency(
-                'Sds\DoctrineExtensions\AccessControl',
-                $accessControlConfig
+                'Sds\DoctrineExtensions\AccessControl'
             );
         } else {
             $this->removeDependency('Sds\DoctrineExtensions\AccessControl');

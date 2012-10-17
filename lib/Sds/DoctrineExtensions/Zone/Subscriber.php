@@ -36,7 +36,7 @@ class Subscriber implements EventSubscriber, AnnotationReaderAwareInterface
      */
     public function getSubscribedEvents(){
         return array(
-            Sds\ZonesField::event
+            Sds\Zones::event
         );
     }
 
@@ -44,10 +44,8 @@ class Subscriber implements EventSubscriber, AnnotationReaderAwareInterface
      *
      * @param \Sds\DoctrineExtensions\Annotation\EventArgs $eventArgs
      */
-    public function annotationZonesField(AnnotationEventArgs $eventArgs)
+    public function annotationZones(AnnotationEventArgs $eventArgs)
     {
-        $annotation = $eventArgs->getAnnotation();
-        $metadataKey = $annotation::metadataKey;
-        $eventArgs->getMetadata()->$metadataKey = $eventArgs->getReflection()->getName();
+        $eventArgs->getMetadata()->zones = $eventArgs->getReflection()->getName();
     }
 }

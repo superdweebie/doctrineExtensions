@@ -7,8 +7,6 @@
 namespace Sds\DoctrineExtensions\Validator;
 
 use Sds\DoctrineExtensions\AbstractExtensionConfig;
-use Sds\DoctrineExtensions\AnnotationReaderAwareInterface;
-use Sds\DoctrineExtensions\AnnotationReaderAwareTrait;
 
 /**
  * Defines the resouces this extension requires
@@ -16,11 +14,8 @@ use Sds\DoctrineExtensions\AnnotationReaderAwareTrait;
  * @since   1.0
  * @author  Tim Roediger <superdweebie@gmail.com>
  */
-class ExtensionConfig extends AbstractExtensionConfig implements
-    AnnotationReaderAwareInterface
+class ExtensionConfig extends AbstractExtensionConfig
 {
-    use AnnotationReaderAwareTrait;
-
     /**
      *
      * @var \Sds\Common\Validator\ValidatorInterface

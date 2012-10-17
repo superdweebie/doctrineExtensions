@@ -15,8 +15,8 @@ final class Events
 {
 
     /**
-     * Triggered when activeUser attempts to change state of a document they don't have permission
+     * Triggered when active identity attempts to change state of a document they don't have permission
      * for
      */
-    const stateChangeDenied = 'stateChangeDenied';
+    const transitionDenied = 'transitionDenied';
 }

@@ -41,7 +41,7 @@ class StampSubscriber extends AbstractStampSubscriber {
         $recomputeChangeSet = false;
         $document = $eventArgs->getDocument();
         if($document instanceof FrozenByInterface){
-            $document->setFrozenBy($this->activeUser->getUsername());
+            $document->setFrozenBy($this->identityName);
             $recomputeChangeSet = true;
         }
         if($document instanceof FrozenOnInterface){
@@ -61,7 +61,7 @@ class StampSubscriber extends AbstractStampSubscriber {
         $recomputeChangeSet = false;
         $document = $eventArgs->getDocument();
         if($document instanceof ThawedByInterface){
-            $document->setThawedBy($this->activeUser->getUsername());
+            $document->setThawedBy($this->identityName);
             $recomputeChangeSet = true;
         }
         if($document instanceof ThawedOnInterface){

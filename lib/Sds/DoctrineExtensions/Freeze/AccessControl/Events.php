@@ -15,13 +15,13 @@ final class Events
 {
 
     /**
-     * Triggered when activeUser attempts to freeze a document they don't have permission
+     * Triggered when active identity attempts to freeze a document they don't have permission
      * for
      */
     const freezeDenied = 'freezeDenied';
 
     /**
-     * Triggers when activeUser attempts to thaw a document they don't have permission
+     * Triggers when active identity attempts to thaw a document they don't have permission
      * for
      */
     const thawDenied = 'thawDenied';

@@ -6,13 +6,8 @@
  */
 namespace Sds\DoctrineExtensions\SoftDelete\AccessControl;
 
-use Doctrine\Common\EventSubscriber;
 use Doctrine\ODM\MongoDB\Event\LifecycleEventArgs;
-use Sds\Common\AccessControl\AccessControlledInterface;
-use Sds\Common\State\StateAwareInterface;
-use Sds\Common\User\ActiveUserAwareInterface;
-use Sds\Common\User\ActiveUserAwareTrait;
-use Sds\Common\User\RoleAwareUserInterface;
+use Sds\DoctrineExtensions\AccessControl\AbstractAccessControlSubscriber;
 use Sds\DoctrineExtensions\AccessControl\AccessController;
 use Sds\DoctrineExtensions\SoftDelete\AccessControl\Events as AccessControlEvents;
 use Sds\DoctrineExtensions\SoftDelete\AccessControl\Constant\Action;
@@ -23,10 +18,8 @@ use Sds\DoctrineExtensions\SoftDelete\Events as SoftDeleteEvents;
  * @since   1.0
  * @author  Tim Roediger <superdweebie@gmail.com>
  */
-class SoftDeleteSubscriber implements EventSubscriber, ActiveUserAwareInterface
+class SoftDeleteSubscriber extends AbstractAccessControlSubscriber
 {
-    use ActiveUserAwareTrait;
-
     /**
      *
      * @return array
@@ -39,25 +32,15 @@ class SoftDeleteSubscriber implements EventSubscriber, ActiveUserAwareInterface
 
     /**
      *
-     * @param \Sds\Common\AccessControl\RoleAwareUserInterface $activeUser
-     */
-    public function __construct(
-        RoleAwareUserInterface $activeUser
-    ) {
-        $this->setRequireRoleAwareUser(true);
-        $this->setActiveUser($activeUser);
-    }
-
-    /**
-     *
      * @param \Doctrine\ODM\MongoDB\Event\OnFlushEventArgs $eventArgs
      */
     public function preSoftDelete(LifecycleEventArgs $eventArgs)
     {
         $document = $eventArgs->getDocument();
+        $documentManager = $eventArgs->getDocumentManager();
 
-        if($document instanceof AccessControlledInterface &&
-            !AccessController::isActionAllowed($document, Action::softDelete, $this->activeUser)
+        if( AccessController::isAccessControlEnabled($documentManager->getClassMetadata(get_class($document)), Action::softDelete) &&
+            !AccessController::isActionAllowed($document, Action::softDelete, $this->roles)
         ) {
             //stop SoftDelete
             $document->restore();

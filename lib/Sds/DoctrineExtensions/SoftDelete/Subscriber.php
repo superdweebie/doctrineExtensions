@@ -43,7 +43,7 @@ class Subscriber implements EventSubscriber, AnnotationReaderAwareInterface
      */
     public function getSubscribedEvents(){
         return array(
-            Sds\SoftDeleteField::event,
+            Sds\SoftDelete::event,
             ODMEvents::onFlush
         );
     }
@@ -52,11 +52,9 @@ class Subscriber implements EventSubscriber, AnnotationReaderAwareInterface
      *
      * @param \Sds\DoctrineExtensions\Annotation\AnnotationEventArgs $eventArgs
      */
-    public function annotationSoftDeleteField(AnnotationEventArgs $eventArgs)
+    public function annotationSoftDelete(AnnotationEventArgs $eventArgs)
     {
-        $annotation = $eventArgs->getAnnotation();
-        $metadataKey = $annotation::metadataKey;
-        $eventArgs->getMetadata()->$metadataKey = $eventArgs->getReflection()->getName();
+        $eventArgs->getMetadata()->softDelete = $eventArgs->getReflection()->getName();
     }
 
     /**
@@ -75,16 +73,16 @@ class Subscriber implements EventSubscriber, AnnotationReaderAwareInterface
             }
 
             $metadata = $documentManager->getClassMetadata(get_class($document));
-            if (!isset($metadata->softDeleteField)) {
+            if (!isset($metadata->softDelete)) {
                 throw new Exception\DocumentException(sprintf(
-                    'Document class %s implements the SoftDeleteableInterface, but does not have a field annotatated as @softDeleteField.',
+                    'Document class %s implements the SoftDeleteableInterface, but does not have a field annotatated as @softDelete.',
                     get_class($document)
                 ));
             }
 
             $eventManager = $documentManager->getEventManager();
             $changeSet = $unitOfWork->getDocumentChangeSet($document);
-            $field = $metadata->softDeleteField;
+            $field = $metadata->softDelete;
 
             if (!isset($changeSet[$field])) {
                 if ($document->getSoftDeleted()) {

@@ -12,13 +12,14 @@ use Doctrine\ODM\MongoDB\Event\LifecycleEventArgs;
 use Doctrine\ODM\MongoDB\Event\OnFlushEventArgs;
 use Doctrine\ODM\MongoDB\Events as ODMEvents;
 use Sds\Common\State\StateAwareInterface;
+use Sds\Common\State\Transition;
 use Sds\DoctrineExtensions\AnnotationReaderAwareTrait;
 use Sds\DoctrineExtensions\AnnotationReaderAwareInterface;
 use Sds\DoctrineExtensions\Annotation\Annotations as Sds;
 use Sds\DoctrineExtensions\Annotation\AnnotationEventArgs;
 use Sds\DoctrineExtensions\Exception;
 use Sds\DoctrineExtensions\State\Events as StateEvents;
-use Sds\DoctrineExtensions\State\EventArgs as StateChangeEventArgs;
+use Sds\DoctrineExtensions\State\EventArgs as TransitionEventArgs;
 
 /**
  * Emits soft delete events
@@ -44,7 +45,7 @@ class Subscriber implements EventSubscriber, AnnotationReaderAwareInterface
      */
     public function getSubscribedEvents(){
         return array(
-            Sds\StateField::event,
+            Sds\State::event,
             ODMEvents::onFlush
         );
     }
@@ -53,11 +54,9 @@ class Subscriber implements EventSubscriber, AnnotationReaderAwareInterface
      *
      * @param \Sds\DoctrineExtensions\Annotation\AnnotationEventArgs $eventArgs
      */
-    public function annotationStateField(AnnotationEventArgs $eventArgs)
+    public function annotationState(AnnotationEventArgs $eventArgs)
     {
-        $annotation = $eventArgs->getAnnotation();
-        $metadataKey = $annotation::metadataKey;
-        $eventArgs->getMetadata()->$metadataKey = $eventArgs->getReflection()->getName();
+        $eventArgs->getMetadata()->state = $eventArgs->getReflection()->getName();
     }
 
     /**
@@ -76,16 +75,16 @@ class Subscriber implements EventSubscriber, AnnotationReaderAwareInterface
             }
 
             $metadata = $documentManager->getClassMetadata(get_class($document));
-            if (!isset($metadata->stateField)) {
+            if (!isset($metadata->state)) {
                 throw new Exception\DocumentException(sprintf(
-                    'Document class %s implements the StateAwareInterface, but does not have a field annotatated as @stateField.',
+                    'Document class %s implements the StateAwareInterface, but does not have a field annotatated as @state.',
                     get_class($document)
                 ));
             }
 
             $eventManager = $documentManager->getEventManager();
             $changeSet = $unitOfWork->getDocumentChangeSet($document);
-            $field = $metadata->stateField;
+            $field = $metadata->state;
 
             if (!isset($changeSet[$field])) {
                 continue;
@@ -94,11 +93,11 @@ class Subscriber implements EventSubscriber, AnnotationReaderAwareInterface
             $fromState = $changeSet[$field][0];
             $toState = $changeSet[$field][1];
 
-            // Raise preStateChange
-            if ($eventManager->hasListeners(StateEvents::preStateChange)) {
+            // Raise preTransition
+            if ($eventManager->hasListeners(StateEvents::preTransition)) {
                 $eventManager->dispatchEvent(
-                    StateEvents::preStateChange,
-                    new StateChangeEventArgs($fromState, $toState, $document, $documentManager)
+                    StateEvents::preTransition,
+                    new TransitionEventArgs(new Transition($fromState, $toState), $document, $documentManager)
                 );
             }
 
@@ -108,22 +107,22 @@ class Subscriber implements EventSubscriber, AnnotationReaderAwareInterface
                 continue;
             }
 
-            // Raise onStateChange
-            if ($eventManager->hasListeners(StateEvents::onStateChange)) {
+            // Raise onTransition
+            if ($eventManager->hasListeners(StateEvents::onTransition)) {
                 $eventManager->dispatchEvent(
-                    StateEvents::onStateChange,
-                    new StateChangeEventArgs($fromState, $toState, $document, $documentManager)
+                    StateEvents::onTransition,
+                    new TransitionEventArgs(new Transition($fromState, $toState), $document, $documentManager)
                 );
             }
 
             // Force change set update
             $unitOfWork->recomputeSingleDocumentChangeSet($metadata, $document);
 
-            // Raise postStateChange - this is when workflow vars should be updated
-            if ($eventManager->hasListeners(StateEvents::postStateChange)) {
+            // Raise postTransition - this is when workflow vars should be updated
+            if ($eventManager->hasListeners(StateEvents::postTransition)) {
                 $eventManager->dispatchEvent(
-                    StateEvents::postStateChange,
-                    new LifecycleEventArgs($document, $documentManager)
+                    StateEvents::postTransition,
+                    new TransitionEventArgs(new Transition($fromState, $toState), $document, $documentManager)
                 );
             }
         }

@@ -6,6 +6,7 @@
  */
 namespace Sds\DoctrineExtensions;
 
+use Doctrine\Common\Annotations\Reader;
 use Sds\DoctrineExtensions\Exception;
 
 /**
@@ -16,6 +17,8 @@ use Sds\DoctrineExtensions\Exception;
  */
 abstract class AbstractExtensionConfig {
 
+    protected $identity;
+
     /**
      * List of other extensions which must be loaded
      * for this extension to work
@@ -23,6 +26,36 @@ abstract class AbstractExtensionConfig {
      * @var array
      */
     protected $dependencies = array('Sds\DoctrineExtensions\Annotation' => null);
+
+
+    /**
+     * @var \Doctrine\Common\Annotations\Reader
+     */
+    protected $annotationReader;
+
+    /**
+     *
+     * @return \Doctrine\Common\Annotations\Reader
+     */
+    public function getAnnotationReader() {
+        return $this->annotationReader;
+    }
+
+    /**
+     *
+     * @param \Doctrine\Common\Annotations\Reader $annoationReader
+     */
+    public function setAnnotationReader(Reader $annotationReader) {
+        $this->annotationReader = $annotationReader;
+    }
+
+    public function getIdentity() {
+        return $this->identity;
+    }
+
+    public function setIdentity($identity) {
+        $this->identity = $identity;
+    }
 
     /**
      *

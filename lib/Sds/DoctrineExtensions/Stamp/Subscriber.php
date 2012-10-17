@@ -39,7 +39,7 @@ class Subscriber extends AbstractStampSubscriber {
     public function prePersist(LifecycleEventArgs $eventArgs) {
         $document = $eventArgs->getDocument();
         if($document instanceof CreatedByInterface){
-            $document->setCreatedBy($this->activeUser->getUsername());
+            $document->setCreatedBy($this->identityName);
         }
         if($document instanceof CreatedOnInterface){
             $document->setCreatedOn(time());
@@ -54,7 +54,7 @@ class Subscriber extends AbstractStampSubscriber {
         $recomputeChangeSet = false;
         $document = $eventArgs->getDocument();
         if ($document instanceof UpdatedByInterface) {
-            $document->setUpdatedBy($this->activeUser->getUsername());
+            $document->setUpdatedBy($this->identityName);
             $recomputeChangeSet = true;
         }
         if ($document instanceof UpdatedOnInterface) {

@@ -12,7 +12,7 @@ class AnnotationInheritaceTest extends BaseTest {
     public function setUp(){
         parent::setUp();
 
-        $this->configActiveUser(true);
+        $this->configIdentity(true);
 
         $manifest = $this->getManifest(array(
             'Sds\DoctrineExtensions\DoNotHardDelete' => null,
@@ -42,12 +42,12 @@ class AnnotationInheritaceTest extends BaseTest {
 
         $metadata = $documentManager->getClassMetadata(get_class(new ChildA));
 
-        $this->assertTrue($metadata->{Sds\DoNotHardDelete::metadataKey});
+        $this->assertTrue($metadata->doNotHardDelete);
         $this->assertTrue($metadata->serializer['className']);
         $this->assertEquals('className', $metadata->serializer['classNameProperty']);
         $this->assertTrue($metadata->serializer['discriminator']);
         $this->assertEquals(array('ParentValidator' => null), $metadata->validator['validatorGroup']);
-        $this->assertEquals('ParentWorkflow', $metadata->{Sds\WorkflowClass::metadataKey});
+        $this->assertEquals('ParentWorkflow', $metadata->workflow);
         $this->assertTrue($metadata->serializer['fields']['name']['ignore']);
     }
 
@@ -57,11 +57,11 @@ class AnnotationInheritaceTest extends BaseTest {
 
         $metadata = $documentManager->getClassMetadata(get_class(new ChildB));
 
-        $this->assertFalse($metadata->{Sds\DoNotHardDelete::metadataKey});
+        $this->assertFalse($metadata->doNotHardDelete);
         $this->assertFalse($metadata->serializer['className']);
         $this->assertFalse($metadata->serializer['discriminator']);
         $this->assertEquals(array('ChildBValidator' => null), $metadata->validator['validatorGroup']);
-        $this->assertEquals('ChildBWorkflow', $metadata->{Sds\WorkflowClass::metadataKey});
+        $this->assertEquals('ChildBWorkflow', $metadata->workflow);
         $this->assertFalse($metadata->serializer['fields']['name']['ignore']);
     }
 }

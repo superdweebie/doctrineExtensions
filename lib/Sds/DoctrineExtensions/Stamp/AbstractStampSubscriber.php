@@ -8,9 +8,6 @@ namespace Sds\DoctrineExtensions\Stamp;
 
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ODM\MongoDB\Event\LifecycleEventArgs;
-use Sds\Common\User\ActiveUserAwareTrait;
-use Sds\Common\User\ActiveUserAwareInterface;
-use Sds\Common\User\UserInterface;
 
 /**
  * Adds create and update stamps during persist
@@ -18,16 +15,24 @@ use Sds\Common\User\UserInterface;
  * @since   1.0
  * @author  Tim Roediger <superdweebie@gmail.com>
  */
-abstract class AbstractStampSubscriber implements EventSubscriber, ActiveUserAwareInterface {
+abstract class AbstractStampSubscriber implements EventSubscriber {
 
-    use ActiveUserAwareTrait;
+    protected $identityName;
+
+    public function getIdentityName() {
+        return $this->identityName;
+    }
+
+    public function setIdentityName($identityName) {
+        $this->identityName = (string) $identityName;
+    }
 
     /**
      *
-     * @param \Sds\Common\User\UserInterface $activeUser
+     * @param string $identityName
      */
-    public function __construct(UserInterface $activeUser) {
-        $this->setActiveUser($activeUser);
+    public function __construct($identityName = null) {
+        isset($identityName) ? $this->setIdentityName($identityName) : null;
     }
 
     /**

@@ -24,17 +24,15 @@ class Extension extends AbstractExtension {
         parent::__construct($config);
         $config = $this->getConfig();
 
-        $activeUser = $config->getActiveUser();
-
         $this->subscribers = array(new Subscriber($config->getAnnotationReader()));
-        if ($config->getUseFreezeStamps()) {
-            $this->subscribers[] = new StampSubscriber($activeUser);
+
+        if ($config->getEnableFreezeStamps()) {
+            $this->subscribers[] = new StampSubscriber($config->getIdentityName());
         }
-        if ($config->getAccessControlFreeze()){
-            $this->subscribers[] = new FreezeSubscriber($activeUser);
-        }
-        if ($config->getAccessControlThaw()){
-            $this->subscribers[] = new ThawSubscriber($activeUser);
+
+        if ($config->getEnableAccessControl()){
+            $this->subscribers[] = new FreezeSubscriber($config->getRoles());
+            $this->subscribers[] = new ThawSubscriber($config->getRoles());
         }
         $this->filters = array('freeze' => 'Sds\DoctrineExtensions\Freeze\Filter\Freeze');
     }

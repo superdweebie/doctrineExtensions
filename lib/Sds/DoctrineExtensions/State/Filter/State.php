@@ -79,12 +79,12 @@ class State extends BsonFilter
      */
     public function addFilterCriteria(ClassMetadata $targetMetadata)
     {
-        if (isset($targetMetadata->stateField) &&
+        if (isset($targetMetadata->state) &&
             count($this->parameters['states'])
         ) {
             $operator = $this->parameters['includeStateList'] ? '$in' : '$nin';
             return array(
-                $targetMetadata->stateField => array($operator => $this->parameters['states'])
+                $targetMetadata->state => array($operator => $this->parameters['states'])
             );
         }
         return array();

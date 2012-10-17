@@ -12,19 +12,19 @@ use Doctrine\ODM\MongoDB\Event\LifecycleEventArgs;
 use Doctrine\ODM\MongoDB\Event\OnFlushEventArgs;
 use Doctrine\ODM\MongoDB\Events as ODMEvents;
 use Sds\Common\AccessControl\AccessControlledInterface;
+use Sds\Common\AccessControl\Constant\Action;
 use Sds\Common\State\StateAwareInterface;
-use Sds\Common\User\ActiveUserAwareInterface;
-use Sds\Common\User\ActiveUserAwareTrait;
-use Sds\Common\User\RoleAwareUserInterface;
 use Sds\DoctrineExtensions\AccessControl\AccessController;
-use Sds\DoctrineExtensions\AccessControl\Constant\Action;
 use Sds\DoctrineExtensions\AccessControl\Events as AccessControlEvents;
 use Sds\DoctrineExtensions\AnnotationReaderAwareTrait;
 use Sds\DoctrineExtensions\AnnotationReaderAwareInterface;
 use Sds\DoctrineExtensions\Annotation\Annotations as Sds;
 use Sds\DoctrineExtensions\Annotation\AnnotationEventArgs;
+use Sds\DoctrineExtensions\Freeze\AccessControl\Constant\Action as FreezeAction;
+use Sds\DoctrineExtensions\SoftDelete\AccessControl\Constant\Action as SoftDeleteAction;
 use Sds\DoctrineExtensions\State\EventArgs as StateEventArgs;
 use Sds\DoctrineExtensions\State\Events as StateEvents;
+use Sds\DoctrineExtensions\State\Transition;
 
 /**
  *
@@ -33,29 +33,19 @@ use Sds\DoctrineExtensions\State\Events as StateEvents;
  */
 class Subscriber implements
     EventSubscriber,
-    AnnotationReaderAwareInterface,
-    ActiveUserAwareInterface
+    AnnotationReaderAwareInterface
 {
-    use ActiveUserAwareTrait;
     use AnnotationReaderAwareTrait;
 
-    /**
-     *
-     * @var boolean
-     */
-    protected $accessControlCreate = true;
+    protected $roles;
 
-    /**
-     *
-     * @var boolean
-     */
-    protected $accessControlUpdate = true;
+    public function getRoles() {
+        return $this->roles;
+    }
 
-    /**
-     *
-     * @var boolean
-     */
-    protected $accessControlDelete =true;
+    public function setRoles(array $roles = []) {
+        $this->roles = $roles;
+    }
 
     /**
      *
@@ -63,42 +53,91 @@ class Subscriber implements
      */
     public function getSubscribedEvents(){
         return array(
-            Sds\DoNotAccessControlUpdate::event,
+            Sds\AccessControl::event,
             ODMEvents::onFlush,
-            StateEvents::onStateChange
+            StateEvents::onTransition
         );
     }
 
     /**
      *
      * @param \Doctrine\Common\Annotations\Reader $annotationReader
-     * @param \Sds\Common\User\RoleAwareUserInterface $activeUser
-     * @param boolean $controlCreate
-     * @param boolean $controlUpdate
-     * @param boolean $controlDelete
+     * @param \Sds\Common\AccessControl\IdentityInterface $identity
      */
     public function __construct(
         Reader $annotationReader,
-        RoleAwareUserInterface $activeUser,
-        $controlCreate = true,
-        $controlUpdate = true,
-        $controlDelete = true
+        array $roles = []
     ) {
         $this->setAnnotationReader($annotationReader);
-        $this->setActiveUser($activeUser);
-        $this->controlCreate = $controlCreate;
-        $this->controlUpdate = $controlUpdate;
-        $this->controlDelete = $controlDelete;
+        $this->roles = $roles;
     }
 
     /**
      *
      * @param \Sds\DoctrineExtensions\Annotation\AnnotationEventArgs $eventArgs
      */
-    public function annotationDoNotAccessControlUpdate(AnnotationEventArgs $eventArgs)
+    public function annotationAccessControl(AnnotationEventArgs $eventArgs)
     {
         $annotation = $eventArgs->getAnnotation();
-        $eventArgs->getMetadata()->fieldMappings[$eventArgs->getReflection()->getName()][$annotation::metadataKey] = true;
+
+        $accessControlMetadata = [];
+
+        if (is_array($annotation->value)){
+            foreach ($annotation->value as $subAnnotation){
+                $accessControlMetadata = $this->processAnnotation($subAnnotation, $accessControlMetadata);
+            }
+        } else {
+            $accessControlMetadata = $this->processAnnotation($annotation->value, $accessControlMetadata);
+        }
+
+        switch ($eventArgs->getEventType()){
+            case 'document':
+                $eventArgs->getMetadata()->accessControl['document'] = $accessControlMetadata;
+                break;
+            case 'property':
+                $eventArgs->getMetadata()->accessControl['fields'][$eventArgs->getReflection()->getName()] = $accessControlMetadata;
+                break;
+        }
+    }
+
+    protected function processAnnotation($annotation, $accessControlMetadata){
+
+        switch (true){
+            case ($annotation instanceof Sds\AccessControl\DefaultValue):
+                $accessControlMetadata['defaultValue'] = $annotation->value;
+                break;
+            case ($annotation instanceof Sds\AccessControl\Create):
+                $accessControlMetadata[Action::create] = $annotation->value;
+                break;
+            case ($annotation instanceof Sds\AccessControl\Read):
+                $accessControlMetadata[Action::read] = $annotation->value;
+                break;
+            case ($annotation instanceof Sds\AccessControl\Update):
+                $accessControlMetadata[Action::update] = $annotation->value;
+                break;
+            case ($annotation instanceof Sds\AccessControl\Delete):
+                $accessControlMetadata[Action::delete] = $annotation->value;
+                break;
+            case ($annotation instanceof Sds\AccessControl\DefaultTransition):
+                $accessControlMetadata['defaultTransition'] = $annotation->value;
+                break;
+            case ($annotation instanceof Sds\AccessControl\Transition):
+                $accessControlMetadata[Transition::getAction($annotation->fromState, $annotation->toState)] = $annotation->value;
+                break;
+            case ($annotation instanceof Sds\AccessControl\Freeze):
+                $accessControlMetadata[FreezeAction::freeze] = $annotation->value;
+                break;
+            case ($annotation instanceof Sds\AccessControl\Thaw):
+                $accessControlMetadata[FreezeAction::thaw] = $annotation->value;
+                break;
+            case ($annotation instanceof Sds\AccessControl\SoftDelete):
+                $accessControlMetadata[SoftDeleteAction::softDelete] = $annotation->value;
+            case ($annotation instanceof Sds\AccessControl\Restore):
+                $accessControlMetadata[SoftDeleteAction::restore] = $annotation->value;
+            default:
+        }
+
+        return $accessControlMetadata;
     }
 
     /**
@@ -112,7 +151,8 @@ class Subscriber implements
         $eventManager = $documentManager->getEventManager();
 
         foreach ($unitOfWork->getScheduledDocumentInsertions() as $document) {
-            if($document instanceof AccessControlledInterface) {
+
+            if(AccessController::isAccessControlEnabled($documentManager->getClassMetadata(get_class($document)), Action::create)){
 
                 //Set stateEqualToParent on permissions
                 if ($document instanceof StateAwareInterface) {
@@ -122,10 +162,9 @@ class Subscriber implements
                     }
                 }
 
+
                 //Check create permissions
-                if ($this->controlCreate &&
-                    !AccessController::isActionAllowed($document, Action::create, $this->activeUser)
-                ) {
+                if (! AccessController::isActionAllowed($document, Action::create, $this->roles)) {
                     //stop creation
                     $unitOfWork->detach($document);
 
@@ -140,18 +179,19 @@ class Subscriber implements
         }
 
         //Check update permissions
-        if ($this->controlUpdate){
-            foreach ($unitOfWork->getScheduledDocumentUpdates() as $document) {
+        foreach ($unitOfWork->getScheduledDocumentUpdates() as $document) {
 
-                // Skip any updates on fields marked with @DoNotAccessControlUpdate
+            $metadata = $documentManager->getClassMetadata(get_class($document));
+            if(AccessController::isAccessControlEnabled($metadata, Action::update)){
+
+                // Skip any updates on fields marked with @AccessControl(@Update = false)
                 $changeSet = $unitOfWork->getDocumentChangeSet($document);
-                $metadata = $documentManager->getClassMetadata(get_class($document));
+
                 $checkPermission = false;
                 foreach ($changeSet as $field => $change) {
-                    if (!isset($metadata->fieldMappings[$field][Sds\DoNotAccessControlUpdate::metadataKey])) {
-                        $checkPermission = true;
-                        break;
-                    } elseif (!$metadata->fieldMappings[$field][Sds\DoNotAccessControlUpdate::metadataKey]) {
+                    if ( ! isset($metadata->accessControl['fields'][$field][Action::update]) ||
+                        $metadata->accessControl['fields'][$field][Action::update]
+                    ) {
                         $checkPermission = true;
                         break;
                     }
@@ -173,9 +213,7 @@ class Subscriber implements
                     }
                 }
 
-                if ($document instanceof AccessControlledInterface &&
-                    !AccessController::isActionAllowed($document, Action::update, $this->activeUser)
-                ) {
+                if (!AccessController::isActionAllowed($document, Action::update, $this->roles)) {
                     //stop updates
                     $unitOfWork->clearDocumentChangeSet(spl_object_hash($document));
 
@@ -190,20 +228,18 @@ class Subscriber implements
         }
 
         //Check delete permsisions
-        if ($this->controlDelete){
-            foreach ($unitOfWork->getScheduledDocumentDeletions() as $document) {
-                if($document instanceof AccessControlledInterface &&
-                    !AccessController::isActionAllowed($document, Action::delete, $this->activeUser)
-                ) {
-                    //stop delete
-                    $documentManager->persist($document);
+        foreach ($unitOfWork->getScheduledDocumentDeletions() as $document) {
+            if (AccessController::isAccessControlEnabled($documentManager->getClassMetadata(get_class($document)), Action::delete) &&
+                !AccessController::isActionAllowed($document, Action::delete, $this->roles)
+            ) {
+                //stop delete
+                $documentManager->persist($document);
 
-                    if ($eventManager->hasListeners(AccessControlEvents::deleteDenied)) {
-                        $eventManager->dispatchEvent(
-                            AccessControlEvents::deleteDenied,
-                            new LifecycleEventArgs($document, $documentManager)
-                        );
-                    }
+                if ($eventManager->hasListeners(AccessControlEvents::deleteDenied)) {
+                    $eventManager->dispatchEvent(
+                        AccessControlEvents::deleteDenied,
+                        new LifecycleEventArgs($document, $documentManager)
+                    );
                 }
             }
         }
@@ -213,11 +249,11 @@ class Subscriber implements
      *
      * @param \Sds\DoctrineExtensions\State\Event\EventArgs $eventArgs
      */
-    public function onStateChange(StateEventArgs $eventArgs){
+    public function onTransition(StateEventArgs $eventArgs){
         $document = $eventArgs->getDocument();
 
         if($document instanceof AccessControlledInterface) {
-            $toState = $eventArgs->getToState();
+            $toState = $eventArgs->getTransition()->getToState();
             foreach ($document->getPermissions() as $permission){
                 $permission->setStateEqualToParent(($permission->getState() == $toState));
             }

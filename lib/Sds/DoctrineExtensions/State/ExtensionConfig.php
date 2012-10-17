@@ -6,12 +6,8 @@
  */
 namespace Sds\DoctrineExtensions\State;
 
-use Sds\Common\User\ActiveUserAwareInterface;
-use Sds\Common\User\ActiveUserAwareTrait;
 use Sds\DoctrineExtensions\AbstractExtensionConfig;
-use Sds\DoctrineExtensions\AccessControl;
-use Sds\DoctrineExtensions\AnnotationReaderAwareInterface;
-use Sds\DoctrineExtensions\AnnotationReaderAwareTrait;
+use Sds\DoctrineExtensions\RolesExtensionConfigTrait;
 
 /**
  * Defines the resouces this extension requires
@@ -19,64 +15,41 @@ use Sds\DoctrineExtensions\AnnotationReaderAwareTrait;
  * @since   1.0
  * @author  Tim Roediger <superdweebie@gmail.com>
  */
-class ExtensionConfig extends AbstractExtensionConfig
-implements
-    AnnotationReaderAwareInterface,
-    ActiveUserAwareInterface
-{
+class ExtensionConfig extends AbstractExtensionConfig {
 
-    use AnnotationReaderAwareTrait;
-    use ActiveUserAwareTrait;
-
+    use RolesExtensionConfigTrait;
+    
     /**
      * Should access control be applied to state changes?
      *
      * @var boolean
      */
-    protected $accessControlStateChange = false;
+    protected $enableAccessControl = false;
 
     /**
      *
      * @return boolean
      */
-    public function getAccessControlStateChange() {
-        return $this->accessControlStateChange;
+    public function getEnableAccessControl() {
+        return $this->enableAccessControl;
     }
 
     /**
      *
-     * @param boolean $accessControlStateChange
+     * @param boolean $enableAccessControl
      */
-    public function setAccessControlStateChange($accessControlStateChange) {
-        $this->accessControlStateChange = (boolean) $accessControlStateChange;
-        $this->updateRequiredRoleAwareUser();
+    public function setEnableAccessControl($enableAccessControl) {
+        $this->enableAccessControl = (boolean) $enableAccessControl;
         $this->updateDependencies();
     }
 
     /**
      *
      */
-    protected function updateRequiredRoleAwareUser(){
-        if ($this->accessControlStateChange) {
-            $this->setRequireRoleAwareUser(true);
-        } else {
-            $this->setRequireRoleAwareUser(false);
-        }
-    }
-
-    /**
-     *
-     */
     protected function updateDependencies(){
-        if ($this->accessControlStateChange) {
-            $accessControlConfig = new AccessControl\ExtensionConfig();
-            $accessControlConfig->setAccessControlCreate(false);
-            $accessControlConfig->setAccessControlRead(false);
-            $accessControlConfig->setAccessControlUpdate(false);
-            $accessControlConfig->setAccessControlDelete(false);
+        if ($this->enableAccessControl) {
             $this->addDependency(
-                'Sds\DoctrineExtensions\AccessControl',
-                $accessControlConfig
+                'Sds\DoctrineExtensions\AccessControl'
             );
         } else {
             $this->removeDependency('Sds\DoctrineExtensions\AccessControl');

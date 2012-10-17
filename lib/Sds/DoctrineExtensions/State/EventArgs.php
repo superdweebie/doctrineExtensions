@@ -8,9 +8,10 @@ namespace Sds\DoctrineExtensions\State;
 
 use Doctrine\Common\EventArgs as BaseEventArgs;
 use Doctrine\ODM\MongoDB\DocumentManager;
+use Sds\Common\State\Transition;
 
 /**
- * Arguments for readonly events
+ * Arguments for transition events
  *
  * @since   1.0
  * @author  Tim Roediger <superdweebie@gmail.com>
@@ -19,15 +20,9 @@ class EventArgs extends BaseEventArgs {
 
     /**
      *
-     * @var state
+     * @var Transition
      */
-    protected $fromState;
-
-    /**
-     *
-     * @var state
-     */
-    protected $toState;
+    protected $transition;
 
     /**
      * The document with the changed state
@@ -44,37 +39,26 @@ class EventArgs extends BaseEventArgs {
 
     /**
      *
-     * @param string $fromState
-     * @param string $toState
+     * @param \Sds\Common\State\Transition $transition
      * @param object $document
      * @param \Doctrine\ODM\MongoDB\DocumentManager $documentManager
      */
     public function __construct(
-        $fromState,
-        $toState,
+        Transition $transition,
         $document,
         DocumentManager $documentManager
     ) {
-        $this->fromState = (string) $fromState;
-        $this->toState = (string) $toState;
+        $this->transition = $transition;
         $this->document = $document;
         $this->documentManager = $documentManager;
     }
 
     /**
-     *
-     * @return string
+     * 
+     * @return \Sds\Common\State\Transition
      */
-    public function getFromState() {
-        return $this->fromState;
-    }
-
-    /**
-     *
-     * @return string
-     */
-    public function getToState() {
-        return $this->toState;
+    public function getTransition() {
+        return $this->transition;
     }
 
     /**

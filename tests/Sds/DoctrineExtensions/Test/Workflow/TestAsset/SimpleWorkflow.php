@@ -2,8 +2,8 @@
 
 namespace Sds\DoctrineExtensions\Test\Workflow\TestAsset;
 
-use Sds\DoctrineExtensions\Workflow\AbstractWorkflow;
-use Sds\DoctrineExtensions\Workflow\Transition;
+use Sds\Common\State\Transition;
+use Sds\Common\Workflow\AbstractWorkflow;
 
 class SimpleWorkflow extends AbstractWorkflow {
 

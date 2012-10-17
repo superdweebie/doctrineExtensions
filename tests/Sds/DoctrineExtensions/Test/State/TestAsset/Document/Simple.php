@@ -3,7 +3,7 @@
 namespace Sds\DoctrineExtensions\Test\State\TestAsset\Document;
 
 use Sds\Common\State\StateAwareInterface;
-use Sds\DoctrineExtensions\State\Behaviour\StateAwareTrait;
+use Sds\DoctrineExtensions\State\DataModel\StateAwareTrait;
 
 //Annotation imports
 use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;

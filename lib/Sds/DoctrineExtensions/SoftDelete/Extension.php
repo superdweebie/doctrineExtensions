@@ -24,17 +24,13 @@ class Extension extends AbstractExtension {
         parent::__construct($config);
         $config = $this->getConfig();
 
-        $activeUser = $config->getActiveUser();
-
         $this->subscribers = array(new Subscriber($config->getAnnotationReader()));
-        if ($config->getUseSoftDeleteStamps()) {
-            $this->subscribers[] = new StampSubscriber($activeUser);
+        if ($config->getEnableSoftDeleteStamps()) {
+            $this->subscribers[] = new StampSubscriber($config->getIdentityName());
         }
-        if ($config->getAccessControlSoftDelete()){
-            $this->subscribers[] = new AccessControl\SoftDeleteSubscriber($activeUser);
-        }
-        if ($config->getAccessControlRestore()){
-            $this->subscribers[] = new AccessControl\RestoreSubscriber($activeUser);
+        if ($config->getEnableAccessControl()){
+            $this->subscribers[] = new AccessControl\SoftDeleteSubscriber($config->getRoles());
+            $this->subscribers[] = new AccessControl\RestoreSubscriber($config->getRoles());
         }
 
         $this->filters = array('softDelete' => 'Sds\DoctrineExtensions\SoftDelete\Filter\SoftDelete');

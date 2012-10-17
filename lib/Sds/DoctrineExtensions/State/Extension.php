@@ -6,6 +6,7 @@
  */
 namespace Sds\DoctrineExtensions\State;
 
+use Sds\Common\AccessControl\AccessControlIdentityInterface;
 use Sds\DoctrineExtensions\AbstractExtension;
 
 /**
@@ -23,8 +24,8 @@ class Extension extends AbstractExtension {
         $config = $this->getConfig();
 
         $this->subscribers = array(new Subscriber($config->getAnnotationReader()));
-        if ($config->getAccessControlStateChange()){
-            $this->subscribers[] = new AccessControl\StateChangeSubscriber($config->getActiveUser());
+        if ($config->getEnableAccessControl()){
+            $this->subscribers[] = new AccessControl\TransitionSubscriber($config->getRoles());
         }
 
         $this->filters = array('state' => 'Sds\DoctrineExtensions\State\Filter\State');
