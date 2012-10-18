@@ -34,10 +34,10 @@ class Simple {
     protected $id;
 
     /**
-     * @ODM\Field(type="string")
+     * @ODM\String
      * @Sds\Dojo(
      *     @Sds\Metadata({
-     *         "title" = "NAME",
+     *         "label" = "NAME",
      *         "tooltip" = "The simple's name",
      *         "description" = "This is a longer description"
      *     }),
@@ -51,7 +51,7 @@ class Simple {
     protected $name;
 
     /**
-     * @ODM\Field(type="string")
+     * @ODM\String
      * @Sds\Dojo(
      *     @Sds\ValidatorGroup(
      *         @Sds\Validator(class = "Sds/Test/CountryValidator1")
@@ -59,6 +59,17 @@ class Simple {
      * )
      */
     protected $country;
+
+    /**
+     * @ODM\String
+     */
+    protected $camelCaseProperty;
+
+    /**
+     * @ODM\String
+     * @Sds\Dojo(@Sds\Ignore)
+     */
+    protected $ignoreProperty;
 
     public function getId() {
         return $this->id;
@@ -78,5 +89,21 @@ class Simple {
 
     public function setCountry($country) {
         $this->country = $country;
+    }
+
+    public function getCamelCaseProperty() {
+        return $this->camelCaseProperty;
+    }
+
+    public function setCamelCaseProperty($camelCaseProperty) {
+        $this->camelCaseProperty = $camelCaseProperty;
+    }
+
+    public function getIgnoreProperty() {
+        return $this->ignoreProperty;
+    }
+
+    public function setIgnoreProperty($ignoreProperty) {
+        $this->ignoreProperty = $ignoreProperty;
     }
 }

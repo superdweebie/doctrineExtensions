@@ -117,4 +117,8 @@ abstract class AbstractExtension implements ExtensionInterface {
     public function getCliHelpers(){
         return $this->cliHelpers;
     }
+
+    public function setIdentity($identity){
+        $this->config->setIdentity($identity);
+    }
 }

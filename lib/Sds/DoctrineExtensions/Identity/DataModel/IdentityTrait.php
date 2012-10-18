@@ -3,7 +3,7 @@
 namespace Sds\DoctrineExtensions\Identity\DataModel;
 
 use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
-use Sds\DoctrineExtensions\Readonly\Mapping\Annotation\Readonly as SDS_Readonly;
+use Sds\DoctrineExtensions\Annotation\Annotations as Sds;
 
 trait IdentityTrait {
 
@@ -16,20 +16,23 @@ trait IdentityTrait {
      *     @Sds\Validator(class = "Sds\Common\Validator\IdentifierValidator")
      * )
      * @Sds\Dojo(
+     *     @Sds\Metadata({
+     *         "label" = "Username:"
+     *     }),
      *     @Sds\ValidatorGroup(
      *         @Sds\Required,
      *         @Sds\Validator(class = "Sds/Common/Validator/IdentifierValidator")
      *     )
      * )
      */
-    protected $name;
+    protected $identityName;
 
-    public function getName() {
-        return $this->name;
+    public function getIdentityName() {
+        return $this->identityName;
     }
 
-    public function setName($name) {
-        $this->name = (string) $name;
+    public function setIdentityName($identityName) {
+        $this->identityName = (string) $identityName;
     }
 }
 

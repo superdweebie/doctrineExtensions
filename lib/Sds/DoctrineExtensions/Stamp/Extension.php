@@ -24,4 +24,9 @@ class Extension extends AbstractExtension {
 
         $this->subscribers = array(new Subscriber($config->getIdentityName()));
     }
+
+    public function setIdentity($identity){
+        parent::setIdentity($identity);
+        $this->subscribers[0]->setIdentityName($identity->getName());
+    }
 }

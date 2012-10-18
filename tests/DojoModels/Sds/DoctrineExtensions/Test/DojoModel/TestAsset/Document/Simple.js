@@ -39,6 +39,9 @@ define ([
                 // country: string
                 country: undefined,
 
+                // camelCaseProperty: string
+                camelCaseProperty: undefined,
+
                 toJSON: function(){
                     // summary:
                     //     Function to handle serialization
@@ -58,6 +61,9 @@ define ([
                     }
                     if (this.get('country')) {
                         json['country'] = this.get('country');
+                    }
+                    if (this.get('camelCaseProperty')) {
+                        json['camelCaseProperty'] = this.get('camelCaseProperty');
                     }
 
                     return json;
@@ -90,7 +96,7 @@ define ([
                 "name": {
                     "id": "nameField",
                     "property": "name",
-                    "label": "Name:",
+                    "label": "NAME",
                     "dataType": "string",
                     "validatorGroup": [
                         {
@@ -108,7 +114,6 @@ define ([
                             }
                         }
                     ],
-                    "title": "NAME",
                     "tooltip": "The simple's name",
                     "description": "This is a longer description"
                 },
@@ -126,6 +131,12 @@ define ([
                             "options": null
                         }
                     ]
+                },
+                "camelCaseProperty": {
+                    "id": "camelCasePropertyField",
+                    "property": "camelCaseProperty",
+                    "label": "Camel Case Property:",
+                    "dataType": "string"
                 }
             }
         };

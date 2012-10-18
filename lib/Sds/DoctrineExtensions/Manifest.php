@@ -158,4 +158,11 @@ class Manifest extends AbstractExtension {
         }
         return $cliHelpers;
     }
+
+    public function setIdentity($identity) {
+        parent::setIdentity($identity);
+        foreach ($this->extensions as $extension) {
+            $extension->setIdentity($identity);
+        }        
+    }
 }

@@ -36,4 +36,21 @@ class Extension extends AbstractExtension {
         }
         $this->filters = array('freeze' => 'Sds\DoctrineExtensions\Freeze\Filter\Freeze');
     }
+
+    public function setIdentity($identity){
+        parent::setIdentity($identity);
+        foreach ($this->subscribers as $subscriber){
+            switch (true){
+                case $subscriber instanceof StampSubscriber:
+                    $subscriber->setIdentityName($identity->getIdentityName());
+                    break;
+                case $subscriber instanceof AccessControl\FreezeSubscriber:
+                    $subscriber->setRoles($identity->getRoles());
+                    break;
+                case $subscriber instanceof AccessControl\ThawSubscriber:
+                    $subscriber->setRoles($identity->getRoles());
+                    break;
+            }
+        }
+    }
 }

@@ -30,4 +30,15 @@ class Extension extends AbstractExtension {
 
         $this->filters = array('state' => 'Sds\DoctrineExtensions\State\Filter\State');
     }
+
+    public function setIdentity($identity){
+        parent::setIdentity($identity);
+        foreach ($this->subscribers as $subscriber){
+            switch (true){
+                case $subscriber instanceof AccessControl\TransitionSubscriber:
+                    $subscriber->setRoles($identity->getRoles());
+                    break;
+            }
+        }
+    }
 }

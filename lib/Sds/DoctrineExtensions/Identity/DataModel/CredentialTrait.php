@@ -22,7 +22,8 @@ trait CredentialTrait {
      * @Sds\Serializer(@Sds\Ignore)
      * @Sds\Dojo(
      *     @Sds\Metadata({
-     *         "type" = "password"
+     *         "type" = "password",
+     *         "label" = "Password:"
      *     }),
      *     @Sds\ValidatorGroup(
      *         @Sds\Required,

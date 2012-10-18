@@ -30,7 +30,7 @@ trait IdentityNameExtensionConfigTrait {
             return $this->identityName;
         }
         if ($this->identity instanceof IdentityInterface){
-            return $this->identity->getName();
+            return $this->identity->getIdentityName();
         }
         return null;
     }

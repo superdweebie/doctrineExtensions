@@ -23,13 +23,6 @@ class Extension extends AbstractExtension {
         parent::__construct($config);
         $config = $this->getConfig();
 
-        if ($config->getIdentityName() == null){
-            $identity = $config->getIdentity();
-            if ($identity instanceof IdentityInterface){
-                $config->setIdentityName($identity->getName());
-            }
-        }
-
         $this->subscribers = array(new Subscriber(
             $config->getAnnotationReader(),
             $config->getIdentityName(),
@@ -38,5 +31,10 @@ class Extension extends AbstractExtension {
 
         $reflection = new \ReflectionClass($config->getAuditClass());
         $this->documents = array($reflection->getNamespaceName() => dirname($reflection->getFileName()));
+    }
+
+    public function setIdentity($identity){
+        parent::setIdentity($identity);
+        $this->subscribers[0]->setIdentityName($identity->getIdentityName());
     }
 }

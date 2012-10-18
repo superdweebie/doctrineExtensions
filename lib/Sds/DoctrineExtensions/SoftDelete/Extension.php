@@ -35,4 +35,21 @@ class Extension extends AbstractExtension {
 
         $this->filters = array('softDelete' => 'Sds\DoctrineExtensions\SoftDelete\Filter\SoftDelete');
     }
+
+    public function setIdentity($identity){
+        parent::setIdentity($identity);
+        foreach ($this->subscribers as $subscriber){
+            switch (true){
+                case $subscriber instanceof StampSubscriber:
+                    $subscriber->setIdentityName($identity->getIdentityName());
+                    break;
+                case $subscriber instanceof AccessControl\SoftDeleteSubscriber:
+                    $subscriber->setRoles($identity->getRoles());
+                    break;
+                case $subscriber instanceof AccessControl\RestoreSubscriber:
+                    $subscriber->setRoles($identity->getRoles());
+                    break;
+            }
+        }
+    }
 }

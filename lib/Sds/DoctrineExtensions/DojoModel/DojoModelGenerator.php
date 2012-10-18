@@ -289,6 +289,12 @@ class DojoModelGenerator
             $dojoMetadata = array_merge($dojoMetadata, $metadata->dojo['metadata']);
         }
 
+        //Camel case splitting regex
+        $regex = '/# Match position between camelCase "words".
+            (?<=[a-z])  # Position is after a lowercase,
+            (?=[A-Z])   # and before an uppercase letter.
+            /x';
+
         $fields = [];
         foreach ($metadata->fieldMappings as $name => $mapping) {
 
@@ -302,7 +308,7 @@ class DojoModelGenerator
             $attributes = [
                 'id' => $name . 'Field',
                 'property' => $name,
-                'label' => ucfirst($name) . ':',
+                'label' => ucfirst(implode(' ', preg_split($regex, $name))) . ':',
                 'dataType' => $mapping['type']
             ];
 

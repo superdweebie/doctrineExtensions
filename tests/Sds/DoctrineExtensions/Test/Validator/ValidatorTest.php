@@ -14,8 +14,6 @@ class ValidatorTest extends BaseTest {
 
         parent::setUp();
 
-        $this->configActiveUser();
-
         $manifest = $this->getManifest(array('Sds\DoctrineExtensions\Validator' => null));
 
         $this->configDoctrine(

@@ -7,6 +7,7 @@
 namespace Sds\DoctrineExtensions\Audit;
 
 use Sds\DoctrineExtensions\AbstractExtensionConfig;
+use Sds\DoctrineExtensions\IdentityNameExtensionConfigTrait;
 
 /**
  * Defines the resouces this extension requires
@@ -17,11 +18,7 @@ use Sds\DoctrineExtensions\AbstractExtensionConfig;
 class ExtensionConfig extends AbstractExtensionConfig
 {
 
-    /**
-     *
-     * @var string
-     */
-    protected $identityName;
+    use IdentityNameExtensionConfigTrait;
 
     /**
      * Defines the audit class to use
@@ -44,21 +41,5 @@ class ExtensionConfig extends AbstractExtensionConfig
      */
     public function setAuditClass($auditClass) {
         $this->auditClass = (string) $auditClass;
-    }
-
-    /**
-     *
-     * @return string
-     */
-    public function getIdentityName() {
-        return $this->identityName;
-    }
-
-    /**
-     *
-     * @param string $identityName
-     */
-    public function setIdentityName($identityName) {
-        $this->identityName = (string) $identityName;
     }
 }

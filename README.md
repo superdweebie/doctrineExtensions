@@ -50,7 +50,7 @@ changes, and when the changes were made.
 
 ##Crypt
 
-Properties annotated with @CryptHash will be hashed before persisting. A class to provide a salt for 
+Properties annotated with @CryptHash will be hashed before persisting. A class to provide a salt for
 the hash can be specified. Useful for passwords and other sensitive data.
 
 ##DoNotHardDelete
@@ -150,7 +150,7 @@ SoftDelete and Zone:
             array(
                 'Sds\DoctrineExtensions\SoftDelete' => null,
                 'Sds\DoctrineExtensions\Zone' => null
-            $this->activeUser
+            $this->identity
         );
 
         $manifest = new Manifest($manifestConfig);

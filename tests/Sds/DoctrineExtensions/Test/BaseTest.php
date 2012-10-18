@@ -34,7 +34,7 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
 
     protected function configIdentity($configRoleAwareIdentity = false){
         $identity = $configRoleAwareIdentity ? new RoleAwareIdentity() : new Identity();
-        $identity->setName('toby');
+        $identity->setIdentityName('toby');
         $this->identity = $identity;
     }
 

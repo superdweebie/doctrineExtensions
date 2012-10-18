@@ -50,8 +50,8 @@ class StampTest extends BaseTest {
         $this->assertNull($testDoc->getUpdatedBy());
         $this->assertNull($testDoc->getUpdatedOn());
 
-        $this->identity->setName('lucy');
-        $this->subscriber->setIdentityName($this->identity->getName());
+        $this->identity->setIdentityName('lucy');
+        $this->subscriber->setIdentityName($this->identity->getIdentityName());
 
         $testDoc->setName('version2');
 
