@@ -16,7 +16,7 @@ use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
 trait RoleAwareIdentityTrait {
 
     /**
-     * @ODM\Field(type="hash")
+     * @ODM\Hash
      * @Sds\Dojo(
      *     @Sds\ValidatorGroup(
      *         @Sds\Validator(class = "Sds/Validator/IdentifierArrayValidator")

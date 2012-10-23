@@ -18,7 +18,7 @@ use Sds\DoctrineExtensions\Annotation\Annotations as Sds;
 trait CredentialTrait {
 
     /**
-     * @ODM\Field(type="string")
+     * @ODM\String
      * @Sds\Serializer(@Sds\Ignore)
      * @Sds\Dojo(
      *     @Sds\Metadata({
