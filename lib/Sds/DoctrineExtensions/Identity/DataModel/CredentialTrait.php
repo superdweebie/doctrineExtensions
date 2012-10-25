@@ -27,19 +27,19 @@ trait CredentialTrait {
      *     }),
      *     @Sds\ValidatorGroup(
      *         @Sds\Required,
-     *         @Sds\Validator(class = "Sds/Common/Validator/PasswordValidator")
+     *         @Sds\Validator(class = "Sds/Common/Validator/CredentialValidator")
      *     )
      * )
      * @Sds\ValidatorGroup(
      *     @Sds\Required,
-     *     @Sds\Validator(class = "Sds\Common\Validator\PasswordValidator")
+     *     @Sds\Validator(class = "Sds\Common\Validator\CredentialValidator")
      * )
      * @Sds\CryptHash
      */
     protected $credential;
 
     /**
-     * Returns encrypted password
+     * Returns encrypted credential
      *
      * @return string
      */
