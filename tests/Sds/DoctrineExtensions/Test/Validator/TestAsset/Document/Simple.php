@@ -8,9 +8,7 @@ use Sds\DoctrineExtensions\Annotation\Annotations as Sds;
 
 /**
  * @ODM\Document
- * @Sds\ValidatorGroup({
- *     @Sds\Validator(class = "Sds\DoctrineExtensions\Test\Validator\TestAsset\ClassValidator")
- * })
+ * @Sds\Validator(class = "Sds\DoctrineExtensions\Test\Validator\TestAsset\ClassValidator")
  */
 class Simple {
 
@@ -21,10 +19,12 @@ class Simple {
 
     /**
      * @ODM\Field(type="string")
-     * @Sds\ValidatorGroup(
+     * @Sds\Validator(
      *     @Sds\Required,
-     *     @Sds\Validator(class = "Sds\DoctrineExtensions\Test\Validator\TestAsset\PropertyValidator1"),
-     *     @Sds\Validator(class = "Sds\DoctrineExtensions\Test\Validator\TestAsset\PropertyValidator2")
+     *     @Sds\Validator(
+     *         @Sds\Validator(class = "Sds\DoctrineExtensions\Test\Validator\TestAsset\PropertyValidator1"),
+     *         @Sds\Validator(class = "Sds\DoctrineExtensions\Test\Validator\TestAsset\PropertyValidator2")
+     *     )
      * )
      */
     protected $name;

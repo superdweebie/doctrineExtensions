@@ -11,7 +11,7 @@ trait IdentityTrait {
      * @ODM\String
      * @ODM\Index(unique = true, order = "asc")
      * @Sds\Readonly
-     * @Sds\ValidatorGroup(
+     * @Sds\Validator(
      *     @Sds\Required,
      *     @Sds\Validator(class = "Sds\Common\Validator\IdentifierValidator")
      * )
@@ -19,7 +19,7 @@ trait IdentityTrait {
      *     @Sds\Metadata({
      *         "label" = "Username:"
      *     }),
-     *     @Sds\ValidatorGroup(
+     *     @Sds\Validator(
      *         @Sds\Required,
      *         @Sds\Validator(class = "Sds/Common/Validator/IdentifierValidator")
      *     )

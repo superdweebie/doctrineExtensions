@@ -13,7 +13,7 @@ use Sds\DoctrineExtensions\Annotation\Annotations as Sds;
  *     @Sds\ClassName,
  *     @Sds\Discriminator
  * )
- * @Sds\ValidatorGroup(@Sds\Validator(class = "ParentValidator"))
+ * @Sds\Validator(class = "ParentValidator")
  * @Sds\Workflow("ParentWorkflow")
  */
 class ParentClass {

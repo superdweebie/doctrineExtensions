@@ -21,7 +21,7 @@ trait ZoneAwareTrait {
     /**
      * @ODM\Field(type="hash")
      * @Sds\Zones
-     * @Sds\ValidatorGroup(@Sds\Validator(class = "Sds\Common\Validator\IdentifierArrayValidator"))
+     * @Sds\Validator(class = "Sds\Common\Validator\IdentifierArrayValidator")
      */
     protected $zones = array();
 

@@ -14,6 +14,7 @@ use Sds\DoctrineExtensions\Annotation\Annotations as Sds;
 use Sds\DoctrineExtensions\Annotation\AnnotationEventArgs;
 use Sds\DoctrineExtensions\Annotation\EventType;
 use Sds\DoctrineExtensions\ClassNamePropertyTrait;
+use Sds\DoctrineExtensions\Validator\Subscriber as ValidatorSubscriber;
 
 /**
  * Adds dojoModel values to classmetadata
@@ -90,41 +91,8 @@ class Subscriber implements EventSubscriber, AnnotationReaderAwareInterface
             case ($annotation instanceOf Sds\Metadata):
                 $dojoMetadata['metadata'] = $annotation->value;
                 break;
-            case ($annotation instanceOf Sds\ValidatorGroup):
-                $dojoMetadata['validatorGroup'] = [];
-                $requiredValidatorAdded = false;
-
-                if (is_array($annotation->value)){
-                    $validators = $annotation->value;
-                } else {
-                    $validators = [$annotation->value];
-                }
-
-                foreach($validators as $validator){
-                    switch (true){
-                        case ($validator instanceof Sds\Validator):
-                            $dojoMetadata['validatorGroup'][] = [
-                                'class' => $validator->class,
-                                'options' => $validator->options
-                            ];
-                            break;
-                        case ($validator instanceof Sds\Required):
-                            if ($validator->value){
-                                $dojoMetadata['validatorGroup'][] = [
-                                    'class' => 'Sds/Common/Validator/RequiredValidator'
-                                ];
-                            } else {
-                                $dojoMetadata['validatorGroup'][] = [
-                                    'class' => 'Sds/Common/Validator/NotRequiredValidator'
-                                ];
-                            }
-                            $requiredValidatorAdded = true;
-                            break;
-                    }
-                }
-                if ( ! $requiredValidatorAdded && $context == EventType::property){
-                    array_unshift($dojoMetadata['validatorGroup'], ['class' => 'Sds/Common/Validator/NotRequiredValidator']);
-                }
+            case ($annotation instanceOf Sds\Validator):                
+                $dojoMetadata['validator'] = ValidatorSubscriber::processValidatorAnnotation($annotation, '/');
                 break;
             case ($annotation instanceOf Sds\Ignore):
                 $dojoMetadata['ignore'] = $annotation->value;

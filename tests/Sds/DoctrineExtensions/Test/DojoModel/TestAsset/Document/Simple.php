@@ -15,7 +15,7 @@ use Sds\DoctrineExtensions\Annotation\Annotations as Sds;
  *         "me/myModule1",
  *         "me/myModule2"
  *     }),
- *     @Sds\ValidatorGroup(
+ *     @Sds\Validator(
  *         @Sds\Validator(class = "Sds/Test/ClassValidator1"),
  *         @Sds\Validator(class = "Sds/Test/ClassValidator2", options = {"option1" = "a", "option2" = "b"})
  *     )
@@ -41,7 +41,7 @@ class Simple {
      *         "tooltip" = "The simple's name",
      *         "description" = "This is a longer description"
      *     }),
-     *     @Sds\ValidatorGroup(
+     *     @Sds\Validator(
      *         @Sds\Required,
      *         @Sds\Validator(class = "Sds/Test/NameValidator1"),
      *         @Sds\Validator(class = "Sds/Test/NameValidator2", options = {"option1" = "b", "option2" = "b"})
@@ -53,7 +53,8 @@ class Simple {
     /**
      * @ODM\String
      * @Sds\Dojo(
-     *     @Sds\ValidatorGroup(
+     *     @Sds\Validator(
+     *         @Sds\Required(false),
      *         @Sds\Validator(class = "Sds/Test/CountryValidator1")
      *     )
      * )

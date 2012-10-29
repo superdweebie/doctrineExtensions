@@ -18,11 +18,11 @@ trait RoleAwareIdentityTrait {
     /**
      * @ODM\Hash
      * @Sds\Dojo(
-     *     @Sds\ValidatorGroup(
+     *     @Sds\Validator(
      *         @Sds\Validator(class = "Sds/Validator/IdentifierArrayValidator")
      *     )
      * )
-     * @Sds\ValidatorGroup(
+     * @Sds\Validator(
      *     @Sds\Validator(class = "Sds\Common\Validator\IdentifierArrayValidator")
      * )
      */

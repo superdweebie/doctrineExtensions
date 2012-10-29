@@ -281,8 +281,8 @@ class DojoModelGenerator
 
         $dojoMetadata = [];
 
-        if (isset($metadata->dojo['validatorGroup'])){
-            $dojoMetadata['validatorGroup'] = $metadata->dojo['validatorGroup'];
+        if (isset($metadata->dojo['validator'])){
+            $dojoMetadata['validator'] = $metadata->dojo['validator'];
         }
 
         if (isset($metadata->dojo['metadata'])){
@@ -312,8 +312,8 @@ class DojoModelGenerator
                 'dataType' => $mapping['type']
             ];
 
-            if (isset($metadata->dojo['fields'][$name]['validatorGroup'])){
-                $attributes['validatorGroup'] = $metadata->dojo['fields'][$name]['validatorGroup'];
+            if (isset($metadata->dojo['fields'][$name]['validator'])){
+                $attributes['validator'] = $metadata->dojo['fields'][$name]['validator'];
             }
 
             if (isset($metadata->dojo['fields'][$name]['metadata'])){

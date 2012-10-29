@@ -25,12 +25,12 @@ trait CredentialTrait {
      *         "type" = "password",
      *         "label" = "Password:"
      *     }),
-     *     @Sds\ValidatorGroup(
+     *     @Sds\Validator(
      *         @Sds\Required,
      *         @Sds\Validator(class = "Sds/Common/Validator/CredentialValidator")
      *     )
      * )
-     * @Sds\ValidatorGroup(
+     * @Sds\Validator(
      *     @Sds\Required,
      *     @Sds\Validator(class = "Sds\Common\Validator\CredentialValidator")
      * )

@@ -72,7 +72,7 @@ define ([
         );
 
         model.metadata = {
-            "validatorGroup": [
+            "validator": [
                 {
                     "class": "Sds\/Test\/ClassValidator1",
                     "options": null
@@ -98,9 +98,10 @@ define ([
                     "property": "name",
                     "label": "NAME",
                     "dataType": "string",
-                    "validatorGroup": [
+                    "validator": [
                         {
-                            "class": "Sds\/Common\/Validator\/RequiredValidator"
+                            "class": "Sds\/Common\/Validator\/RequiredValidator",
+                            "options": null
                         },
                         {
                             "class": "Sds\/Test\/NameValidator1",
@@ -122,9 +123,10 @@ define ([
                     "property": "country",
                     "label": "Country:",
                     "dataType": "string",
-                    "validatorGroup": [
+                    "validator": [
                         {
-                            "class": "Sds\/Common\/Validator\/NotRequiredValidator"
+                            "class": "Sds\/Common\/Validator\/NotRequiredValidator",
+                            "options": null
                         },
                         {
                             "class": "Sds\/Test\/CountryValidator1",

@@ -41,25 +41,22 @@ class DocumentValidator implements DocumentValidatorInterface
 
         // Property level validators
         if (isset($metadata->validator['fields'])){
-            foreach ($metadata->validator['fields'] as $field => $validatorMetadata){
+            foreach ($metadata->validator['fields'] as $field => $validatorDefinition){
 
-                // Test other validators
-                if (isset($validatorMetadata['validatorGroup'])){
-                    $validator = ValidatorFactory::createGroup($validatorMetadata['validatorGroup']);
-                    $value = $document->{Accessor::getGetter($metadata, $field, $document)}();
-                    if ( ! $validator->isValid($value)){
-                        foreach ($validator->getMessages() as $message){
-                            $this->messages[] = sprintf('Field "%s": %s', $field, $message);
-                        }
-                        $isValid = false;
+                $validator = ValidatorFactory::create($validatorDefinition);
+                $value = $document->{Accessor::getGetter($metadata, $field, $document)}();
+                if ( ! $validator->isValid($value)){
+                    foreach ($validator->getMessages() as $message){
+                        $this->messages[] = sprintf('Field "%s": %s', $field, $message);
                     }
+                    $isValid = false;
                 }
             }
         }
 
         // Class level validators
-        if (isset($metadata->validator['validatorGroup'])){
-            $validator = ValidatorFactory::createGroup($metadata->validator['validatorGroup']);
+        if (isset($metadata->validator['document'])){
+            $validator = ValidatorFactory::create($metadata->validator['document']);
             if ( ! $validator->isValid($document)){
                 $this->messages = array_merge($this->messages, $validator->getMessages());
                 $isValid = false;
