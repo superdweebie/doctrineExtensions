@@ -63,7 +63,8 @@ class Subscriber implements EventSubscriber, AnnotationReaderAwareInterface
      */
     public function getSubscribedEvents(){
         $events = array(
-            Sds\Validator::event
+            Sds\Validator::event,
+            Sds\Required::event
         );
         if ($this->getValidateOnFlush()) {
             $events[] = ODMEvents::onFlush;
@@ -86,6 +87,17 @@ class Subscriber implements EventSubscriber, AnnotationReaderAwareInterface
         $this->setValidateOnFlush($validateOnFlush);
     }
 
+    /**
+     *
+     * @param \Sds\DoctrineExtensions\Annotation\AnnotationEventArgs $eventArgs
+     */
+    public function annotationRequired(AnnotationEventArgs $eventArgs)
+    {
+        $annotation = $eventArgs->getAnnotation();
+        $validatorDefinition = self::processValidatorAnnotation($annotation);
+        $eventArgs->getMetadata()->validator['fields'][$eventArgs->getReflection()->getName()] = $validatorDefinition;
+    }
+    
     /**
      *
      * @param \Sds\DoctrineExtensions\Annotation\AnnotationEventArgs $eventArgs

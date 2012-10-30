@@ -18,6 +18,7 @@ use Doctrine\Common\Annotations\Annotation;
  */
 final class Required extends Annotation
 {
-
+    const event = 'annotationRequired';
+    
     public $value = true;
 }

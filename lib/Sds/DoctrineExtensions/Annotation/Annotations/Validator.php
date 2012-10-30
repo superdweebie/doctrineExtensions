@@ -52,7 +52,7 @@ final class Validator extends Annotation {
      *
      * @var array
      */
-    public $options;
+    public $options = [];
 
     public $value = [];
 }
