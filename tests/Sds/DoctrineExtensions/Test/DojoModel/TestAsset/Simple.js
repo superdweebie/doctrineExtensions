@@ -75,7 +75,9 @@ define ([
             "validator": [
                 {
                     "class": "Sds\/Test\/ClassValidator1",
-                    "options": null
+                    "options": [
+
+                    ]
                 },
                 {
                     "class": "Sds\/Test\/ClassValidator2",
@@ -105,7 +107,9 @@ define ([
                         },
                         {
                             "class": "Sds\/Test\/NameValidator1",
-                            "options": null
+                            "options": [
+
+                            ]
                         },
                         {
                             "class": "Sds\/Test\/NameValidator2",
@@ -130,7 +134,9 @@ define ([
                         },
                         {
                             "class": "Sds\/Test\/CountryValidator1",
-                            "options": null
+                            "options": [
+
+                            ]
                         }
                     ]
                 },

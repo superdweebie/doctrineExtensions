@@ -46,7 +46,7 @@ class AnnotationInheritaceTest extends BaseTest {
         $this->assertTrue($metadata->serializer['className']);
         $this->assertEquals('className', $metadata->serializer['classNameProperty']);
         $this->assertTrue($metadata->serializer['discriminator']);
-        $this->assertEquals(array('class' => 'ParentValidator', 'options' => null), $metadata->validator['document']);
+        $this->assertEquals(array('class' => 'ParentValidator', 'options' => Array()), $metadata->validator['document']);
         $this->assertEquals('ParentWorkflow', $metadata->workflow);
         $this->assertTrue($metadata->serializer['fields']['name']['ignore']);
     }
@@ -60,7 +60,7 @@ class AnnotationInheritaceTest extends BaseTest {
         $this->assertFalse($metadata->doNotHardDelete);
         $this->assertFalse($metadata->serializer['className']);
         $this->assertFalse($metadata->serializer['discriminator']);
-        $this->assertEquals(array('class' => 'ChildBValidator', 'options' => null), $metadata->validator['document']);
+        $this->assertEquals(array('class' => 'ChildBValidator', 'options' => Array()), $metadata->validator['document']);
         $this->assertEquals('ChildBWorkflow', $metadata->workflow);
         $this->assertFalse($metadata->serializer['fields']['name']['ignore']);
     }
