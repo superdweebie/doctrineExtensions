@@ -8,26 +8,28 @@ use Sds\DoctrineExtensions\Annotation\Annotations as Sds;
 
 /**
  * @ODM\Document
- * @Sds\Dojo(
+ * @Sds\Validator(class = "Sds/Test/ClassValidator1"),
+ * @Sds\Validator(class = "Sds/Test/ClassValidator2", options = {"option1" = "a", "option2" = "b"})
+ * @Sds\DojoModel(
  *     @Sds\ClassName,
  *     @Sds\Discriminator,
  *     @Sds\InheritFrom({
  *         "me/myModule1",
  *         "me/myModule2"
  *     }),
- *     @Sds\Validator(
- *         @Sds\Validator(class = "Sds/Test/ClassValidator1"),
- *         @Sds\Validator(class = "Sds/Test/ClassValidator2", options = {"option1" = "a", "option2" = "b"})
- *     )
+ *     @Sds\Mixin({
+ *         "property1" = 1,
+ *         "property2" = 2
+ *     })
  * )
  */
 class Simple {
 
     /**
      * @ODM\Id(strategy="UUID")
-     * @Sds\Dojo(
-     *     @Sds\Metadata({
-     *         "inputType" = "hidden"
+     * @Sds\DojoInput(
+     *     @Sds\Mixin({
+     *         "type" = "hidden"
      *     })
      * )
      */
@@ -35,29 +37,23 @@ class Simple {
 
     /**
      * @ODM\String
-     * @Sds\Dojo(
-     *     @Sds\Metadata({
+     * @Sds\RequiredValidator,
+     * @Sds\Validator(class = "Sds/Test/NameValidator1"),
+     * @Sds\Validator(class = "Sds/Test/NameValidator2", options = {"option1" = "b", "option2" = "b"})
+     * @Sds\DojoInput(
+     *     @Sds\Mixin({
      *         "label" = "NAME",
      *         "tooltip" = "The simple's name",
      *         "description" = "This is a longer description"
-     *     }),
-     *     @Sds\Validator(
-     *         @Sds\Required,
-     *         @Sds\Validator(class = "Sds/Test/NameValidator1"),
-     *         @Sds\Validator(class = "Sds/Test/NameValidator2", options = {"option1" = "b", "option2" = "b"})
-     *     )
+     *     })     
      * )
      */
     protected $name;
 
     /**
      * @ODM\String
-     * @Sds\Dojo(
-     *     @Sds\Validator(
-     *         @Sds\Required(false),
-     *         @Sds\Validator(class = "Sds/Test/CountryValidator1")
-     *     )
-     * )
+     * @Sds\NotRequiredValidator,
+     * @Sds\Validator(class = "Sds/Test/CountryValidator1")
      */
     protected $country;
 
@@ -68,7 +64,8 @@ class Simple {
 
     /**
      * @ODM\String
-     * @Sds\Dojo(@Sds\Ignore)
+     * @Sds\DojoModel(@Sds\Ignore)
+     * @Sds\DojoInput(@Sds\Ignore)     
      */
     protected $ignoreProperty;
 

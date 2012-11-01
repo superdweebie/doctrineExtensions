@@ -17,18 +17,18 @@ use Doctrine\Common\Annotations\Annotation;
  * It behaviour is defined by the annotations it contains.
  *
  * The following annotations are permissiable in a class or property context
- *     ValidatorGroup
- *     Metadata
+ *     Ignore
  *
  * The following annotaions are permissable only in a class context
  *     InheritFrom
  *     ClassName
  *     Discriminator
+ *     Mixin
  *
  * @Annotation
  * @Target({"CLASS", "PROPERTY"})
  */
-final class Dojo extends Annotation {
+final class DojoModel extends Annotation {
 
-    const event = 'annotationDojo';
+    const event = 'annotationDojoModel';
 }

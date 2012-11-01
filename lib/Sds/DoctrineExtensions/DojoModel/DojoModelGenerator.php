@@ -91,6 +91,15 @@ class DojoModelGenerator
         if ($isNew) {
             file_put_contents($path, $this->generateDojoModel($metadata));
         }
+        
+        $dir .= '/Form';
+        if ( ! is_dir($dir)) {
+            mkdir($dir, 0777, true);
+        }
+        $path = $dir . '/' . $metadata->name . $this->extension;
+        if ($isNew) {
+            file_put_contents($path, $this->generateDojoForm($metadata));
+        }                
     }
 
     /**
@@ -111,12 +120,34 @@ class DojoModelGenerator
             'className' => $this->populateClassNameTemplate($metadata),
             'discriminator' => $this->populateDiscriminatorTemplate($metadata),
             'properties' => $this->populatePropertiesTemplate($metadata),
-            'jsonFields' => $this->populateJsonFieldsTemplate($metadata),
-            'metadata' => $this->populateMetadata($metadata)
+            'jsonFields' => $this->populateJsonFieldsTemplate($metadata)
         ));
         return $module;
     }
 
+    /**
+     * Generate a js dojo module from the given ClassMetadataInfo instance
+     *
+     * @param ClassMetadataInfo $metadata
+     * @return string $code
+     */
+    public function generateDojoForm(ClassMetadata $metadata) {
+
+        $module = $this->populateFormTemplate(array(
+            'define' => $this->populateDefine($metadata),
+            'imports' => $this->populateImports($metadata),
+            'moduleName' => str_replace('\\', '/', $metadata->name),
+            'moduleDeclare' => str_replace('\\', '/', $metadata->name),
+            'inheritFrom' => $this->populateInheritFrom($metadata),
+            'documentClass' => $metadata->name,
+            'className' => $this->populateClassNameTemplate($metadata),
+            'discriminator' => $this->populateDiscriminatorTemplate($metadata),
+            'properties' => $this->populatePropertiesTemplate($metadata),
+            'jsonFields' => $this->populateJsonFieldsTemplate($metadata)
+        ));
+        return $module;
+    }
+    
     protected function populateDefine(ClassMetadata $metadata){
 
         $return = '';

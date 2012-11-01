@@ -9,14 +9,16 @@ namespace Sds\DoctrineExtensions\Annotation\Annotations;
 use Doctrine\Common\Annotations\Annotation;
 
 /**
- * Must be used in the context of a Dojo annotation. The value
- * of this annotaiton will be added to the generated metadata.
  *
  * @since   1.0
  * @author  Tim Roediger <superdweebie@gmail.com>
  *
  * @Annotation
+ * @Target({"PROPERTY"})
  */
-final class Metadata extends Annotation
+final class IdentifierArrayValidator extends Annotation
 {
+    const event = 'annotationIdentifierArrayValidator';
+    
+    public $value = true;
 }
