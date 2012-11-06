@@ -237,6 +237,15 @@ class Subscriber implements EventSubscriber, AnnotationReaderAwareInterface
 
     protected function addFieldValidator($eventArgs, $definition){
         if ($eventArgs->getAnnotation()->value){
+            
+            if (isset($eventArgs->getMetadata()->validator['fields'][$eventArgs->getReflection()->getName()])){
+                foreach ($eventArgs->getMetadata()->validator['fields'][$eventArgs->getReflection()->getName()] as $index => $setDefinition){
+                    if ($setDefinition['class'] == $definition['class']){
+                        $eventArgs->getMetadata()->validator['fields'][$eventArgs->getReflection()->getName()][$index] = $definition;
+                        return;
+                    }
+                }   
+            }
             $eventArgs->getMetadata()->validator['fields'][$eventArgs->getReflection()->getName()][] = $definition;
         } else {
             foreach ($eventArgs->getMetadata()->validator['fields'][$eventArgs->getReflection()->getName()] as $index => $setDefinition){
@@ -248,8 +257,16 @@ class Subscriber implements EventSubscriber, AnnotationReaderAwareInterface
     }
 
     protected function addDocumentValidator($eventArgs, $definition){
-        if ($eventArgs->getAnnotation()->value){
-            $eventArgs->getMetadata()->validator['document'][] = $definition;
+        if ($eventArgs->getAnnotation()->value){            
+            if (isset($eventArgs->getMetadata()->validator['document'])){
+                foreach ($eventArgs->getMetadata()->validator['document'] as $index => $setDefinition){
+                    if ($setDefinition['class'] == $definition['class']){
+                        $eventArgs->getMetadata()->validator['document'][$index] = $definition;
+                        return;
+                    }
+                }   
+            }
+            $eventArgs->getMetadata()->validator['document'][] = $definition;            
         } else {
             foreach ($eventArgs->getMetadata()->validator['document'] as $index => $setDefinition){
                 if ($setDefinition['class'] == $definition['class']){

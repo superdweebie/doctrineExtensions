@@ -105,6 +105,13 @@ class DojoGenerator
 
         $templateValues = [];
 
+        list(
+            $hasMultiFieldValidator,
+            $muliFieldValidator,
+            $hasFieldValidator,
+            $fieldValidators
+        ) = $this->configValidators($metadata);
+        
         $serializeList = Serializer::fieldListUp($metadata);
         $className = '';
         if (isset($metadata->serializer['className'])){
@@ -115,6 +122,10 @@ class DojoGenerator
                 str_replace('\\', '\\\\', $metadata->name) .
                 "'";
         }
+        $validator = '';
+        if ($hasMultiFieldValidator || $hasFieldValidator){
+            $validator = ",\n                    _validator: '" . $baseId . "/Validator'";
+        }
         $templateValues['model'] = $this->populateTemplate(
             file_get_contents(__DIR__ . '/Template/model.js.template'),
             [
@@ -124,28 +135,21 @@ class DojoGenerator
                     "\n                    ",
                     json_encode($serializeList, JSON_PRETTY_PRINT)
                 ),
-                'className' => $className
+                'className' => $className,
+                'validator' => $validator
             ]
         );
-
-        list(
-            $hasMultiFieldValidator,
-            $muliFieldValidator,
-            $hasFieldValidator,
-            $fieldValidators
-        ) = $this->configValidators($metadata);
-
 
         $templateValues['modelValidator'] = '';
         if ($hasMultiFieldValidator || $hasFieldValidator){
 
             $validators = [];
-            $hasMultiFieldValidator ? $validators[] = $baseId . '/multiFieldValidator' : null;
+            $hasMultiFieldValidator ? $validators[] = $baseId . '/MultiFieldValidator' : null;
             $validators = array_merge(
                 $validators,
                 array_map(
                     function($value) use($baseId) {
-                        return $baseId . '/' . ucfirst($value) . '/validator';
+                        return $baseId . '/' . ucfirst($value) . '/Validator';
                     },
                     array_keys($fieldValidators)
                 )
@@ -154,7 +158,7 @@ class DojoGenerator
             $templateValues['modelValidator'] = $this->populateTemplate(
                 file_get_contents(__DIR__ . '/Template/modelValidator.js.template'),
                 [
-                    'id' => $baseId . '/validator',
+                    'id' => $baseId . '/Validator',
                     'validators' => str_replace(
                         "\n",
                         "\n                    ",
@@ -169,7 +173,7 @@ class DojoGenerator
             $templateValues['multiFieldValidator'] = $this->populateTemplate(
                 file_get_contents(__DIR__ . '/Template/multifieldValidator.js.template'),
                 [
-                    'id' => $baseId . '/multiFieldValidator',
+                    'id' => $baseId . '/MultiFieldValidator',
                     'config' => str_replace(
                         "\n",
                         "\n            ",
@@ -187,7 +191,7 @@ class DojoGenerator
                     file_get_contents(__DIR__ . '/Template/fieldValidator.js.template'),
                     [
                         'field' => $field,
-                        'id' => $baseId . '/' . ucfirst($field) . '/validator',
+                        'id' => $baseId . '/' . ucfirst($field) . '/Validator',
                         'config' => str_replace(
                             "\n",
                             "\n            ",
@@ -207,7 +211,7 @@ class DojoGenerator
             $formConfig['directives'] = ['define' => true, 'declare' => true];
             $formConfig['gets'] = [];
             if ($hasMultiFieldValidator){
-                $formConfig['gets']['validator'] = $baseId . '/multiFieldValidator';
+                $formConfig['gets']['validator'] = $baseId . '/MultiFieldValidator';
             }
             $formConfig['gets']['inputs'] = [];
             foreach(Serializer::fieldListUp($metadata) as $field){

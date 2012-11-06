@@ -7,6 +7,6 @@
                     declare: true
                 },
                 params: {
-                    _fields: <fields><className>
+                    _fields: <fields><className><validator>
                 }
             }
