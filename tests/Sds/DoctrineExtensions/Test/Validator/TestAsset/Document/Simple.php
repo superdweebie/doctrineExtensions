@@ -19,12 +19,9 @@ class Simple {
 
     /**
      * @ODM\Field(type="string")
-     * @Sds\Validator(
-     *     @Sds\Required,
-     *     @Sds\Validator(
-     *         @Sds\Validator(class = "Sds\DoctrineExtensions\Test\Validator\TestAsset\PropertyValidator1"),
-     *         @Sds\Validator(class = "Sds\DoctrineExtensions\Test\Validator\TestAsset\PropertyValidator2")
-     *     )
+     * @Sds\RequiredValidator,
+     * @Sds\Validator(class = "Sds\DoctrineExtensions\Test\Validator\TestAsset\PropertyValidator1")
+     * @Sds\Validator(class = "Sds\DoctrineExtensions\Test\Validator\TestAsset\PropertyValidator2")
      * )
      */
     protected $name;

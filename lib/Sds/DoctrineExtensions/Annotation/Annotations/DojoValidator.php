@@ -12,14 +12,16 @@ use Doctrine\Common\Annotations\Annotation;
  * @since   1.0
  * @author  Tim Roediger <superdweebie@gmail.com>
  *
- * The main annotaion for defineing the behaviour of Dojo Form generation.
+ * The main annotaion for defineing the behaviour of Dojo Validator generation.
+ * It may be used as a class or property annotation.
+ * It behaviour is defined by the annotations it contains.
  *
  * @Annotation
- * @Target({"CLASS"})
+ * @Target({"CLASS", "PROPERTY"})
  */
-final class DojoForm extends Annotation {
+final class DojoValidator extends Annotation {
 
-    const event = 'annotationDojoForm';
+    const event = 'annotationDojoValidator';
 
     public $base;
 

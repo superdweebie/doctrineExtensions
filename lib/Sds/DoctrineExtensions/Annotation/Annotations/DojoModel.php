@@ -16,19 +16,18 @@ use Doctrine\Common\Annotations\Annotation;
  * It may be used as a class or property annotation.
  * It behaviour is defined by the annotations it contains.
  *
- * The following annotations are permissiable in a class or property context
- *     Ignore
- *
- * The following annotaions are permissable only in a class context
- *     InheritFrom
- *     ClassName
- *     Discriminator
- *     Mixin
- *
  * @Annotation
- * @Target({"CLASS", "PROPERTY"})
+ * @Target({"CLASS"})
  */
 final class DojoModel extends Annotation {
 
     const event = 'annotationDojoModel';
+
+    public $base;
+
+    public $params;
+
+    public $gets;
+
+    public $proxies;
 }

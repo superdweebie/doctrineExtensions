@@ -11,9 +11,6 @@ use Doctrine\Common\Annotations\Annotation;
 /**
  * May be used in two contexts:
  *
- *     Dojo class annotation
- *         If true, will add the class name to the generated Dojo Model
- *
  *     Serializer class annotation
  *         If true, the serializer will add the class name field to serialization
  *

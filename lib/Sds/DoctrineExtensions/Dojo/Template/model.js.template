@@ -1,0 +1,12 @@
+
+            // Will return an object representing the document
+            // which can be serialized to json.
+            '<id>': {
+                base: 'Sds/Mvc/BaseModel',
+                directives: {
+                    declare: true
+                },
+                params: {
+                    _fields: <fields><className>
+                }
+            }

@@ -16,14 +16,18 @@ use Doctrine\Common\Annotations\Annotation;
  * It may be used as a class or property annotation.
  * It behaviour is defined by the annotations it contains.
  *
- * The following annotations are permissiable in a property context
- *     Ignore
- *     Mixin
- *
  * @Annotation
  * @Target({"PROPERTY"})
  */
 final class DojoInput extends Annotation {
 
     const event = 'annotationDojoInput';
+
+    public $base;
+
+    public $params;
+
+    public $gets;
+
+    public $proxies;
 }

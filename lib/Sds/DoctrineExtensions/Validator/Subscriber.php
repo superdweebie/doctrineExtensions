@@ -73,7 +73,7 @@ class Subscriber implements EventSubscriber, AnnotationReaderAwareInterface
             Sds\LengthValidator::event,
             Sds\NotRequiredValidator::event,
             Sds\PersonalNameValidator::event,
-            Sds\RequiredValidator::event,            
+            Sds\RequiredValidator::event,
             Sds\Validator::event,
         );
         if ($this->getValidateOnFlush()) {
@@ -103,54 +103,54 @@ class Subscriber implements EventSubscriber, AnnotationReaderAwareInterface
      */
     public function annotationAlphaValidator(AnnotationEventArgs $eventArgs)
     {
-        $this->addFieldValidator($eventArgs, ['class' => 'Sds/Common/Validator/AlphaValidator']);
-    }    
-    
+        $this->addFieldValidator($eventArgs, ['class' => 'Sds\Common\Validator\AlphaValidator']);
+    }
+
     /**
      *
      * @param \Sds\DoctrineExtensions\Annotation\AnnotationEventArgs $eventArgs
      */
     public function annotationCredentialValidator(AnnotationEventArgs $eventArgs)
     {
-        $this->addFieldValidator($eventArgs, ['class' => 'Sds/Common/Validator/CredentialValidator']);
-    }    
-    
+        $this->addFieldValidator($eventArgs, ['class' => 'Sds\Common\Validator\CredentialValidator']);
+    }
+
     /**
      *
      * @param \Sds\DoctrineExtensions\Annotation\AnnotationEventArgs $eventArgs
      */
     public function annotationCurrencyValidator(AnnotationEventArgs $eventArgs)
     {
-        $this->addFieldValidator($eventArgs, ['class' => 'Sds/Common/Validator/CurrencyValidator']);
-    }    
-    
+        $this->addFieldValidator($eventArgs, ['class' => 'Sds\Common\Validator\CurrencyValidator']);
+    }
+
     /**
      *
      * @param \Sds\DoctrineExtensions\Annotation\AnnotationEventArgs $eventArgs
      */
     public function annotationEmailAddressValidator(AnnotationEventArgs $eventArgs)
     {
-        $this->addFieldValidator($eventArgs, ['class' => 'Sds/Common/Validator/EmailAddressValidator']);
-    }   
-    
+        $this->addFieldValidator($eventArgs, ['class' => 'Sds\Common\Validator\EmailAddressValidator']);
+    }
+
     /**
      *
      * @param \Sds\DoctrineExtensions\Annotation\AnnotationEventArgs $eventArgs
      */
     public function annotationIdentifierArrayValidator(AnnotationEventArgs $eventArgs)
     {
-        $this->addFieldValidator($eventArgs, ['class' => 'Sds/Common/Validator/IdentifierArrayValidator']);
-    }   
-    
+        $this->addFieldValidator($eventArgs, ['class' => 'Sds\Common\Validator\IdentifierArrayValidator']);
+    }
+
     /**
      *
      * @param \Sds\DoctrineExtensions\Annotation\AnnotationEventArgs $eventArgs
      */
     public function annotationIdentifierValidator(AnnotationEventArgs $eventArgs)
     {
-        $this->addFieldValidator($eventArgs, ['class' => 'Sds/Common/Validator/IdentifierValidator']);
-    }   
-    
+        $this->addFieldValidator($eventArgs, ['class' => 'Sds\Common\Validator\IdentifierValidator']);
+    }
+
     /**
      *
      * @param \Sds\DoctrineExtensions\Annotation\AnnotationEventArgs $eventArgs
@@ -159,14 +159,14 @@ class Subscriber implements EventSubscriber, AnnotationReaderAwareInterface
     {
         $annotation = $eventArgs->getAnnotation();
         $this->addFieldValidator($eventArgs, [
-            'class' => 'Sds/Common/Validator/InequalityValidator',
+            'class' => 'Sds\Common\Validator\InequalityValidator',
             'options' => [
                 'compareValue' => $annotation->compareValue,
                 'operator' => $annotation->operator
             ]
         ]);
-    }   
-    
+    }
+
     /**
      *
      * @param \Sds\DoctrineExtensions\Annotation\AnnotationEventArgs $eventArgs
@@ -175,39 +175,39 @@ class Subscriber implements EventSubscriber, AnnotationReaderAwareInterface
     {
         $annotation = $eventArgs->getAnnotation();
         $this->addFieldValidator($eventArgs, [
-            'class' => 'Sds/Common/Validator/LengthValidator',
+            'class' => 'Sds\Common\Validator\LengthValidator',
             'options' => [
                 'min' => $annotation->min,
                 'max' => $annotation->max
             ]
         ]);
-    }  
-    
+    }
+
     /**
      *
      * @param \Sds\DoctrineExtensions\Annotation\AnnotationEventArgs $eventArgs
      */
     public function annotationNotRequiredValidator(AnnotationEventArgs $eventArgs)
     {
-        $this->addFieldValidator($eventArgs, ['class' => 'Sds/Common/Validator/NotRequiredValidator']);
+        $this->addFieldValidator($eventArgs, ['class' => 'Sds\Common\Validator\NotRequiredValidator']);
     }
-    
+
     /**
      *
      * @param \Sds\DoctrineExtensions\Annotation\AnnotationEventArgs $eventArgs
      */
     public function annotationPersonalNameValidator(AnnotationEventArgs $eventArgs)
     {
-        $this->addFieldValidator($eventArgs, ['class' => 'Sds/Common/Validator/PersonalNameValidator']);
+        $this->addFieldValidator($eventArgs, ['class' => 'Sds\Common\Validator\PersonalNameValidator']);
     }
-    
+
     /**
      *
      * @param \Sds\DoctrineExtensions\Annotation\AnnotationEventArgs $eventArgs
      */
     public function annotationRequiredValidator(AnnotationEventArgs $eventArgs)
     {
-        $this->addFieldValidator($eventArgs, ['class' => 'Sds/Common/Validator/RequiredValidator']);
+        $this->addFieldValidator($eventArgs, ['class' => 'Sds\Common\Validator\RequiredValidator']);
     }
 
     /**
@@ -217,48 +217,48 @@ class Subscriber implements EventSubscriber, AnnotationReaderAwareInterface
     public function annotationValidator(AnnotationEventArgs $eventArgs)
     {
         $annotation = $eventArgs->getAnnotation();
-        
+
         switch ($eventArgs->getEventType()){
             case EventType::document:
                 $this->addDocumentValidator($eventArgs, [
                     'class' => $annotation->class,
-                    'options' => $annotation->options            
-                ]);                
-                break;                
+                    'options' => $annotation->options
+                ]);
+                break;
                 break;
             case EventType::property:
                 $this->addFieldValidator($eventArgs, [
                     'class' => $annotation->class,
-                    'options' => $annotation->options            
-                ]);                
+                    'options' => $annotation->options
+                ]);
                 break;
         }
-    }      
-    
+    }
+
     protected function addFieldValidator($eventArgs, $definition){
         if ($eventArgs->getAnnotation()->value){
             $eventArgs->getMetadata()->validator['fields'][$eventArgs->getReflection()->getName()][] = $definition;
         } else {
             foreach ($eventArgs->getMetadata()->validator['fields'][$eventArgs->getReflection()->getName()] as $index => $setDefinition){
                 if ($setDefinition['class'] == $definition['class']){
-                    unset($eventArgs->getMetadata()->validator['fields'][$eventArgs->getReflection()->getName()][$index]);                    
+                    array_splice($eventArgs->getMetadata()->validator['fields'][$eventArgs->getReflection()->getName()], $index, 1);
                 }
             }
-        }      
+        }
     }
-    
+
     protected function addDocumentValidator($eventArgs, $definition){
         if ($eventArgs->getAnnotation()->value){
             $eventArgs->getMetadata()->validator['document'][] = $definition;
         } else {
             foreach ($eventArgs->getMetadata()->validator['document'] as $index => $setDefinition){
                 if ($setDefinition['class'] == $definition['class']){
-                    unset($eventArgs->getMetadata()->validator['document'][$index]);                    
+                    array_splice($eventArgs->getMetadata()->validator['document'], $index, 1);
                 }
             }
-        }      
+        }
     }
-  
+
     /**
      *
      * @param \Doctrine\ODM\MongoDB\Event\OnFlushEventArgs $eventArgs

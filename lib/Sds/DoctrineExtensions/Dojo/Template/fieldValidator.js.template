@@ -1,0 +1,5 @@
+,
+
+            // Will return a validator that can be used to check
+            // the <field> field
+            '<id>': <config>
