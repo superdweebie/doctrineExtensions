@@ -47,7 +47,7 @@ class DocumentValidator implements DocumentValidatorInterface
                 $value = $document->{Accessor::getGetter($metadata, $field, $document)}();
                 if ( ! $validator->isValid($value)){
                     foreach ($validator->getMessages() as $message){
-                        $this->messages[] = sprintf('Field "%s": %s', $field, $message);
+                        $this->messages[] = sprintf('Field %s: %s', $field, $message);
                     }
                     $isValid = false;
                 }

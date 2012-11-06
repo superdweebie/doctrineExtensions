@@ -19,21 +19,16 @@ trait CredentialTrait {
 
     /**
      * @ODM\String
-     * @Sds\Serializer(@Sds\Ignore)
-     * @Sds\Dojo(
-     *     @Sds\Metadata({
+     * @Sds\Serializer(@Sds\Ignore("down"))
+     * @Sds\DojoInput(
+     *     params = {
      *         "type" = "password",
      *         "label" = "Password:"
-     *     }),
-     *     @Sds\Validator(
-     *         @Sds\Required,
-     *         @Sds\Validator(class = "Sds/Common/Validator/CredentialValidator")
-     *     )
+     *     }
      * )
-     * @Sds\Validator(
-     *     @Sds\Required,
-     *     @Sds\Validator(class = "Sds\Common\Validator\CredentialValidator")
-     * )
+     * @Sds\RequiredValidator
+     * @Sds\CredentialValidator
+     *
      * @Sds\CryptHash
      */
     protected $credential;

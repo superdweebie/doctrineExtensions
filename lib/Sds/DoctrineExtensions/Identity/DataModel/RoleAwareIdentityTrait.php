@@ -17,14 +17,7 @@ trait RoleAwareIdentityTrait {
 
     /**
      * @ODM\Hash
-     * @Sds\Dojo(
-     *     @Sds\Validator(
-     *         @Sds\Validator(class = "Sds/Validator/IdentifierArrayValidator")
-     *     )
-     * )
-     * @Sds\Validator(
-     *     @Sds\Validator(class = "Sds\Common\Validator\IdentifierArrayValidator")
-     * )
+     * @Sds\IdentifierArrayValidator
      */
     protected $roles = [];
 

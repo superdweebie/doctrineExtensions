@@ -84,7 +84,7 @@ class Subscriber implements EventSubscriber, AnnotationReaderAwareInterface
                 $serializerMetadata['discriminator'] = (boolean) $annotation->value;
                 break;
             case ($annotation instanceOf Sds\Ignore):
-                $serializerMetadata['ignore'] = (boolean) $annotation->value;
+                $serializerMetadata['ignore'] = $annotation->value;
                 break;
         }
 

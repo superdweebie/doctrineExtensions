@@ -11,18 +11,13 @@ trait IdentityTrait {
      * @ODM\String
      * @ODM\Index(unique = true, order = "asc")
      * @Sds\Readonly
-     * @Sds\Validator(
-     *     @Sds\Required,
-     *     @Sds\Validator(class = "Sds\Common\Validator\IdentifierValidator")
-     * )
-     * @Sds\Dojo(
-     *     @Sds\Metadata({
+     * @Sds\RequiredValidator
+     * @Sds\IdentifierValidator
+     *
+     * @Sds\DojoInput(
+     *     params = {
      *         "label" = "Username:"
-     *     }),
-     *     @Sds\Validator(
-     *         @Sds\Required,
-     *         @Sds\Validator(class = "Sds/Common/Validator/IdentifierValidator")
-     *     )
+     *     }
      * )
      */
     protected $identityName;

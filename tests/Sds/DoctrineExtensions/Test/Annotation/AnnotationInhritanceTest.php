@@ -16,10 +16,10 @@ class AnnotationInheritaceTest extends BaseTest {
 
         $manifest = $this->getManifest(array(
             'Sds\DoctrineExtensions\DoNotHardDelete' => null,
-            'Sds\DoctrineExtensions\DojoModel' => array(
+            'Sds\DoctrineExtensions\Dojo' => array(
                 'destPaths' => array(
                     'filter' => '',
-                    'path' => __DIR__ . '/../../../../DojoModels'
+                    'path' => __DIR__ . '/../../../../Dojo'
             )),
             'Sds\DoctrineExtensions\Serializer' => null,
             'Sds\DoctrineExtensions\Validator' => null,
@@ -46,9 +46,9 @@ class AnnotationInheritaceTest extends BaseTest {
         $this->assertTrue($metadata->serializer['className']);
         $this->assertEquals('className', $metadata->serializer['classNameProperty']);
         $this->assertTrue($metadata->serializer['discriminator']);
-        $this->assertEquals(array('class' => 'ParentValidator', 'options' => Array()), $metadata->validator['document']);
+        $this->assertEquals([['class' => 'ParentValidator', 'options' => []]], $metadata->validator['document']);
         $this->assertEquals('ParentWorkflow', $metadata->workflow);
-        $this->assertTrue($metadata->serializer['fields']['name']['ignore']);
+        $this->assertEquals('up_and_down', $metadata->serializer['fields']['name']['ignore']);
     }
 
     public function testAnnotationInheritanceOverride(){
@@ -60,8 +60,8 @@ class AnnotationInheritaceTest extends BaseTest {
         $this->assertFalse($metadata->doNotHardDelete);
         $this->assertFalse($metadata->serializer['className']);
         $this->assertFalse($metadata->serializer['discriminator']);
-        $this->assertEquals(array('class' => 'ChildBValidator', 'options' => Array()), $metadata->validator['document']);
+        $this->assertEquals([['class' => 'ChildBValidator', 'options' => []]], $metadata->validator['document']);
         $this->assertEquals('ChildBWorkflow', $metadata->workflow);
-        $this->assertFalse($metadata->serializer['fields']['name']['ignore']);
+        $this->assertEquals('none', $metadata->serializer['fields']['name']['ignore']);
     }
 }
