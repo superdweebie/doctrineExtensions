@@ -13,13 +13,14 @@ use Sds\DoctrineExtensions\Annotation\Annotations as Sds;
  *     @Sds\ClassName(false),
  *     @Sds\Discriminator(false)
  * )
+ * @Sds\Validator(class = "ParentValidator", value = false)
  * @Sds\Validator(class ="ChildBValidator")
  * @Sds\Workflow("ChildBWorkflow")
  */
 class ChildB extends ParentClass {
 
     /**
-     * @Sds\Serializer(@Sds\Ignore(false))
+     * @Sds\Serializer(@Sds\Ignore("none"))
      */
     protected $name;
 }

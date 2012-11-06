@@ -9,7 +9,6 @@ namespace Sds\DoctrineExtensions\Serializer;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\ODM\MongoDB\Mapping\ClassMetadata;
 use Sds\DoctrineExtensions\Accessor\Accessor;
-use Sds\DoctrineExtensions\Annotation\Annotations as Sds;
 use Sds\DoctrineExtensions\Exception;
 
 /**
@@ -19,6 +18,11 @@ use Sds\DoctrineExtensions\Exception;
  * @author  Tim Roediger <superdweebie@gmail.com>
  */
 class Serializer {
+
+    const IGNORE_UP = 'up';
+    const IGNORE_DOWN = 'down';
+    const IGNORE_UP_AND_DOWN = 'up_and_down';
+    const IGNORE_NONE = 'none';
 
     /**
      *
@@ -57,13 +61,16 @@ class Serializer {
         foreach ($classMetadata->fieldMappings as $field=>$mapping){
 
             if (isset($classMetadata->serializer['fields'][$field]['ignore']) &&
-                $classMetadata->serializer['fields'][$field]['ignore']
+                (
+                    $classMetadata->serializer['fields'][$field]['ignore'] == self::IGNORE_DOWN ||
+                    $classMetadata->serializer['fields'][$field]['ignore'] == self::IGNORE_UP_AND_DOWN
+                )
             ){
                 if (isset($return[$field])){
                     unset($return[$field]);
                 }
                 continue;
-            }            
+            }
 
             if(isset($mapping['embedded'])){
                 switch ($mapping['type']){
@@ -90,10 +97,6 @@ class Serializer {
         return $return;
     }
 
-    public static function removeSerializeMetadataFromArray(array $array, $className, DocumentManager $documentManager){
-
-    }
-
     protected static function serializeClassNameAndDiscriminator(ClassMetadata $classMetadata) {
 
         $return = array();
@@ -114,6 +117,46 @@ class Serializer {
         return $return;
     }
 
+    public static function fieldListUp(ClassMetadata $classMetadata){
+
+        $return = [];
+
+        foreach ($classMetadata->fieldMappings as $field=>$mapping){
+            if (isset($classMetadata->serializer['fields'][$field]['ignore']) &&
+                (
+                    $classMetadata->serializer['fields'][$field]['ignore'] == self::IGNORE_UP ||
+                    $classMetadata->serializer['fields'][$field]['ignore'] == self::IGNORE_UP_AND_DOWN
+                )
+            ){
+               continue;
+            }
+
+            $return[] = $field;
+        }
+
+        return $return;
+    }
+
+    public static function fieldListDown(ClassMetadata $classMetadata){
+
+        $return = [];
+
+        foreach ($classMetadata->fieldMappings as $field=>$mapping){
+            if (isset($classMetadata->serializer['fields'][$field]['ignore']) &&
+                (
+                    $classMetadata->serializer['fields'][$field]['ignore'] == self::IGNORE_DOWN ||
+                    $classMetadata->serializer['fields'][$field]['ignore'] == self::IGNORE_UP_AND_DOWN
+                )
+            ){
+               continue;
+            }
+
+            $return[] = $field;
+        }
+
+        return $return;
+    }
+
     /**
      *
      * @param object | array $document
@@ -129,7 +172,10 @@ class Serializer {
         foreach ($classMetadata->fieldMappings as $field=>$mapping){
 
             if (isset($classMetadata->serializer['fields'][$field]['ignore']) &&
-                $classMetadata->serializer['fields'][$field]['ignore']
+                (
+                    $classMetadata->serializer['fields'][$field]['ignore'] == self::IGNORE_DOWN ||
+                    $classMetadata->serializer['fields'][$field]['ignore'] == self::IGNORE_UP_AND_DOWN
+                )
             ){
                continue;
             }

@@ -57,9 +57,9 @@ the hash can be specified. Useful for passwords and other sensitive data.
 
 Documents annotated with @DoNotHardDelete cannot be deleted from the database.
 
-##DojoModel
+##Dojo
 
-This extension provides an extra command for the Doctrine cli which generates an AMD compatible Dojo module for
+This extension provides an extra command for the Doctrine cli which generates an AMD compatible Dojo config for
 each Document. The Dojo module is like a javascript class definition of your document. It can be used to easily
 create a client side instance of your document which can be passed back to the server as json - such as through a Dojo rest store.
 

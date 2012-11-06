@@ -7,19 +7,16 @@
 namespace Sds\DoctrineExtensions\Annotation\Annotations;
 
 use Doctrine\Common\Annotations\Annotation;
-use Sds\DoctrineExtensions\Serializer\Serializer as Constants;
 
 /**
- * Mark a field to be skipped during serialization. Must be used in the context
- * of the Serializer annotation
+ * Must be used in the context of a Dojo annotation. The value
+ * of this annotaiton will mixed into to the generated module.
  *
  * @since   1.0
  * @author  Tim Roediger <superdweebie@gmail.com>
  *
  * @Annotation
  */
-final class Ignore extends Annotation
+final class Mixin extends Annotation
 {
-
-    public $value = Constants::IGNORE_UP_AND_DOWN;
 }

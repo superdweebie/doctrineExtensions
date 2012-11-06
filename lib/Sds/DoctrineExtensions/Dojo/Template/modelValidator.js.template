@@ -1,0 +1,10 @@
+,
+
+            // Will return an validator that can be used to validate
+            // a complete instance of the document/model
+            '<id>': {
+                base: 'modelValidator',
+                gets: {
+                    validators: <validators>
+                }
+            }

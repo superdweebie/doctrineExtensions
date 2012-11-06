@@ -7,20 +7,23 @@
 namespace Sds\DoctrineExtensions\Annotation\Annotations;
 
 use Doctrine\Common\Annotations\Annotation;
+use Sds\Common\Validator\InequalityValidator as ValidatorConst;
 
 /**
- * May be used in two contexts:
- *
- *     Serializer class annotation
- *         If true, the serializer will add the class name field to serialization
  *
  * @since   1.0
  * @author  Tim Roediger <superdweebie@gmail.com>
  *
  * @Annotation
+ * @Target({"PROPERTY"})
  */
-final class ClassName extends Annotation
+final class InequalityValidator extends Annotation
 {
-
+    const event = 'annotationInequalityValidator';
+    
     public $value = true;
+    
+    public $compareValue = 0;
+    
+    public $operator = ValidatorConst::GREATER_THAN;    
 }
