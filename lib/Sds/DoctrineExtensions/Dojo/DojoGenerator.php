@@ -312,7 +312,7 @@ class DojoGenerator
         if (isset($metadata->validator['document'])){
             $hasMultiFieldValidator = true;
             if (is_array($metadata->validator['document'])){
-                $multiFieldValidator = ['base' => 'validatorGroup', 'gets' => ['validators' => []]];
+                $multiFieldValidator = ['base' => 'ValidatorGroup', 'gets' => ['validators' => []]];
                 foreach($metadata->validator['document'] as $validator){
                     $base = str_replace('\\', '/', $validator['class']);
                     if(isset($validator['options']) && count($validator['options']) > 0 ){
@@ -349,7 +349,7 @@ class DojoGenerator
                 $hasFieldValidator = true;
 
                 if (is_array($metadata->validator['fields'][$field])){
-                    $fieldValidators[$field] = ['base' => 'validatorGroup', 'gets' => ['validators' => []]];
+                    $fieldValidators[$field] = ['base' => 'ValidatorGroup', 'gets' => ['validators' => []]];
                     foreach($metadata->validator['fields'][$field] as $validator){
                         $base = str_replace('\\', '/', $validator['class']);
                         if(isset($validator['options']) && count($validator['options']) > 0 ){
