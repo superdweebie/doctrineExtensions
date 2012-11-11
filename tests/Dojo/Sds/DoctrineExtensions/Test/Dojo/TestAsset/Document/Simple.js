@@ -28,7 +28,7 @@ define ([], function (){
             // Will return an validator that can be used to validate
             // a complete instance of the document/model
             'Sds/DoctrineExtensions/Test/Dojo/TestAsset/Document/Simple/Validator': {
-                base: 'modelValidator',
+                base: 'ModelValidator',
                 gets: {
                     validators: [
                         "Sds\/DoctrineExtensions\/Test\/Dojo\/TestAsset\/Document\/Simple\/MultiFieldValidator",
@@ -41,7 +41,7 @@ define ([], function (){
             // Will return a validator that can be used to check any
             // validations that require multiple fields
             'Sds/DoctrineExtensions/Test/Dojo/TestAsset/Document/Simple/MultiFieldValidator': {
-                "base": "validatorGroup",
+                "base": "ValidatorGroup",
                 "gets": {
                     "validators": [
                         "Sds\/Test\/ClassValidator1",
@@ -59,7 +59,7 @@ define ([], function (){
             // Will return a validator that can be used to check
             // the name field
             'Sds/DoctrineExtensions/Test/Dojo/TestAsset/Document/Simple/Name/Validator': {
-                "base": "validatorGroup",
+                "base": "ValidatorGroup",
                 "gets": {
                     "validators": [
                         "Sds\/Common\/Validator\/RequiredValidator",
