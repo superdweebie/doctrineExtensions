@@ -20,26 +20,27 @@ define ([], function (){
                         "camelCaseProperty",
                         "_className"
                     ],
-                    _className: 'Sds\\DoctrineExtensions\\Test\\Dojo\\TestAsset\\Document\\Simple'
+                    _className: 'Sds\\DoctrineExtensions\\Test\\Dojo\\TestAsset\\Document\\Simple',
+                    _validator: 'Sds/DoctrineExtensions/Test/Dojo/TestAsset/Document/Simple/Validator'
                 }
             },
 
             // Will return an validator that can be used to validate
             // a complete instance of the document/model
-            'Sds/DoctrineExtensions/Test/Dojo/TestAsset/Document/Simple/validator': {
+            'Sds/DoctrineExtensions/Test/Dojo/TestAsset/Document/Simple/Validator': {
                 base: 'modelValidator',
                 gets: {
                     validators: [
-                        "Sds\/DoctrineExtensions\/Test\/Dojo\/TestAsset\/Document\/Simple\/multiFieldValidator",
-                        "Sds\/DoctrineExtensions\/Test\/Dojo\/TestAsset\/Document\/Simple\/Name\/validator",
-                        "Sds\/DoctrineExtensions\/Test\/Dojo\/TestAsset\/Document\/Simple\/Country\/validator"
+                        "Sds\/DoctrineExtensions\/Test\/Dojo\/TestAsset\/Document\/Simple\/MultiFieldValidator",
+                        "Sds\/DoctrineExtensions\/Test\/Dojo\/TestAsset\/Document\/Simple\/Name\/Validator",
+                        "Sds\/DoctrineExtensions\/Test\/Dojo\/TestAsset\/Document\/Simple\/Country\/Validator"
                     ]
                 }
             },
 
             // Will return a validator that can be used to check any
             // validations that require multiple fields
-            'Sds/DoctrineExtensions/Test/Dojo/TestAsset/Document/Simple/multiFieldValidator': {
+            'Sds/DoctrineExtensions/Test/Dojo/TestAsset/Document/Simple/MultiFieldValidator': {
                 "base": "validatorGroup",
                 "gets": {
                     "validators": [
@@ -57,7 +58,7 @@ define ([], function (){
 
             // Will return a validator that can be used to check
             // the name field
-            'Sds/DoctrineExtensions/Test/Dojo/TestAsset/Document/Simple/Name/validator': {
+            'Sds/DoctrineExtensions/Test/Dojo/TestAsset/Document/Simple/Name/Validator': {
                 "base": "validatorGroup",
                 "gets": {
                     "validators": [
@@ -79,7 +80,7 @@ define ([], function (){
 
             // Will return a validator that can be used to check
             // the country field
-            'Sds/DoctrineExtensions/Test/Dojo/TestAsset/Document/Simple/Country/validator': {
+            'Sds/DoctrineExtensions/Test/Dojo/TestAsset/Document/Simple/Country/Validator': {
                 "base": "Sds\/Test\/CountryValidator1",
                 "gets": {
                     "validators": [
@@ -99,7 +100,7 @@ define ([], function (){
                     "declare": true
                 },
                 "gets": {
-                    "validator": "Sds\/DoctrineExtensions\/Test\/Dojo\/TestAsset\/Document\/Simple\/multiFieldValidator",
+                    "validator": "Sds\/DoctrineExtensions\/Test\/Dojo\/TestAsset\/Document\/Simple\/MultiFieldValidator",
                     "inputs": [
                         "Sds\/DoctrineExtensions\/Test\/Dojo\/TestAsset\/Document\/Simple\/Id\/Input",
                         "Sds\/DoctrineExtensions\/Test\/Dojo\/TestAsset\/Document\/Simple\/Name\/Input",
