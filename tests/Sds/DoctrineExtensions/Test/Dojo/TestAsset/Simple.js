@@ -128,7 +128,7 @@ define ([], function (){
             'Sds/DoctrineExtensions/Test/Dojo/TestAsset/Document/Simple/Name/Input': {
                 "base": "Sds\/Common\/Form\/ValidationTextBox",
                 "gets": {
-                    "validator": "Sds\/DoctrineExtensions\/Test\/Dojo\/TestAsset\/Document\/Simple\/Name\/validator"
+                    "validator": "Sds\/DoctrineExtensions\/Test\/Dojo\/TestAsset\/Document\/Simple\/Name\/Validator"
                 },
                 "directives": {
                     "define": true,
@@ -146,7 +146,7 @@ define ([], function (){
             'Sds/DoctrineExtensions/Test/Dojo/TestAsset/Document/Simple/Country/Input': {
                 "base": "Sds\/Common\/Form\/ValidationTextarea",
                 "gets": {
-                    "validator": "Sds\/DoctrineExtensions\/Test\/Dojo\/TestAsset\/Document\/Simple\/Country\/validator"
+                    "validator": "Sds\/DoctrineExtensions\/Test\/Dojo\/TestAsset\/Document\/Simple\/Country\/Validator"
                 },
                 "directives": {
                     "define": true,

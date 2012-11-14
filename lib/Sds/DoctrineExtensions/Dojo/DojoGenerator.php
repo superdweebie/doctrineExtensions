@@ -111,7 +111,7 @@ class DojoGenerator
             $hasFieldValidator,
             $fieldValidators
         ) = $this->configValidators($metadata);
-        
+
         $serializeList = Serializer::fieldListUp($metadata);
         $className = '';
         if (isset($metadata->serializer['className'])){
@@ -241,7 +241,7 @@ class DojoGenerator
                 $inputConfig = [];
                 if (isset($fieldValidators[$field])){
                     $inputConfig['base'] = 'Sds/Common/Form/ValidationTextBox';
-                    $inputConfig['gets'] = ['validator' => $baseId . '/' . ucfirst($field) . '/validator'];
+                    $inputConfig['gets'] = ['validator' => $baseId . '/' . ucfirst($field) . '/Validator'];
                 } else {
                     $inputConfig['base'] = 'Sds/Common/Form/TextBox';
                 }
