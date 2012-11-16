@@ -72,7 +72,7 @@ class Serializer {
                 continue;
             }
 
-            if ( isset($mapping['id']) && $mapping['id']){
+            if ( isset($mapping['id']) && $mapping['id'] && isset($array['_id'])){
                 $return[$field] = $array['_id'];
                 unset($return['_id']);
             }
