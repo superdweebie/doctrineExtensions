@@ -8,7 +8,7 @@ use Sds\DoctrineExtensions\Annotation\Annotations as Sds;
 trait IdentityTrait {
 
     /**
-     * @ODM\String
+     * @ODM\Id(strategy="none")
      * @ODM\Index(unique = true, order = "asc")
      * @Sds\Readonly
      * @Sds\RequiredValidator

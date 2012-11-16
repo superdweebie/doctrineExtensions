@@ -3,23 +3,20 @@
 namespace Sds\DoctrineExtensions\Test\Validator\TestAsset;
 
 use Sds\Common\Validator\ValidatorInterface;
+use Sds\Common\Validator\ValidatorResult;
 
 class PropertyValidator2 implements ValidatorInterface {
 
-    protected $messages;
-
     public function isValid($value) {
-        $this->messages = array();
+        $messages = [];
 
         if ($value == 'valid' || $value == 'alsoValid') {
-            return true;
+            $result = true;
         } else {
-            $this->messages[] = 'invalid name 2';
-            return false;
+            $messages[] = 'invalid name 2';
+            $result = false;
         }
-    }
-
-    public function getMessages() {
-        return $this->messages;
+        
+        return new ValidatorResult($result, $messages);
     }
 }

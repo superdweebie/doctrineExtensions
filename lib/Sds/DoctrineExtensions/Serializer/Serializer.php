@@ -72,6 +72,11 @@ class Serializer {
                 continue;
             }
 
+            if ( isset($mapping['id']) && $mapping['id']){
+                $return[$field] = $array['_id'];
+                unset($return['_id']);
+            }
+
             if(isset($mapping['embedded'])){
                 switch ($mapping['type']){
                     case 'one':

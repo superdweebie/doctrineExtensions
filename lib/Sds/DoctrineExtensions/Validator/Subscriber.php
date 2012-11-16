@@ -237,14 +237,14 @@ class Subscriber implements EventSubscriber, AnnotationReaderAwareInterface
 
     protected function addFieldValidator($eventArgs, $definition){
         if ($eventArgs->getAnnotation()->value){
-            
+
             if (isset($eventArgs->getMetadata()->validator['fields'][$eventArgs->getReflection()->getName()])){
                 foreach ($eventArgs->getMetadata()->validator['fields'][$eventArgs->getReflection()->getName()] as $index => $setDefinition){
                     if ($setDefinition['class'] == $definition['class']){
                         $eventArgs->getMetadata()->validator['fields'][$eventArgs->getReflection()->getName()][$index] = $definition;
                         return;
                     }
-                }   
+                }
             }
             $eventArgs->getMetadata()->validator['fields'][$eventArgs->getReflection()->getName()][] = $definition;
         } else {
@@ -257,16 +257,16 @@ class Subscriber implements EventSubscriber, AnnotationReaderAwareInterface
     }
 
     protected function addDocumentValidator($eventArgs, $definition){
-        if ($eventArgs->getAnnotation()->value){            
+        if ($eventArgs->getAnnotation()->value){
             if (isset($eventArgs->getMetadata()->validator['document'])){
                 foreach ($eventArgs->getMetadata()->validator['document'] as $index => $setDefinition){
                     if ($setDefinition['class'] == $definition['class']){
                         $eventArgs->getMetadata()->validator['document'][$index] = $definition;
                         return;
                     }
-                }   
+                }
             }
-            $eventArgs->getMetadata()->validator['document'][] = $definition;            
+            $eventArgs->getMetadata()->validator['document'][] = $definition;
         } else {
             foreach ($eventArgs->getMetadata()->validator['document'] as $index => $setDefinition){
                 if ($setDefinition['class'] == $definition['class']){
@@ -288,7 +288,8 @@ class Subscriber implements EventSubscriber, AnnotationReaderAwareInterface
         foreach ($unitOfWork->getScheduledDocumentUpdates() AS $document) {
             $metadata = $documentManager->getClassMetadata(get_class($document));
 
-            if (!$this->documentValidator->isValid($document, $metadata)) {
+            $validatorResult = $this->documentValidator->isValid($document, $metadata);
+            if ( ! $validatorResult->getResult()) {
 
                 // Updates to invalid documents are not allowed. Roll them back
                 $unitOfWork->clearDocumentChangeSet(spl_object_hash($document));
@@ -299,7 +300,7 @@ class Subscriber implements EventSubscriber, AnnotationReaderAwareInterface
                 if ($eventManager->hasListeners(Events::invalidUpdate)) {
                     $eventManager->dispatchEvent(
                         Events::invalidUpdate,
-                        new EventArgs($document, $documentManager, $this->documentValidator->getMessages())
+                        new EventArgs($document, $documentManager, $validatorResult->getMessages())
                     );
                 }
             }
@@ -308,7 +309,8 @@ class Subscriber implements EventSubscriber, AnnotationReaderAwareInterface
         foreach ($unitOfWork->getScheduledDocumentInsertions() as $document) {
             $metadata = $documentManager->getClassMetadata(get_class($document));
 
-            if (!$this->documentValidator->isValid($document, $metadata)) {
+            $validatorResult = $this->documentValidator->isValid($document, $metadata);
+            if ( ! $validatorResult->getResult()) {
 
                 //stop creation
                 $unitOfWork->detach($document);
@@ -319,7 +321,7 @@ class Subscriber implements EventSubscriber, AnnotationReaderAwareInterface
                 if ($eventManager->hasListeners(Events::invalidCreate)) {
                     $eventManager->dispatchEvent(
                         Events::invalidCreate,
-                        new EventArgs($document, $documentManager, $this->documentValidator->getMessages())
+                        new EventArgs($document, $documentManager, $validatorResult->getMessages())
                     );
                 }
             }

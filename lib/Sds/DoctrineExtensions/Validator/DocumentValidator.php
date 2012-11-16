@@ -7,6 +7,7 @@ namespace Sds\DoctrineExtensions\Validator;
 
 use Doctrine\ODM\MongoDB\Mapping\ClassMetadata;
 use Sds\Common\Validator\ValidatorFactory;
+use Sds\Common\Validator\ValidatorResult;
 use Sds\DoctrineExtensions\Accessor\Accessor;
 use Sds\DoctrineExtensions\Annotation\Annotations as Sds;
 
@@ -19,8 +20,6 @@ use Sds\DoctrineExtensions\Annotation\Annotations as Sds;
 class DocumentValidator implements DocumentValidatorInterface
 {
 
-    protected $messages = array();
-
     // TODO: make use of a validatorCache - the validator are re-instatated every validation at the moment.
     protected $validatorCache = [];
 
@@ -32,11 +31,11 @@ class DocumentValidator implements DocumentValidatorInterface
      * @return boolean
      */
     public function isValid($document, ClassMetadata $metadata) {
-        $this->messages = array();
-        $isValid = true;
+        $messages = [];
+        $result = true;
 
         if ( ! isset($metadata->validator)){
-            return true;
+            return new ValidatorResult(true, []);
         }
 
         // Property level validators
@@ -45,11 +44,13 @@ class DocumentValidator implements DocumentValidatorInterface
 
                 $validator = ValidatorFactory::create($validatorDefinition);
                 $value = $document->{Accessor::getGetter($metadata, $field, $document)}();
-                if ( ! $validator->isValid($value)){
-                    foreach ($validator->getMessages() as $message){
-                        $this->messages[] = sprintf('Field %s: %s', $field, $message);
+
+                $validatorResult = $validator->isValid($value);
+                if ( ! $validatorResult->getResult()){
+                    foreach ($validatorResult->getMessages() as $message){
+                        $messages[] = sprintf('Field %s: %s', $field, $message);
                     }
-                    $isValid = false;
+                    $result = false;
                 }
             }
         }
@@ -57,20 +58,13 @@ class DocumentValidator implements DocumentValidatorInterface
         // Class level validators
         if (isset($metadata->validator['document'])){
             $validator = ValidatorFactory::create($metadata->validator['document']);
-            if ( ! $validator->isValid($document)){
-                $this->messages = array_merge($this->messages, $validator->getMessages());
-                $isValid = false;
+            $validatorResult = $validator->isValid($value);
+            if ( ! $validatorResult->getResult()){
+                $messages = array_merge($messages, $validatorResult->getMessages());
+                $result = false;
             }
         }
 
-        return $isValid;
-    }
-
-    /**
-     *
-     * {@inheritdoc}
-     */
-    public function getMessages() {
-        return $this->messages;
+        return new ValidatorResult($result, $messages);
     }
 }
