@@ -16,8 +16,11 @@ use Zend\Crypt\BlockCipher;
  */
 class ZendBlockCipher implements BlockCipherInterface {
 
-    public static function encrypt($plainText, $key){
+    public static function encrypt($plainText, $key, $salt = null){
         $cipher = BlockCipher::factory('mcrypt', array('algorithm' => 'aes'));
+        if (isset($salt)) {
+            $cipher->setSalt(substr($salt, 0, $cipher->getCipher()->getSaltSize()));
+        }
         $cipher->setKey($key);
         return $cipher->encrypt($plainText);
     }

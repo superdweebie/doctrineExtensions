@@ -60,7 +60,7 @@ class Subscriber implements EventSubscriber, AnnotationReaderAwareInterface
         if ( ! in_array('Sds\Common\Crypt\SaltInterface', class_implements($annotation->saltClass))) {
             throw new Exception\DocumentException(sprintf('Class %s given in @CryptHash must implement SaltInterface', $annotation->saltClass));
         }
-        $eventArgs->getMetadata()->{$annotation::metadataKey}[$eventArgs->getReflection()->getName()] = array(
+        $eventArgs->getMetadata()->crypt['hash'][$eventArgs->getReflection()->getName()] = array(
             'hashClass' => $annotation->hashClass,
             'saltClass' => $annotation->saltClass,
             'prependSalt' => $annotation->prependSalt
@@ -83,9 +83,10 @@ class Subscriber implements EventSubscriber, AnnotationReaderAwareInterface
             throw new Exception\DocumentException(sprintf('Class %s given in @CryptBlockCipher must implement KeyInterface', $annotation->keyClass));
         }
 
-        $eventArgs->getMetadata()->{$annotation::metadataKey}[$eventArgs->getReflection()->getName()] = array(
+        $eventArgs->getMetadata()->crypt['blockCipher'][$eventArgs->getReflection()->getName()] = array(
             'blockCipherClass' => $annotation->blockCipherClass,
-            'keyClass' => $annotation->keyClass
+            'keyClass' => $annotation->keyClass,
+            'saltClass' => $annotation->saltClass
         );
     }
 
@@ -116,14 +117,14 @@ class Subscriber implements EventSubscriber, AnnotationReaderAwareInterface
 
                 $requireRecompute = false;
 
-                if(isset($metadata->{Sds\CryptHash::metadataKey}) &&
-                   isset($metadata->{Sds\CryptHash::metadataKey}[$field])
+                if(isset($metadata->crypt['hash']) &&
+                   isset($metadata->crypt['hash'][$field])
                 ){
                     HashService::hashField($field, $document, $metadata);
                     $requireRecompute = true;
 
-                } elseif (isset($metadata->{Sds\CryptBlockCipher::metadataKey}) &&
-                   isset($metadata->{Sds\CryptBlockCipher::metadataKey}[$field])
+                } elseif (isset($metadata->crypt['blockCipher']) &&
+                   isset($metadata->crypt['blockCipher'][$field])
                 ){
                     BlockCipherService::encryptField($field, $document, $metadata);
                     $requireRecompute = true;
@@ -145,14 +146,14 @@ class Subscriber implements EventSubscriber, AnnotationReaderAwareInterface
         $documentManager = $eventArgs->getDocumentManager();
         $metadata = $documentManager->getClassMetadata(get_class($document));
 
-        if (isset($metadata->{Sds\CryptHash::metadataKey})) {
-            foreach ($metadata->{Sds\CryptHash::metadataKey} as $field => $config){
+        if (isset($metadata->crypt['hash'])) {
+            foreach ($metadata->crypt['hash'] as $field => $config){
                 HashService::hashField($field, $document, $metadata);
             }
         }
 
-        if (isset($metadata->{Sds\CryptBlockCipher::metadataKey})) {
-            foreach ($metadata->{Sds\CryptBlockCipher::metadataKey} as $field => $config){
+        if (isset($metadata->crypt['blockCipher'])) {
+            foreach ($metadata->crypt['blockCipher'] as $field => $config){
                 BlockCipherService::encryptField($field, $document, $metadata);
             }
         }

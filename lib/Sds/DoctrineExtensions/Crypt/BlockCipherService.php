@@ -20,7 +20,8 @@ class BlockCipherService {
         if ( ! isset($value) || $value == ''){
             return $value;
         }
-        return $config['blockCipherClass']::encrypt($value, $config['keyClass']::getKey());
+        $salt = isset($config['saltClass']) ? $config['saltClass']::getSalt() : null;
+        return $config['blockCipherClass']::encrypt($value, $config['keyClass']::getKey(), $salt);
     }
 
     public static function decryptValue($value, $config){
@@ -31,34 +32,34 @@ class BlockCipherService {
         $getMethod = Accessor::getGetter($metadata, $field, $document);
         $setMethod = Accessor::getSetter($metadata, $field, $document);
 
-        $document->$setMethod(self::encryptValue($document->$getMethod(), $metadata->{Sds\CryptBlockCipher::metadataKey}[$field]));
+        $document->$setMethod(self::encryptValue($document->$getMethod(), $metadata->crypt['blockCipher'][$field]));
     }
 
     public static function decryptField($field, $document, $metadata){
         $getMethod = Accessor::getGetter($metadata, $field, $document);
         $setMethod = Accessor::getSetter($metadata, $field, $document);
 
-        $document->$setMethod(self::decryptValue($document->$getMethod(), $metadata->{Sds\CryptBlockCipher::metadataKey}[$field]));
+        $document->$setMethod(self::decryptValue($document->$getMethod(), $metadata->crypt['blockCipher'][$field]));
     }
 
     public static function encryptDocument($document, $metadata){
 
-        if ( ! isset($metadata->{Sds\CryptBlockCipher::metadataKey})){
+        if ( ! isset($metadata->crypt['blockCipher'])){
             return;
         }
 
-        foreach ($metadata->{Sds\CryptBlockCipher::metadataKey} as $field => $config){
+        foreach ($metadata->crypt['blockCipher'] as $field => $config){
             self::encryptField($field, $document, $metadata);
         }
     }
 
     public static function decryptDocument($document, $metadata){
 
-        if ( ! isset($metadata->{Sds\CryptBlockCipher::metadataKey})){
+        if ( ! isset($metadata->crypt['blockCipher'])){
             return;
         }
 
-        foreach ($metadata->{Sds\CryptBlockCipher::metadataKey} as $field => $config){
+        foreach ($metadata->crypt['blockCipher'] as $field => $config){
             self::decryptField($field, $document, $metadata);
         }
     }

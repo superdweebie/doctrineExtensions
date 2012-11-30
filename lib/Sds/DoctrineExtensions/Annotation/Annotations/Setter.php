@@ -20,6 +20,4 @@ use Doctrine\Common\Annotations\Annotation;
 final class Setter extends Annotation
 {
     const event = 'annotationSetter';
-
-    const metadataKey = 'setter';
 }

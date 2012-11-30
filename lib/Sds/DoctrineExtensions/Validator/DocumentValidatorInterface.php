@@ -28,4 +28,6 @@ interface DocumentValidatorInterface
      * @throws Exception\RuntimeException If validation of $value is impossible
      */
     public function isValid($value, ClassMetadata $metadata);
+
+    public function setDocumentManager($documentManager);
 }

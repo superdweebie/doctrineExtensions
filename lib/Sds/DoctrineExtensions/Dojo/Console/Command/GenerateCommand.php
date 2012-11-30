@@ -33,11 +33,7 @@ class GenerateCommand extends Console\Command\Command
             new InputOption(
                 'dest-path', null, InputOption::VALUE_OPTIONAL,
                 'The path Dojo config should be generated to.'
-            ),
-            new InputOption(
-                'regenerate-models', null, InputOption::VALUE_OPTIONAL,
-                'Flag to define if generator should regenerate config if it exists.', true
-            ),
+            )
         ))
         ->setHelp(<<<EOT
 Generate Dojo config representing Doctrine documents from your mapping information.
@@ -57,7 +53,6 @@ EOT
 
         // Create DocumentGenerator
         $generator = new DojoGenerator();
-        $generator->setRegenerateIfExists($input->getOption('regenerate-models'));
         $generator->setDocumentManager($this->getHelper('dm')->getDocumentManager());
 
         // Process destination directory

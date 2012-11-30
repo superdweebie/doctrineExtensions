@@ -19,7 +19,7 @@ use Sds\DoctrineExtensions\Exception;
 class Accessor {
 
     /**
-     * 
+     *
      * @param \Doctrine\ODM\MongoDB\Mapping\ClassMetadata $metadata
      * @param string $field
      * @param object $document
@@ -28,9 +28,9 @@ class Accessor {
      */
     public static function getGetter(ClassMetadata $metadata, $field, $document){
 
-        if(isset($metadata->fieldMappings[$field][Sds\Getter::metadataKey])
+        if(isset($metadata->fieldMappings[$field]['getter'])
         ){
-            $getMethod = $metadata->fieldMappings[$field][Sds\Getter::metadataKey];
+            $getMethod = $metadata->fieldMappings[$field]['getter'];
         } else {
             $getMethod = 'get'.ucfirst($field);
         }
@@ -41,12 +41,12 @@ class Accessor {
                 $getMethod
             ));
         }
-        
-        return $getMethod;        
+
+        return $getMethod;
     }
-    
+
     /**
-     * 
+     *
      * @param \Doctrine\ODM\MongoDB\Mapping\ClassMetadata $metadata
      * @param string $field
      * @param object $document
@@ -54,10 +54,10 @@ class Accessor {
      * @throws Exception\BadMethodCallException
      */
     public static function getSetter(ClassMetadata $metadata, $field, $document){
-        
-        if(isset($metadata->fieldMappings[$field][Sds\Setter::metadataKey])
+
+        if(isset($metadata->fieldMappings[$field]['setter'])
         ){
-            $setMethod = $metadata->fieldMappings[$field][Sds\Setter::metadataKey];
+            $setMethod = $metadata->fieldMappings[$field]['setter'];
         } else {
             $setMethod = 'set'.ucfirst($field);
         }
@@ -68,7 +68,7 @@ class Accessor {
                 $setMethod
             ));
         }
-        
+
         return $setMethod;
     }
 }

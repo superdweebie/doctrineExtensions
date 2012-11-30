@@ -20,6 +20,4 @@ use Doctrine\Common\Annotations\Annotation;
 final class Readonly extends Annotation
 {
     const event = 'annotationReadonly';
-
-    const metadataKey = 'readonly';
 }

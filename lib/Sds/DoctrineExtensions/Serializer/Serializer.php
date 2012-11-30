@@ -77,7 +77,7 @@ class Serializer {
                 unset($return['_id']);
             }
 
-            if(isset($mapping['embedded'])){
+            if(isset($mapping['embedded']) && isset($return[$field])){
                 switch ($mapping['type']){
                     case 'one':
                         $return[$field] = self::applySerializeMetadataToArray(

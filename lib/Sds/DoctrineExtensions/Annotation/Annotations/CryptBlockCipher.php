@@ -21,8 +21,6 @@ final class CryptBlockCipher extends Annotation
 {
     const event = 'annotationCryptBlockCipher';
 
-    const metadataKey = 'cryptBlockCipher';
-
     /**
      * FQCN of a class that implements Sds\Common\Crypt\BlockCipherInterface.
      * Responsible for encrypt and decrypt
@@ -40,4 +38,12 @@ final class CryptBlockCipher extends Annotation
      * @var string
      */
     public $keyClass;
+
+    /**
+     * FQCN of a class that implements Sds\Common\Crypt\SaltInterface.
+     * Gets the salt used to create the hash
+     *
+     * @var string
+     */
+    public $saltClass;
 }

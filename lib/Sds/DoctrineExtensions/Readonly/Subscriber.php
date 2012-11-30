@@ -54,7 +54,7 @@ class Subscriber implements EventSubscriber, AnnotationReaderAwareInterface
     public function annotationReadonly(AnnotationEventArgs $eventArgs)
     {
         $annotation = $eventArgs->getAnnotation();
-        $eventArgs->getMetadata()->fieldMappings[$eventArgs->getReflection()->getName()][$annotation::metadataKey] = true;
+        $eventArgs->getMetadata()->fieldMappings[$eventArgs->getReflection()->getName()]['readonly'] = true;
     }
 
     /**
@@ -76,7 +76,7 @@ class Subscriber implements EventSubscriber, AnnotationReaderAwareInterface
                 $new = $change[1];
 
                 // Check for change and readonly annotation
-                if(!isset($metadata->fieldMappings[$field][Sds\Readonly::metadataKey]) ||
+                if(!isset($metadata->fieldMappings[$field]['readonly']) ||
                     $old == null ||
                     $old == $new
                 ){

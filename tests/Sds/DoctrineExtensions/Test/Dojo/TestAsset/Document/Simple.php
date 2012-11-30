@@ -37,8 +37,7 @@ class Simple {
 
     /**
      * @ODM\String
-     * @Sds\NotRequiredValidator,
-     * @Sds\DojoValidator(base = "Sds/Test/CountryValidator1")
+     * @Sds\Validator(class = "Sds/Test/CountryValidator1")
      * @Sds\DojoInput(
      *     base = "Sds/Common/Form/ValidationTextarea"
      * )

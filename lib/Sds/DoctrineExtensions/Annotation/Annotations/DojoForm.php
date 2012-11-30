@@ -24,8 +24,4 @@ final class DojoForm extends Annotation {
     public $base;
 
     public $params;
-
-    public $gets;
-
-    public $proxies;
 }

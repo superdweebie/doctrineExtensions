@@ -34,7 +34,6 @@ class DojoTest extends BaseTest {
         );
 
         $this->generator = new DojoGenerator();
-        $this->generator->setRegenerateIfExists(true);
     }
 
     public function testDojoGenerator(){

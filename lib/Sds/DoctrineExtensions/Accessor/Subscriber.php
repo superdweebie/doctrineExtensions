@@ -48,7 +48,7 @@ class Subscriber implements EventSubscriber, AnnotationReaderAwareInterface
     public function annotationGetter(AnnotationEventArgs $eventArgs)
     {
         $annotation = $eventArgs->getAnnotation();
-        $eventArgs->getMetadata()->fieldMappings[$eventArgs->getReflection()->getName()][$annotation::metadataKey] = $annotation->value;
+        $eventArgs->getMetadata()->fieldMappings[$eventArgs->getReflection()->getName()]['getter'] = $annotation->value;
     }
 
     /**
@@ -58,6 +58,6 @@ class Subscriber implements EventSubscriber, AnnotationReaderAwareInterface
     public function annotationSetter(AnnotationEventArgs $eventArgs)
     {
         $annotation = $eventArgs->getAnnotation();
-        $eventArgs->getMetadata()->fieldMappings[$eventArgs->getReflection()->getName()][$annotation::metadataKey] = $annotation->value;
+        $eventArgs->getMetadata()->fieldMappings[$eventArgs->getReflection()->getName()]['setter'] = $annotation->value;
     }
 }

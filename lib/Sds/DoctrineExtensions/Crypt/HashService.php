@@ -28,16 +28,16 @@ class HashService {
         $setMethod = Accessor::getSetter($metadata, $field, $document);
         $getMethod = Accessor::getGetter($metadata, $field, $document);
 
-        $document->$setMethod(self::hashValue($document->$getMethod(), $metadata->{Sds\CryptHash::metadataKey}[$field]));
+        $document->$setMethod(self::hashValue($document->$getMethod(), $metadata->crypt['hash'][$field]));
     }
 
     public static function hashDocument($document, $metadata){
 
-        if ( ! isset($metadata->{Sds\CryptHash::metadataKey})){
+        if ( ! isset($metadata->crypt['hash'])){
             return;
         }
 
-        foreach ($metadata->{Sds\CryptHash::metadataKey} as $field => $config){
+        foreach ($metadata->crypt['hash'] as $field => $config){
             self::hashField($field, $document, $metadata);
         }
     }

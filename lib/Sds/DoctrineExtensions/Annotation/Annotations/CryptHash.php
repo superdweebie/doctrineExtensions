@@ -21,8 +21,6 @@ final class CryptHash extends Annotation
 {
     const event = 'annotationCryptHash';
 
-    const metadataKey = 'cryptHash';
-
     /**
      * FQCN of a class that implements Sds\Common\Crypt\HashInterface.
      * Responsible for hashing

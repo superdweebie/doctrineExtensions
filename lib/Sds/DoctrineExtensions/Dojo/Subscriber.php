@@ -33,8 +33,7 @@ class Subscriber implements EventSubscriber, AnnotationReaderAwareInterface
         return array(
             Sds\DojoModel::event,
             Sds\DojoInput::event,
-            Sds\DojoForm::event,
-            Sds\DojoValidator::event
+            Sds\DojoForm::event
         );
     }
 
@@ -58,9 +57,7 @@ class Subscriber implements EventSubscriber, AnnotationReaderAwareInterface
 
         $eventArgs->getMetadata()->dojo['model'] = [
             'base' => $annotation->base,
-            'params' => $annotation->params,
-            'gets' => $annotation->gets,
-            'proxies' => $annotation->proxies
+            'params' => $annotation->params
         ];
     }
 
@@ -81,9 +78,7 @@ class Subscriber implements EventSubscriber, AnnotationReaderAwareInterface
         } else {
             $eventArgs->getMetadata()->dojo['form'] = array_merge($eventArgs->getMetadata()->dojo['form'], [
                 'base' => $annotation->base,
-                'params' => $annotation->params,
-                'gets' => $annotation->gets,
-                'proxies' => $annotation->proxies
+                'params' => $annotation->params
             ]);
         }
     }
@@ -98,37 +93,7 @@ class Subscriber implements EventSubscriber, AnnotationReaderAwareInterface
 
         $eventArgs->getMetadata()->dojo['fields'][$eventArgs->getReflection()->getName()]['input'] = [
             'base' => $annotation->base,
-            'params' => $annotation->params,
-            'gets' => $annotation->gets,
-            'proxies' => $annotation->proxies
+            'params' => $annotation->params
         ];
-    }
-
-    /**
-     *
-     * @param \Sds\DoctrineExtensions\Annotation\AnnotationEventArgs $eventArgs
-     */
-    public function annotationDojoValidator(AnnotationEventArgs $eventArgs)
-    {
-        $annotation = $eventArgs->getAnnotation();
-
-        switch ($eventArgs->getEventType()){
-            case 'document':
-                $eventArgs->getMetadata()->dojo['validator'] = [
-                    'base' => $annotation->base,
-                    'params' => $annotation->params,
-                    'gets' => $annotation->gets,
-                    'proxies' => $annotation->proxies
-                ];
-                break;
-            case 'property':
-                $eventArgs->getMetadata()->dojo['fields'][$eventArgs->getReflection()->getName()]['validator'] = [
-                    'base' => $annotation->base,
-                    'params' => $annotation->params,
-                    'gets' => $annotation->gets,
-                    'proxies' => $annotation->proxies
-                ];
-                break;
-        }
     }
 }

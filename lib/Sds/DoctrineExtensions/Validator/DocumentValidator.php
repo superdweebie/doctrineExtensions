@@ -20,8 +20,15 @@ use Sds\DoctrineExtensions\Annotation\Annotations as Sds;
 class DocumentValidator implements DocumentValidatorInterface
 {
 
-    // TODO: make use of a validatorCache - the validator are re-instatated every validation at the moment.
+    // TODO: make use of a validatorCache - the validators are re-instatated every validation at the moment.
     protected $validatorCache = [];
+
+    //Only needs to be set when validating documents that have encrypted fields.
+    protected $documentManager;
+
+    public function setDocumentManager($documentManager) {
+        $this->documentManager = $documentManager;
+    }
 
     /**
      * Using zend\form\annotation\validator annotations, this method will check if a document
@@ -42,8 +49,27 @@ class DocumentValidator implements DocumentValidatorInterface
         if (isset($metadata->validator['fields'])){
             foreach ($metadata->validator['fields'] as $field => $validatorDefinition){
 
+                $getter = Accessor::getGetter($metadata, $field, $document);
+
+                //check for hashed or encrypted values - if the field has been persisted, and is unchanged,
+                //it is assumed to be vaild. If the encrypted value is passed to the validators, then
+                //it is likely fail, which isn't correct.
+                if ((isset($metadata->crypt['hash'][$field]) ||
+                    isset($metadata->crypt['blockCipher'][$field])) &&
+                    isset($this->documentManager)
+                ) {
+                    $originalDocumentData = $this->documentManager->getUnitOfWork()->getOriginalDocumentData($document);
+                    if (isset($originalDocumentData) &&
+                        isset($originalDocumentData[$field]) &&
+                        $originalDocumentData[$field] == $document->$getter()
+                    ){
+                        //encrypted value hasn't changed, so skip validation of it.
+                        continue;
+                    }
+                }
+
                 $validator = ValidatorFactory::create($validatorDefinition);
-                $value = $document->{Accessor::getGetter($metadata, $field, $document)}();
+                $value = $document->$getter();
 
                 $validatorResult = $validator->isValid($value);
                 if ( ! $validatorResult->getResult()){
