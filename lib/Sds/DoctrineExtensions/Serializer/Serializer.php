@@ -219,7 +219,7 @@ class Serializer {
                     $referenceSerializer = self::getReferenceSerializer($field, $classMetadata);
                     foreach($document->$getMethod()->getMongoData() as $referenceDocument){
                         $return[$field][] = $referenceSerializer::serialize(
-                            $referenceDocument['$id'],
+                            is_array($referenceDocument) ? $referenceDocument['$id'] : (string) $referenceDocument,
                             $mapping,
                             $documentManager
                         );
