@@ -195,34 +195,40 @@ class Serializer {
 
             switch (true){
                 case isset($mapping['embedded']) && $mapping['type'] == 'one':
-                    $embedDocument = $document->$getMethod();
-                    if (isset($embedDocument)) {
-                        $return[$field] = self::serialize($embedDocument, $documentManager);
+                    if ($embedDocument = $document->$getMethod()) {
+                        if (isset($embedDocument)) {
+                            $return[$field] = self::serialize($embedDocument, $documentManager);
+                        }
                     }
                     break;
                 case isset($mapping['embedded']) && $mapping['type'] == 'many':
-                    $return[$field] = array();
-                    $embedDocuments = $document->$getMethod();
-                    foreach($embedDocuments as $embedDocument){
-                        $return[$field][] = self::serialize($embedDocument, $documentManager);
+                    if ($embedDocuments = $document->$getMethod()) {
+                        $return[$field] = array();
+                        foreach($embedDocuments as $embedDocument){
+                            $return[$field][] = self::serialize($embedDocument, $documentManager);
+                        }
                     }
                     break;
                 case isset($mapping['reference']) && $mapping['type'] == 'one':
-                    $referenceSerializer = self::getReferenceSerializer($field, $classMetadata);
-                    $return[$field] = $referenceSerializer::serialize(
-                        $document->$getMethod()->getId(),
-                        $mapping,
-                        $documentManager
-                    );
-                    break;
-                case isset($mapping['reference']) && $mapping['type'] == 'many':
-                    $referenceSerializer = self::getReferenceSerializer($field, $classMetadata);
-                    foreach($document->$getMethod()->getMongoData() as $referenceDocument){
-                        $return[$field][] = $referenceSerializer::serialize(
-                            $referenceDocument['$id'],
+                    if ($referencedDocument = $document->$getMethod()) {
+                        $referenceSerializer = self::getReferenceSerializer($field, $classMetadata);
+                        $return[$field] = $referenceSerializer::serialize(
+                            $referencedDocument->getId(),
                             $mapping,
                             $documentManager
                         );
+                    }
+                    break;
+                case isset($mapping['reference']) && $mapping['type'] == 'many':
+                    if ($referencedDocuments = $document->$getMethod()) {
+                        $referenceSerializer = self::getReferenceSerializer($field, $classMetadata);
+                        foreach($referencedDocuments->getMongoData() as $referencedDocument){
+                            $return[$field][] = $referenceSerializer::serialize(
+                                $referencedDocument['$id'],
+                                $mapping,
+                                $documentManager
+                            );
+                        }
                     }
                     break;
                 default:
