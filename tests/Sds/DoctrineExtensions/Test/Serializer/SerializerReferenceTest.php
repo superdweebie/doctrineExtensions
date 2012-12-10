@@ -206,6 +206,29 @@ class SerializerReferenceTest extends BaseTest {
         $this->assertEquals('Flavour', $pieces[0]);
     }
 
+
+    public function testEagerSerializerWithNull(){
+
+        $documentManager = $this->documentManager;
+
+        //bake the eager cake. Hmm yum.
+        $cake = new CakeEager();
+
+        //Persist cake and clear out documentManager
+        $documentManager->persist($cake);
+        $documentManager->flush();
+        $id = $cake->getId();
+        $documentManager->clear();
+
+        $cake = $documentManager->getRepository('Sds\DoctrineExtensions\Test\Serializer\TestAsset\Document\CakeEager')->findOneBy(['id' => $id]);
+
+        $array = Serializer::toArray($cake, $documentManager);
+
+        $this->assertArrayNotHasKey('ingredients', $array);
+        $this->assertArrayNotHasKey('flavour', $array);
+
+    }
+
     protected function createIngredient($name){
         $ingredient = new Ingredient($name);
         $this->documentManager->persist($ingredient);
