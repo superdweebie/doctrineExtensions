@@ -196,9 +196,7 @@ class Serializer {
             switch (true){
                 case isset($mapping['embedded']) && $mapping['type'] == 'one':
                     if ($embedDocument = $document->$getMethod()) {
-                        if (isset($embedDocument)) {
-                            $return[$field] = self::serialize($embedDocument, $documentManager);
-                        }
+                        $return[$field] = self::serialize($embedDocument, $documentManager);
                     }
                     break;
                 case isset($mapping['embedded']) && $mapping['type'] == 'many':
