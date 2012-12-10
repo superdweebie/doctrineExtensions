@@ -12,7 +12,7 @@ function(
     // Will return an Input for the country field
 
     return declare(
-        Sds/DoctrineExtensions/Test/Dojo/TestAsset/Document/Simple/Country/Input,
+        'Sds/DoctrineExtensions/Test/Dojo/TestAsset/Document/Simple/Country/Input',
         [ValidationTextarea],
         {
             validator: new CountryValidator,

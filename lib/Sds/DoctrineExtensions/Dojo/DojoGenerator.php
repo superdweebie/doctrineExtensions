@@ -100,11 +100,11 @@ class DojoGenerator
 
 
         //Model module
-        $serializeList = Serializer::fieldListUp($metadata);
+        $serializeList = Serializer::fieldListForUnserialize($metadata);
         $className = '';
         if (isset($metadata->serializer['className'])){
-            $serializeList[] = '_' . $metadata->serializer['classNameProperty'];
-            $className = ",\n            _" .
+            $serializeList[] = $metadata->serializer['classNameProperty'];
+            $className = ",\n            " .
                 $metadata->serializer['classNameProperty'] .
                 ": '" .
                 str_replace('\\', '\\\\', $metadata->name) .
@@ -226,7 +226,7 @@ class DojoGenerator
         $inputBases = [];
         $inputs = [];
         $inputParams = [];
-        foreach(Serializer::fieldListUp($metadata) as $field){
+        foreach(Serializer::fieldListForUnserialize($metadata) as $field){
             $inputBases[] = "'" . $baseId . '/' . ucfirst($field) . '/Input' . "'";
             $inputs[] = ucfirst($field) . 'Input';
             $inputParams[] = 'new ' . ucfirst($field) . 'Input';
@@ -251,7 +251,7 @@ class DojoGenerator
             (?=[A-Z]) # and before an uppercase letter.
             /x';
 
-        foreach(Serializer::fieldListUp($metadata) as $field){
+        foreach(Serializer::fieldListForUnserialize($metadata) as $field){
 
             $params = [];
             if (isset($fieldValidators[$field])){
@@ -368,7 +368,7 @@ class DojoGenerator
         $hasFieldValidator = false;
         $fieldValidators = [];
 
-        foreach (Serializer::fieldListUp($metadata) as $field){
+        foreach (Serializer::fieldListForUnserialize($metadata) as $field){
             if (isset($metadata->validator['fields'][$field])){
                 $hasFieldValidator = true;
 

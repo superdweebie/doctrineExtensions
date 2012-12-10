@@ -7,10 +7,9 @@
 namespace Sds\DoctrineExtensions\Annotation\Annotations;
 
 use Doctrine\Common\Annotations\Annotation;
-use Sds\DoctrineExtensions\Serializer\Serializer as Constants;
 
 /**
- * Mark a field to be skipped during serialization. Must be used in the context
+ * Define the serialize that should be used to serialize a reference document. Must be used in the context
  * of the Serializer annotation
  *
  * @since   1.0
@@ -18,8 +17,7 @@ use Sds\DoctrineExtensions\Serializer\Serializer as Constants;
  *
  * @Annotation
  */
-final class Ignore extends Annotation
+final class ReferenceSerializer extends Annotation
 {
-
-    public $value = Constants::IGNORE_ALWAYS;
+    public $value;
 }

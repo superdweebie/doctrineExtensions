@@ -10,7 +10,7 @@ function(
     // Will return an Input for the id field
 
     return declare(
-        Sds/DoctrineExtensions/Test/Dojo/TestAsset/Document/Simple/Id/Input,
+        'Sds/DoctrineExtensions/Test/Dojo/TestAsset/Document/Simple/Id/Input',
         [TextBox],
         {
             name: "id",

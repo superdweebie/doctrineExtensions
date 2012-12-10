@@ -17,7 +17,7 @@ trait ClassNamePropertyTrait {
      *
      * @var string
      */
-    protected $classNameProperty = 'className';
+    protected $classNameProperty = '_className';
 
     /**
      *

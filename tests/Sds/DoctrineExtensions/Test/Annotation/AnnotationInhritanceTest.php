@@ -44,11 +44,11 @@ class AnnotationInheritaceTest extends BaseTest {
 
         $this->assertTrue($metadata->doNotHardDelete);
         $this->assertTrue($metadata->serializer['className']);
-        $this->assertEquals('className', $metadata->serializer['classNameProperty']);
+        $this->assertEquals('_className', $metadata->serializer['classNameProperty']);
         $this->assertTrue($metadata->serializer['discriminator']);
         $this->assertEquals([['class' => 'ParentValidator', 'options' => []]], $metadata->validator['document']);
         $this->assertEquals('ParentWorkflow', $metadata->workflow);
-        $this->assertEquals('up_and_down', $metadata->serializer['fields']['name']['ignore']);
+        $this->assertEquals('ignore_always', $metadata->serializer['fields']['name']['ignore']);
     }
 
     public function testAnnotationInheritanceOverride(){

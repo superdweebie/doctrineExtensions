@@ -129,7 +129,7 @@ class SerializerTest extends BaseTest {
         $testDoc->setName('superdweebie');
 
         $correct = array(
-            'className' => 'Sds\DoctrineExtensions\Test\Serializer\TestAsset\Document\ClassName',
+            '_className' => 'Sds\DoctrineExtensions\Test\Serializer\TestAsset\Document\ClassName',
             'id' => null,
             'name' => 'superdweebie',
         );

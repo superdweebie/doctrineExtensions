@@ -19,10 +19,10 @@ use Sds\DoctrineExtensions\Exception;
  */
 class Serializer {
 
-    const IGNORE_UP = 'up';
-    const IGNORE_DOWN = 'down';
-    const IGNORE_UP_AND_DOWN = 'up_and_down';
-    const IGNORE_NONE = 'none';
+    const IGNORE_WHEN_UNSERIALIZING = 'ignore_when_unserializing';
+    const IGNORE_WHEN_SERIALIZING = 'ignore_when_serializing';
+    const IGNORE_ALWAYS = 'ignore_always';
+    const IGNORE_NEVER = 'ignore_never';
 
     /**
      *
@@ -56,16 +56,12 @@ class Serializer {
     public static function applySerializeMetadataToArray(array $array, $className, DocumentManager $documentManager) {
 
         $classMetadata = $documentManager->getClassMetadata($className);
+        $fieldList = self::fieldListForSerialize($classMetadata);
         $return = array_merge($array, self::serializeClassNameAndDiscriminator($classMetadata));
 
         foreach ($classMetadata->fieldMappings as $field=>$mapping){
 
-            if (isset($classMetadata->serializer['fields'][$field]['ignore']) &&
-                (
-                    $classMetadata->serializer['fields'][$field]['ignore'] == self::IGNORE_DOWN ||
-                    $classMetadata->serializer['fields'][$field]['ignore'] == self::IGNORE_UP_AND_DOWN
-                )
-            ){
+            if ( ! in_array($field, $fieldList)){
                 if (isset($return[$field])){
                     unset($return[$field]);
                 }
@@ -77,25 +73,41 @@ class Serializer {
                 unset($return['_id']);
             }
 
-            if(isset($mapping['embedded']) && isset($return[$field])){
-                switch ($mapping['type']){
-                    case 'one':
-                        $return[$field] = self::applySerializeMetadataToArray(
-                            $return[$field],
+            switch (true){
+                case isset($mapping['embedded']) && $mapping['type'] == 'one':
+                    $return[$field] = self::applySerializeMetadataToArray(
+                        $return[$field],
+                        $mapping['targetDocument'],
+                        $documentManager
+                    );
+                    break;
+                case isset($mapping['embedded']) && $mapping['type'] == 'many':
+                    foreach($return[$field] as $index => $embedArray){
+                        $return[$field][$index] = self::applySerializeMetadataToArray(
+                            $embedArray,
                             $mapping['targetDocument'],
                             $documentManager
                         );
-                        break;
-                    case 'many':
-                        foreach($return[$field] as $index => $embedArray){
-                            $return[$field][$index] = self::applySerializeMetadataToArray(
-                                $embedArray,
-                                $mapping['targetDocument'],
-                                $documentManager
-                            );
-                        }
-                        break;
-                }
+                    }
+                    break;
+                case isset($mapping['reference']) && $mapping['type'] == 'one':
+                    $referenceSerializer = self::getReferenceSerializer($field, $classMetadata);
+                    $return[$field] = $referenceSerializer::serialize(
+                        $return[$field]['$id'],
+                        $mapping,
+                        $documentManager
+                    );
+                    break;
+                case isset($mapping['reference']) && $mapping['type'] == 'many':
+                    $referenceSerializer = self::getReferenceSerializer($field, $classMetadata);
+                    foreach($return[$field] as $index => $referenceDocument){
+                        $return[$field][$index] = $referenceSerializer::serialize(
+                            $referenceDocument['$id'],
+                            $mapping,
+                            $documentManager
+                        );
+                    }
+                    break;
             }
         }
 
@@ -122,40 +134,38 @@ class Serializer {
         return $return;
     }
 
-    public static function fieldListUp(ClassMetadata $classMetadata){
+    public static function fieldListForUnserialize(ClassMetadata $classMetadata){
 
         $return = [];
 
         foreach ($classMetadata->fieldMappings as $field=>$mapping){
             if (isset($classMetadata->serializer['fields'][$field]['ignore']) &&
                 (
-                    $classMetadata->serializer['fields'][$field]['ignore'] == self::IGNORE_UP ||
-                    $classMetadata->serializer['fields'][$field]['ignore'] == self::IGNORE_UP_AND_DOWN
+                    $classMetadata->serializer['fields'][$field]['ignore'] == self::IGNORE_WHEN_UNSERIALIZING ||
+                    $classMetadata->serializer['fields'][$field]['ignore'] == self::IGNORE_ALWAYS
                 )
             ){
                continue;
             }
-
             $return[] = $field;
         }
 
         return $return;
     }
 
-    public static function fieldListDown(ClassMetadata $classMetadata){
+    public static function fieldListForSerialize(ClassMetadata $classMetadata){
 
         $return = [];
 
         foreach ($classMetadata->fieldMappings as $field=>$mapping){
             if (isset($classMetadata->serializer['fields'][$field]['ignore']) &&
                 (
-                    $classMetadata->serializer['fields'][$field]['ignore'] == self::IGNORE_DOWN ||
-                    $classMetadata->serializer['fields'][$field]['ignore'] == self::IGNORE_UP_AND_DOWN
+                    $classMetadata->serializer['fields'][$field]['ignore'] == self::IGNORE_WHEN_SERIALIZING ||
+                    $classMetadata->serializer['fields'][$field]['ignore'] == self::IGNORE_ALWAYS
                 )
             ){
                continue;
             }
-
             $return[] = $field;
         }
 
@@ -172,44 +182,63 @@ class Serializer {
     protected static function serialize($document, DocumentManager $documentManager){
 
         $classMetadata = $documentManager->getClassMetadata(get_class($document));
+        $fieldList = self::fieldListForSerialize($classMetadata);
         $return = self::serializeClassNameAndDiscriminator($classMetadata);
 
         foreach ($classMetadata->fieldMappings as $field=>$mapping){
 
-            if (isset($classMetadata->serializer['fields'][$field]['ignore']) &&
-                (
-                    $classMetadata->serializer['fields'][$field]['ignore'] == self::IGNORE_DOWN ||
-                    $classMetadata->serializer['fields'][$field]['ignore'] == self::IGNORE_UP_AND_DOWN
-                )
-            ){
-               continue;
+            if ( ! in_array($field, $fieldList)){
+                continue;
             }
 
             $getMethod = Accessor::getGetter($classMetadata, $field, $document);
 
-            if(isset($mapping['embedded'])){
-                switch ($mapping['type']){
-                    case 'one':
-                        $embedDocument = $document->$getMethod();
-                        if (isset($embedDocument)) {
-                            $return[$field] = self::serialize($embedDocument, $documentManager);
-                        }
-                        break;
-                    case 'many':
-                        $return[$field] = array();
-                        $embedDocuments = $document->$getMethod();
-                        foreach($embedDocuments as $embedDocument){
-                            $return[$field][] = self::serialize($embedDocument, $documentManager);
-                        }
-                        break;
-                }
-            } else {
-                $return[$field] = $document->$getMethod();
+            switch (true){
+                case isset($mapping['embedded']) && $mapping['type'] == 'one':
+                    $embedDocument = $document->$getMethod();
+                    if (isset($embedDocument)) {
+                        $return[$field] = self::serialize($embedDocument, $documentManager);
+                    }
+                    break;
+                case isset($mapping['embedded']) && $mapping['type'] == 'many':
+                    $return[$field] = array();
+                    $embedDocuments = $document->$getMethod();
+                    foreach($embedDocuments as $embedDocument){
+                        $return[$field][] = self::serialize($embedDocument, $documentManager);
+                    }
+                    break;
+                case isset($mapping['reference']) && $mapping['type'] == 'one':
+                    $referenceSerializer = self::getReferenceSerializer($field, $classMetadata);
+                    $return[$field] = $referenceSerializer::serialize(
+                        $document->$getMethod()->getId(),
+                        $mapping,
+                        $documentManager
+                    );
+                    break;
+                case isset($mapping['reference']) && $mapping['type'] == 'many':
+                    $referenceSerializer = self::getReferenceSerializer($field, $classMetadata);
+                    foreach($document->$getMethod()->getMongoData() as $referenceDocument){
+                        $return[$field][] = $referenceSerializer::serialize(
+                            $referenceDocument['$id'],
+                            $mapping,
+                            $documentManager
+                        );
+                    }
+                    break;
+                default:
+                    $return[$field] = $document->$getMethod();
             }
         }
         return $return;
     }
 
+    protected static function getReferenceSerializer($field, $classMetadata){
+        if (isset($classMetadata->serializer['fields'][$field]['referenceSerializer'])){
+            return $classMetadata->serializer['fields'][$field]['referenceSerializer'];
+        } else {
+            return 'Sds\DoctrineExtensions\Serializer\Reference\Lazy';
+        }
+    }
 
     /**
      * This will create a document from the supplied array.
@@ -261,41 +290,84 @@ class Serializer {
 
         $metadata = $documentManager->getClassMetadata($className);
 
-        $reflection = new \ReflectionClass($className);
-        $document = $reflection->newInstanceWithoutConstructor();
+        // Attempt to load prexisting document from db
+        if (isset($data[$metadata->identifier])){
+            $document = $documentManager->getProxyFactory()->getProxy($className, $data[$metadata->identifier]);
+        }
+        if (isset($document)){
+            $loadedFromDocumentManager = true;
+        } else {
+            $loadedFromDocumentManager = false;
+            $reflection = new \ReflectionClass($className);
+            $document = $reflection->newInstanceWithoutConstructor();
+        }
 
         foreach ($metadata->fieldMappings as $field=>$mapping){
+
             if (!isset($data[$field])) {
+                continue;
+            }
+            if ($field == $metadata->identifier && $loadedFromDocumentManager){
                 continue;
             }
 
             $setMethod = Accessor::getSetter($metadata, $field, $document);
 
-            if(isset($mapping['embedded'])){
-                switch ($mapping['type']){
-                    case 'one':
+            switch (true){
+                case isset($mapping['embedded']) && $mapping['type'] == 'one':
+                    $document->$setMethod(self::unserialize(
+                        $data[$field],
+                        $documentManager,
+                        null,
+                        $mapping['targetDocument']
+                    ));
+                    break;
+                case isset($mapping['embedded']) && $mapping['type'] == 'many':
+                    $collection = array();
+                    foreach($data[$field] as $embedData){
+                        $collection[] = self::unserialize(
+                            $embedData,
+                            $documentManager,
+                            null,
+                            $mapping['targetDocument']
+                        );
+                    }
+                    $document->$setMethod($collection);
+                    break;
+                case isset($mapping['reference']) && $mapping['type'] == 'one':
+                    if (isset($data[$field]['$ref'])){
+                        $pieces = explode('/', $data[$field]['$ref']);
+                        $id = $pieces[count($pieces) - 1];
+                        $document->$setMethod($documentManager->getReference($mapping['targetDocument'], $id));
+                    } else {
                         $document->$setMethod(self::unserialize(
                             $data[$field],
                             $documentManager,
                             null,
                             $mapping['targetDocument']
                         ));
-                        break;
-                    case 'many':
-                        $collection = array();
-                        foreach($data[$field] as $embedData){
-                            $collection[] = self::unserialize(
-                                $embedData,
+                    }
+                    break;
+                case isset($mapping['reference']) && $mapping['type'] == 'many':
+                    $newArray = [];
+                    foreach($data[$field] as $value){
+                        if (isset($value['$ref'])){
+                            $pieces = explode('/', $value['$ref']);
+                            $id = $pieces[count($pieces) - 1];
+                            $newArray[] = $documentManager->getReference($mapping['targetDocument'], $id);
+                        } else {
+                            $newArray[] = self::unserialize(
+                                $value,
                                 $documentManager,
                                 null,
                                 $mapping['targetDocument']
                             );
                         }
-                        $document->$setMethod($collection);
-                        break;
-                }
-            } else {
-                $document->$setMethod($data[$field]);
+                    }
+                    $document->$setMethod($newArray);
+                    break;
+                default:
+                    $document->$setMethod($data[$field]);
             }
         }
 

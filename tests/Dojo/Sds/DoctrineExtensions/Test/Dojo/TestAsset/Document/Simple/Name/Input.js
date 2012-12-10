@@ -12,7 +12,7 @@ function(
     // Will return an Input for the name field
 
     return declare(
-        Sds/DoctrineExtensions/Test/Dojo/TestAsset/Document/Simple/Name/Input,
+        'Sds/DoctrineExtensions/Test/Dojo/TestAsset/Document/Simple/Name/Input',
         [ValidationTextBox],
         {
             validator: new NameValidator,

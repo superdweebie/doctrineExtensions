@@ -86,6 +86,15 @@ class Subscriber implements EventSubscriber, AnnotationReaderAwareInterface
             case ($annotation instanceOf Sds\Ignore):
                 $serializerMetadata['ignore'] = $annotation->value;
                 break;
+            case ($annotation instanceOf Sds\ReferenceSerializer):
+                $serializerMetadata['referenceSerializer'] = $annotation->value;
+                break;
+            case ($annotation instanceOf Sds\Eager):
+                $serializerMetadata['referenceSerializer'] = 'Sds\DoctrineExtensions\Serializer\Reference\Eager';
+                break;
+            case ($annotation instanceOf Sds\Lazy):
+                $serializerMetadata['referenceSerializer'] = 'Sds\DoctrineExtensions\Serializer\Reference\Lazy';
+                break;
         }
 
         return $serializerMetadata;

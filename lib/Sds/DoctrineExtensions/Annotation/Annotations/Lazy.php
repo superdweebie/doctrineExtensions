@@ -7,19 +7,15 @@
 namespace Sds\DoctrineExtensions\Annotation\Annotations;
 
 use Doctrine\Common\Annotations\Annotation;
-use Sds\DoctrineExtensions\Serializer\Serializer as Constants;
 
 /**
- * Mark a field to be skipped during serialization. Must be used in the context
- * of the Serializer annotation
+ * Shorthand for @ReferenceSerializer("Sds\DoctrineExtensions\Serializer\Reference\Lazy")
  *
  * @since   1.0
  * @author  Tim Roediger <superdweebie@gmail.com>
  *
  * @Annotation
  */
-final class Ignore extends Annotation
+final class Lazy extends Annotation
 {
-
-    public $value = Constants::IGNORE_ALWAYS;
 }
