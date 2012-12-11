@@ -99,7 +99,7 @@ class DojoGenerator
         ) = $this->configValidators($metadata);
 
 
-        //Model module
+        //Generate Model module
         $serializeList = Serializer::fieldListForUnserialize($metadata);
         $className = '';
         if (isset($metadata->serializer['className'])){
@@ -129,7 +129,7 @@ class DojoGenerator
         );
 
 
-        //ModelValidator module
+        //Generate ModelValidator
         if ($hasMultiFieldValidator || $hasFieldValidator){
 
             $validatorMids = [];
@@ -175,6 +175,7 @@ class DojoGenerator
             );
         }
 
+        //Generate validator for each field
         if ($hasFieldValidator){
             foreach($fieldValidators as $field => $config){
                 $params = [];
@@ -213,7 +214,7 @@ class DojoGenerator
             }
         }
 
-
+        //Generate form
         if ($hasMultiFieldValidator){
             $validatorBase = ",\n    '$baseId/MultiFieldValidator'";
             $validator = ",\n    MultiFieldValidator";
@@ -251,6 +252,7 @@ class DojoGenerator
             (?=[A-Z]) # and before an uppercase letter.
             /x';
 
+        //Generate inputs
         foreach(Serializer::fieldListForUnserialize($metadata) as $field){
 
             $params = [];
@@ -314,6 +316,16 @@ class DojoGenerator
                 ]
             );
         }
+
+        //Generate store
+        $return[$basePath . '/Store' . $this->extension] = $this->populateTemplate(
+            file_get_contents(__DIR__ . '/Template/Store.js.template'),
+            [
+                'mid' => $baseId . '/Store',
+                'target' => $metadata->rest['url'],
+                'idProperty' => $metadata->identifier
+            ]
+        );
 
         return $return;
     }

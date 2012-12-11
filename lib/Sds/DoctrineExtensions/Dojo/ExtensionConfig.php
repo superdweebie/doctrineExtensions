@@ -42,6 +42,7 @@ class ExtensionConfig extends AbstractExtensionConfig {
      * @var array
      */
     protected $dependencies = array(
+        'Sds\DoctrineExtensions\Rest' => null,
         'Sds\DoctrineExtensions\Serializer' => null,
         'Sds\DoctrineExtensions\Validator' => null
     );
