@@ -326,6 +326,7 @@ class DojoGenerator
                 'modelMid' => $baseId,
                 'model' =>  $model,
                 'mid' => $baseId . '/JsonRestStore',
+                'name' => $metadata->collection,
                 'target' => $metadata->rest['url'],
                 'idProperty' => $metadata->identifier
             ]
