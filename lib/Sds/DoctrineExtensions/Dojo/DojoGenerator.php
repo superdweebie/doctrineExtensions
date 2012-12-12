@@ -318,10 +318,14 @@ class DojoGenerator
         }
 
         //Generate store
-        $return[$basePath . '/Store' . $this->extension] = $this->populateTemplate(
-            file_get_contents(__DIR__ . '/Template/Store.js.template'),
+        $pieces = explode('/', $baseId);
+        $model = $pieces[count($pieces) - 1];
+        $return[$basePath . '/JsonRestStore' . $this->extension] = $this->populateTemplate(
+            file_get_contents(__DIR__ . '/Template/JsonRestStore.js.template'),
             [
-                'mid' => $baseId . '/Store',
+                'modelMid' => $baseId,
+                'model' =>  $model,
+                'mid' => $baseId . '/JsonRestStore',
                 'target' => $metadata->rest['url'],
                 'idProperty' => $metadata->identifier
             ]
