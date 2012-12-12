@@ -73,6 +73,10 @@ class Serializer {
                 unset($return['_id']);
             }
 
+            if ( ! isset($return[$field])){
+                continue;
+            }
+
             switch (true){
                 case isset($mapping['embedded']) && $mapping['type'] == 'one':
                     $return[$field] = self::applySerializeMetadataToArray(
@@ -296,7 +300,7 @@ class Serializer {
 
         // Attempt to load prexisting document from db
         if (isset($data[$metadata->identifier])){
-            $document = $documentManager->getProxyFactory()->getProxy($className, $data[$metadata->identifier]);
+            $document = $documentManager->getRepository($className)->find($data[$metadata->identifier]);
         }
         if (isset($document)){
             $loadedFromDocumentManager = true;
