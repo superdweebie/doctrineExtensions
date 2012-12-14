@@ -239,7 +239,7 @@ class DojoGenerator
                 'inputBases' => ",\n    " . implode(",\n    ", $inputBases),
                 'mid' => $baseId . '/Form',
                 'validator' => $validator,
-                'inputs' => ",\n    " . implode(",\n    ", $inputs),
+                'inputs' => count($inputs) > 0 ? ",\n    " . implode(",\n    ", $inputs) : '',
                 'validatorParam' => $validatorParam,
                 'inputParams' => "[\n                " . implode(",\n                ", $inputParams) . "\n            ]"
             ]
