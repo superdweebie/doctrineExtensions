@@ -93,7 +93,7 @@ class Serializer {
                 case isset($mapping['reference']) && $mapping['type'] == 'one':
                     $referenceSerializer = self::getReferenceSerializer($field, $classMetadata);
                     $return[$field] = $referenceSerializer::serialize(
-                        $return[$field]['$id'],
+                        is_array($return[$field]) ? $return[$field]['$id'] : $return[$field],
                         $mapping,
                         $documentManager
                     );
@@ -102,7 +102,7 @@ class Serializer {
                     $referenceSerializer = self::getReferenceSerializer($field, $classMetadata);
                     foreach($return[$field] as $index => $referenceDocument){
                         $return[$field][$index] = $referenceSerializer::serialize(
-                            $referenceDocument['$id'],
+                            is_array($referenceDocument) ? $referenceDocument['$id'] : $referenceDocument,
                             $mapping,
                             $documentManager
                         );
