@@ -24,6 +24,12 @@ class Serializer {
     const IGNORE_ALWAYS = 'ignore_always';
     const IGNORE_NEVER = 'ignore_never';
 
+    protected static $typeSerializers = [];
+
+    public static function setTypeSerializer($type, $serializer){
+        self::$typeSerializers[(string) $type] = (string) $serializer;
+    }
+
     /**
      *
      * @param object $document
@@ -97,7 +103,7 @@ class Serializer {
                 case isset($mapping['reference']) && $mapping['type'] == 'one':
                     $referenceSerializer = self::getReferenceSerializer($field, $classMetadata);
                     $return[$field] = $referenceSerializer::serialize(
-                        $return[$field]['$id'],
+                        is_array($return[$field]) ? $return[$field]['$id'] : $return[$field],
                         $mapping,
                         $documentManager
                     );
@@ -106,11 +112,15 @@ class Serializer {
                     $referenceSerializer = self::getReferenceSerializer($field, $classMetadata);
                     foreach($return[$field] as $index => $referenceDocument){
                         $return[$field][$index] = $referenceSerializer::serialize(
-                            $referenceDocument['$id'],
+                            is_array($referenceDocument) ? $referenceDocument['$id'] : $referenceDocument,
                             $mapping,
                             $documentManager
                         );
                     }
+                    break;
+                case array_key_exists($mapping['type'], self::$typeSerializers):
+                    $typeSerializer = self::$typeSerializers[$mapping['type']];
+                    $return[$field] = $typeSerializer::serialize($return[$field]);
                     break;
             }
         }
@@ -224,14 +234,18 @@ class Serializer {
                 case isset($mapping['reference']) && $mapping['type'] == 'many':
                     if ($referencedDocuments = $document->$getMethod()) {
                         $referenceSerializer = self::getReferenceSerializer($field, $classMetadata);
-                        foreach($referencedDocuments->getMongoData() as $referencedDocument){
+                        foreach($referencedDocuments->getMongoData() as $referenceDocument){
                             $return[$field][] = $referenceSerializer::serialize(
-                                $referencedDocument['$id'],
+                                is_array($referenceDocument) ? $referenceDocument['$id'] : (string) $referenceDocument,
                                 $mapping,
                                 $documentManager
                             );
                         }
                     }
+                    break;
+                case array_key_exists($mapping['type'], self::$typeSerializers):
+                    $typeSerializer = self::$typeSerializers[$mapping['type']];
+                    $return[$field] = $typeSerializer::serialize($document->$getMethod());
                     break;
                 default:
                     $return[$field] = $document->$getMethod();
@@ -373,6 +387,10 @@ class Serializer {
                         }
                     }
                     $document->$setMethod($newArray);
+                    break;
+                case array_key_exists($mapping['type'], self::$typeSerializers):
+                    $typeSerializer = self::$typeSerializers[$mapping['type']];
+                    $document->$setMethod($typeSerializer::unserialize($data[$field]));
                     break;
                 default:
                     $document->$setMethod($data[$field]);

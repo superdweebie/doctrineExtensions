@@ -17,6 +17,8 @@ function(
         [BaseJsonRestStore],
         {
 
+            name: 'Simple',
+
             idProperty: 'id',
 
             target: 'Simple',

@@ -19,6 +19,6 @@ class Lazy implements ReferenceSerializerInterface {
 
         $metadata = $documentManager->getClassMetadata($mapping['targetDocument']);
         $ref = $metadata->collection . '/' . $id;
-        return ['$ref' => $ref];
+        return array_key_exists('simple', $mapping) && $mapping['simple'] == true ? $ref : ['$ref' => $ref];
     }
 }

@@ -18,12 +18,22 @@ class ExtensionConfig extends AbstractExtensionConfig {
 
     use ClassNamePropertyTrait;
 
+    protected $typeSerializers = [];
+
     /**
      *
      * @var array
      */
-    protected $dependencies = array(
+    protected $dependencies = [
         'Sds\DoctrineExtensions\Annotation' => null,
         'Sds\DoctrineExtensions\Accessor' => null
-    );
+    ];
+
+    public function getTypeSerializers() {
+        return $this->typeSerializers;
+    }
+
+    public function setTypeSerializers($typeSerializers) {
+        $this->typeSerializers = $typeSerializers;
+    }
 }
