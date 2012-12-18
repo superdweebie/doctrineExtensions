@@ -26,5 +26,11 @@ class Extension extends AbstractExtension {
             $config->getAnnotationReader(),
             $config->getClassNameProperty()
         ));
+
+        Serializer::addTypeSerializer('date', 'Sds\DoctrineExtensions\Serializer\Type\DateSerializer');
+
+        foreach ($this->config->getTypeSerializers() as $type => $typeSerializer){
+            Serializer::addTypeSerializer($type, $typeSerializer);
+        }
     }
 }
