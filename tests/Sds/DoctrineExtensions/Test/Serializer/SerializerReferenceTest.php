@@ -9,6 +9,7 @@ use Sds\DoctrineExtensions\Test\Serializer\TestAsset\Document\CakeEagerSimpleRef
 use Sds\DoctrineExtensions\Test\Serializer\TestAsset\Document\CakeLazy;
 use Sds\DoctrineExtensions\Test\Serializer\TestAsset\Document\CakeLazySimpleReference;
 use Sds\DoctrineExtensions\Test\Serializer\TestAsset\Document\Flavour;
+use Sds\DoctrineExtensions\Test\Serializer\TestAsset\Document\FlavourEager;
 use Sds\DoctrineExtensions\Test\Serializer\TestAsset\Document\Ingredient;
 
 class SerializerReferenceTest extends BaseTest {
@@ -41,7 +42,7 @@ class SerializerReferenceTest extends BaseTest {
             $this->createIngredient('eggs')
         ]);
 
-        $flavour = new Flavour('chocolate');
+        $flavour = new FlavourEager('chocolate');
         $documentManager->persist($flavour);
         $cake->setFlavour($flavour);
 
@@ -53,11 +54,21 @@ class SerializerReferenceTest extends BaseTest {
 
         $cake = $documentManager->getRepository('Sds\DoctrineExtensions\Test\Serializer\TestAsset\Document\CakeEager')->findOneBy(['id' => $id]);
 
+        Serializer::setMaxNestingDepth(1);
         $array = Serializer::toArray($cake, $documentManager);
 
         $this->assertCount(4, $array['ingredients']);
         $this->assertEquals('flour', $array['ingredients'][0]['name']);
         $this->assertEquals('chocolate', $array['flavour']['name']);
+
+        // maxNestingDepth = 1 should not display cakes
+        $this->assertArrayNotHasKey('cakes', $array['flavour']);
+
+        Serializer::setMaxNestingDepth(2);
+        $array = Serializer::toArray($cake, $documentManager);
+
+        // maxNestingDepth = 2 should display cakes
+        $this->assertArrayHasKey('cakes', $array['flavour']);
 
         $array['ingredients'][3] = ['name' => 'coconut'];
         $cake = Serializer::fromArray($array, $documentManager);
@@ -130,7 +141,7 @@ class SerializerReferenceTest extends BaseTest {
             $this->createIngredient('eggs')
         ]);
 
-        $flavour = new Flavour('black_forest');
+        $flavour = new FlavourEager('black_forest');
         $documentManager->persist($flavour);
         $cake->setFlavour($flavour);
 
@@ -244,7 +255,7 @@ class SerializerReferenceTest extends BaseTest {
             $this->createIngredient('eggs')
         ]);
 
-        $flavour = new Flavour('chocolate');
+        $flavour = new FlavourEager('chocolate');
         $documentManager->persist($flavour);
         $cake->setFlavour($flavour);
 
@@ -316,8 +327,8 @@ class SerializerReferenceTest extends BaseTest {
         $pieces = explode('/', $array['flavour']);
         $this->assertCount(2, $pieces);
         $this->assertEquals('Flavour', $pieces[0]);
-    }    
-    
+    }
+
     protected function createIngredient($name){
         $ingredient = new Ingredient($name);
         $this->documentManager->persist($ingredient);

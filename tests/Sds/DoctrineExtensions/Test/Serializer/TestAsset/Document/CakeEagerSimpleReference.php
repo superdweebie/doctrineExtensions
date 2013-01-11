@@ -26,7 +26,7 @@ class CakeEagerSimpleReference {
     protected $ingredients;
 
     /**
-     * @ODM\ReferenceOne(targetDocument="Flavour", simple=true)
+     * @ODM\ReferenceOne(targetDocument="FlavourEager", simple=true)
      * @Sds\Serializer(@Sds\Eager)
      */
     protected $flavour;
