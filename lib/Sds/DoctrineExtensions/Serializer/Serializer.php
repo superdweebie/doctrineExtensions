@@ -24,16 +24,34 @@ class Serializer {
     const IGNORE_ALWAYS = 'ignore_always';
     const IGNORE_NEVER = 'ignore_never';
 
+    /** @var array */
     protected static $typeSerializers = [];
 
+    /** @var int */
+    protected static $maxNestingDepth = 1;
+
+    /**
+     * @param string $type
+     * @param string $serializer
+     */
     public static function addTypeSerializer($type, $serializer){
         self::$typeSerializers[(string) $type] = (string) $serializer;
     }
 
+    /**
+     * @param string $type
+     */
     public static function removeTypeSerializer($type){
         unset(self::$typeSerializers[(string) $type]);
     }
-    
+
+    /**
+     * @param int $maxNestingDepth
+     */
+    public static function setMaxNestingDepth($maxNestingDepth){
+        self::$maxNestingDepth = (int) $maxNestingDepth;
+    }
+
     /**
      *
      * @param object $document
@@ -116,7 +134,7 @@ class Serializer {
                     $referenceSerializer = self::getReferenceSerializer($field, $classMetadata);
                     foreach($return[$field] as $index => $referenceDocument){
                         $return[$field][$index] = $referenceSerializer::serialize(
-                            is_array($referenceDocument) ? $referenceDocument['$id'] : $referenceDocument,                            
+                            is_array($referenceDocument) ? $referenceDocument['$id'] : $referenceDocument,
                             $mapping,
                             $documentManager
                         );
@@ -229,7 +247,7 @@ class Serializer {
                     if ($referencedDocument = $document->$getMethod()) {
                         $referenceSerializer = self::getReferenceSerializer($field, $classMetadata);
                         $return[$field] = $referenceSerializer::serialize(
-                            $referencedDocument->getId(),                           
+                            $referencedDocument->getId(),
                             $mapping,
                             $documentManager
                         );
