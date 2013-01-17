@@ -13,12 +13,10 @@ use Doctrine\ODM\MongoDB\DocumentManager;
  * @since   1.0
  * @author  Tim Roediger <superdweebie@gmail.com>
  */
-class Lazy implements ReferenceSerializerInterface {
+class RefLazy implements ReferenceSerializerInterface {
 
     public static function serialize($id, array $mapping, DocumentManager $documentManager){
 
-        $metadata = $documentManager->getClassMetadata($mapping['targetDocument']);
-        $ref = $metadata->collection . '/' . $id;
-        return ['$ref' => $ref];
+        return ['$ref' => $documentManager->getClassMetadata($mapping['targetDocument'])->collection . '/' . $id];
     }
 }

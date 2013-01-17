@@ -26,7 +26,7 @@ class CakeEager {
     protected $ingredients;
 
     /**
-     * @ODM\ReferenceOne(targetDocument="Flavour")
+     * @ODM\ReferenceOne(targetDocument="FlavourEager")
      * @Sds\Serializer(@Sds\Eager)
      */
     protected $flavour;
@@ -45,12 +45,11 @@ class CakeEager {
         return $this->ingredients;
     }
 
-    public function setIngredients(array $ingredients){
+    public function setIngredients(array $ingredients) {
         $this->ingredients = $ingredients;
     }
 
-    public function addIngredient(Ingredient $ingredient)
-    {
+    public function addIngredient(Ingredient $ingredient) {
         $this->ingredients[] = $ingredient;
     }
 
@@ -58,7 +57,8 @@ class CakeEager {
         return $this->flavour;
     }
 
-    public function setFlavour($flavour) {
+    public function setFlavour(FlavourEager $flavour) {
         $this->flavour = $flavour;
+        $flavour->addCake($this);
     }
 }

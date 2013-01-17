@@ -12,7 +12,7 @@ use Sds\DoctrineExtensions\Annotation\Annotations as Sds;
  * @ODM\Document
  * @Sds\Serializer(@Sds\ClassName)
  */
-class CakeLazySimpleReference {
+class CakeSimpleLazySimpleReference {
 
     /**
      * @ODM\Id(strategy="UUID")
@@ -21,13 +21,13 @@ class CakeLazySimpleReference {
 
     /**
      * @ODM\ReferenceMany(targetDocument="Ingredient", simple=true)
-     * @Sds\Serializer(@Sds\Lazy)
+     * @Sds\Serializer(@Sds\SimpleLazy)
      */
     protected $ingredients;
 
     /**
      * @ODM\ReferenceOne(targetDocument="Flavour", simple=true)
-     * @Sds\Serializer(@Sds\Lazy)
+     * @Sds\Serializer(@Sds\SimpleLazy)
      */
     protected $flavour;
 

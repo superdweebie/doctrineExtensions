@@ -92,8 +92,11 @@ class Subscriber implements EventSubscriber, AnnotationReaderAwareInterface
             case ($annotation instanceOf Sds\Eager):
                 $serializerMetadata['referenceSerializer'] = 'Sds\DoctrineExtensions\Serializer\Reference\Eager';
                 break;
-            case ($annotation instanceOf Sds\Lazy):
-                $serializerMetadata['referenceSerializer'] = 'Sds\DoctrineExtensions\Serializer\Reference\Lazy';
+            case ($annotation instanceOf Sds\RefLazy):
+                $serializerMetadata['referenceSerializer'] = 'Sds\DoctrineExtensions\Serializer\Reference\RefLazy';
+                break;
+            case ($annotation instanceOf Sds\SimpleLazy):
+                $serializerMetadata['referenceSerializer'] = 'Sds\DoctrineExtensions\Serializer\Reference\SimpleLazy';
                 break;
         }
 

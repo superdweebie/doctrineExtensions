@@ -24,14 +24,35 @@ class Serializer {
     const IGNORE_ALWAYS = 'ignore_always';
     const IGNORE_NEVER = 'ignore_never';
 
+    /** @var array */
     protected static $typeSerializers = [];
 
+    /** @var int */
+    protected static $maxNestingDepth = 1;
+
+    /** @var int */
+    protected static $nestingDepth = 0;
+
+    /**
+     * @param string $type
+     * @param string $serializer
+     */
     public static function addTypeSerializer($type, $serializer){
         self::$typeSerializers[(string) $type] = (string) $serializer;
     }
 
+    /**
+     * @param string $type
+     */
     public static function removeTypeSerializer($type){
         unset(self::$typeSerializers[(string) $type]);
+    }
+
+    /**
+     * @param int $maxNestingDepth
+     */
+    public static function setMaxNestingDepth($maxNestingDepth){
+        self::$maxNestingDepth = (int) $maxNestingDepth;
     }
 
     /**
@@ -105,21 +126,29 @@ class Serializer {
                     }
                     break;
                 case isset($mapping['reference']) && $mapping['type'] == 'one':
-                    $referenceSerializer = self::getReferenceSerializer($field, $classMetadata);
-                    $return[$field] = $referenceSerializer::serialize(
-                        is_array($return[$field]) ? $return[$field]['$id'] : $return[$field],
-                        $mapping,
-                        $documentManager
-                    );
-                    break;
-                case isset($mapping['reference']) && $mapping['type'] == 'many':
-                    $referenceSerializer = self::getReferenceSerializer($field, $classMetadata);
-                    foreach($return[$field] as $index => $referenceDocument){
-                        $return[$field][$index] = $referenceSerializer::serialize(
-                            is_array($referenceDocument) ? $referenceDocument['$id'] : $referenceDocument,
+                    if (self::$nestingDepth < self::$maxNestingDepth) {
+                        self::$nestingDepth++;
+                        $referenceSerializer = self::getReferenceSerializer($field, $classMetadata);
+                        $return[$field] = $referenceSerializer::serialize(
+                            is_array($return[$field]) ? $return[$field]['$id'] : $return[$field],
                             $mapping,
                             $documentManager
                         );
+                        self::$nestingDepth--;
+                    }
+                    break;
+                case isset($mapping['reference']) && $mapping['type'] == 'many':
+                    if (self::$nestingDepth < self::$maxNestingDepth) {
+                        self::$nestingDepth++;
+                        $referenceSerializer = self::getReferenceSerializer($field, $classMetadata);
+                        foreach($return[$field] as $index => $referenceDocument){
+                            $return[$field][$index] = $referenceSerializer::serialize(
+                                is_array($referenceDocument) ? $referenceDocument['$id'] : $referenceDocument,
+                                $mapping,
+                                $documentManager
+                            );
+                        }
+                        self::$nestingDepth--;
                     }
                     break;
                 case array_key_exists($mapping['type'], self::$typeSerializers):
@@ -226,25 +255,33 @@ class Serializer {
                     }
                     break;
                 case isset($mapping['reference']) && $mapping['type'] == 'one':
-                    if ($referencedDocument = $document->$getMethod()) {
-                        $referenceSerializer = self::getReferenceSerializer($field, $classMetadata);
-                        $return[$field] = $referenceSerializer::serialize(
-                            Accessor::getId($documentManager->getClassMetadata($mapping['targetDocument']), $referencedDocument),
-                            $mapping,
-                            $documentManager
-                        );
-                    }
-                    break;
-                case isset($mapping['reference']) && $mapping['type'] == 'many':
-                    if ($referencedDocuments = $document->$getMethod()) {
-                        $referenceSerializer = self::getReferenceSerializer($field, $classMetadata);
-                        foreach($referencedDocuments->getMongoData() as $referencedDocument){
-                            $return[$field][] = $referenceSerializer::serialize(
-                                is_array($referencedDocument) ? $referencedDocument['$id'] : (string) $referencedDocument,
+                    if (self::$nestingDepth < self::$maxNestingDepth) {
+                        self::$nestingDepth++;
+                        if ($referencedDocument = $document->$getMethod()) {
+                            $referenceSerializer = self::getReferenceSerializer($field, $classMetadata);
+                            $return[$field] = $referenceSerializer::serialize(
+                                Accessor::getId($documentManager->getClassMetadata($mapping['targetDocument']), $referencedDocument),
                                 $mapping,
                                 $documentManager
                             );
                         }
+                        self::$nestingDepth--;
+                    }
+                    break;
+                case isset($mapping['reference']) && $mapping['type'] == 'many':
+                    if (self::$nestingDepth < self::$maxNestingDepth) {
+                        self::$nestingDepth++;
+                        if ($referencedDocuments = $document->$getMethod()) {
+                            $referenceSerializer = self::getReferenceSerializer($field, $classMetadata);
+                            foreach($referencedDocuments->getMongoData() as $referenceDocument){
+                                $return[$field][] = $referenceSerializer::serialize(
+                                    is_array($referenceDocument) ? $referenceDocument['$id'] : (string) $referenceDocument,
+                                    $mapping,
+                                    $documentManager
+                                );
+                            }
+                        }
+                        self::$nestingDepth--;
                     }
                     break;
                 case array_key_exists($mapping['type'], self::$typeSerializers):

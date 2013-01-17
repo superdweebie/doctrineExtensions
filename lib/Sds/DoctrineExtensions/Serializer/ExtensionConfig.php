@@ -18,22 +18,43 @@ class ExtensionConfig extends AbstractExtensionConfig {
 
     use ClassNamePropertyTrait;
 
+    /** @var array */
     protected $typeSerializers = [];
     
-    /**
-     *
-     * @var array
-     */
-    protected $dependencies = array(
+    /** @var int */
+    protected $maxNestingDepth = 1;
+
+    /** @var array */
+    protected $dependencies = [
         'Sds\DoctrineExtensions\Annotation' => null,
         'Sds\DoctrineExtensions\Accessor' => null
-    );
+    ];
 
+    /**
+     * @return array
+     */
     public function getTypeSerializers() {
         return $this->typeSerializers;
     }
 
+    /**
+     * @param array $typeSerializers
+     */
     public function setTypeSerializers($typeSerializers) {
         $this->typeSerializers = $typeSerializers;
+    }
+
+    /**
+     * @return int
+     */
+    public function getMaxNestingDepth() {
+        return $this->maxNestingDepth;
+    }
+
+    /**
+     * @param type $maxNestingDepth
+     */
+    public function setMaxNestingDepth($maxNestingDepth) {
+        $this->maxNestingDepth = (int) $maxNestingDepth;
     }
 }
