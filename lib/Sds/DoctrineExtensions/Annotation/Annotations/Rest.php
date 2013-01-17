@@ -9,17 +9,19 @@ namespace Sds\DoctrineExtensions\Annotation\Annotations;
 use Doctrine\Common\Annotations\Annotation;
 
 /**
- * Annotation to mark a property as required
+ * Annotation specify the url of a rest server to access a document
  *
  * @since   1.0
  * @author  Tim Roediger <superdweebie@gmail.com>
  *
  * @Annotation
- * @Target({"PROPERTY"})
+ * @Target({"CLASS"})
  */
-final class NotRequiredValidator extends Annotation
+final class Rest extends Annotation
 {
-    const event = 'annotationNotRequiredValidator';
-    
-    public $value = true;    
+    const event = 'annotationRest';
+
+    public $value;
+
+    public $basePath;
 }

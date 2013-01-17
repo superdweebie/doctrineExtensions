@@ -8,7 +8,7 @@ use Sds\DoctrineExtensions\Annotation\Annotations as Sds;
 
 /**
  * @ODM\Document
- * @Sds\RestUrl("RestAPI/Explicit")
+ * @Sds\Rest("RestAPI/Explicit")
  */
 class Explicit {
 

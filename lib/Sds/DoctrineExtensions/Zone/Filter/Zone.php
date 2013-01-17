@@ -51,7 +51,7 @@ class Zone extends BsonFilter
      * @param array $zones
      */
     public function setZones(array $zones){
-        $this->parameters['zones'] = $zones;
+        $this->parameters['zones'] = array_map(function($zone){return (string) $zone;}, $zones);
     }
 
     /**

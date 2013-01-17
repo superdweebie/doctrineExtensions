@@ -18,7 +18,7 @@ class ExtensionConfig extends AbstractExtensionConfig
 {
     /**
      *
-     * @var \Sds\Common\Validator\ValidatorInterface
+     * @var \Sds\Validator\ValidatorInterface
      */
     protected $documentValidator;
 
@@ -26,7 +26,7 @@ class ExtensionConfig extends AbstractExtensionConfig
 
     /**
      *
-     * @return \Sds\Common\Validator\ValidatorInterface
+     * @return \Sds\Validator\ValidatorInterface
      */
     public function getDocumentValidator() {
         return $this->documentValidator;
@@ -34,7 +34,7 @@ class ExtensionConfig extends AbstractExtensionConfig
 
     /**
      *
-     * @param \Sds\Common\Validator\ValidatorInterface $validator
+     * @param \Sds\Validator\ValidatorInterface $validator
      */
     public function setDocumentValidator(DocumentValidatorInterface $documentValidator) {
         $this->documentValidator = $documentValidator;

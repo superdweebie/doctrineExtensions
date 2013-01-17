@@ -36,7 +36,7 @@ class Subscriber implements EventSubscriber, AnnotationReaderAwareInterface
     /**
      *
      * @param \Doctrine\Common\Annotations\Reader $annotationReader
-     * @param \Sds\Common\Validator\ValidatorInterface $validator
+     * @param \Sds\Validator\ValidatorInterface $validator
      */
     public function __construct(Reader $annotationReader){
         $this->setAnnotationReader($annotationReader);

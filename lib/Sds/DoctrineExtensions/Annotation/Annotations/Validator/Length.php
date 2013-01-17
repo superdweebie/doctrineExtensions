@@ -4,7 +4,7 @@
  * @package    Sds
  * @license    MIT
  */
-namespace Sds\DoctrineExtensions\Annotation\Annotations;
+namespace Sds\DoctrineExtensions\Annotation\Annotations\Validator;
 
 use Doctrine\Common\Annotations\Annotation;
 
@@ -16,9 +16,13 @@ use Doctrine\Common\Annotations\Annotation;
  * @Annotation
  * @Target({"PROPERTY"})
  */
-final class IdentifierArrayValidator extends Annotation
+final class Length extends Annotation
 {
-    const event = 'annotationIdentifierArrayValidator';
-    
+    const event = 'annotationLengthValidator';
+
     public $value = true;
+
+    public $min;
+
+    public $max;
 }

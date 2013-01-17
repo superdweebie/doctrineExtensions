@@ -31,7 +31,8 @@ class RestTest extends BaseTest {
 
         $metadata = $documentManager->getClassMetadata(get_class(new Explicit));
 
-        $this->assertEquals('http://myserver.com/RestAPI/Explicit', $metadata->rest['url']);
+        $this->assertEquals('http://myserver.com/', $metadata->rest['basePath']);
+        $this->assertEquals('RestAPI/Explicit', $metadata->rest['endpoint']);
     }
 
     public function testImplicit(){
@@ -40,6 +41,7 @@ class RestTest extends BaseTest {
 
         $metadata = $documentManager->getClassMetadata(get_class(new Implicit));
 
-        $this->assertEquals('http://myserver.com/Implicit', $metadata->rest['url']);
+        $this->assertEquals('http://myserver.com/', $metadata->rest['basePath']);
+        $this->assertEquals('implicit', $metadata->rest['endpoint']);
     }
 }

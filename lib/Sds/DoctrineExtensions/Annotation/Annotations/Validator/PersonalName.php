@@ -4,7 +4,7 @@
  * @package    Sds
  * @license    MIT
  */
-namespace Sds\DoctrineExtensions\Annotation\Annotations;
+namespace Sds\DoctrineExtensions\Annotation\Annotations\Validator;
 
 use Doctrine\Common\Annotations\Annotation;
 
@@ -14,11 +14,11 @@ use Doctrine\Common\Annotations\Annotation;
  * @author  Tim Roediger <superdweebie@gmail.com>
  *
  * @Annotation
- * @Target({"PROPERTY"}) 
+ * @Target({"PROPERTY"})
  */
-final class AlphaValidator extends Annotation
+final class PersonalName extends Annotation
 {
-    const event = 'annotationAlphaValidator';
-    
+    const event = 'annotationPersonalNameValidator';
+
     public $value = true;
 }

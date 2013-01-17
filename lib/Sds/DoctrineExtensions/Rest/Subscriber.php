@@ -8,8 +8,6 @@ namespace Sds\DoctrineExtensions\Rest;
 
 use Doctrine\Common\Annotations\Reader;
 use Doctrine\Common\EventSubscriber;
-use Doctrine\ODM\MongoDB\Event\LoadClassMetadataEventArgs;
-use Doctrine\ODM\MongoDB\Events as ODMEvents;
 use Sds\DoctrineExtensions\AnnotationReaderAwareTrait;
 use Sds\DoctrineExtensions\AnnotationReaderAwareInterface;
 use Sds\DoctrineExtensions\Annotation\Annotations as Sds;
@@ -41,8 +39,7 @@ class Subscriber implements EventSubscriber, AnnotationReaderAwareInterface
      */
     public function getSubscribedEvents(){
         return array(
-            ODMEvents::loadClassMetadata,
-            Sds\RestUrl::event
+            Sds\Rest::event
         );
     }
 
@@ -57,29 +54,15 @@ class Subscriber implements EventSubscriber, AnnotationReaderAwareInterface
 
     /**
      *
-     * @param \Doctrine\ODM\MongoDB\Event\LoadClassMetadataEventArgs $eventArgs
-     */
-    public function loadClassMetadata(LoadClassMetadataEventArgs $eventArgs)
-    {
-        $metadata = $eventArgs->getClassMetadata();
-
-        if (isset($metadata->rest)){
-            return;
-        }
-
-        $metadata->rest = ['url' => $this->getBasePath() . $metadata->collection];
-    }
-
-    /**
-     *
      * @param \Sds\DoctrineExtensions\Annotation\AnnotationEventArgs $eventArgs
      */
-    public function annotationRestUrl(AnnotationEventArgs $eventArgs)
+    public function annotationRest(AnnotationEventArgs $eventArgs)
     {
         $annotation = $eventArgs->getAnnotation();
 
         $eventArgs->getMetadata()->rest = [
-            'url' => $this->getBasePath() . $annotation->value
+            'basePath' => isset($annotation->basePath) ? $annotation->basePath : $this->getBasePath(),
+            'endpoint' => isset($annotation->value) ? $annotation->value : strtolower($eventArgs->getMetadata()->collection)
         ];
     }
 }

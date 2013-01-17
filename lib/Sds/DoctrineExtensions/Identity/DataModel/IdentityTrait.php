@@ -11,8 +11,8 @@ trait IdentityTrait {
      * @ODM\Id(strategy="none")
      * @ODM\Index(unique = true, order = "asc")
      * @Sds\Readonly
-     * @Sds\RequiredValidator
-     * @Sds\IdentifierValidator
+     * @Sds\Validator\Required
+     * @Sds\Validator\Identifier
      *
      * @Sds\DojoInput(
      *     params = {
@@ -30,4 +30,3 @@ trait IdentityTrait {
         $this->identityName = (string) $identityName;
     }
 }
-

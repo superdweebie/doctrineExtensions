@@ -4,11 +4,12 @@
  * @package    Sds
  * @license    MIT
  */
-namespace Sds\DoctrineExtensions\Annotation\Annotations;
+namespace Sds\DoctrineExtensions\Annotation\Annotations\Validator;
 
 use Doctrine\Common\Annotations\Annotation;
 
 /**
+ * Annotation to mark a property as required
  *
  * @since   1.0
  * @author  Tim Roediger <superdweebie@gmail.com>
@@ -16,13 +17,9 @@ use Doctrine\Common\Annotations\Annotation;
  * @Annotation
  * @Target({"PROPERTY"})
  */
-final class LengthValidator extends Annotation
+final class NotRequired extends Annotation
 {
-    const event = 'annotationLengthValidator';
-    
+    const event = 'annotationNotRequiredValidator';
+
     public $value = true;
-    
-    public $min;
-    
-    public $max;
 }

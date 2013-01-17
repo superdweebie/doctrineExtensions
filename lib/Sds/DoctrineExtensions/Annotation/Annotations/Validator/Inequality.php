@@ -4,10 +4,10 @@
  * @package    Sds
  * @license    MIT
  */
-namespace Sds\DoctrineExtensions\Annotation\Annotations;
+namespace Sds\DoctrineExtensions\Annotation\Annotations\Validator;
 
 use Doctrine\Common\Annotations\Annotation;
-use Sds\Common\Validator\InequalityValidator as ValidatorConst;
+use Sds\Validator\Inequality as ValidatorConst;
 
 /**
  *
@@ -17,13 +17,13 @@ use Sds\Common\Validator\InequalityValidator as ValidatorConst;
  * @Annotation
  * @Target({"PROPERTY"})
  */
-final class InequalityValidator extends Annotation
+final class Inequality extends Annotation
 {
     const event = 'annotationInequalityValidator';
-    
+
     public $value = true;
-    
+
     public $compareValue = 0;
-    
-    public $operator = ValidatorConst::GREATER_THAN;    
+
+    public $operator = ValidatorConst::GREATER_THAN;
 }

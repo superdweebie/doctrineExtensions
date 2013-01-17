@@ -4,7 +4,7 @@
  * @package    Sds
  * @license    MIT
  */
-namespace Sds\DoctrineExtensions\Annotation\Annotations;
+namespace Sds\DoctrineExtensions\Annotation\Annotations\Validator;
 
 use Doctrine\Common\Annotations\Annotation;
 
@@ -16,9 +16,9 @@ use Doctrine\Common\Annotations\Annotation;
  * @Annotation
  * @Target({"PROPERTY"})
  */
-final class CredentialValidator extends Annotation
+final class IdentifierArray extends Annotation
 {
-    const event = 'annotationCredentialValidator';
-    
+    const event = 'annotationIdentifierArrayValidator';
+
     public $value = true;
 }

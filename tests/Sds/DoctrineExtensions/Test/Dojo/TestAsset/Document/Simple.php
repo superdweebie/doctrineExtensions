@@ -22,7 +22,7 @@ class Simple {
 
     /**
      * @ODM\String
-     * @Sds\RequiredValidator,
+     * @Sds\Validator\Required,
      * @Sds\Validator(class = "Sds/Test/NameValidator1"),
      * @Sds\Validator(class = "Sds/Test/NameValidator2", options = {"option1" = "b", "option2" = "b"})
      * @Sds\DojoInput(
@@ -52,7 +52,7 @@ class Simple {
     /**
      * @ODM\String
      * @Sds\Serializer(@Sds\Ignore)
-     * @Sds\NotRequiredValidator
+     * @Sds\Validator\NotRequired
      */
     protected $ignoreProperty;
 

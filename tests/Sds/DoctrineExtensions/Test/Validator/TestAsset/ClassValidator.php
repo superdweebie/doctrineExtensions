@@ -2,8 +2,8 @@
 
 namespace Sds\DoctrineExtensions\Test\Validator\TestAsset;
 
-use Sds\Common\Validator\ValidatorInterface;
-use Sds\Common\Validator\ValidatorResult;
+use Sds\Validator\ValidatorInterface;
+use Sds\Validator\ValidatorResult;
 
 class ClassValidator implements ValidatorInterface {
 

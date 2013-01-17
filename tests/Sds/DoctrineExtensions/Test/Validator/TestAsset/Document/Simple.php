@@ -19,7 +19,7 @@ class Simple {
 
     /**
      * @ODM\Field(type="string")
-     * @Sds\RequiredValidator,
+     * @Sds\Validator\Required,
      * @Sds\Validator(class = "Sds\DoctrineExtensions\Test\Validator\TestAsset\PropertyValidator1")
      * @Sds\Validator(class = "Sds\DoctrineExtensions\Test\Validator\TestAsset\PropertyValidator2")
      * )

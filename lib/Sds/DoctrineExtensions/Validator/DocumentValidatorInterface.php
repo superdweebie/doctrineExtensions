@@ -24,7 +24,7 @@ interface DocumentValidatorInterface
      * validation failed.
      *
      * @param  document $value
-     * @return Sds\Common\Validator\ValidatorResult
+     * @return Sds\Validator\ValidatorResult
      * @throws Exception\RuntimeException If validation of $value is impossible
      */
     public function isValid($value, ClassMetadata $metadata);

@@ -19,7 +19,7 @@ use Sds\DoctrineExtensions\Annotations as Sds;
 trait ZoneAwareTrait {
 
     /**
-     * @ODM\Field(type="hash")
+     * @ODM\Field(type="collection")
      * @Sds\Zones
      * @Sds\Validator(class = "Sds\Common\Validator\IdentifierArrayValidator")
      */
@@ -31,7 +31,7 @@ trait ZoneAwareTrait {
      * @param array $zones An array of strings which are zone names
      */
     public function setZones(array $zones){
-        $this->zones = $zones;
+        $this->zones = array_map(function($zone){return (string) $zone;}, $zones);
     }
 
     /**

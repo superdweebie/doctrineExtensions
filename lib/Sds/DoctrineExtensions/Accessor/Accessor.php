@@ -71,4 +71,9 @@ class Accessor {
 
         return $setMethod;
     }
+
+    public static function getId(ClassMetadata $metadata, $document){
+        $idGetter = self::getGetter($metadata, $metadata->identifier, $document);
+        return $document->$idGetter();
+    }
 }

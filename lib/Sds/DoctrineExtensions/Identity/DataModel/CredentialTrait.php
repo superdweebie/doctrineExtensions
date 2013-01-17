@@ -26,8 +26,8 @@ trait CredentialTrait {
      *         "label" = "Password:"
      *     }
      * )
-     * @Sds\RequiredValidator
-     * @Sds\CredentialValidator
+     * @Sds\Validator\Required
+     * @Sds\Validator\Credential
      *
      * @Sds\CryptHash
      */

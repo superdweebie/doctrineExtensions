@@ -4,7 +4,7 @@
  * @package    Sds
  * @license    MIT
  */
-namespace Sds\DoctrineExtensions\Annotation\Annotations;
+namespace Sds\DoctrineExtensions\Annotation\Annotations\Validator;
 
 use Doctrine\Common\Annotations\Annotation;
 
@@ -16,9 +16,9 @@ use Doctrine\Common\Annotations\Annotation;
  * @Annotation
  * @Target({"PROPERTY"})
  */
-final class CurrencyValidator extends Annotation
+final class EmailAddress extends Annotation
 {
-    const event = 'annotationCurrencyValidator';
-    
+    const event = 'annotationEmailAddressValidator';
+
     public $value = true;
 }

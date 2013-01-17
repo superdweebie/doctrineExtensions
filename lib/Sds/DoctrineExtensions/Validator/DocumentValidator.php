@@ -6,8 +6,8 @@
 namespace Sds\DoctrineExtensions\Validator;
 
 use Doctrine\ODM\MongoDB\Mapping\ClassMetadata;
-use Sds\Common\Validator\ValidatorFactory;
-use Sds\Common\Validator\ValidatorResult;
+use Sds\Validator\ValidatorFactory;
+use Sds\Validator\ValidatorResult;
 use Sds\DoctrineExtensions\Accessor\Accessor;
 use Sds\DoctrineExtensions\Annotation\Annotations as Sds;
 

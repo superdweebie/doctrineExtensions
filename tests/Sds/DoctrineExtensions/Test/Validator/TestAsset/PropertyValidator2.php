@@ -2,8 +2,8 @@
 
 namespace Sds\DoctrineExtensions\Test\Validator\TestAsset;
 
-use Sds\Common\Validator\ValidatorInterface;
-use Sds\Common\Validator\ValidatorResult;
+use Sds\Validator\ValidatorInterface;
+use Sds\Validator\ValidatorResult;
 
 class PropertyValidator2 implements ValidatorInterface {
 
@@ -16,7 +16,7 @@ class PropertyValidator2 implements ValidatorInterface {
             $messages[] = 'invalid name 2';
             $result = false;
         }
-        
+
         return new ValidatorResult($result, $messages);
     }
 }

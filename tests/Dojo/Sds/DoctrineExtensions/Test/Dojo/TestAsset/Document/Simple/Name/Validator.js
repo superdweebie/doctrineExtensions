@@ -2,14 +2,14 @@
 define([
     'dojo/_base/declare',
     'Sds/Common/Validator/ValidatorGroup',
-    'Sds/Common/Validator/RequiredValidator',
+    'Sds/Validator/Required',
     'Sds/Test/NameValidator1',
     'Sds/Test/NameValidator2'
 ],
 function(
     declare,
     ValidatorGroup,
-    RequiredValidator,
+    Required,
     NameValidator1,
     NameValidator2
 ){
@@ -23,7 +23,7 @@ function(
             field: "name",
 
             validators: [
-                new RequiredValidator,
+                new Required,
                 new NameValidator1,
                 new NameValidator2({
                     "option1": "b",
