@@ -299,7 +299,7 @@ class Serializer {
         if (isset($classMetadata->serializer['fields'][$field]['referenceSerializer'])){
             return $classMetadata->serializer['fields'][$field]['referenceSerializer'];
         } else {
-            return 'Sds\DoctrineExtensions\Serializer\Reference\Lazy';
+            return 'Sds\DoctrineExtensions\Serializer\Reference\RefLazy';
         }
     }
 
@@ -320,6 +320,25 @@ class Serializer {
         $className = null
     ) {
         return self::unserialize($data, $documentManager, $classNameKey, $className);
+    }
+
+    /**
+     * This will create a document from the supplied json string.
+     * WARNING: the constructor of the document will not be called.
+     *
+     * @param string $data
+     * @param \Doctrine\ODM\MongoDB\DocumentManager $documentManager
+     * @param string $classNameKey
+     * @param string $className
+     * @return object
+     */
+    public static function fromJson(
+        $data,
+        DocumentManager $documentManager,
+        $classNameKey = '_className',
+        $className = null
+    ) {
+        return self::unserialize(json_dencode($data), $documentManager, $classNameKey, $className);
     }
 
     /**
