@@ -18,9 +18,11 @@ class Eager implements ReferenceSerializerInterface {
 
     public static function serialize($id, array $mapping, DocumentManager $documentManager){
 
-        return Serializer::toArray(
-            $documentManager->getRepository($mapping['targetDocument'])->findOneBy(['id' => $id]),
-            $documentManager
-        );
+        $document = $documentManager->getRepository($mapping['targetDocument'])->findOneBy(['id' => $id]);
+        if ($document){
+            return Serializer::toArray($document, $documentManager);
+        } else {
+            return null;
+        }
     }
 }

@@ -259,11 +259,14 @@ class Serializer {
                         self::$nestingDepth++;
                         if ($referencedDocument = $document->$getMethod()) {
                             $referenceSerializer = self::getReferenceSerializer($field, $classMetadata);
-                            $return[$field] = $referenceSerializer::serialize(
+                            $serializedDocument = $referenceSerializer::serialize(
                                 Accessor::getId($documentManager->getClassMetadata($mapping['targetDocument']), $referencedDocument),
                                 $mapping,
                                 $documentManager
                             );
+                            if ($serializedDocument){
+                                $return[$field] = $serializedDocument;
+                            }
                         }
                         self::$nestingDepth--;
                     }
@@ -274,11 +277,14 @@ class Serializer {
                         if ($referencedDocuments = $document->$getMethod()) {
                             $referenceSerializer = self::getReferenceSerializer($field, $classMetadata);
                             foreach($referencedDocuments->getMongoData() as $referenceDocument){
-                                $return[$field][] = $referenceSerializer::serialize(
+                                $serializedDocument = $referenceSerializer::serialize(
                                     is_array($referenceDocument) ? $referenceDocument['$id'] : (string) $referenceDocument,
                                     $mapping,
                                     $documentManager
                                 );
+                                if ($serializedDocument){
+                                    $return[$field][] = $serializedDocument;
+                                }
                             }
                         }
                         self::$nestingDepth--;
