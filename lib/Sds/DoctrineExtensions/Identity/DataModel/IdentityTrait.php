@@ -13,12 +13,6 @@ trait IdentityTrait {
      * @Sds\Readonly
      * @Sds\Validator\Required
      * @Sds\Validator\Identifier
-     *
-     * @Sds\DojoInput(
-     *     params = {
-     *         "label" = "Username:"
-     *     }
-     * )
      */
     protected $identityName;
 
