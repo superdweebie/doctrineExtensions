@@ -17,7 +17,7 @@ trait RoleAwareIdentityTrait {
 
     /**
      * @ODM\Hash
-     * @Sds\IdentifierArrayValidator
+     * @Sds\Validator\IdentifierArray
      */
     protected $roles = [];
 

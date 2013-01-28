@@ -24,7 +24,6 @@ trait AccessControlledTrait{
      * @ODM\EmbedMany(
      *   targetDocument="Sds\DoctrineExtensions\AccessControl\DataModel\Permission"
      * )
-     * @Sds\Audit
      */
     protected $permissions = [];
 

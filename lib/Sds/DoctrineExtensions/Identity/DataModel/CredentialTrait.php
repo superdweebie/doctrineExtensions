@@ -20,15 +20,8 @@ trait CredentialTrait {
     /**
      * @ODM\String
      * @Sds\Serializer(@Sds\Ignore("down"))
-     * @Sds\DojoInput(
-     *     params = {
-     *         "type" = "password",
-     *         "label" = "Password:"
-     *     }
-     * )
      * @Sds\Validator\Required
      * @Sds\Validator\Credential
-     *
      * @Sds\CryptHash
      */
     protected $credential;
