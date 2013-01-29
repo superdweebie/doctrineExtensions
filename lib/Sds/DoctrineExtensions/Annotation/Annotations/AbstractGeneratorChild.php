@@ -12,11 +12,7 @@ use Doctrine\Common\Annotations\Annotation;
  *
  * @since   1.0
  * @author  Tim Roediger <superdweebie@gmail.com>
- *
- * @Annotation
- * @Target({"CLASS", "PROPERTY"})
  */
-final class Generator extends Annotation
+abstract class AbstractGeneratorChild extends Annotation
 {
-    const event = 'annotationGenerator';
 }

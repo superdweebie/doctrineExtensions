@@ -12,6 +12,7 @@ use Sds\DoctrineExtensions\AnnotationReaderAwareTrait;
 use Sds\DoctrineExtensions\AnnotationReaderAwareInterface;
 use Sds\DoctrineExtensions\Annotation\Annotations as Sds;
 use Sds\DoctrineExtensions\Annotation\AnnotationEventArgs;
+use Sds\DoctrineExtensions\Annotation\EventType;
 
 /**
  * Adds generator values to classmetadata
@@ -60,19 +61,21 @@ class Subscriber implements EventSubscriber, AnnotationReaderAwareInterface
         }
 
         $metadata = $eventArgs->getMetadata();
-        $metadata->generator = [];
+        if ( ! isset($metadata->generator)){
+            $metadata->generator = [];
+        }
 
         $eventManager = $eventArgs->getEventManager();
 
         foreach ($childAnnotations as $annotation){
-            if ($eventManager->hasListeners($annotation::event)) {
+            if ($annotation instanceof Sds\AbstractGeneratorChild && $eventManager->hasListeners($annotation::event)) {
                 $eventManager->dispatchEvent(
                     $annotation::event,
                     new AnnotationEventArgs(
                         $metadata,
-                        EventType::document,
+                        $eventArgs->getEventType(),
                         $annotation,
-                        $metadata->getReflectionClass(),
+                        $eventArgs->getReflection(),
                         $eventManager
                     )
                 );

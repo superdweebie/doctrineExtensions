@@ -23,10 +23,11 @@ class Extension extends AbstractExtension {
         parent::__construct($config);
         $config = $this->getConfig();
 
-        $this->subscribers = array(new Subscriber(
-            $config->getAnnotationReader()
-        ));
+        $this->subscribers = [
+            new Subscriber($config->getAnnotationReader()),
+            new Generator()
+        ];
 
-        $this->cliCommands = array(new GenerateCommand());
+        $this->cliCommands = [new GenerateCommand()];
     }
 }

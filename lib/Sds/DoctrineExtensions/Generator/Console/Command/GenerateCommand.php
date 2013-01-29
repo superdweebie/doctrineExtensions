@@ -7,6 +7,7 @@
 namespace Sds\DoctrineExtensions\Generator\Console\Command;
 
 use Doctrine\ODM\MongoDB\Mapping\ClassMetadataFactory;
+use Sds\DoctrineExtensions\Generator\GenerateEventArgs;
 use Sds\DoctrineExtensions\Generator\Generator;
 use Symfony\Component\Console;
 
@@ -24,7 +25,7 @@ class GenerateCommand extends Console\Command\Command
     protected function configure()
     {
         $this
-        ->setName('odm:generate:doctrineExtensions')
+        ->setName('sds:generate:all')
         ->setDescription('Generate files from Doctrine document metadata.')
         ->setHelp(<<<EOT
 Generate files from Doctrine document metadata.
@@ -42,9 +43,7 @@ EOT
 
         $metadatas = $metadataFactory->getAllMetadata();
 
-        // Create DocumentGenerator
-        $generator = new Generator();
-        $documentManager = $this->getHelper('dm')->getDocumentManager();
+        $eventManager = $documentManager->getEventManager();
 
         if (count($metadatas)) {
 
@@ -52,7 +51,23 @@ EOT
                 $output->write(
                     sprintf('Processing document "<info>%s</info>"', $metadata->name) . PHP_EOL
                 );
-                $output->write($generator->generate($metadata, $documentManager) . PHP_EOL);
+
+                $results = new ArrayObject();
+                $eventManager->dispatchEvent(
+                    Generator::event,
+                    new GenerateEventArgs(
+                        $metadata,
+                        $documentManager,
+                        $eventManager,
+                        $results
+                   )
+                );
+
+                $messages = [];
+                foreach ($results as $result){
+                    $messages[] = $result->getMessage();
+                }
+                $output->write(implode(PHP_EOL, $messages));
             }
         } else {
             $output->write('No Metadata to process.' . PHP_EOL);

@@ -6,9 +6,6 @@
  */
 namespace Sds\DoctrineExtensions\Generator;
 
-use Doctrine\ODM\MongoDB\DocumentManager;
-use Doctrine\ODM\MongoDB\Mapping\ClassMetadata;
-
 /**
  * Generate file from mapping information.
  *
@@ -18,25 +15,44 @@ use Doctrine\ODM\MongoDB\Mapping\ClassMetadata;
 class Generator implements GeneratorInterface
 {
 
+    const event = 'generatorGenerate';
+
+    public function getSubscribedEvents(){
+        return [
+            self::event,
+        ];
+    }
+
     /**
      *
-     * @param \Doctrine\ODM\MongoDB\Mapping\ClassMetadata $metadata
-     * @return string
+     * @param \Sds\DoctrineExtensions\Generator\GenerateEventArgs $eventArgs
      */
-    public function generate(ClassMetadata $metadata, DocumentManager $documentManager)
+    public function generatorGenerate(GenerateEventArgs $eventArgs)
     {
-        $messages = [];
+        $metadata = $eventArgs->getMetadata();
+
         if (! $metadata->isMappedSuperclass &&
             ! $metadata->reflClass->isAbstract()
         ) {
             if (isset($metadata->generator)){
-                foreach ($metadata->generator as $class){
-                    $generator = new $class;
-                    $messages[] = $generator->generate($metadata, $this->documentManager);
+                $eventManager = $eventArgs->getEventManager();
+                foreach ($metadata->generator as $config){
+                    if ($eventManager->hasListeners($config['class']::event)) {
+                        $eventManager->dispatchEvent(
+                            $config['class']::event,
+                            new GenerateEventArgs(
+                                $metadata,
+                                $eventArgs->getDocumentManager(),
+                                $eventManager,
+                                $eventArgs->getResults(),
+                                $config['options']
+                           )
+                        );
+                    }
                 }
             }
         }
 
-        return implode(PHP_EOL, $messages);
+        $eventArgs->getResults()[] = new GeneratorResult(['message' => 'Generate all complete']);
     }
 }

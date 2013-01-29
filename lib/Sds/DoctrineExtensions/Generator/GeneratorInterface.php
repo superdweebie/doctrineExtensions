@@ -6,8 +6,7 @@
  */
 namespace Sds\DoctrineExtensions\Generator;
 
-use Doctrine\ODM\MongoDB\DocumentManager;
-use Doctrine\ODM\MongoDB\Mapping\ClassMetadata;
+use Doctrine\Common\EventSubscriber;
 
 /**
  * Generate file from mapping information.
@@ -15,15 +14,7 @@ use Doctrine\ODM\MongoDB\Mapping\ClassMetadata;
  * @since   1.0
  * @author  Tim Roediger <superdweebie@gmail.com>
  */
-interface GeneratorInterface
+interface GeneratorInterface extends EventSubscriber
 {
-
-    /**
-     *
-     * @param \Doctrine\ODM\MongoDB\Mapping\ClassMetadata $metadata
-     * @param \Doctrine\ODM\MongoDB\DocumentManager $documentManager
-     * @return string
-     */
-    public function generate(ClassMetadata $metadata, DocumentManager $documentManager);
 
 }
