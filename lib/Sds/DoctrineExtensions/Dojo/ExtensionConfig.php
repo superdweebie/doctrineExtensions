@@ -74,9 +74,9 @@ class ExtensionConfig extends AbstractExtensionConfig {
      * @var array
      */
     protected $dependencies = array(
-        'Sds\DoctrineExtensions\Rest' => null,
-        'Sds\DoctrineExtensions\Serializer' => null,
-        'Sds\DoctrineExtensions\Validator' => null,
-        'Sds\DoctrineExtensions\Generator' => null
+        'Sds\DoctrineExtensions\Rest' => true,
+        'Sds\DoctrineExtensions\Serializer' => true,
+        'Sds\DoctrineExtensions\Validator' => true,
+        'Sds\DoctrineExtensions\Generator' => true
     );
 }

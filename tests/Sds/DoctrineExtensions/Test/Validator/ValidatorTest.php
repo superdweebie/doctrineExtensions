@@ -14,7 +14,7 @@ class ValidatorTest extends BaseTest {
 
         parent::setUp();
 
-        $manifest = $this->getManifest(array('Sds\DoctrineExtensions\Validator' => null));
+        $manifest = $this->getManifest(array('Sds\DoctrineExtensions\Validator' => true));
 
         $this->configDoctrine(
             array_merge(
