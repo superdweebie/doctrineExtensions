@@ -14,7 +14,7 @@ class ValidatorTest extends BaseTest {
 
         parent::setUp();
 
-        $manifest = $this->getManifest(array('Sds\DoctrineExtensions\Validator' => true));
+        $manifest = $this->getManifest(array('Sds\DoctrineExtensions\Validator' => ['validateOnFlush' => true]));
 
         $this->configDoctrine(
             array_merge(
