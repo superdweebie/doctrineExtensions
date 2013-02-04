@@ -101,14 +101,14 @@ class Input extends AbstractDojoGenerator
                     $defaultMids = $this->defaultMixins['input']['floatWithValidator'];
                     break;
                 case 'custom_id':
-                    $params['type'] = "'hidden'";
+                    $params['type'] = "hidden";
                 case 'string':
                 default:
                     $defaultMids = $this->defaultMixins['input']['stringWithValidator'];
                     break;
             }
-            if (isset($options->mixins)){
-                $templateArgs['dependencyMids'] = $options->mixins;
+            if (isset($options['mixins'])){
+                $templateArgs['dependencyMids'] = $options['mixins'];
             } else {
                 $templateArgs['dependencyMids'] = $defaultMids;
             }
@@ -134,8 +134,8 @@ class Input extends AbstractDojoGenerator
                     break;
             }
 
-            if (isset($options->mixins)){
-                $templateArgs['dependencyMids'] = $options->mixins;
+            if (isset($options['mixins'])){
+                $templateArgs['dependencyMids'] = $options['mixins'];
             } else {
                 $templateArgs['dependencyMids'] = $defaultMids;
             }
@@ -152,10 +152,10 @@ class Input extends AbstractDojoGenerator
             (?=[A-Z]) # and before an uppercase letter.
             /x';
 
-        $params['label'] = ucfirst(implode(' ', preg_split($regex, $field))) . ":";
+        $params['label'] = ucfirst(implode(' ', preg_split($regex, $field)));
 
-        if (isset($options->params)){
-            foreach ($options->params as $key => $value){
+        if (isset($options['params'])){
+            foreach ($options['params'] as $key => $value){
                 $params[$key] = $value;
             }
         }

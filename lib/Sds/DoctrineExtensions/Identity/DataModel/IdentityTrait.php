@@ -13,6 +13,9 @@ trait IdentityTrait {
      * @Sds\Readonly
      * @Sds\Validator\Required
      * @Sds\Validator\Identifier
+     * @Sds\Generator({
+     *     @Sds\Dojo\Input
+     * })
      */
     protected $identityName;
 

@@ -117,8 +117,8 @@ class ModelValidator extends AbstractDojoGenerator
 
         $params = ['validators' => []];
 
-        if (isset($options->mixins)){
-            $templateArgs['dependencyMids'] = $options->mixins;
+        if (isset($options['mixins'])){
+            $templateArgs['dependencyMids'] = $options['mixins'];
         } else {
             $templateArgs['dependencyMids'] = $this->defaultMixins['validator']['model'];
         }

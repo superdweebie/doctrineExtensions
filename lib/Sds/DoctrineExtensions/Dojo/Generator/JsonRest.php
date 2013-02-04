@@ -82,8 +82,8 @@ class JsonRest extends AbstractDojoGenerator
 
         $params = [];
 
-        if (isset($options->mixins)){
-            $templateArgs['dependencyMids'] = $options->mixins;
+        if (isset($options['mixins'])){
+            $templateArgs['dependencyMids'] = $options['mixins'];
         } else {
             $templateArgs['dependencyMids'] = $this->defaultMixins['store']['jsonRest'];
         }
