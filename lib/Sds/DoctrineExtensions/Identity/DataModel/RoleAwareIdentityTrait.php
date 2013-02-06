@@ -16,7 +16,9 @@ use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
 trait RoleAwareIdentityTrait {
 
     /**
-     * @ODM\Hash
+     * @ODM\Collection
+     * @Sds\Roles
+     * @Sds\AccessControl(@Sds\AccessControl\Update(false))
      * @Sds\Validator\IdentifierArray
      */
     protected $roles = [];

@@ -17,7 +17,7 @@ function(
         {
             name: 'camelCaseProperty',
             
-            label: 'Camel Case Property:'
+            label: 'Camel Case Property'
         }
     );
 });

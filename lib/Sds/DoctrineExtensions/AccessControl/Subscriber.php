@@ -14,8 +14,13 @@ use Doctrine\ODM\MongoDB\Events as ODMEvents;
 use Sds\Common\AccessControl\AccessControlledInterface;
 use Sds\Common\AccessControl\Constant\Action;
 use Sds\Common\State\StateAwareInterface;
+use Sds\Common\Identity\RoleAwareIdentityInterface;
 use Sds\DoctrineExtensions\AccessControl\AccessController;
 use Sds\DoctrineExtensions\AccessControl\Events as AccessControlEvents;
+use Sds\DoctrineExtensions\AccessControl\UpdatePermissions\Events as UpdatePermissionsEvents;
+use Sds\DoctrineExtensions\AccessControl\UpdatePermissions\EventArgs as UpdatePermissionsEventArgs;
+use Sds\DoctrineExtensions\AccessControl\UpdateRoles\Events as UpdateRolesEvents;
+use Sds\DoctrineExtensions\AccessControl\UpdateRoles\EventArgs as UpdateRolesEventArgs;
 use Sds\DoctrineExtensions\AnnotationReaderAwareTrait;
 use Sds\DoctrineExtensions\AnnotationReaderAwareInterface;
 use Sds\DoctrineExtensions\Annotation\Annotations as Sds;
@@ -54,6 +59,8 @@ class Subscriber implements
     public function getSubscribedEvents(){
         return array(
             Sds\AccessControl::event,
+            Sds\Permissions::event,
+            Sds\Roles::event,
             ODMEvents::onFlush,
             StateEvents::onTransition
         );
@@ -98,6 +105,24 @@ class Subscriber implements
                 $eventArgs->getMetadata()->accessControl['fields'][$eventArgs->getReflection()->getName()] = $accessControlMetadata;
                 break;
         }
+    }
+
+    /**
+     *
+     * @param \Sds\DoctrineExtensions\Annotation\AnnotationEventArgs $eventArgs
+     */
+    public function annotationPermissions(AnnotationEventArgs $eventArgs)
+    {
+        $eventArgs->getMetadata()->accessControl['permissions'] = $eventArgs->getReflection()->getName();
+    }
+
+    /**
+     *
+     * @param \Sds\DoctrineExtensions\Annotation\AnnotationEventArgs $eventArgs
+     */
+    public function annotationRoles(AnnotationEventArgs $eventArgs)
+    {
+        $eventArgs->getMetadata()->accessControl['roles'] = $eventArgs->getReflection()->getName();
     }
 
     protected function processAnnotation($annotation, $accessControlMetadata){
@@ -196,24 +221,10 @@ class Subscriber implements
                         break;
                     }
                 }
-                if (!$checkPermission){
-                    continue;
-                }
 
-                // allow updates to @stateField. If you need to control state updates, enable
-                // access control in the state extension
-                if ($document instanceof StateAwareInterface) {
-
-                    $changeSet = $unitOfWork->getDocumentChangeSet($document);
-                    $metadata = $documentManager->getClassMetadata(get_class($document));
-                    $field = $metadata->stateField;
-
-                    if (count($changeSet) == 1 && isset($changeSet[$field])) {
-                        continue;
-                    }
-                }
-
-                if (!AccessController::isActionAllowed($document, Action::update, $this->roles)) {
+                if ( $checkPermission &&
+                     ! AccessController::isActionAllowed($document, Action::update, $this->roles)
+                ) {
                     //stop updates
                     $unitOfWork->clearDocumentChangeSet(spl_object_hash($document));
 
@@ -222,6 +233,88 @@ class Subscriber implements
                             AccessControlEvents::updateDenied,
                             new LifecycleEventArgs($document, $documentManager)
                         );
+                    }
+                    continue;
+                }
+
+                // Check for roles changes
+                if (
+                    $document instanceof RoleAwareIdentityInterface &&
+                    isset($changeSet[$metadata->accessControl['roles']])
+                ){
+                    $old = $changeSet[$metadata->accessControl['roles']][0];
+                    $new = $changeSet[$metadata->accessControl['roles']][1];
+
+                    $event = new UpdateRolesEventArgs($old, $new, $document, $documentManager);
+
+                    // Raise preUpdateRoles
+                    if ($eventManager->hasListeners(UpdateRolesEvents::preUpdateRoles)) {
+                        $eventManager->dispatchEvent(UpdateRolesEvents::preUpdateRoles, $event);
+                    }
+
+                    if ($document->getRoles() == $old){
+                        //Roll back changes and continue
+                        $unitOfWork->recomputeSingleDocumentChangeSet($metadata, $document);
+                    } else {
+
+                        // Raise onUpdatePermissions
+                        if ($eventManager->hasListeners(UpdateRolesEvents::onUpdateRoles)) {
+                            $eventManager->dispatchEvent(
+                                UpdateRolesEvents::onUpdateRoles,
+                                $event
+                            );
+                        }
+
+                        // Force change set update
+                        $unitOfWork->recomputeSingleDocumentChangeSet($metadata, $document);
+
+                        // Raise postUpdatePermissions
+                        if ($eventManager->hasListeners(UpdateRolesEvents::postUpdateRoles)) {
+                            $eventManager->dispatchEvent(
+                                UpdateRolesEvents::postUpdateRoles,
+                                $event
+                            );
+                        }
+                    }
+                }
+
+                // Check for permission changes
+                if (isset($changeSet[$metadata->accessControl['permissions']])){
+
+                    $old = $changeSet[$metadata->accessControl['permissions']][0];
+                    $new = $changeSet[$metadata->accessControl['permissions']][1];
+
+                    $event = new UpdatePermissionsEventArgs($old, $new, $document, $documentManager);
+
+                    // Raise preUpdatePermissions
+                    if ($eventManager->hasListeners(UpdatePermissionsEvents::preUpdatePermissions)) {
+                        $eventManager->dispatchEvent(UpdatePermissionsEvents::preUpdatePermissions, $event);
+                    }
+
+                    if ($event->getStopUpdatePermissions()){
+                        //Roll back changes and continue
+                        $document->setPermissions($old);
+                        $unitOfWork->recomputeSingleDocumentChangeSet($metadata, $document);
+                    } else {
+
+                        // Raise onUpdatePermissions
+                        if ($eventManager->hasListeners(UpdatePermissionsEvents::onUpdatePermissions)) {
+                            $eventManager->dispatchEvent(
+                                UpdatePermissionsEvents::onUpdatePermissions,
+                                $event
+                            );
+                        }
+
+                        // Force change set update
+                        $unitOfWork->recomputeSingleDocumentChangeSet($metadata, $document);
+
+                        // Raise postUpdatePermissions
+                        if ($eventManager->hasListeners(UpdatePermissionsEvents::postUpdatePermissions)) {
+                            $eventManager->dispatchEvent(
+                                UpdatePermissionsEvents::postUpdatePermissions,
+                                $event
+                            );
+                        }
                     }
                 }
             }
@@ -244,6 +337,7 @@ class Subscriber implements
             }
         }
     }
+
 
     /**
      *

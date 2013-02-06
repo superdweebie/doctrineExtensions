@@ -108,6 +108,7 @@ class ModelValidator extends AbstractDojoGenerator
         $multiFieldValidatorMid = $midBase . '/MultiFieldValidator';
         $templateArgs['mid'] = $mid;
 
+        $hasMultiFieldValidator = false;
         foreach ($results as $result){
             if ($result->getMid() == $multiFieldValidatorMid){
                 $hasMultiFieldValidator = true;

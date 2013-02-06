@@ -19,7 +19,7 @@ use Sds\DoctrineExtensions\Annotations as Sds;
 trait ZoneAwareTrait {
 
     /**
-     * @ODM\Field(type="collection")
+     * @ODM\Collection
      * @Sds\Zones
      * @Sds\Validator(class = "Sds\Common\Validator\IdentifierArrayValidator")
      */

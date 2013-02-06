@@ -9,19 +9,15 @@ namespace Sds\DoctrineExtensions\Annotation\Annotations;
 use Doctrine\Common\Annotations\Annotation;
 
 /**
+ * Annotation to mark a property as the roles.
+ *
  * @since   1.0
  * @author  Tim Roediger <superdweebie@gmail.com>
  *
- * The main annotaion for defineing the behaviour of Dojo Form generation.
- *
  * @Annotation
- * @Target({"CLASS"})
+ * @Target({"PROPERTY"})
  */
-final class DojoForm extends Annotation {
-
-    const event = 'annotationDojoForm';
-
-    public $base;
-
-    public $params;
+final class Roles extends Annotation
+{
+    const event = 'annotationRoles';
 }

@@ -24,6 +24,8 @@ trait AccessControlledTrait{
      * @ODM\EmbedMany(
      *   targetDocument="Sds\DoctrineExtensions\AccessControl\DataModel\Permission"
      * )
+     * @Sds\Permissions
+     * @Sds\AccessControl(@Sds\AccessControl\Update(false))
      */
     protected $permissions = [];
 
@@ -32,7 +34,7 @@ trait AccessControlledTrait{
      *
      * @param array $permissions An array of PermissionInterface objects
      */
-    public function setPermissions(array $permissions){
+    public function setPermissions($permissions){
         $this->permissions = $permissions;
     }
 

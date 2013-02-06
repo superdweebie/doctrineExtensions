@@ -4,7 +4,7 @@
  * @package    Sds
  * @license    MIT
  */
-namespace Sds\DoctrineExtensions\Annotation\Annotations;
+namespace Sds\DoctrineExtensions\Annotation\Annotations\Crypt;
 
 use Doctrine\Common\Annotations\Annotation;
 
@@ -17,7 +17,7 @@ use Doctrine\Common\Annotations\Annotation;
  * @Annotation
  * @Target({"PROPERTY"})
  */
-final class CryptHash extends Annotation
+final class Hash extends Annotation
 {
     const event = 'annotationCryptHash';
 
@@ -35,7 +35,7 @@ final class CryptHash extends Annotation
      *
      * @var string
      */
-    public $saltClass = 'Sds\Common\Crypt\Hash';
+    public $saltClass = 'Sds\Common\Crypt\Salt';
 
     public $prependSalt = true;
 }

@@ -11,8 +11,6 @@ use Doctrine\Common\EventSubscriber;
 use Doctrine\ODM\MongoDB\Event\LifecycleEventArgs;
 use Doctrine\ODM\MongoDB\Event\OnFlushEventArgs;
 use Doctrine\ODM\MongoDB\Events as ODMEvents;
-use Sds\Common\Crypt\Hash;
-use Sds\DoctrineExtensions\Accessor\Accessor;
 use Sds\DoctrineExtensions\AnnotationReaderAwareTrait;
 use Sds\DoctrineExtensions\AnnotationReaderAwareInterface;
 use Sds\DoctrineExtensions\Annotation\Annotations as Sds;
@@ -42,8 +40,8 @@ class Subscriber implements EventSubscriber, AnnotationReaderAwareInterface
      */
     public function getSubscribedEvents(){
         return array(
-            Sds\CryptHash::event,
-            Sds\CryptBlockCipher::event,
+            Sds\Crypt\Hash::event,
+            Sds\Crypt\BlockCipher::event,
             ODMEvents::prePersist,
             ODMEvents::onFlush
         );

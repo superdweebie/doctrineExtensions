@@ -6,7 +6,8 @@
  */
 namespace Sds\DoctrineExtensions\AccessControl;
 
-use Sds\Common\AccessControl\AccessControlIdentityInterface;
+use Sds\DoctrineExtensions\AccessControl\UpdatePermissions\Subscriber as UpdatePermissionsSubscriber;
+use Sds\DoctrineExtensions\AccessControl\UpdateRoles\Subscriber as UpdateRolesSubscriber;
 use Sds\DoctrineExtensions\AbstractExtension;
 
 /**
@@ -27,10 +28,18 @@ class Extension extends AbstractExtension {
         parent::__construct($config);
         $config = $this->getConfig();
 
-        $this->subscribers = array(new Subscriber(
-            $config->getAnnotationReader(),
-            $config->getRoles()
-        ));
+        $this->subscribers = [
+            new Subscriber(
+                $config->getAnnotationReader(),
+                $config->getRoles()
+            ),
+            new UpdatePermissionsSubscriber(
+                $config->getRoles()
+            ),
+            new UpdateRolesSubscriber(
+                $config->getRoles()
+            )
+        ];
 
         $this->filters = array('readAccessControl' => 'Sds\DoctrineExtensions\AccessControl\Filter\ReadAccessControl');
 

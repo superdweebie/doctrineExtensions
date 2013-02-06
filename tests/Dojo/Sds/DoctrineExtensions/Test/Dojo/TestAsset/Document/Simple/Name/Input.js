@@ -21,7 +21,11 @@ function(
             
             name: 'name',
             
-            label: 'Name:'
+            label: 'NAME',
+            
+            tooltip: 'The simple's name',
+            
+            description: 'This is a longer description'
         }
     );
 });

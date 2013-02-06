@@ -11,7 +11,7 @@ use Sds\DoctrineExtensions\Test\AccessControl\TestAsset\Document\Simple;
 use Sds\DoctrineExtensions\Test\AccessControl\TestAsset\Document\StateAware;
 use Sds\DoctrineExtensions\Test\BaseTest;
 
-class AccessControlGuestIdentityTest extends BaseTest {
+class GuestIdentityTest extends BaseTest {
 
     protected $calls = array();
 

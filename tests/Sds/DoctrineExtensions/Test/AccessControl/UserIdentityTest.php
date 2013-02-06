@@ -10,7 +10,7 @@ use Sds\DoctrineExtensions\Test\AccessControl\TestAsset\Document\Simple;
 use Sds\DoctrineExtensions\Test\AccessControl\TestAsset\Document\StateAware;
 use Sds\DoctrineExtensions\Test\BaseTest;
 
-class AccessControlUserIdentityTest extends BaseTest {
+class UserIdentityTest extends BaseTest {
 
     protected $calls = array();
 

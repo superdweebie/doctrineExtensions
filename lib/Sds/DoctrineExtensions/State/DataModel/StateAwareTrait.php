@@ -20,7 +20,6 @@ trait StateAwareTrait{
     /**
      * @ODM\Field(type="string")
      * @ODM\Index
-     * @Sds\Audit
      * @Sds\State
      * @Sds\AccessControl(@Sds\AccessControl\Update(false))
      * @Sds\Validator(class = "Sds\Validator\Identifier")

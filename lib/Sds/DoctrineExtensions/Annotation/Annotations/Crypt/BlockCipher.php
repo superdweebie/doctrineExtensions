@@ -4,7 +4,7 @@
  * @package    Sds
  * @license    MIT
  */
-namespace Sds\DoctrineExtensions\Annotation\Annotations;
+namespace Sds\DoctrineExtensions\Annotation\Annotations\Crypt;
 
 use Doctrine\Common\Annotations\Annotation;
 
@@ -17,7 +17,7 @@ use Doctrine\Common\Annotations\Annotation;
  * @Annotation
  * @Target({"PROPERTY"})
  */
-final class CryptBlockCipher extends Annotation
+final class BlockCipher extends Annotation
 {
     const event = 'annotationCryptBlockCipher';
 

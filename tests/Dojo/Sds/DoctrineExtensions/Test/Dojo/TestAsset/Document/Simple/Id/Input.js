@@ -19,7 +19,7 @@ function(
             
             name: 'id',
             
-            label: 'Id:'
+            label: 'Id'
         }
     );
 });

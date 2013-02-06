@@ -16,7 +16,7 @@ class Simple {
 
     /**
      * @ODM\Field(type="string")
-     * @Sds\CryptBlockCipher(
+     * @Sds\Crypt\BlockCipher(
      *     keyClass = "Sds\DoctrineExtensions\Test\Crypt\TestAsset\Key"
      * )
      */

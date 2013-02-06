@@ -6,7 +6,7 @@ use Sds\DoctrineExtensions\AccessControl\DataModel\Permission;
 use Sds\DoctrineExtensions\Test\AccessControl\TestAsset\Document\Simple;
 use Sds\DoctrineExtensions\Test\BaseTest;
 
-class AccessControlledTraitTest extends BaseTest {
+class TraitTest extends BaseTest {
 
     public function testAddPermission(){
 
