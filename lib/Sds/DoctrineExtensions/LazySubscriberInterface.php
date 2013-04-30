@@ -6,14 +6,18 @@
  */
 namespace Sds\DoctrineExtensions;
 
+use Doctrine\Common\EventSubscriber;
+
 /**
  *
  * @since   1.0
  * @author  Tim Roediger <superdweebie@gmail.com>
  */
-abstract class AbstractLazySubscriber implements LazySubscriberInterface {
+interface LazySubscriberInterface extends EventSubscriber {
 
-    public function getSubscribedEvents(){
-        return self::getStaticSubscribedEvents();
-    }
+    /**
+     *
+     * @return array
+     */
+    public static function getStaticSubscribedEvents();
 }
