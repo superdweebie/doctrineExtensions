@@ -6,17 +6,20 @@
  */
 namespace Sds\DoctrineExtensions\Serializer\Reference;
 
-use Doctrine\ODM\MongoDB\DocumentManager;
+use Sds\DoctrineExtensions\DocumentManagerAwareInterface;
+use Sds\DoctrineExtensions\DocumentManagerAwareTrait;
 
 /**
  *
  * @since   1.0
  * @author  Tim Roediger <superdweebie@gmail.com>
  */
-class SimpleLazy implements ReferenceSerializerInterface {
+class SimpleLazy implements ReferenceSerializerInterface, DocumentManagerAwareInterface {
 
-    public static function serialize($id, array $mapping, DocumentManager $documentManager){
+    use DocumentManagerAwareTrait;
 
-        return $documentManager->getClassMetadata($mapping['targetDocument'])->collection . '/' . $id;
+    public function serialize($id, array $mapping){
+
+        return $this->documentManager->getClassMetadata($mapping['targetDocument'])->collection . '/' . $id;
     }
 }

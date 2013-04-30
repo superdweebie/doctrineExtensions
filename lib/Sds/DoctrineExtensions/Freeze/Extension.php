@@ -7,50 +7,34 @@
 namespace Sds\DoctrineExtensions\Freeze;
 
 use Sds\DoctrineExtensions\AbstractExtension;
-use Sds\DoctrineExtensions\Freeze\AccessControl\FreezeSubscriber;
-use Sds\DoctrineExtensions\Freeze\AccessControl\ThawSubscriber;
 
 /**
- * Defines the resouces this extension provies
+ * Defines the resouces this extension requires
  *
  * @since   1.0
  * @author  Tim Roediger <superdweebie@gmail.com>
  */
-class Extension extends AbstractExtension {
+class Extension extends AbstractExtension
+{
+    protected $dependencies = [
+        'Sds\DoctrineExtensions\Annotation' => true,
+        'Sds\DoctrineExtensions\Identity' => true,
+    ];
 
-    public function __construct($config){
+    protected $subscribers = [
+        'Sds\DoctrineExtensions\Freeze\MainSubscriber',
+        'Sds\DoctrineExtensions\Freeze\StampSubscriber',
+        'Sds\DoctrineExtensions\Freeze\AnnotationSubscriber',
+        'Sds\DoctrineExtensions\Freeze\AccessControl\FreezeSubscriber'
+    ];
 
-        $this->configClass = __NAMESPACE__ . '\ExtensionConfig';
-        parent::__construct($config);
-        $config = $this->getConfig();
+    protected $filters = [
+        'freeze' => 'Sds\DoctrineExtensions\Freeze\Filter\Freeze'
+    ];
 
-        $this->subscribers = array(new Subscriber($config->getAnnotationReader()));
-
-        if ($config->getEnableFreezeStamps()) {
-            $this->subscribers[] = new StampSubscriber($config->getIdentityName());
-        }
-
-        if ($config->getEnableAccessControl()){
-            $this->subscribers[] = new FreezeSubscriber($config->getRoles());
-            $this->subscribers[] = new ThawSubscriber($config->getRoles());
-        }
-        $this->filters = array('freeze' => 'Sds\DoctrineExtensions\Freeze\Filter\Freeze');
-    }
-
-    public function setIdentity($identity){
-        parent::setIdentity($identity);
-        foreach ($this->subscribers as $subscriber){
-            switch (true){
-                case $subscriber instanceof StampSubscriber:
-                    $subscriber->setIdentityName($identity->getIdentityName());
-                    break;
-                case $subscriber instanceof AccessControl\FreezeSubscriber:
-                    $subscriber->setRoles($identity->getRoles());
-                    break;
-                case $subscriber instanceof AccessControl\ThawSubscriber:
-                    $subscriber->setRoles($identity->getRoles());
-                    break;
-            }
-        }
-    }
+    protected $defaultServiceManagerConfig = [
+        'invokables' => [
+            'freezer' => 'Sds\DoctrineExtensions\Freeze\Freezer'
+        ]
+    ];
 }

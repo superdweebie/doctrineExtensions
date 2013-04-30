@@ -7,7 +7,6 @@
 namespace Sds\DoctrineExtensions\Dojo\Generator;
 
 use Sds\DoctrineExtensions\Generator\GenerateEventArgs;
-use Sds\DoctrineExtensions\Serializer\Serializer;
 use Zend\Json\Expr;
 
 /**
@@ -20,10 +19,22 @@ class Form extends AbstractDojoGenerator
 
     const event = 'generatorDojoForm';
 
-    public function getSubscribedEvents(){
+    public static function getStaticSubscribedEvents(){
         return [
             self::event,
         ];
+    }
+
+    public function getFilePath($className, $fieldName = null){
+        return parent::getFilePath($className) . '/Form.js';
+    }
+
+    static public function getResourceName($className, $fieldName = null){
+        return parent::getResourceName($className) . '/Form.js';
+    }
+
+    static public function getMid($className, $fieldName = null){
+        return parent::getMid($className) . '/Form';
     }
 
     /**
@@ -33,94 +44,21 @@ class Form extends AbstractDojoGenerator
     public function generatorDojoForm(GenerateEventArgs $eventArgs)
     {
 
-        $metadata = $eventArgs->getMetadata();
-        $eventManager = $eventArgs->getEventManager();
-        $results = $eventArgs->getResults();
+        $metadata = $eventArgs->getDocumentManager()->getClassMetadata($eventArgs->getClassName());
         $options = $eventArgs->getOptions();
-
-        $path = $this->getPath($metadata->name);
-        if (! $path){
-            return;
-        }
-
-        $path .= '/Form.js';
-        foreach ($results as $result){
-            if ($result->getFileGenerated() == $path){
-                //File has already been generated
-                return;
-            }
-        }
-
-        //generate multifield validator if required
-        $validatorOptions = [];
-        foreach ($metadata->generator as $config){
-            if (
-                $config['class'] == 'Sds\DoctrineExtensions\Dojo\Generator\MultiFieldValidator' &&
-                ! isset($config['options'])
-            ){
-                $validatorOptions = $config['options'];
-                break;
-            }
-        }
-
-        $eventManager->dispatchEvent(
-            MultiFieldValidator::event,
-            new GenerateEventArgs(
-                $metadata,
-                $eventArgs->getDocumentManager(),
-                $eventManager,
-                $results,
-                $validatorOptions
-            )
-        );
-
-        //generate inputs
-        foreach(Serializer::fieldListForUnserialize($metadata) as $field){
-
-            //generate any required inputs
-            $inputOptions = ['property' => $field];
-            foreach ($metadata->generator as $config){
-                if (
-                    $config['class'] == 'Sds\DoctrineExtensions\Dojo\Generator\Input' &&
-                    $config['options']['property'] == $field
-                ){
-                    $inputOptions = $config['options'];
-                    break;
-                }
-            }
-
-            $eventManager->dispatchEvent(
-                Input::event,
-                new GenerateEventArgs(
-                    $metadata,
-                    $eventArgs->getDocumentManager(),
-                    $eventManager,
-                    $results,
-                    $inputOptions
-                )
-            );
-        }
+        $resource = $eventArgs->getResource();
+        $defaultMixins = $this->getDefaultMixins();
 
         $templateArgs = [];
 
-        $midBase = str_replace('\\', '/', $metadata->name);
-        $mid = $midBase . '/Form';
-        $multiFieldValidatorMid = $midBase . '/MultiFieldValidator';
-        $templateArgs['mid'] = $mid;
-
-        foreach ($results as $result){
-            if ($result->getMid() == $multiFieldValidatorMid){
-                $hasMultiFieldValidator = true;
-                break;
-            }
-        }
+        $hasMultiFieldValidator = array_key_exists(MultiFieldValidator::getResourceName($metadata->name), $metadata->generator);
 
         $params = [];
 
         if ($hasMultiFieldValidator){
-            $defaultMids = $this->defaultMixins['form']['withValidator'];
+            $defaultMids = $defaultMixins['form']['withValidator'];
         } else {
-            $defaultMids = $this->defaultMixins['form']['simple'];
+            $defaultMids = $defaultMixins['form']['simple'];
         }
         if (isset($options['mixins'])){
             $templateArgs['dependencyMids'] = $options['mixins'];
@@ -130,13 +68,13 @@ class Form extends AbstractDojoGenerator
         $templateArgs['mixins'] = $this->namesFromMids($templateArgs['dependencyMids']);
         $templateArgs['dependencies'] = $this->namesFromMids($templateArgs['dependencyMids']);
         if ($hasMultiFieldValidator){
-            $templateArgs['dependencyMids'][] = $multiFieldValidatorMid;
+            $templateArgs['dependencyMids'][] = MultiFieldValidator::getMid($metadata->name);
             $templateArgs['dependencies'][] = 'MultiFieldValidator';
             $params['validator'] = new Expr('new MultiFieldValidator');
         }
         $params['inputs'] = [];
-        foreach(Serializer::fieldListForUnserialize($metadata) as $field){
-            $templateArgs['dependencyMids'][] = $midBase . '/' . ucfirst($field) . '/Input';
+        foreach($this->getSerializer()->fieldListForUnserialize($metadata) as $field){
+            $templateArgs['dependencyMids'][] = Input::getMid($metadata->name, $field);
             $templateArgs['dependencies'][] = ucfirst($field) . 'Input';
             $params['inputs'][] = new Expr('new ' . ucfirst($field) . 'Input');
         }
@@ -147,24 +85,11 @@ class Form extends AbstractDojoGenerator
         $templateArgs['params'] = $this->implodeParams($params);
         $templateArgs['comment'] = $this->indent("// Will return a form for $metadata->name");
 
-        $content = $this->populateTemplate(
+        $resource->content = $this->populateTemplate(
             file_get_contents(__DIR__ . '/Template/Module.js.template'),
             $templateArgs
         );
 
-        $dir = dirname($path);
-
-        if ( ! is_dir($dir)) {
-            mkdir($dir, 0777, true);
-        }
-
-        file_put_contents($path, $content);
-
-        $results[] = new GeneratorResult([
-            'fileGenerated' => $path,
-            'mid' => $mid,
-            'message' => "Form for $metadata->name generated to $path"
-        ]);
-
+        $this->persistToFile($this->getFilePath($metadata->name), $resource->content);
     }
 }

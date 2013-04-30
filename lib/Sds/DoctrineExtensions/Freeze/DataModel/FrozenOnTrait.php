@@ -17,17 +17,10 @@ use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
 trait FrozenOnTrait {
 
     /**
-     * @ODM\Field(type="timestamp")
+     * @ODM\Timestamp
+     * @Sds\Freeze\FrozenOn
      */
     protected $frozenOn;
-
-    /**
-     *
-     * @param timestamp $timestamp
-     */
-    public function setFrozenOn($timestamp){
-        $this->frozenOn = $timestamp;
-    }
 
     /**
      *

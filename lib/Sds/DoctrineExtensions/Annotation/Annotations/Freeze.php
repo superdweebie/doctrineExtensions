@@ -9,7 +9,7 @@ namespace Sds\DoctrineExtensions\Annotation\Annotations;
 use Doctrine\Common\Annotations\Annotation;
 
 /**
- * Annotation to mark a property as the frozen flag. Property must be a
+ * Annotation to mark a field as the frozen flag. Field must be a
  * boolean type.
  *
  * @since   1.0

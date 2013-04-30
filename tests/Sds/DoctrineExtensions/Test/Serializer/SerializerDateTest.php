@@ -11,7 +11,7 @@ class SerializerDateTest extends BaseTest {
     public function setUp(){
 
         parent::setUp();
-        $manifest = $this->getManifest(array('Sds\DoctrineExtensions\Serializer' => true));
+        $manifest = $this->getManifest(['extensionConfigs' => ['Sds\DoctrineExtensions\Serializer' => true]]);
 
         $this->configDoctrine(
             array_merge(
@@ -21,6 +21,8 @@ class SerializerDateTest extends BaseTest {
             $manifest->getFilters(),
             $manifest->getSubscribers()
         );
+        $manifest->setDocumentManagerService($this->documentManager)->bootstrapped();
+        $this->serializer = $manifest->getServiceManager()->get('serializer');
     }
 
     public function testSerializerMongoDate(){
@@ -28,12 +30,11 @@ class SerializerDateTest extends BaseTest {
         $birthday = new Birthday('Miriam', new \MongoDate(strtotime('1950-01-01 Europe/Berlin')));
 
         $correct = [
-            'id' => null,
             'name' => 'Miriam',
             'date' => '1949-12-31T23:00:00+00:00'
         ];
 
-        $array = Serializer::toArray($birthday, $this->documentManager);
+        $array = $this->serializer->toArray($birthday, $this->documentManager);
 
         $this->assertEquals($correct, $array);
     }
@@ -43,12 +44,11 @@ class SerializerDateTest extends BaseTest {
         $birthday = new Birthday('Miriam', new \DateTime('01/01/1950', new \DateTimeZone('Europe/Berlin')));
 
         $correct = [
-            'id' => null,
             'name' => 'Miriam',
             'date' => '1949-12-31T23:00:00+00:00'
         ];
 
-        $array = Serializer::toArray($birthday, $this->documentManager);
+        $array = $this->serializer->toArray($birthday, $this->documentManager);
 
         $this->assertEquals($correct, $array);
     }
@@ -76,10 +76,9 @@ class SerializerDateTest extends BaseTest {
             'date' => '1949-12-31T23:00:00+00:00'
         ];
 
-        $array = Serializer::ApplySerializeMetadataToArray(
+        $array = $this->serializer->ApplySerializeMetadataToArray(
             $array,
-            'Sds\DoctrineExtensions\Test\Serializer\TestAsset\Document\Birthday',
-            $this->documentManager
+            'Sds\DoctrineExtensions\Test\Serializer\TestAsset\Document\Birthday'
         );
 
         $this->assertEquals($correct, $array);
@@ -92,10 +91,8 @@ class SerializerDateTest extends BaseTest {
             'date' => '1949-12-31T23:00:00+00:00'
         );
 
-        $birthday = Serializer::fromArray(
+        $birthday = $this->serializer->fromArray(
             $data,
-            $this->documentManager,
-            null,
             'Sds\DoctrineExtensions\Test\Serializer\TestAsset\Document\Birthday'
         );
 

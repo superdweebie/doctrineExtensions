@@ -6,44 +6,31 @@
  */
 namespace Sds\DoctrineExtensions\AccessControl;
 
-use Doctrine\Common\EventSubscriber;
+use Sds\DoctrineExtensions\AbstractLazySubscriber;
+use Zend\ServiceManager\ServiceLocatorAwareInterface;
+use Zend\ServiceManager\ServiceLocatorAwareTrait;
 
 /**
  *
  * @since   1.0
  * @author  Tim Roediger <superdweebie@gmail.com>
  */
-abstract class AbstractAccessControlSubscriber implements EventSubscriber
+abstract class AbstractAccessControlSubscriber extends AbstractLazySubscriber implements ServiceLocatorAwareInterface
 {
 
-    /**
-     * The array of identity roles that permissions will be checked against
-     *
-     * @var array
-     */
-    protected $roles;
+    use ServiceLocatorAwareTrait;
 
-    /**
-     *
-     * @return array
-     */
-    public function getRoles() {
-        return $this->roles;
-    }
+    protected $accessController;
 
-    /**
-     *
-     * @param array $roles
-     */
-    public function setRoles($roles) {
-        $this->roles = $roles;
-    }
+    protected $hasAccessController;
 
-    /**
-     *
-     * @param array $roles
-     */
-    public function __construct(array $roles = []) {
-        $this->roles = $roles;
+    protected function getAccessController(){
+        if (!isset($this->hasAccessController)){
+            $this->hasAccessController = $this->serviceLocator->has('accessController');
+            if ($this->hasAccessController){
+                $this->accessController = $this->serviceLocator->get('accessController');
+            }
+        }       
+        return $this->accessController;
     }
 }

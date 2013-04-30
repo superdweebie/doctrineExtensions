@@ -9,7 +9,7 @@ namespace Sds\DoctrineExtensions\Annotation\Annotations;
 use Doctrine\Common\Annotations\Annotation;
 
 /**
- * Annotation to mark a property as the state. Property must be a
+ * Annotation to mark a field as the state. Field must be a
  * string type.
  *
  * @since   1.0

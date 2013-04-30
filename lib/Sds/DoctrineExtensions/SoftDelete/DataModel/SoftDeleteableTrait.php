@@ -8,10 +8,9 @@ namespace Sds\DoctrineExtensions\SoftDelete\DataModel;
 
 //Annotation imports
 use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
-use Sds\DoctrineExtensions\Annotations as Sds;
+use Sds\DoctrineExtensions\Annotation\Annotations as Sds;
 
 /**
- * Implements the Sds\Common\SoftDelete\SoftDeleteableInterface
  *
  * @since   1.0
  * @author  Tim Roediger <superdweebie@gmail.com>
@@ -19,33 +18,11 @@ use Sds\DoctrineExtensions\Annotations as Sds;
 trait SoftDeleteableTrait {
 
     /**
-     * @ODM\Field(type="boolean")
+     * @ODM\Boolean
      * @Sds\SoftDelete
-     * @Sds\AccessControl(@Sds\AccessControl\Update(false))
+     * @Sds\AccessControl\IgnoreUpdate)
      * )
      */
     protected $softDeleted = false;
 
-    /**
-     * Check if object has been soft deleted
-     *
-     * @return boolean
-     */
-    public function getSoftDeleted(){
-        return $this->softDeleted;
-    }
-
-    /**
-     * Soft delete the object
-     */
-    public function softDelete() {
-        $this->softDeleted = true;
-    }
-
-    /**
-     * Restore the object
-     */
-    public function restore() {
-        $this->softDeleted = false;
-    }
 }

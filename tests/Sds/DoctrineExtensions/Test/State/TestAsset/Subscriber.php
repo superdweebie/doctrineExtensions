@@ -28,7 +28,7 @@ class Subscriber implements EventSubscriber {
     public function preTransition(StateEventArgs $eventArgs) {
         $this->calls['preTransition'] = $eventArgs;
         if ($this->rollbackTransition) {
-            $eventArgs->getDocument()->setState($eventArgs->getTransition()->getFromState());
+            $eventArgs->getDocument()->setState($eventArgs->getTransition()->getFrom());
         }
     }
 

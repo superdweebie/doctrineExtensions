@@ -8,10 +8,9 @@ namespace Sds\DoctrineExtensions\Freeze\AccessControl;
 
 use Doctrine\ODM\MongoDB\Event\LifecycleEventArgs;
 use Sds\DoctrineExtensions\AccessControl\AbstractAccessControlSubscriber;
-use Sds\DoctrineExtensions\AccessControl\AccessController;
-use Sds\DoctrineExtensions\Freeze\AccessControl\Events as AccessControlEvents;
-use Sds\DoctrineExtensions\Freeze\AccessControl\Constant\Action;
-use Sds\DoctrineExtensions\Freeze\Events as FreezeEvents;
+use Sds\DoctrineExtensions\AccessControl\EventArgs as AccessControlEventArgs;
+use Sds\DoctrineExtensions\Freeze\Events;
+use Zend\ServiceManager\ServiceLocatorInterface;
 
 /**
  *
@@ -21,14 +20,17 @@ use Sds\DoctrineExtensions\Freeze\Events as FreezeEvents;
 class FreezeSubscriber extends AbstractAccessControlSubscriber
 {
 
+    protected $freezer;
+
     /**
      *
      * @return array
      */
-    public function getSubscribedEvents(){
-        return array(
-            FreezeEvents::preFreeze
-        );
+    public static function getStaticSubscribedEvents(){
+        return [
+            Events::preFreeze,
+            Events::preThaw
+        ];
     }
 
     /**
@@ -37,22 +39,59 @@ class FreezeSubscriber extends AbstractAccessControlSubscriber
      */
     public function preFreeze(LifecycleEventArgs $eventArgs)
     {
-        $document = $eventArgs->getDocument();
-        $documentManager = $eventArgs->getDocumentManager();
+        if (! ($accessController = $this->getAccessController())){
+            //Access control is not enabled
+            return;
+        }
 
-        if ( AccessController::isAccessControlEnabled($documentManager->getClassMetadata(get_class($document)), Action::freeze) &&
-            !AccessController::isActionAllowed($document, Action::freeze, $this->roles)
-        ) {
+        $document = $eventArgs->getDocument();
+
+        if ( ! $accessController->isAllowed(Actions::freeze, null, $document)->getIsAllowed()) {
             //stop freeze
-            $document->thaw();
+            $this->getFreezer()->thaw($document);
 
             $eventManager = $eventArgs->getDocumentManager()->getEventManager();
-            if ($eventManager->hasListeners(AccessControlEvents::freezeDenied)) {
+            if ($eventManager->hasListeners(Events::freezeDenied)) {
                 $eventManager->dispatchEvent(
-                    AccessControlEvents::freezeDenied,
-                    $eventArgs
+                    Events::freezeDenied,
+                    new AccessControlEventArgs($document, $eventArgs->getDocumentManager(), Actions::freeze)
                 );
             }
         }
+    }
+
+    /**
+     *
+     * @param \Doctrine\ODM\MongoDB\Event\OnFlushEventArgs $eventArgs
+     */
+    public function preThaw(LifecycleEventArgs $eventArgs)
+    {
+
+        if (! ($accessController = $this->getAccessController())){
+            //Access control is not enabled
+            return;
+        }
+
+        $document = $eventArgs->getDocument();
+
+        if ( ! $accessController->isAllowed(Actions::thaw, null, $document)->getIsAllowed()) {
+            //stop thaw
+            $this->getFreezer()->freeze($document);
+
+            $eventManager = $eventArgs->getDocumentManager()->getEventManager();
+            if ($eventManager->hasListeners(Events::thawDenied)) {
+                $eventManager->dispatchEvent(
+                    Events::thawDenied,
+                    new AccessControlEventArgs($document, $eventArgs->getDocumentManager(), Actions::thaw)
+                );
+            }
+        }
+    }
+
+    protected function getFreezer(){
+        if (!isset($this->freezer)){
+            $this->freezer = $this->serviceLocator->get('freezer');
+        }
+        return $this->freezer;
     }
 }

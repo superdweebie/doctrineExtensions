@@ -17,14 +17,12 @@ class SetMethod {
     /**
      * @ODM\Field(type="string")
      * @Sds\Readonly
-     * @Sds\Setter("good")
      */
     protected $goodField;
 
     /**
      * @ODM\Field(type="string")
      * @Sds\Readonly
-     * @Sds\Setter("broken")
      */
     protected $badField;
 

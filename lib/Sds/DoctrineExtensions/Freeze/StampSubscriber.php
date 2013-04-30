@@ -7,11 +7,6 @@
 namespace Sds\DoctrineExtensions\Freeze;
 
 use Doctrine\ODM\MongoDB\Event\LifecycleEventArgs;
-use Sds\Common\Freeze\FrozenByInterface;
-use Sds\Common\Freeze\FrozenOnInterface;
-use Sds\Common\Freeze\ThawedByInterface;
-use Sds\Common\Freeze\ThawedOnInterface;
-use Sds\DoctrineExtensions\Freeze\Events as FreezeEvents;
 use Sds\DoctrineExtensions\Stamp\AbstractStampSubscriber;
 
 /**
@@ -26,11 +21,11 @@ class StampSubscriber extends AbstractStampSubscriber {
      *
      * @return array
      */
-    public function getSubscribedEvents() {
-        return array(
-            FreezeEvents::postFreeze,
-            FreezeEvents::postThaw
-        );
+    public static function getStaticSubscribedEvents() {
+        return [
+            Events::postFreeze,
+            Events::postThaw
+        ];
     }
 
     /**
@@ -38,14 +33,17 @@ class StampSubscriber extends AbstractStampSubscriber {
      * @param \Doctrine\ODM\MongoDB\Event\LifecycleEventArgs $eventArgs
      */
     public function postFreeze(LifecycleEventArgs $eventArgs) {
+
         $recomputeChangeSet = false;
         $document = $eventArgs->getDocument();
-        if($document instanceof FrozenByInterface){
-            $document->setFrozenBy($this->identityName);
+        $metadata = $eventArgs->getDocumentManager()->getClassMetadata(get_class($document));
+
+        if(isset($metadata->freeze['frozenBy'])){
+            $metadata->reflFields[$metadata->freeze['frozenBy']]->setValue($document, $this->getIdentityName());
             $recomputeChangeSet = true;
         }
-        if($document instanceof FrozenOnInterface){
-            $document->setFrozenOn(time());
+        if(isset($metadata->freeze['frozenOn'])){
+            $metadata->reflFields[$metadata->freeze['frozenOn']]->setValue($document, time());
             $recomputeChangeSet = true;
         }
         if ($recomputeChangeSet) {
@@ -58,14 +56,17 @@ class StampSubscriber extends AbstractStampSubscriber {
      * @param \Doctrine\ODM\MongoDB\Event\LifecycleEventArgs $eventArgs
      */
     public function postThaw(LifecycleEventArgs $eventArgs) {
+
         $recomputeChangeSet = false;
         $document = $eventArgs->getDocument();
-        if($document instanceof ThawedByInterface){
-            $document->setThawedBy($this->identityName);
+        $metadata = $eventArgs->getDocumentManager()->getClassMetadata(get_class($document));
+
+        if(isset($metadata->freeze['thawedBy'])){
+            $metadata->reflFields[$metadata->freeze['thawedBy']]->setValue($document, $this->getIdentityName());
             $recomputeChangeSet = true;
         }
-        if($document instanceof ThawedOnInterface){
-            $document->setThawedOn(time());
+        if(isset($metadata->freeze['thawedOn'])){
+            $metadata->reflFields[$metadata->freeze['thawedOn']]->setValue($document, time());
             $recomputeChangeSet = true;
         }
         if ($recomputeChangeSet) {

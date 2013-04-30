@@ -9,7 +9,7 @@ namespace Sds\DoctrineExtensions\Annotation\Annotations\Crypt;
 use Doctrine\Common\Annotations\Annotation;
 
 /**
- * Encrypt the property value before persisting, and decrypt on retrieval
+ * Encrypt the field value before persisting, and decrypt on retrieval
  *
  * @since   1.0
  * @author  Tim Roediger <superdweebie@gmail.com>

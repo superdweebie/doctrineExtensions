@@ -6,7 +6,6 @@
  */
 namespace Sds\DoctrineExtensions\Crypt;
 
-use Sds\DoctrineExtensions\Accessor\Accessor;
 use Sds\DoctrineExtensions\Annotation\Annotations as Sds;
 
 /**
@@ -25,10 +24,14 @@ class HashService {
     }
 
     public static function hashField($field, $document, $metadata){
-        $setMethod = Accessor::getSetter($metadata, $field, $document);
-        $getMethod = Accessor::getGetter($metadata, $field, $document);
 
-        $document->$setMethod(self::hashValue($document->$getMethod(), $metadata->crypt['hash'][$field]));
+        $metadata->reflFields[$field]->setValue(
+            $document,
+            self::hashValue(
+                $metadata->reflFields[$field]->getValue($document),
+                $metadata->crypt['hash'][$field]
+            )
+        );
     }
 
     public static function hashDocument($document, $metadata){

@@ -7,6 +7,7 @@
 namespace Sds\DoctrineExtensions\Dojo\Generator;
 
 use Sds\DoctrineExtensions\Generator\GenerateEventArgs;
+use Zend\Json\Expr;
 
 /**
  *
@@ -18,10 +19,22 @@ class MultiFieldValidator extends AbstractDojoGenerator
 
     const event = 'generatorDojoMultiFieldValidator';
 
-    public function getSubscribedEvents(){
+    public static function getStaticSubscribedEvents(){
         return [
             self::event,
         ];
+    }
+
+    public function getFilePath($className, $fieldName = null){
+        return parent::getFilePath($className) . '/MultiFieldValidator.js';
+    }
+
+    static public function getResourceName($className, $fieldName = null){
+        return parent::getResourceName($className) . '/MultiFieldValidator.js';
+    }
+
+    static public function getMid($className, $fieldName = null){
+        return parent::getMid($className) . '/MultiFieldValidator';
     }
 
     /**
@@ -31,21 +44,10 @@ class MultiFieldValidator extends AbstractDojoGenerator
     public function generatorDojoMultiFieldValidator(GenerateEventArgs $eventArgs)
     {
 
-        $metadata = $eventArgs->getMetadata();
-        $results = $eventArgs->getResults();
-
-        $path = $this->getPath($metadata->name);
-        if (! $path){
-            return;
-        }
-
-        $path .= '/MultiFieldValidator.js';
-        foreach ($results as $result){
-            if ($result->getFileGenerated() == $path){
-                //File has already been generated
-                return;
-            }
-        }
+        $metadata = $eventArgs->getDocumentManager()->getClassMetadata($eventArgs->getClassName());
+        $options = $eventArgs->getOptions();
+        $resource = $eventArgs->getResource();
+        $defaultMixins = $this->getDefaultMixins();
 
         if ( ! isset($metadata->validator['document'])){
             return;
@@ -54,9 +56,9 @@ class MultiFieldValidator extends AbstractDojoGenerator
 
         if (count($metadata->validator['document']) > 1){
             $templateArgs = [
-                'dependencyMids' => $this->defaultMixins['validator']['group'],
-                'dependencies' => $this->namesFromMids($this->defaultMixins['validator']['group']),
-                'mixins' => $this->namesFromMids($this->defaultMixins['validator']['group'])
+                'dependencyMids' => $defaultMixins['validator']['group'],
+                'dependencies' => $this->namesFromMids($defaultMixins['validator']['group']),
+                'mixins' => $this->namesFromMids($defaultMixins['validator']['group'])
             ];
 
             foreach($metadata->validator['document'] as $validator){
@@ -68,9 +70,9 @@ class MultiFieldValidator extends AbstractDojoGenerator
 
                 if(isset($validator['options']) && count($validator['options']) > 0 ){
                     $params = json_encode($validator['options'], JSON_PRETTY_PRINT);
-                    $templateArgs['params']['validators'][] = "new $validatorName($params)";
+                    $templateArgs['params']['validators'][] = new Expr("new $validatorName($params)");
                 } else {
-                    $templateArgs['params']['validators'][] = "new $validatorName";
+                    $templateArgs['params']['validators'][] = new Expr("new $validatorName");
                 }
             }
 
@@ -91,31 +93,18 @@ class MultiFieldValidator extends AbstractDojoGenerator
             }
         }
 
-        $mid = str_replace('\\', '/', $metadata->name)  . '/MultiFieldValidator';
-        $templateArgs['mid'] = $mid;
         $templateArgs['dependencyMids'] = ',' . $this->indent($this->implodeMids($templateArgs['dependencyMids']));
         $templateArgs['dependencies'] = ',' . $this->indent($this->implodeNames($templateArgs['dependencies']));
         $templateArgs['mixins'] = $this->indent($this->implodeNames($templateArgs['mixins']), 12) . $this->indent("\n", 8);
         $templateArgs['params'] = $this->implodeParams($templateArgs['params']);
         $templateArgs['comment'] = $this->indent("// Will return a multi field validator");
 
-        $content = $this->populateTemplate(
+        $resource->content = $this->populateTemplate(
             file_get_contents(__DIR__ . '/Template/Module.js.template'),
             $templateArgs
         );
 
-        $dir = dirname($path);
+        $this->persistToFile($this->getFilePath($metadata->name), $resource->content);
 
-        if ( ! is_dir($dir)) {
-            mkdir($dir, 0777, true);
-        }
-
-        file_put_contents($path, $content);
-
-        $results[] = new GeneratorResult([
-            'fileGenerated' => $path,
-            'mid' => $mid,
-            'message' => "MultiFieldValidator for $metadata->name generated to $path"
-        ]);
     }
 }

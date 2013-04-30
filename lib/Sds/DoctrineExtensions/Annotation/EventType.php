@@ -15,7 +15,7 @@ class EventType {
 
     const document = 'document';
 
-    const property = 'property';
+    const field = 'field';
 
     const method = 'method';
 }

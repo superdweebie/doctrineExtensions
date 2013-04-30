@@ -9,7 +9,7 @@ namespace Sds\DoctrineExtensions\Annotation\Annotations\Crypt;
 use Doctrine\Common\Annotations\Annotation;
 
 /**
- * Cryptographically hash the property value before persisting
+ * Cryptographically hash the field value before persisting
  *
  * @since   1.0
  * @author  Tim Roediger <superdweebie@gmail.com>

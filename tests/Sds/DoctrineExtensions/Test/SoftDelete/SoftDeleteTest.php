@@ -2,12 +2,13 @@
 
 namespace Sds\DoctrineExtensions\Test\SoftDelete;
 
+use Doctrine\Common\EventSubscriber;
+use Doctrine\ODM\MongoDB\Event\LifecycleEventArgs;
 use Sds\DoctrineExtensions\SoftDelete\Events;
 use Sds\DoctrineExtensions\Test\BaseTest;
 use Sds\DoctrineExtensions\Test\SoftDelete\TestAsset\Document\Simple;
-use Sds\DoctrineExtensions\Test\SoftDelete\TestAsset\Subscriber;
 
-class SoftDeleteTest extends BaseTest {
+class SoftDeleteTest extends BaseTest implements EventSubscriber {
 
     public function setUp(){
 
@@ -15,7 +16,7 @@ class SoftDeleteTest extends BaseTest {
 
         $this->configIdentity();
 
-        $manifest = $this->getManifest(array('Sds\DoctrineExtensions\SoftDelete' => true));
+        $manifest = $this->getManifest(['extensionConfigs' => ['Sds\DoctrineExtensions\SoftDelete' => true]]);
 
         $this->configDoctrine(
             array_merge(
@@ -25,6 +26,8 @@ class SoftDeleteTest extends BaseTest {
             $manifest->getFilters(),
             $manifest->getSubscribers()
         );
+        $manifest->setDocumentManagerService($this->documentManager)->bootstrapped();
+        $this->softDeleter = $manifest->getServiceManager()->get('softDeleter');
     }
 
     public function testBasicFunction(){
@@ -43,16 +46,16 @@ class SoftDeleteTest extends BaseTest {
         $testDoc = null;
         $testDoc = $repository->find($id);
 
-        $this->assertFalse($testDoc->getSoftDeleted());
+        $this->assertFalse($this->softDeleter->isSoftDeleted($testDoc));
 
-        $testDoc->softDelete();
+        $this->softDeleter->softDelete($testDoc);
 
         $documentManager->flush();
         $documentManager->clear();
         $testDoc = null;
         $testDoc = $repository->find($id);
 
-        $this->assertTrue($testDoc->getSoftDeleted());
+        $this->assertTrue($this->softDeleter->isSoftDeleted($testDoc));
 
         $testDoc->setName('version 2');
 
@@ -63,14 +66,14 @@ class SoftDeleteTest extends BaseTest {
 
         $this->assertEquals('version 1', $testDoc->getName());
 
-        $testDoc->restore();
+        $this->softDeleter->restore($testDoc);
 
         $documentManager->flush();
         $documentManager->clear();
         $testDoc = null;
         $testDoc = $repository->find($id);
 
-        $this->assertFalse($testDoc->getSoftDeleted());
+        $this->assertFalse($this->softDeleter->isSoftDeleted($testDoc));
     }
 
     public function testFilter() {
@@ -94,9 +97,9 @@ class SoftDeleteTest extends BaseTest {
         $this->assertEquals(array('lucy', 'miriam'), $docNames);
 
         if ($testDocs[0]->getName() == 'lucy'){
-            $testDocs[0]->softDelete();
+            $this->softDeleter->softDelete($testDocs[0]);
         } else {
-            $testDocs[1]->softDelete();
+            $this->softDeleter->softDelete($testDocs[1]);
         }
 
         $documentManager->flush();
@@ -127,9 +130,9 @@ class SoftDeleteTest extends BaseTest {
         $this->assertEquals(array('lucy', 'miriam'), $docNames);
 
         if ($testDocs[0]->getName() == 'lucy'){
-            $testDocs[0]->restore();
+            $this->softDeleter->restore($testDocs[0]);
         } else {
-            $testDocs[1]->restore();
+            $this->softDeleter->restore($testDocs[1]);
         }
 
         $documentManager->getFilterCollection()->enable('softDelete');
@@ -156,7 +159,7 @@ class SoftDeleteTest extends BaseTest {
 
     public function testEvents() {
 
-        $subscriber = new Subscriber();
+        $subscriber = $this;
 
         $documentManager = $this->documentManager;
         $eventManager = $documentManager->getEventManager();
@@ -181,9 +184,9 @@ class SoftDeleteTest extends BaseTest {
         $testDoc = null;
         $testDoc = $repository->find($id);
 
-        $this->assertFalse($testDoc->getSoftDeleted());
+        $this->assertFalse($this->softDeleter->isSoftDeleted($testDoc));
 
-        $testDoc->softDelete();
+        $this->softDeleter->softDelete($testDoc);
         $subscriber->reset();
 
         $documentManager->flush();
@@ -197,7 +200,7 @@ class SoftDeleteTest extends BaseTest {
         $testDoc = null;
         $testDoc = $repository->find($id);
 
-        $this->assertTrue($testDoc->getSoftDeleted());
+        $this->assertTrue($this->softDeleter->isSoftDeleted($testDoc));
 
         $testDoc->setName('version 2');
         $subscriber->reset();
@@ -206,7 +209,7 @@ class SoftDeleteTest extends BaseTest {
         $calls = $subscriber->getCalls();
         $this->assertTrue(isset($calls[Events::softDeletedUpdateDenied]));
 
-        $testDoc->restore();
+        $this->softDeleter->restore($testDoc);
         $subscriber->reset();
 
         $documentManager->flush();
@@ -220,9 +223,9 @@ class SoftDeleteTest extends BaseTest {
         $testDoc = null;
         $testDoc = $repository->find($id);
 
-        $this->assertFalse($testDoc->getSoftDeleted());
+        $this->assertFalse($this->softDeleter->isSoftDeleted($testDoc));
 
-        $testDoc->softDelete();
+        $this->softDeleter->softDelete($testDoc);
         $subscriber->reset();
         $subscriber->setRollbackDelete(true);
 
@@ -237,17 +240,17 @@ class SoftDeleteTest extends BaseTest {
         $testDoc = null;
         $testDoc = $repository->find($id);
 
-        $this->assertFalse($testDoc->getSoftDeleted());
-        $testDoc->softDelete();
+        $this->assertFalse($this->softDeleter->isSoftDeleted($testDoc));
+        $this->softDeleter->softDelete($testDoc);
         $subscriber->reset();
         $documentManager->flush();
 
         $testDoc = null;
         $testDoc = $repository->find($id);
 
-        $this->assertTrue($testDoc->getSoftDeleted());
+        $this->assertTrue($this->softDeleter->isSoftDeleted($testDoc));
 
-        $testDoc->restore();
+        $this->softDeleter->restore($testDoc);
         $subscriber->reset();
         $subscriber->setRollbackRestore(true);
 
@@ -258,5 +261,64 @@ class SoftDeleteTest extends BaseTest {
         $this->assertFalse(isset($calls[Events::postSoftDelete]));
         $this->assertTrue(isset($calls[Events::preRestore]));
         $this->assertFalse(isset($calls[Events::postRestore]));
+    }
+
+    protected $calls = array();
+
+    protected $rollbackDelete = false;
+    protected $rollbackRestore = false;
+
+    public function getSubscribedEvents(){
+        return array(
+            Events::preSoftDelete,
+            Events::postSoftDelete,
+            Events::preRestore,
+            Events::postRestore,
+            Events::softDeletedUpdateDenied
+        );
+    }
+
+    public function reset() {
+        $this->calls = array();
+        $this->rollbackDelete = false;
+        $this->rollbackRestore = false;
+    }
+
+    public function preSoftDelete(LifecycleEventArgs $eventArgs) {
+        $this->calls[Events::preSoftDelete] = $eventArgs;
+        if ($this->rollbackDelete) {
+            $this->softDeleter->restore($eventArgs->getDocument());
+        }
+    }
+
+    public function preRestore(LifecycleEventArgs $eventArgs) {
+        $this->calls[Events::preRestore] = $eventArgs;
+        if ($this->rollbackRestore) {
+            $this->softDeleter->softDelete($eventArgs->getDocument());
+        }
+    }
+
+    public function getRollbackDelete() {
+        return $this->rollbackDelete;
+    }
+
+    public function setRollbackDelete($rollbackDelete) {
+        $this->rollbackDelete = $rollbackDelete;
+    }
+
+    public function getRollbackRestore() {
+        return $this->rollbackRestore;
+    }
+
+    public function setRollbackRestore($rollbackRestore) {
+        $this->rollbackRestore = $rollbackRestore;
+    }
+
+    public function getCalls() {
+        return $this->calls;
+    }
+
+    public function __call($name, $arguments){
+        $this->calls[$name] = $arguments[0];
     }
 }

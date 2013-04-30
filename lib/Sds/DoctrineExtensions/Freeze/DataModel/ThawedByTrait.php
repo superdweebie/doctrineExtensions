@@ -17,19 +17,12 @@ use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
 trait ThawedByTrait {
 
     /**
-     * @ODM\Field(type="string")
+     * @ODM\String
      * @ODM\Index
+     * @Sds\Freeze\ThawedBy
      * @Sds\Validator(class = "Sds\Validator\Identifier")
      */
     protected $thawedBy;
-
-    /**
-     *
-     * @param string $name
-     */
-    public function setThawedBy($name){
-        $this->thawedBy = (string) $name;
-    }
 
     /**
      *

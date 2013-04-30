@@ -12,7 +12,6 @@ function(
     // Will return an input for the country field
 
     return declare(
-        'Sds/DoctrineExtensions/Test/Dojo/TestAsset/Document/Simple/Country/Input',
         [            
             ValidationTextarea        
         ],

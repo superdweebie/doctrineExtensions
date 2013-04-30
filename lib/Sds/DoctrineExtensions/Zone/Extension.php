@@ -9,21 +9,23 @@ namespace Sds\DoctrineExtensions\Zone;
 use Sds\DoctrineExtensions\AbstractExtension;
 
 /**
- * Defines the resouces this extension provies
+ * Defines the resouces this extension requires
  *
  * @since   1.0
  * @author  Tim Roediger <superdweebie@gmail.com>
  */
-class Extension extends AbstractExtension {
+class Extension extends AbstractExtension
+{
 
-    public function __construct($config){
+    protected $subscribers = [
+        'Sds\DoctrineExtensions\Zone\AnnotationSubscriber'
+    ];
 
-        $this->configClass = __NAMESPACE__ . '\ExtensionConfig';
-        parent::__construct($config);
-        $config = $this->getConfig();
+    protected $filters = [
+        'zone' => 'Sds\DoctrineExtensions\Zone\Filter\Zone'
+    ];
 
-        $this->subscribers = array(new Subscriber($config->getAnnotationReader()));
-
-        $this->filters = array('zone' => 'Sds\DoctrineExtensions\Zone\Filter\Zone');
-    }
+    protected $dependencies = [
+        'Sds\DoctrineExtensions\Annotation' => true,
+    ];
 }

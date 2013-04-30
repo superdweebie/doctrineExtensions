@@ -22,6 +22,4 @@ final class Rest extends Annotation
     const event = 'annotationRest';
 
     public $value;
-
-    public $basePath;
 }

@@ -14,7 +14,7 @@ namespace Sds\DoctrineExtensions\Serializer\Type;
  */
 class DateToISO8601 implements TypeSerializerInterface {
 
-    public static function serialize($value) {
+    public function serialize($value) {
 
         switch (true){
             case $value instanceof \MongoDate:
@@ -26,7 +26,7 @@ class DateToISO8601 implements TypeSerializerInterface {
         }
     }
 
-    public static function unserialize($value) {
+    public function unserialize($value) {
         return new \DateTime($value);
     }
 }

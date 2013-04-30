@@ -7,9 +7,9 @@
 namespace Sds\DoctrineExtensions\SoftDelete\DataModel;
 
 use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
+use Sds\DoctrineExtensions\Annotation\Annotations as Sds;
 
 /**
- * Implements \Sds\Common\SoftDelete\SoftDeletedOnInterface
  *
  * @since   1.0
  * @author  Tim Roediger <superdweebie@gmail.com>
@@ -17,17 +17,10 @@ use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
 trait SoftDeletedOnTrait {
 
     /**
-     * @ODM\Field(type="timestamp")
+     * @ODM\Timestamp
+     * @Sds\SoftDelete\DeletedOn
      */
     protected $softDeletedOn;
-
-    /**
-     *
-     * @param timestamp $timestamp
-     */
-    public function setSoftDeletedOn($timestamp){
-        $this->softDeletedOn = $timestamp;
-    }
 
     /**
      *

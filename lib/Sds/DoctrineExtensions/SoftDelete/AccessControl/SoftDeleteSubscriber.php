@@ -8,10 +8,7 @@ namespace Sds\DoctrineExtensions\SoftDelete\AccessControl;
 
 use Doctrine\ODM\MongoDB\Event\LifecycleEventArgs;
 use Sds\DoctrineExtensions\AccessControl\AbstractAccessControlSubscriber;
-use Sds\DoctrineExtensions\AccessControl\AccessController;
-use Sds\DoctrineExtensions\SoftDelete\AccessControl\Events as AccessControlEvents;
-use Sds\DoctrineExtensions\SoftDelete\AccessControl\Constant\Action;
-use Sds\DoctrineExtensions\SoftDelete\Events as SoftDeleteEvents;
+use Sds\DoctrineExtensions\SoftDelete\Events;
 
 /**
  *
@@ -20,14 +17,18 @@ use Sds\DoctrineExtensions\SoftDelete\Events as SoftDeleteEvents;
  */
 class SoftDeleteSubscriber extends AbstractAccessControlSubscriber
 {
+
+    protected $softDeleter;
+
     /**
      *
      * @return array
      */
-    public function getSubscribedEvents(){
-        return array(
-            SoftDeleteEvents::preSoftDelete
-        );
+    public static function getStaticSubscribedEvents(){
+        return [
+            Events::preSoftDelete,
+            Events::preRestore
+        ];
     }
 
     /**
@@ -36,22 +37,58 @@ class SoftDeleteSubscriber extends AbstractAccessControlSubscriber
      */
     public function preSoftDelete(LifecycleEventArgs $eventArgs)
     {
-        $document = $eventArgs->getDocument();
-        $documentManager = $eventArgs->getDocumentManager();
+        if (! ($accessController = $this->getAccessController())){
+            //Access control is not enabled
+            return;
+        }
 
-        if( AccessController::isAccessControlEnabled($documentManager->getClassMetadata(get_class($document)), Action::softDelete) &&
-            !AccessController::isActionAllowed($document, Action::softDelete, $this->roles)
-        ) {
+        $document = $eventArgs->getDocument();
+
+        if( !$accessController->isAllowed(Actions::softDelete, null, $document)->getIsAllowed()) {
             //stop SoftDelete
-            $document->restore();
+            $this->getSoftDeleter()->restore($document);
 
             $eventManager = $eventArgs->getDocumentManager()->getEventManager();
-            if ($eventManager->hasListeners(AccessControlEvents::softDeleteDenied)) {
+            if ($eventManager->hasListeners(Events::softDeleteDenied)) {
                 $eventManager->dispatchEvent(
-                    AccessControlEvents::softDeleteDenied,
+                    Events::softDeleteDenied,
                     $eventArgs
                 );
             }
         }
+    }
+
+    /**
+     *
+     * @param \Doctrine\ODM\MongoDB\Event\OnFlushEventArgs $eventArgs
+     */
+    public function preRestore(LifecycleEventArgs $eventArgs)
+    {
+        if (! ($accessController = $this->getAccessController())){
+            //Access control is not enabled
+            return;
+        }
+
+        $document = $eventArgs->getDocument();
+
+        if ( !$accessController->isAllowed(Actions::restore, null, $document)->getIsAllowed()) {
+            //stop restore
+            $this->getSoftDeleter()->softDelete($document);
+
+            $eventManager = $eventArgs->getDocumentManager()->getEventManager();
+            if ($eventManager->hasListeners(Events::restoreDenied)) {
+                $eventManager->dispatchEvent(
+                    Events::restoreDenied,
+                    $eventArgs
+                );
+            }
+        }
+    }
+
+    protected function getSoftDeleter(){
+        if (!isset($this->softDeleter)){
+            $this->softDeleter = $this->serviceLocator->get('softDeleter');
+        }
+        return $this->softDeleter;
     }
 }

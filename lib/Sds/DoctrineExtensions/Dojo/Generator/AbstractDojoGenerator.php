@@ -6,34 +6,83 @@
  */
 namespace Sds\DoctrineExtensions\Dojo\Generator;
 
+use Sds\DoctrineExtensions\AbstractLazySubscriber;
 use Sds\DoctrineExtensions\Generator\GeneratorInterface;
 use Zend\Json\Expr;
 use Zend\Json\Json;
+use Zend\ServiceManager\ServiceLocatorAwareInterface;
+use Zend\ServiceManager\ServiceLocatorAwareTrait;
 
 /**
  *
  * @since   1.0
  * @author  Tim Roediger <superdweebie@gmail.com>
  */
-abstract class AbstractDojoGenerator implements GeneratorInterface
+abstract class AbstractDojoGenerator extends AbstractLazySubscriber implements GeneratorInterface, ServiceLocatorAwareInterface
 {
 
-    protected $destPaths;
+    use ServiceLocatorAwareTrait;
+
+    protected $extension;
+
+    protected $serializer;
+
+    protected $filePaths;
 
     protected $defaultMixins;
 
-    public function __construct($destPaths, $defaultMixins){
-        $this->destPaths = $destPaths;
-        $this->defaultMixins = $defaultMixins;
+    protected $persistToFile;
+
+    public function getFilePaths(){
+        if (!isset($this->filePaths)){
+            $this->filePaths = $this->getExtension()->getFilePaths();
+        }
+        return $this->filePaths;
     }
 
-    protected function getPath($name){
-        foreach ($this->destPaths as $dest){
-            if ($dest['filter'] == '' || strpos($name, $dest['filter']) !== false) {
-                return $dest['path'] . '/' . str_replace('\\', '/', $name);;
+    public function getDefaultMixins(){
+        if (!isset($this->defaultMixins)){
+            $this->defaultMixins = $this->getExtension()->getDefaultMixins();
+        }
+        return $this->defaultMixins;
+    }
+
+    public function getPersistToFile(){
+        if (!isset($this->persistToFile)){
+            $this->persistToFile = $this->getExtension()->getPersistToFile();
+        }
+        return $this->persistToFile;
+    }
+
+    public function getExtension(){
+        if (!isset($this->extension)){
+            $this->extension = $this->serviceLocator->get('Sds\DoctrineExtensions\Dojo\Extension');
+        }
+        return $this->extension;
+    }
+
+    protected function getSerializer(){
+        if (!isset($this->serializer)){
+            $this->serializer = $this->serviceLocator->get('serializer');
+        }
+        return $this->serializer;
+    }
+
+    public function getFilePath($className, $fieldName = null){
+        foreach ($this->getFilePaths() as $filePath){
+            if ($filePath['filter'] == '' || strpos($className, $filePath['filter']) !== false) {
+                return $filePath['path'] . '/' . self::getMid($className);
                 break;
             }
         }
+    }
+
+    static public function getResourceName($className, $fieldName = null){
+        return self::getMid($className);
+    }
+
+    static public function getMid($className, $fieldName = null){
+        return str_replace('\\', '/', $className);
     }
 
     protected function populateTemplate($template, array $args) {
@@ -95,5 +144,20 @@ abstract class AbstractDojoGenerator implements GeneratorInterface
 
     protected function midFromClass($class){
         return str_replace('\\', '/', $class);
+    }
+
+    protected function persistToFile($filePath, $content){
+        if ($this->getPersistToFile()){
+            if ($filePath){
+
+                $dir = dirname($filePath);
+
+                if ( ! is_dir($dir)) {
+                    mkdir($dir, 0777, true);
+                }
+
+                file_put_contents($filePath, $content);
+            }
+        }
     }
 }

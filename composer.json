@@ -15,15 +15,20 @@
     ],
     "require": {
         "php": ">=5.4",
-        "superdweebie/common": "dev-master",
-        "superdweebie/validator": "dev-master",
-        "doctrine/mongodb-odm": "dev-master",
-        "zendframework/zend-json": "2.*",
-        "zendframework/zend-crypt": "2.*"
+        "superdweebie/common":               "~0.3",
+        "superdweebie/validator":            "~0.3",
+        "doctrine/mongodb-odm":              "1.0.0-BETA8",
+        "zendframework/zend-json":           "~2.1",
+        "zendframework/zend-crypt":          "~2.1",
+        "zendframework/zend-servicemanager": "~2.1",
+        "zendframework/zend-stdlib":         "~2.1"
     },
     "autoload": {
         "psr-0": {
             "Sds\\DoctrineExtensions": "lib/"
         }
+    },
+    "config": {
+        "github-protocols": ["http", "https", "git"]
     }
 }

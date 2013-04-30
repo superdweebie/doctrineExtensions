@@ -11,9 +11,7 @@ class RestTest extends BaseTest {
     public function setUp(){
 
         parent::setUp();
-        $manifest = $this->getManifest(['Sds\DoctrineExtensions\Rest' =>
-            ['basePath' => 'http://myserver.com/']
-        ]);
+        $manifest = $this->getManifest(['extensionConfigs' => ['Sds\DoctrineExtensions\Rest' => true]]);
 
         $this->configDoctrine(
             array_merge(
@@ -23,6 +21,7 @@ class RestTest extends BaseTest {
             $manifest->getFilters(),
             $manifest->getSubscribers()
         );
+        $manifest->setDocumentManagerService($this->documentManager)->bootstrapped();
     }
 
     public function testExplicit(){
@@ -31,7 +30,6 @@ class RestTest extends BaseTest {
 
         $metadata = $documentManager->getClassMetadata(get_class(new Explicit));
 
-        $this->assertEquals('http://myserver.com/', $metadata->rest['basePath']);
         $this->assertEquals('RestAPI/Explicit', $metadata->rest['endpoint']);
     }
 
@@ -41,7 +39,6 @@ class RestTest extends BaseTest {
 
         $metadata = $documentManager->getClassMetadata(get_class(new Implicit));
 
-        $this->assertEquals('http://myserver.com/', $metadata->rest['basePath']);
         $this->assertEquals('implicit', $metadata->rest['endpoint']);
     }
 }

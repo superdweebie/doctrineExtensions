@@ -4,7 +4,6 @@ namespace Sds\DoctrineExtensions\Test\SoftDelete;
 
 use Sds\DoctrineExtensions\Test\BaseTest;
 use Sds\DoctrineExtensions\Test\SoftDelete\TestAsset\Document\Stamped;
-use Sds\DoctrineExtensions\SoftDelete\ExtensionConfig;
 
 class StampTest extends BaseTest {
 
@@ -14,9 +13,7 @@ class StampTest extends BaseTest {
 
         $this->configIdentity();
 
-        $extensionConfig = new ExtensionConfig();
-        $extensionConfig->setEnableSoftDeleteStamps(true);
-        $manifest = $this->getManifest(array('Sds\DoctrineExtensions\SoftDelete' => $extensionConfig));
+        $manifest = $this->getManifest(['extensionConfigs' => ['Sds\DoctrineExtensions\SoftDelete' => true]]);
 
         $this->configDoctrine(
             array_merge(
@@ -26,6 +23,8 @@ class StampTest extends BaseTest {
             $manifest->getFilters(),
             $manifest->getSubscribers()
         );
+        $manifest->setDocumentManagerService($this->documentManager)->bootstrapped();
+        $this->softDeleter = $manifest->getServiceManager()->get('softDeleter');
     }
 
     public function testStamps() {
@@ -48,7 +47,7 @@ class StampTest extends BaseTest {
         $this->assertNull($testDoc->getRestoredBy());
         $this->assertNull($testDoc->getRestoredOn());
 
-        $testDoc->softDelete();
+        $this->softDeleter->softDelete($testDoc);
 
         $documentManager->flush();
         $documentManager->clear();
@@ -61,7 +60,7 @@ class StampTest extends BaseTest {
         $this->assertNull($testDoc->getRestoredBy());
         $this->assertNull($testDoc->getRestoredOn());
 
-        $testDoc->restore();
+        $this->softDeleter->restore($testDoc);
 
         $documentManager->flush();
         $documentManager->clear();

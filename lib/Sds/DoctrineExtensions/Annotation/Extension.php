@@ -9,19 +9,14 @@ namespace Sds\DoctrineExtensions\Annotation;
 use Sds\DoctrineExtensions\AbstractExtension;
 
 /**
- * Defines the resouces this extension provies
+ * Defines the resouces this extension requires
  *
  * @since   1.0
  * @author  Tim Roediger <superdweebie@gmail.com>
  */
-class Extension extends AbstractExtension {
-
-    public function __construct($config){
-
-        $this->configClass = __NAMESPACE__ . '\ExtensionConfig';
-        parent::__construct($config);
-        $config = $this->getConfig();
-
-        $this->subscribers = array(new Subscriber($config->getAnnotationReader()));
-    }
+class Extension extends AbstractExtension
+{
+    protected $subscribers = [
+        'Sds\DoctrineExtensions\Annotation\MainSubscriber'
+    ];
 }

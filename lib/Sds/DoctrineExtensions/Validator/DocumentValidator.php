@@ -5,11 +5,10 @@
  */
 namespace Sds\DoctrineExtensions\Validator;
 
-use Doctrine\ODM\MongoDB\Mapping\ClassMetadata;
+use Sds\DoctrineExtensions\DocumentManagerAwareInterface;
+use Sds\DoctrineExtensions\DocumentManagerAwareTrait;
 use Sds\Validator\Factory as ValidatorFactory;
 use Sds\Validator\ValidatorResult;
-use Sds\DoctrineExtensions\Accessor\Accessor;
-use Sds\DoctrineExtensions\Annotation\Annotations as Sds;
 
 /**
  *
@@ -17,51 +16,40 @@ use Sds\DoctrineExtensions\Annotation\Annotations as Sds;
  * @version $Revision$
  * @author  Tim Roediger <superdweebie@gmail.com>
  */
-class DocumentValidator implements DocumentValidatorInterface
+class DocumentValidator implements DocumentValidatorInterface, DocumentManagerAwareInterface
 {
 
-    // TODO: make use of a validatorCache - the validators are re-instatated every validation at the moment.
-    protected $validatorCache = [];
-
-    //Only needs to be set when validating documents that have encrypted fields.
-    protected $documentManager;
-
-    public function setDocumentManager($documentManager) {
-        $this->documentManager = $documentManager;
-    }
+    use DocumentManagerAwareTrait;
 
     /**
-     * Using zend\form\annotation\validator annotations, this method will check if a document
-     * is valid.
      *
      * @param object $document
      * @return boolean
      */
-    public function isValid($document, ClassMetadata $metadata) {
+    public function isValid($document) {
         $messages = [];
         $result = true;
+
+        $metadata = $this->documentManager->getClassMetadata(get_class($document));
 
         if ( ! isset($metadata->validator)){
             return new ValidatorResult(true, []);
         }
 
-        // Property level validators
+        // Field level validators
         if (isset($metadata->validator['fields'])){
             foreach ($metadata->validator['fields'] as $field => $validatorDefinition){
-
-                $getter = Accessor::getGetter($metadata, $field, $document);
 
                 //check for hashed or encrypted values - if the field has been persisted, and is unchanged,
                 //it is assumed to be vaild. If the encrypted value is passed to the validators, then
                 //it is likely fail, which isn't correct.
                 if ((isset($metadata->crypt['hash'][$field]) ||
-                    isset($metadata->crypt['blockCipher'][$field])) &&
-                    isset($this->documentManager)
+                    isset($metadata->crypt['blockCipher'][$field]))
                 ) {
                     $originalDocumentData = $this->documentManager->getUnitOfWork()->getOriginalDocumentData($document);
                     if (isset($originalDocumentData) &&
                         isset($originalDocumentData[$field]) &&
-                        $originalDocumentData[$field] == $document->$getter()
+                        $originalDocumentData[$field] == $metadata->reflFields[$field]->getValue($document)
                     ){
                         //encrypted value hasn't changed, so skip validation of it.
                         continue;
@@ -69,19 +57,17 @@ class DocumentValidator implements DocumentValidatorInterface
                 }
 
                 $validator = ValidatorFactory::create($validatorDefinition);
-                $value = $document->$getter();
+                $value = $metadata->reflFields[$field]->getValue($document);
 
                 $validatorResult = $validator->isValid($value);
                 if ( ! $validatorResult->getResult()){
-                    foreach ($validatorResult->getMessages() as $message){
-                        $messages[] = sprintf('Field %s: %s', $field, $message);
-                    }
+                    $messages[$field] = $validatorResult->getMessages();
                     $result = false;
                 }
             }
         }
 
-        // Class level validators
+        // Document level validators
         if (isset($metadata->validator['document'])){
             $validator = ValidatorFactory::create($metadata->validator['document']);
             $validatorResult = $validator->isValid($value);

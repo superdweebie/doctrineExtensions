@@ -7,6 +7,7 @@
 namespace Sds\DoctrineExtensions\Stamp\DataModel;
 
 use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
+use Sds\DoctrineExtensions\Annotations as Sds;
 
 /**
  * Implements \Sds\Common\Stamp\UpdatedOnInterface
@@ -17,17 +18,10 @@ use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
 trait UpdatedOnTrait {
 
     /**
-     * @ODM\Field(type="timestamp")
+     * @ODM\Timestamp
+     * @Sds\Stamp\UpdatedOn
      */
     protected $updatedOn;
-
-    /**
-     *
-     * @param timestamp $timestamp
-     */
-    public function setUpdatedOn($timestamp){
-        $this->updatedOn = $timestamp;
-    }
 
     /**
      *

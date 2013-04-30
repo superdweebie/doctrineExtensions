@@ -7,8 +7,6 @@
 namespace Sds\DoctrineExtensions\Dojo\Generator;
 
 use Sds\DoctrineExtensions\Generator\GenerateEventArgs;
-use Sds\DoctrineExtensions\Serializer\Serializer;
-use Zend\Json\Expr;
 
 /**
  *
@@ -20,10 +18,18 @@ class Model extends AbstractDojoGenerator
 
     const event = 'generatorDojoModel';
 
-    public function getSubscribedEvents(){
+    public static function getStaticSubscribedEvents(){
         return [
             self::event,
         ];
+    }
+
+    public function getFilePath($className, $fieldName = null){
+        return parent::getFilePath($className) . '.js';
+    }
+
+    static public function getResourceName($className, $fieldName = null){
+        return parent::getResourceName($className) . '.js';
     }
 
     /**
@@ -33,41 +39,28 @@ class Model extends AbstractDojoGenerator
     public function generatorDojoModel(GenerateEventArgs $eventArgs)
     {
 
-        $metadata = $eventArgs->getMetadata();
-        $eventManager = $eventArgs->getEventManager();
-        $results = $eventArgs->getResults();
         $options = $eventArgs->getOptions();
-
-        $path = $this->getPath($metadata->name) . '.js';
-        if (! $path){
-            return;
-        }
-
-        foreach ($results as $result){
-            if ($result->getFileGenerated() == $path){
-                //File has already been generated
-                return;
-            }
-        }
+        $resource = $eventArgs->getResource();
+        $metadata = $eventArgs->getDocumentManager()->getClassMetadata($eventArgs->getClassName());
+        $defaultMixins = $this->getDefaultMixins();
 
         $templateArgs = [];
 
-        $mid = str_replace('\\', '/', $metadata->name);
-        $templateArgs['mid'] = $mid;
+        $mid = self::getMid($metadata->name);
 
         $params = [];
 
         if (isset($options['mixins'])){
             $templateArgs['dependencyMids'] = $options['mixins'];
         } else {
-            $templateArgs['dependencyMids'] = $this->defaultMixins['model'];
+            $templateArgs['dependencyMids'] = $defaultMixins['model'];
         }
 
         $templateArgs['mixins'] = $this->namesFromMids($templateArgs['dependencyMids']);
         $templateArgs['dependencies'] = $this->namesFromMids($templateArgs['dependencyMids']);
 
         $params['_fields'] = [];
-        foreach(Serializer::fieldListForUnserialize($metadata) as $field){
+        foreach($this->getSerializer()->fieldListForUnserialize($metadata) as $field){
             $params['_fields'][] = $field;
         }
 
@@ -80,24 +73,11 @@ class Model extends AbstractDojoGenerator
         $templateArgs['params'] = $this->implodeParams($params);
         $templateArgs['comment'] = $this->indent("// Will return a model for $metadata->name");
 
-        $content = $this->populateTemplate(
+        $resource->content = $this->populateTemplate(
             file_get_contents(__DIR__ . '/Template/Module.js.template'),
             $templateArgs
         );
 
-        $dir = dirname($path);
-
-        if ( ! is_dir($dir)) {
-            mkdir($dir, 0777, true);
-        }
-
-        file_put_contents($path, $content);
-
-        $results[] = new GeneratorResult([
-            'fileGenerated' => $path,
-            'mid' => $mid,
-            'message' => "Model for $metadata->name generated to $path"
-        ]);
-
+        $this->persistToFile($this->getFilePath($metadata->name), $resource->content);
     }
 }

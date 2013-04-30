@@ -2,11 +2,6 @@
 
 namespace Sds\DoctrineExtensions\Test\Freeze\TestAsset\Document;
 
-use Sds\Common\Freeze\FreezeableInterface;
-use Sds\Common\Freeze\FrozenByInterface;
-use Sds\Common\Freeze\FrozenOnInterface;
-use Sds\Common\Freeze\ThawedByInterface;
-use Sds\Common\Freeze\ThawedOnInterface;
 use Sds\DoctrineExtensions\Freeze\DataModel\FreezeableTrait;
 use Sds\DoctrineExtensions\Freeze\DataModel\FreezeStampTrait;
 
@@ -15,13 +10,8 @@ use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
 use Sds\DoctrineExtensions\Annotation\Annotations as Sds;
 
 /** @ODM\Document */
-class Stamped implements
-    FreezeableInterface,
-    FrozenByInterface,
-    FrozenOnInterface,
-    ThawedByInterface,
-    ThawedOnInterface
-{
+class Stamped {
+
     use FreezeableTrait;
     use FreezeStampTrait;
 

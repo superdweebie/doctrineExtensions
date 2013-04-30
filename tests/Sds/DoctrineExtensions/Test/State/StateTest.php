@@ -13,9 +13,7 @@ class StateTest extends BaseTest {
 
         parent::setUp();
 
-        $this->configIdentity();
-
-        $manifest = $this->getManifest(array('Sds\DoctrineExtensions\State' => true));
+        $manifest = $this->getManifest(['extensionConfigs' => ['Sds\DoctrineExtensions\State' => true]]);
 
         $this->configDoctrine(
             array_merge(
@@ -25,6 +23,7 @@ class StateTest extends BaseTest {
             $manifest->getFilters(),
             $manifest->getSubscribers()
         );
+        $manifest->setDocumentManagerService($this->documentManager)->bootstrapped();
     }
 
     public function testBasicFunction(){

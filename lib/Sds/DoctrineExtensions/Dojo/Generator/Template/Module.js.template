@@ -8,7 +8,6 @@ function(
 <comment>
 
     return declare(
-        '<mid>',
         [<mixins>],
         {
 <params>

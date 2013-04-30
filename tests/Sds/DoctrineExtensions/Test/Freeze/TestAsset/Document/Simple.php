@@ -3,14 +3,13 @@
 namespace Sds\DoctrineExtensions\Test\Freeze\TestAsset\Document;
 
 use Sds\DoctrineExtensions\Freeze\DataModel\FreezeableTrait;
-use Sds\Common\Freeze\FreezeableInterface;
 
 //Annotation imports
 use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
 use Sds\DoctrineExtensions\Annotation\Annotations as Sds;
 
 /** @ODM\Document */
-class Simple implements FreezeableInterface {
+class Simple {
 
     use FreezeableTrait;
 

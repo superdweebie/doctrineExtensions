@@ -39,4 +39,16 @@ final class Events
      * Fires if an updated is attempted on a soft deleted object
      */
     const softDeletedUpdateDenied = 'softDeletedUpdateDenied';
+
+    /**
+     * Triggered when active identity attempts to soft delete a document they don't have permission
+     * for
+     */
+    const softDeleteDenied = 'softDeleteDenied';
+
+    /**
+     * Triggers when active identity attempts to restore a document they don't have permission
+     * for
+     */
+    const restoreDenied = 'restoreDenied';
 }

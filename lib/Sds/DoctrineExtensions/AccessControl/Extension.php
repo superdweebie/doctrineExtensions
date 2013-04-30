@@ -6,44 +6,39 @@
  */
 namespace Sds\DoctrineExtensions\AccessControl;
 
-use Sds\DoctrineExtensions\AccessControl\UpdatePermissions\Subscriber as UpdatePermissionsSubscriber;
-use Sds\DoctrineExtensions\AccessControl\UpdateRoles\Subscriber as UpdateRolesSubscriber;
 use Sds\DoctrineExtensions\AbstractExtension;
 
 /**
- * Defines the resouces this extension provies
+ * Defines the resouces this extension requires
  *
  * @since   1.0
  * @author  Tim Roediger <superdweebie@gmail.com>
  */
-class Extension extends AbstractExtension {
+class Extension extends AbstractExtension
+{
+
+    protected $subscribers = [
+        'Sds\DoctrineExtensions\AccessControl\MainSubscriber',
+        'Sds\DoctrineExtensions\AccessControl\AnnotationSubscriber',
+        'Sds\DoctrineExtensions\AccessControl\BasicPermissionSubscriber'
+    ];
+
+    protected $filters = [
+        'readAccessControl' => 'Sds\DoctrineExtensions\AccessControl\Filter\ReadAccessControl'
+    ];
+
+    protected $defaultServiceManagerConfig = [
+        'invokables' => [
+            'accessController' => 'Sds\DoctrineExtensions\AccessControl\AccessController'
+        ]
+    ];
 
     /**
      *
-     * @param array|\Traversable|\Sds\DoctrineExtensions\AccessControl\ExtensionConfig $config
+     * @var array
      */
-    public function __construct($config){
-
-        $this->configClass = __NAMESPACE__ . '\ExtensionConfig';
-        parent::__construct($config);
-        $config = $this->getConfig();
-
-        $this->subscribers = [
-            new Subscriber(
-                $config->getAnnotationReader(),
-                $config->getRoles()
-            ),
-            new UpdatePermissionsSubscriber(
-                $config->getRoles()
-            ),
-            new UpdateRolesSubscriber(
-                $config->getRoles()
-            )
-        ];
-
-        $this->filters = array('readAccessControl' => 'Sds\DoctrineExtensions\AccessControl\Filter\ReadAccessControl');
-
-        $reflection = new \ReflectionClass($config->getPermissionClass());
-        $this->documents = array($reflection->getNamespaceName() => dirname($reflection->getFileName()));
-    }
+    protected $dependencies = [
+        'Sds\DoctrineExtensions\Annotation' => true,
+        'Sds\DoctrineExtensions\Identity' => true,
+    ];
 }

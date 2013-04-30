@@ -10,7 +10,7 @@ use Sds\DoctrineExtensions\Annotation\Annotations as Sds;
 
 /**
  * @ODM\Document
- * @Sds\Serializer(@Sds\ClassName)
+ * @Sds\Serializer\ClassName
  */
 class CakeRefLazy {
 
@@ -21,13 +21,13 @@ class CakeRefLazy {
 
     /**
      * @ODM\ReferenceMany(targetDocument="Ingredient")
-     * @Sds\Serializer(@Sds\RefLazy)
+     * @Sds\Serializer\RefLazy
      */
     protected $ingredients;
 
     /**
      * @ODM\ReferenceOne(targetDocument="Flavour")
-     * @Sds\Serializer(@Sds\RefLazy)
+     * @Sds\Serializer\RefLazy
      */
     protected $flavour;
 

@@ -4,6 +4,7 @@ namespace Sds\DoctrineExtensions\Test;
 
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\AnnotationRegistry;
+use Doctrine\Common\Cache\ArrayCache;
 use Doctrine\Common\EventManager;
 use Doctrine\Common\Persistence\Mapping\Driver\MappingDriverChain;
 use Doctrine\MongoDB\Connection;
@@ -11,7 +12,6 @@ use Doctrine\ODM\MongoDB\Configuration;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\ODM\MongoDB\Mapping\Driver\AnnotationDriver;
 use Sds\DoctrineExtensions\Manifest;
-use Sds\DoctrineExtensions\ManifestConfig;
 use Sds\DoctrineExtensions\Test\TestAsset\RoleAwareIdentity;
 use Sds\DoctrineExtensions\Test\TestAsset\Identity;
 
@@ -24,13 +24,7 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
 
     protected $unitOfWork;
 
-    protected $annotationReader;
-
     protected $identity;
-
-    public function setUp(){
-        $this->annotationReader = new AnnotationReader();
-    }
 
     protected function configIdentity($configRoleAwareIdentity = false){
         $identity = $configRoleAwareIdentity ? new RoleAwareIdentity() : new Identity();
@@ -38,16 +32,12 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
         $this->identity = $identity;
     }
 
-    protected function getManifest(array $extensionConfigs){
+    protected function getManifest(array $manifestConfig){
 
-        $config = array(
-            'annotationReader' => $this->annotationReader,
-            'extensionConfigs' => $extensionConfigs
-        );
         if (isset($this->identity)) {
-            $config['identity'] = $this->identity;
+            $identity = $this->identity;
+            $manifestConfig['serviceManagerConfig']['factories']['Sds\DoctrineExtensions\Identity'] = function() use ($identity){return $identity;};
         }
-        $manifestConfig = new ManifestConfig($config);
 
         return new Manifest($manifestConfig);
     }
@@ -68,11 +58,13 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
 
         $config->setDefaultDB(self::DEFAULT_DB);
 
+        $config->setMetadataCacheImpl(new ArrayCache);
+
         //create driver chain
         $chain  = new MappingDriverChain;
 
         foreach ($documents as $namespace => $path){
-            $driver = new AnnotationDriver($this->annotationReader, $path);
+            $driver = new AnnotationDriver(new AnnotationReader, $path);
             $chain->addDriver($driver, $namespace);
         }
         $config->setMetadataDriverImpl($chain);
@@ -95,7 +87,6 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
 
         $conn = new Connection(null, array(), $config);
         $this->documentManager = DocumentManager::create($conn, $config, $eventManager);
-        $this->unitOfWork = $this->documentManager->getUnitOfWork();
     }
 
     public function tearDown()

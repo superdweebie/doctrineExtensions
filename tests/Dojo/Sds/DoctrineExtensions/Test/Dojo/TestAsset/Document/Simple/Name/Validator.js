@@ -17,7 +17,6 @@ function(
     // the name field
 
     return declare(
-        'Sds/DoctrineExtensions/Test/Dojo/TestAsset/Document/Simple/Name/Validator',
         [            
             Group        
         ],

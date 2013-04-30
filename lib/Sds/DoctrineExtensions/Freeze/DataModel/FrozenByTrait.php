@@ -19,17 +19,10 @@ trait FrozenByTrait {
     /**
      * @ODM\String
      * @ODM\Index
+     * @Sds\Freeze\FrozenBy
      * @Sds\Validator(class = "Sds\Validator\Identifier")
      */
     protected $frozenBy;
-
-    /**
-     *
-     * @param string $name
-     */
-    public function setFrozenBy($name){
-        $this->frozenBy = (string) $name;
-    }
 
     /**
      *

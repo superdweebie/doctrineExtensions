@@ -19,10 +19,22 @@ class Validator extends AbstractDojoGenerator
 
     const event = 'generatorDojoValidator';
 
-    public function getSubscribedEvents(){
+    public static function getStaticSubscribedEvents(){
         return [
             self::event,
         ];
+    }
+
+    public function getFilePath($className, $fieldName){
+        return parent::getFilePath($className) . '/' . ucfirst($fieldName) . '/Validator.js';
+    }
+
+    static public function getResourceName($className, $fieldName){
+        return parent::getResourceName($className) . '/' . ucfirst($fieldName) . '/Validator.js';
+    }
+
+    static public function getMid($className, $fieldName){
+        return parent::getMid($className) . '/' . ucfirst($fieldName) . '/Validator';
     }
 
     /**
@@ -32,33 +44,21 @@ class Validator extends AbstractDojoGenerator
     public function generatorDojoValidator(GenerateEventArgs $eventArgs)
     {
 
-        $metadata = $eventArgs->getMetadata();
-        $field = $eventArgs->getOptions()['property'];
-        $results = $eventArgs->getResults();
-
-        $path = $this->getPath($metadata->name);
-        if (! $path){
-            return;
-        }
-
-        $path .= '/' . ucfirst($field) . '/Validator.js';
-        foreach ($results as $result){
-            if ($result->getFileGenerated() == $path){
-                //File has already been generated
-                return;
-            }
-        }
+        $metadata = $eventArgs->getDocumentManager()->getClassMetadata($eventArgs->getClassName());
+        $options = $eventArgs->getOptions();
+        $resource = $eventArgs->getResource();
+        $field = $options['field'];
+        $defaultMixins = $this->getDefaultMixins();
 
         if ( ! isset($metadata->validator['fields'][$field])){
             return;
         }
 
-
         if (count($metadata->validator['fields'][$field]) > 1){
             $templateArgs = [
-                'dependencyMids' => $this->defaultMixins['validator']['group'],
-                'dependencies' => $this->namesFromMids($this->defaultMixins['validator']['group']),
-                'mixins' => $this->namesFromMids($this->defaultMixins['validator']['group']),
+                'dependencyMids' => $defaultMixins['validator']['group'],
+                'dependencies' => $this->namesFromMids($defaultMixins['validator']['group']),
+                'mixins' => $this->namesFromMids($defaultMixins['validator']['group']),
                 'params' => ['field' => "$field"]
             ];
 
@@ -94,31 +94,18 @@ class Validator extends AbstractDojoGenerator
             }
         }
 
-        $mid = str_replace('\\', '/', $metadata->name)  . '/' . ucfirst($field) . '/Validator';
-        $templateArgs['mid'] = $mid;
         $templateArgs['dependencyMids'] = ',' . $this->indent($this->implodeMids($templateArgs['dependencyMids']));
         $templateArgs['dependencies'] = ',' . $this->indent($this->implodeNames($templateArgs['dependencies']));
         $templateArgs['mixins'] = $this->indent($this->implodeNames($templateArgs['mixins']), 12) . $this->indent("\n", 8);
         $templateArgs['params'] = $this->implodeParams($templateArgs['params']);
         $templateArgs['comment'] = $this->indent("// Will return a validator that can be used to check\n// the $field field");
 
-        $content = $this->populateTemplate(
+        $resource->content = $this->populateTemplate(
             file_get_contents(__DIR__ . '/Template/Module.js.template'),
             $templateArgs
         );
 
-        $dir = dirname($path);
+        $this->persistToFile($this->getFilePath($metadata->name, $field), $resource->content);
 
-        if ( ! is_dir($dir)) {
-            mkdir($dir, 0777, true);
-        }
-
-        file_put_contents($path, $content);
-
-        $results[] = new GeneratorResult([
-            'fileGenerated' => $path,
-            'mid' => $mid,
-            'message' => "Validator for $metadata->name::$field generated to $path"
-        ]);
     }
 }

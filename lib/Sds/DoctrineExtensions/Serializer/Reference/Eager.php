@@ -6,23 +6,37 @@
  */
 namespace Sds\DoctrineExtensions\Serializer\Reference;
 
-use Doctrine\ODM\MongoDB\DocumentManager;
-use Sds\DoctrineExtensions\Serializer\Serializer;
+use Sds\DoctrineExtensions\DocumentManagerAwareInterface;
+use Sds\DoctrineExtensions\DocumentManagerAwareTrait;
+use Zend\ServiceManager\ServiceLocatorAwareInterface;
+use Zend\ServiceManager\ServiceLocatorAwareTrait;
 
 /**
  *
  * @since   1.0
  * @author  Tim Roediger <superdweebie@gmail.com>
  */
-class Eager implements ReferenceSerializerInterface {
+class Eager implements ReferenceSerializerInterface, ServiceLocatorAwareInterface, DocumentManagerAwareInterface {
 
-    public static function serialize($id, array $mapping, DocumentManager $documentManager){
+    use ServiceLocatorAwareTrait;
+    use DocumentManagerAwareTrait;
 
-        $document = $documentManager->getRepository($mapping['targetDocument'])->findOneBy(['id' => $id]);
+    protected $serializer;
+
+    public function serialize($id, array $mapping){
+
+        $document = $this->documentManager->getRepository($mapping['targetDocument'])->find($id);
         if ($document){
-            return Serializer::toArray($document, $documentManager);
+            return $this->getSerializer()->toArray($document);
         } else {
             return null;
         }
+    }
+
+    protected function getSerializer(){
+        if (!isset($this->serializer)){
+            $this->serializer = $this->serviceLocator->get('serializer');
+        }
+        return $this->serializer;
     }
 }

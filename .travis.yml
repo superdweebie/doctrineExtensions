@@ -2,6 +2,7 @@ language: php
 
 php:
   - 5.4
+  - 5.5
 
 env:
   - MONGO_VERSION=1.2.12
@@ -9,8 +10,13 @@ env:
 services: mongodb
 
 before_script:
-  - pecl -q install mongo-${MONGO_VERSION} && echo "extension=mongo.so" >> `php --ini | grep "Loaded Configuration" | sed -e "s|.*:\s*||"`
-  - git submodule update --init
-  - cp .travis/composer.json ./    
-  - wget -nc http://getcomposer.org/composer.phar
+  - pecl -q install -f mongo-${MONGO_VERSION} && echo "extension=mongo.so" >> `php --ini | grep "Loaded Configuration" | sed -e "s|.*:\s*||"`
   - php composer.phar install
+
+before_script:
+  - cp .travis/composer.json ./
+  - composer update --dev
+
+script:
+  - cd ./tests
+  - phpunit

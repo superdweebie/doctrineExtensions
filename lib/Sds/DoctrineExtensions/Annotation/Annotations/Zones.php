@@ -9,7 +9,7 @@ namespace Sds\DoctrineExtensions\Annotation\Annotations;
 use Doctrine\Common\Annotations\Annotation;
 
 /**
- * Annotation to mark a property as the zones hash field. Property must be a
+ * Annotation to mark a field as the zones hash field. Field must be a
  * hash type.
  *
  * @since   1.0

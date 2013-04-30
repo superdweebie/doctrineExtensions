@@ -36,12 +36,18 @@ final class Events
     const postThaw = 'postThaw';
 
     /**
-     * Fires if an updated is attempted on a frozen object
+     * Triggered when active identity attempts to freeze a document they don't have permission
+     * for
      */
-    const frozenUpdateDenied = 'frozenUpdateDenied';
+    const freezeDenied = 'freezeDenied';
 
     /**
-     * Fires if a delete is attempted on a frozen object
+     * Triggers when active identity attempts to thaw a document they don't have permission
+     * for
      */
+    const thawDenied = 'thawDenied';
+
+    const frozenUpdateDenied = 'frozenUpdateDenied';
+
     const frozenDeleteDenied = 'frozenDeleteDenied';
 }

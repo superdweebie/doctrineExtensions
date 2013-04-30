@@ -16,7 +16,6 @@ function(
     // Will return a validator to validate a complete model for Sds\DoctrineExtensions\Test\Dojo\TestAsset\Document\Simple
 
     return declare(
-        'Sds/DoctrineExtensions/Test/Dojo/TestAsset/Document/Simple/ModelValidator',
         [            
             Model        
         ],

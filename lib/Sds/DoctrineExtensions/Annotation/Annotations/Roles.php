@@ -9,7 +9,7 @@ namespace Sds\DoctrineExtensions\Annotation\Annotations;
 use Doctrine\Common\Annotations\Annotation;
 
 /**
- * Annotation to mark a property as the roles.
+ * Annotation to mark a field as the roles.
  *
  * @since   1.0
  * @author  Tim Roediger <superdweebie@gmail.com>
@@ -20,4 +20,6 @@ use Doctrine\Common\Annotations\Annotation;
 final class Roles extends Annotation
 {
     const event = 'annotationRoles';
+
+    public $value = true;
 }

@@ -10,7 +10,7 @@ class ZoneTest extends BaseTest {
     public function setUp(){
 
         parent::setUp();
-        $manifest = $this->getManifest(['Sds\DoctrineExtensions\Zone' => true]);
+        $manifest = $this->getManifest(['extensionConfigs' => ['Sds\DoctrineExtensions\Zone' => true]]);
 
         $this->configDoctrine(
             array_merge(
@@ -20,6 +20,7 @@ class ZoneTest extends BaseTest {
             $manifest->getFilters(),
             $manifest->getSubscribers()
         );
+        $manifest->setDocumentManagerService($this->documentManager)->bootstrapped();
     }
 
     public function testBasicFunction(){

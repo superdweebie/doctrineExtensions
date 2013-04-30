@@ -7,7 +7,6 @@
 namespace Sds\DoctrineExtensions\Dojo\Generator;
 
 use Sds\DoctrineExtensions\Generator\GenerateEventArgs;
-use Sds\DoctrineExtensions\Serializer\Serializer;
 use Zend\Json\Expr;
 
 /**
@@ -20,10 +19,22 @@ class JsonRest extends AbstractDojoGenerator
 
     const event = 'generatorDojoJsonRest';
 
-    public function getSubscribedEvents(){
+    public static function getStaticSubscribedEvents(){
         return [
             self::event,
         ];
+    }
+
+    public function getFilePath($className, $fieldName = null){
+        return parent::getFilePath($className) . '/JsonRest.js';
+    }
+
+    static public function getResourceName($className, $fieldName = null){
+        return parent::getResourceName($className) . '/JsonRest.js';
+    }
+
+    static public function getMid($className, $fieldName = null){
+        return parent::getMid($className) . '/JsonRest';
     }
 
     /**
@@ -33,74 +44,35 @@ class JsonRest extends AbstractDojoGenerator
     public function generatorDojoJsonRest(GenerateEventArgs $eventArgs)
     {
 
-        $metadata = $eventArgs->getMetadata();
-        $eventManager = $eventArgs->getEventManager();
-        $results = $eventArgs->getResults();
         $options = $eventArgs->getOptions();
-
-        $path = $this->getPath($metadata->name);
-        if (! $path){
-            return;
-        }
-
-        $path .= '/JsonRest.js';
-        foreach ($results as $result){
-            if ($result->getFileGenerated() == $path){
-                //File has already been generated
-                return;
-            }
-        }
-
-        //generate model if required
-        $modelOptions = [];
-        foreach ($metadata->generator as $config){
-            if (
-                $config['class'] == 'Sds\DoctrineExtensions\Dojo\Generator\Model' &&
-                ! isset($config['options'])
-            ){
-                $modelOptions = $config['options'];
-                break;
-            }
-        }
-
-        $eventManager->dispatchEvent(
-            Model::event,
-            new GenerateEventArgs(
-                $metadata,
-                $eventArgs->getDocumentManager(),
-                $eventManager,
-                $results,
-                $modelOptions
-            )
-        );
+        $resource = $eventArgs->getResource();
+        $metadata = $eventArgs->getDocumentManager()->getClassMetadata($eventArgs->getClassName());
+        $defaultMixins = $this->getDefaultMixins();
 
         $templateArgs = [];
-
-        $midBase = str_replace('\\', '/', $metadata->name);
-        $mid = $midBase . '/JsonRest';
-        $templateArgs['mid'] = $mid;
 
         $params = [];
 
         if (isset($options['mixins'])){
             $templateArgs['dependencyMids'] = $options['mixins'];
         } else {
-            $templateArgs['dependencyMids'] = $this->defaultMixins['store']['jsonRest'];
+            $templateArgs['dependencyMids'] = $defaultMixins['store']['jsonRest'];
         }
         $templateArgs['mixins'] = $this->namesFromMids($templateArgs['dependencyMids']);
         $templateArgs['dependencies'] = $this->namesFromMids($templateArgs['dependencyMids']);
 
-        $pieces = explode('/', $midBase);
+        $modelMid = Model::getMid($metadata->name);
+        $pieces = explode('/', $modelMid);
         $model = $pieces[count($pieces) - 1];
 
-        $templateArgs['dependencyMids'][] = $midBase;
+        $templateArgs['dependencyMids'][] = $modelMid;
         $templateArgs['dependencies'][] = $model;
 
         $params['name'] = $metadata->collection;
-        $params['idProperty'] = $metadata->identifier;
+        $params['idField'] = $metadata->identifier;
 
         if (isset($metadata->rest)){
-            $params['target'] = $metadata->rest['basePath'] . $metadata->rest['endpoint'];
+            $params['target'] = $metadata->rest['endpoint'];
         } else {
             $params['target'] = $metadata->collection;
         }
@@ -112,24 +84,12 @@ class JsonRest extends AbstractDojoGenerator
         $templateArgs['params'] = $this->implodeParams($params);
         $templateArgs['comment'] = $this->indent("// Will return create a dojo JsonRest store for $metadata->name");
 
-        $content = $this->populateTemplate(
+        $resource->content = $this->populateTemplate(
             file_get_contents(__DIR__ . '/Template/Module.js.template'),
             $templateArgs
         );
 
-        $dir = dirname($path);
-
-        if ( ! is_dir($dir)) {
-            mkdir($dir, 0777, true);
-        }
-
-        file_put_contents($path, $content);
-
-        $results[] = new GeneratorResult([
-            'fileGenerated' => $path,
-            'mid' => $mid,
-            'message' => "JsonStore for $metadata->name generated to $path"
-        ]);
+        $this->persistToFile($this->getFilePath($metadata->name), $resource->content);
 
     }
 }

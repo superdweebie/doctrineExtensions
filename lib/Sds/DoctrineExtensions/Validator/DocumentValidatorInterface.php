@@ -5,8 +5,6 @@
  */
 namespace Sds\DoctrineExtensions\Validator;
 
-use Doctrine\ODM\MongoDB\Mapping\ClassMetadata;
-
 /**
  *
  * @since   1.0
@@ -27,7 +25,6 @@ interface DocumentValidatorInterface
      * @return Sds\Validator\ValidatorResult
      * @throws Exception\RuntimeException If validation of $value is impossible
      */
-    public function isValid($value, ClassMetadata $metadata);
+    public function isValid($document);
 
-    public function setDocumentManager($documentManager);
 }

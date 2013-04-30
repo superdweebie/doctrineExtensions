@@ -19,13 +19,11 @@ trait CredentialTrait {
 
     /**
      * @ODM\String
-     * @Sds\Serializer(@Sds\Ignore("ignore_when_serializing"))
+     * @Sds\Serializer\Ignore("ignore_when_serializing"))
      * @Sds\Validator\Required
      * @Sds\Validator\Credential
      * @Sds\Crypt\Hash
-     * @Sds\Generator({
-     *     @Sds\Dojo\Input(mixins = {"Sds/Form/PasswordTextBox"})
-     * })
+     * @Sds\Dojo\Input(mixins = {"Sds/Form/PasswordTextBox"})
      */
     protected $credential;
 

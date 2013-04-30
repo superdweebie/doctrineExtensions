@@ -14,7 +14,7 @@ class CredentialTraitTest extends BaseTest {
 
         $this->configIdentity();
 
-        $manifest = $this->getManifest(array('Sds\DoctrineExtensions\Crypt' => true));
+        $manifest = $this->getManifest(['extensionConfigs' => ['Sds\DoctrineExtensions\Crypt' => true]]);
 
         $this->configDoctrine(
             array_merge(
@@ -24,6 +24,7 @@ class CredentialTraitTest extends BaseTest {
             $manifest->getFilters(),
             $manifest->getSubscribers()
         );
+        $manifest->setDocumentManagerService($this->documentManager)->bootstrapped();
     }
 
     public function testPassword(){

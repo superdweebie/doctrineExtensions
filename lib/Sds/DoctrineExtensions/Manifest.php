@@ -6,12 +6,12 @@
  */
 namespace Sds\DoctrineExtensions;
 
-use Sds\Common\Identity\IdentityAwareInterface;
-use Sds\DoctrineExtensions\Exception;
+use Doctrine\ODM\MongoDB\DocumentManager;
+use Zend\Stdlib\ArrayUtils;
 
 /**
  * Pass this class a configuration array with extension namespaces, and then retrieve the
- * required annotations, filters, subscribers, and document locations
+ * required filters, subscribers, and document locations
  *
  * @since   1.0
  * @author  Tim Roediger <superdweebie@gmail.com>
@@ -19,31 +19,73 @@ use Sds\DoctrineExtensions\Exception;
 class Manifest extends AbstractExtension {
 
     /**
-     * {@inheritdoc}
-     */
-    protected $config;
-
-    /**
+     * Keys are extension namespaces
+     * Values are extensionConfig objects
      *
      * @var array
      */
-    protected $extensions = array();
+    protected $extensionConfigs;
+
+    protected $extensions;
+
+    protected $defaultServiceManagerConfig = [
+        'abstract_factories' => [
+            'Sds\DoctrineExtensions\AbstractExtensionFactory'
+        ],
+        'initializers' => [
+            'Sds\DoctrineExtensions\ServiceLocatorInitalizer',
+            'Sds\DoctrineExtensions\DocumentManagerInitalizer'
+        ]
+    ];
+
+    protected $serviceManager;
 
     /**
      *
-     * @param \Sds\DoctrineExtensions\ManifestConfig $config
+     * @return array
      */
-    public function __construct(ManifestConfig $config) {
-        $this->config = $config;
+    public function getExtensionConfigs() {
+        return $this->extensionConfigs;
+    }
 
-        foreach ($config->getExtensionConfigs() as $namespace => $extensionConfig){
-            if ($extensionConfig != null){
-                if (is_bool($extensionConfig)){
-                    $extensionConfig = [];
-                }
+    /**
+     *
+     * @param array $extensionConfigs
+     */
+    public function setExtensionConfigs(array $extensionConfigs) {
+        $this->extensionConfigs = $extensionConfigs;
+    }
+
+    public function getExtensionConfig($namespace) {
+        if (isset($this->extensionConfigs[(string) $namespace])){
+            $this->extensionConfigs[(string) $namespace];
+        }
+    }
+
+    public static function staticBootstrapped(ServiceManager $serviceManager){
+        $eventManager = $serviceManager->get('documentManager')->getEventManager();
+        if ($eventManager->hasListeners(Events::onBootstrapped)) {
+            $eventManager->dispatchEvent(Events::onBootstrapped, new BootstrappedEventArgs($serviceManager));
+        }
+    }
+
+    public function bootstrapped(){
+        $this->staticBootstrapped($this->getServiceManager());
+        return $this;
+    }
+
+    public function setDocumentManagerService(DocumentManager $documentManager){
+        $this->getServiceManager()->setService('documentManager', $documentManager);
+        return $this;
+    }
+
+    protected function getExtensions(){
+        if ( ! isset($this->extensions)){
+            foreach ($this->extensionConfigs as $namespace => $extensionConfig){
                 $this->addExtension($namespace, $extensionConfig);
             }
         }
+        return $this->extensions;
     }
 
     /**
@@ -52,58 +94,28 @@ class Manifest extends AbstractExtension {
      * @param array | \Sds\DoctrineExtensions\AbstractConfig $extensionConfig
      * @throws \Exception
      */
-    public function addExtension($namespace, $extensionConfig){
+    protected function addExtension($namespace, $extensionConfig){
 
         //Check if the extension is already added
-        if (isset($this->extensions[$namespace])){
+        if (isset($this->extensions[$namespace]) || ! (boolean) $extensionConfig){
             return;
         }
 
-        $config = $this->config;
-
-        $extensionConfigClass = $namespace. '\ExtensionConfig';
-
-        // Create specific config class if not given
-        if (!$extensionConfig instanceof $extensionConfigClass) {
-            $extensionConfig = new $extensionConfigClass($extensionConfig);
+        if (is_bool($extensionConfig)){
+            $extensionConfig = [];
         }
 
-        // Inject annotation reader if required, but not given
-        if ($extensionConfig->getAnnotationReader() == null) {
-            $extensionConfig->setAnnotationReader($config->getAnnotationReader());
-        }
-
-        //Inject active identity if required, but not given
-        if ($extensionConfig->getIdentity() == null) {
-            $extensionConfig->setIdentity($config->getIdentity());
-        }
-
-        $config->setExtensionConfig($namespace, $extensionConfig);
-
-        // Create extension
-        $extensionClass = $namespace . '\Extension';
+        $extensionClass = $namespace. '\Extension';
         $extension = new $extensionClass($extensionConfig);
-        if (!$extension instanceof ExtensionInterface) {
-            throw new Exception\UnexpectedValueException(sprintf(
-                '%s must be an instance of ExtensionInterface, but is not',
-                $extensionClass
-            ));
-        }
+
         $this->extensions[$namespace] = $extension;
 
         //Add dependencies
-        $manifestConfigs = $config->getExtensionConfigs();
-        foreach ($extensionConfig->getDependencies() as $namespace => $dependencyConfig){
+        $manifestConfigs = $this->extensionConfigs;
+        foreach ($extension->getDependencies() as $namespace => $dependencyConfig){
             //Check for manifest config, and use that instead if present
             if (isset($manifestConfigs[$namespace])){
                 $dependencyConfig = $manifestConfigs[$namespace];
-            }
-            if (is_bool($dependencyConfig)){
-                if ($dependencyConfig){
-                    $dependencyConfig = [];
-                } else {
-                    continue;
-                }
             }
             $this->addExtension($namespace, $dependencyConfig);
         }
@@ -112,16 +124,9 @@ class Manifest extends AbstractExtension {
     /**
      * {@inheritdoc}
      */
-    public function getConfig(){
-        return $this->config;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function getFilters(){
-        $filters = array();
-        foreach ($this->extensions as $extension) {
+        $filters = [];
+        foreach ($this->getExtensions() as $extension) {
             $filters = array_merge($filters, $extension->getFilters());
         }
         return $filters;
@@ -131,9 +136,19 @@ class Manifest extends AbstractExtension {
      * {@inheritdoc}
      */
     public function getSubscribers(){
-        $subscribers = array();
-        foreach ($this->extensions as $extension) {
-            $subscribers = array_merge($subscribers, $extension->getSubscribers());
+        $subscribers = [];
+        foreach ($this->getExtensions() as $extension) {
+            foreach ($extension->getSubscribers() as $subscriber){
+                if (is_string($subscriber)){
+                    if (!isset($masterLazySubscriber)){
+                        $masterLazySubscriber = new MasterLazySubscriber;
+                        $subscribers[] = $masterLazySubscriber;
+                    }
+                    $masterLazySubscriber->addLazySubscriber($subscriber);
+                } else {
+                    $subscribers[] = $subscriber;
+                }
+            }
         }
         return $subscribers;
     }
@@ -142,8 +157,8 @@ class Manifest extends AbstractExtension {
      * {@inheritdoc}
      */
     public function getDocuments(){
-        $documents = array();
-        foreach ($this->extensions as $extension) {
+        $documents = [];
+        foreach ($this->getExtensions() as $extension) {
             $documents = array_merge($documents, $extension->getDocuments());
         }
         return $documents;
@@ -153,8 +168,8 @@ class Manifest extends AbstractExtension {
      * {@inheritdoc}
      */
     public function getCliCommands(){
-        $cliCommands = array();
-        foreach ($this->extensions as $extension) {
+        $cliCommands = [];
+        foreach ($this->getExtensions() as $extension) {
             $cliCommands = array_merge($cliCommands, $extension->getCliCommands());
         }
         return $cliCommands;
@@ -164,17 +179,28 @@ class Manifest extends AbstractExtension {
      * {@inheritdoc}
      */
     public function getCliHelpers(){
-        $cliHelpers = array();
-        foreach ($this->extensions as $extension) {
+        $cliHelpers = [];
+        foreach ($this->getExtensions() as $extension) {
             $cliHelpers = array_merge($cliHelpers, $extension->getcliHelpers());
         }
         return $cliHelpers;
     }
 
-    public function setIdentity($identity) {
-        parent::setIdentity($identity);
-        foreach ($this->extensions as $extension) {
-            $extension->setIdentity($identity);
+    public function getServiceManagerConfig(){
+        $config = $this->defaultServiceManagerConfig;
+        foreach ($this->getExtensions() as $extension){
+            $config = ArrayUtils::merge($config, $extension->getServiceManagerConfig());
         }
+        return ArrayUtils::merge($config, $this->serviceManagerConfig);
+    }
+
+    public function getServiceManager(){
+        if (!isset($this->serviceManager)){
+            $this->serviceManager = ServiceManagerFactory::create(
+                $this->getServiceManagerConfig(),
+                $this->extensionConfigs
+            );
+        }
+        return $this->serviceManager;
     }
 }

@@ -2,11 +2,14 @@
 
 namespace Sds\DoctrineExtensions\Test\Freeze;
 
+use Doctrine\Common\EventSubscriber;
+use Doctrine\ODM\MongoDB\Event\LifecycleEventArgs;
+use Sds\DoctrineExtensions\Freeze\Events;
 use Sds\DoctrineExtensions\Test\BaseTest;
 use Sds\DoctrineExtensions\Test\Freeze\TestAsset\Document\Simple;
-use Sds\DoctrineExtensions\Test\Freeze\TestAsset\Subscriber;
 
-class FreezeTest extends BaseTest {
+
+class FreezeTest extends BaseTest implements EventSubscriber {
 
     public function setUp(){
 
@@ -14,7 +17,7 @@ class FreezeTest extends BaseTest {
 
         $this->configIdentity();
 
-        $manifest = $this->getManifest(array('Sds\DoctrineExtensions\Freeze' => true));
+        $manifest = $this->getManifest(['extensionConfigs' => ['Sds\DoctrineExtensions\Freeze' => true]]);
 
         $this->configDoctrine(
             array_merge(
@@ -24,6 +27,8 @@ class FreezeTest extends BaseTest {
             $manifest->getFilters(),
             $manifest->getSubscribers()
         );
+        $manifest->setDocumentManagerService($this->documentManager)->bootstrapped();
+        $this->freezer = $manifest->getServiceManager()->get('freezer');
     }
 
     public function testBasicFunction(){
@@ -42,16 +47,16 @@ class FreezeTest extends BaseTest {
         $testDoc = null;
         $testDoc = $repository->find($id);
 
-        $this->assertFalse($testDoc->getFrozen());
+        $this->assertFalse($this->freezer->isFrozen($testDoc));
 
-        $testDoc->freeze();
+        $this->freezer->freeze($testDoc);
 
         $documentManager->flush();
         $documentManager->clear();
         $testDoc = null;
         $testDoc = $repository->find($id);
 
-        $this->assertTrue($testDoc->getFrozen());
+        $this->assertTrue($this->freezer->isFrozen($testDoc));
 
         $testDoc->setName('version 2');
 
@@ -70,14 +75,14 @@ class FreezeTest extends BaseTest {
 
         $this->assertEquals('version 1', $testDoc->getName());
 
-        $testDoc->thaw();
+        $this->freezer->thaw($testDoc);
 
         $documentManager->flush();
         $documentManager->clear();
         $testDoc = null;
         $testDoc = $repository->find($id);
 
-        $this->assertFalse($testDoc->getFrozen());
+        $this->assertFalse($this->freezer->isFrozen($testDoc));
     }
 
     public function testFilter() {
@@ -101,9 +106,9 @@ class FreezeTest extends BaseTest {
         $this->assertEquals(array('lucy', 'miriam'), $docNames);
 
         if ($testDocs[0]->getName() == 'lucy'){
-            $testDocs[0]->freeze();
+            $this->freezer->freeze($testDocs[0]);
         } else {
-            $testDocs[1]->freeze();
+            $this->freezer->freeze($testDocs[1]);
         }
 
         $documentManager->flush();
@@ -134,9 +139,9 @@ class FreezeTest extends BaseTest {
         $this->assertEquals(array('lucy', 'miriam'), $docNames);
 
         if ($testDocs[0]->getName() == 'lucy'){
-            $testDocs[0]->thaw();
+            $this->freezer->thaw($testDocs[0]);
         } else {
-            $testDocs[1]->thaw();
+            $this->freezer->thaw($testDocs[1]);
         }
 
         $documentManager->getFilterCollection()->enable('freeze');
@@ -163,7 +168,7 @@ class FreezeTest extends BaseTest {
 
     public function testEvents() {
 
-        $subscriber = new Subscriber();
+        $subscriber = $this;
 
         $documentManager = $this->documentManager;
         $eventManager = $documentManager->getEventManager();
@@ -178,94 +183,161 @@ class FreezeTest extends BaseTest {
         $id = $testDoc->getId();
         $documentManager->clear();
 
-        $this->assertFalse($subscriber->getPreFreezeCalled());
-        $this->assertFalse($subscriber->getPostFreezeCalled());
-        $this->assertFalse($subscriber->getPreThawCalled());
-        $this->assertFalse($subscriber->getPostThawCalled());
+        $calls = $this->calls;
+        $this->assertFalse(isset($calls[Events::preFreeze]));
+        $this->assertFalse(isset($calls[Events::postFreeze]));
+        $this->assertFalse(isset($calls[Events::preThaw]));
+        $this->assertFalse(isset($calls[Events::postThaw]));
 
         $repository = $documentManager->getRepository(get_class($testDoc));
         $testDoc = $repository->find($id);
 
-        $this->assertFalse($testDoc->getFrozen());
+        $this->assertFalse($this->freezer->isFrozen($testDoc));
 
-        $testDoc->freeze();
+        $this->freezer->freeze($testDoc);
         $subscriber->reset();
 
         $documentManager->flush();
 
-        $this->assertTrue($subscriber->getPreFreezeCalled());
-        $this->assertTrue($subscriber->getPostFreezeCalled());
-        $this->assertFalse($subscriber->getPreThawCalled());
-        $this->assertFalse($subscriber->getPostThawCalled());
+        $calls = $this->calls;
+        $this->assertTrue(isset($calls[Events::preFreeze]));
+        $this->assertTrue(isset($calls[Events::postFreeze]));
+        $this->assertFalse(isset($calls[Events::preThaw]));
+        $this->assertFalse(isset($calls[Events::postThaw]));
 
         $testDoc = null;
         $testDoc = $repository->find($id);
 
-        $this->assertTrue($testDoc->getFrozen());
+        $this->assertTrue($this->freezer->isFrozen($testDoc));
 
         $testDoc->setName('version 2');
         $subscriber->reset();
         $documentManager->flush();
 
-        $this->assertTrue($subscriber->getFrozenUpdateDeniedCalled());
+        $calls = $this->calls;
+        $this->assertTrue(isset($calls[Events::frozenUpdateDenied]));
         $subscriber->reset();
 
         $documentManager->remove($testDoc);
         $documentManager->flush();
 
-        $this->assertTrue($subscriber->getFrozenDeleteDeniedCalled());
+        $calls = $this->calls;
+        $this->assertTrue(isset($calls[Events::frozenDeleteDenied]));
 
         $documentManager->clear();
         $testDoc = $repository->find($id);
 
-        $testDoc->thaw();
+        $this->freezer->thaw($testDoc);
         $subscriber->reset();
 
         $documentManager->flush();
 
-        $this->assertFalse($subscriber->getPreFreezeCalled());
-        $this->assertFalse($subscriber->getPostFreezeCalled());
-        $this->assertTrue($subscriber->getPreThawCalled());
-        $this->assertTrue($subscriber->getPostThawCalled());
+        $calls = $this->calls;
+        $this->assertFalse(isset($calls[Events::preFreeze]));
+        $this->assertFalse(isset($calls[Events::postFreeze]));
+        $this->assertTrue(isset($calls[Events::preThaw]));
+        $this->assertTrue(isset($calls[Events::postThaw]));
 
         $testDoc = null;
         $testDoc = $repository->find($id);
 
-        $this->assertFalse($testDoc->getFrozen());
+        $this->assertFalse($this->freezer->isFrozen($testDoc));
 
-        $testDoc->freeze();
+        $this->freezer->freeze($testDoc);
         $subscriber->reset();
         $subscriber->setRollbackFreeze(true);
 
         $documentManager->flush();
 
-        $this->assertTrue($subscriber->getPreFreezeCalled());
-        $this->assertFalse($subscriber->getPostFreezeCalled());
-        $this->assertFalse($subscriber->getPreThawCalled());
-        $this->assertFalse($subscriber->getPostThawCalled());
+        $calls = $this->calls;
+        $this->assertTrue(isset($calls[Events::preFreeze]));
+        $this->assertFalse(isset($calls[Events::postFreeze]));
+        $this->assertFalse(isset($calls[Events::preThaw]));
+        $this->assertFalse(isset($calls[Events::postThaw]));
 
         $testDoc = null;
         $testDoc = $repository->find($id);
 
-        $this->assertFalse($testDoc->getFrozen());
-        $testDoc->freeze();
+        $this->assertFalse($this->freezer->isFrozen($testDoc));
+        $this->freezer->freeze($testDoc);
         $subscriber->reset();
         $documentManager->flush();
 
         $testDoc = null;
         $testDoc = $repository->find($id);
 
-        $this->assertTrue($testDoc->getFrozen());
+        $this->assertTrue($this->freezer->isFrozen($testDoc));
 
-        $testDoc->thaw();
+        $this->freezer->thaw($testDoc);
         $subscriber->reset();
         $subscriber->setRollbackThaw(true);
 
         $documentManager->flush();
 
-        $this->assertFalse($subscriber->getPreFreezeCalled());
-        $this->assertFalse($subscriber->getPostFreezeCalled());
-        $this->assertTrue($subscriber->getPreThawCalled());
-        $this->assertFalse($subscriber->getPostThawCalled());
+        $calls = $this->calls;
+        $this->assertFalse(isset($calls[Events::preFreeze]));
+        $this->assertFalse(isset($calls[Events::postFreeze]));
+        $this->assertTrue(isset($calls[Events::preThaw]));
+        $this->assertFalse(isset($calls[Events::postThaw]));
+    }
+
+    protected $calls = array();
+
+    protected $rollbackFreeze = false;
+    protected $rollbackThaw = false;
+
+    public function getSubscribedEvents(){
+        return array(
+            Events::preFreeze,
+            Events::postFreeze,
+            Events::preThaw,
+            Events::postThaw,
+            Events::frozenUpdateDenied,
+            Events::frozenDeleteDenied
+        );
+    }
+
+    public function reset() {
+        $this->calls = array();
+        $this->rollbackFreeze = false;
+        $this->rollbackThaw = false;
+    }
+
+    public function preFreeze(LifecycleEventArgs $eventArgs) {
+        $this->calls[Events::preFreeze] = $eventArgs;
+        if ($this->rollbackFreeze) {
+            $this->freezer->thaw($eventArgs->getDocument());
+        }
+    }
+
+    public function preThaw(LifecycleEventArgs $eventArgs) {
+        $this->calls[Events::preThaw] = $eventArgs;
+        if ($this->rollbackThaw) {
+            $this->freezer->freeze($eventArgs->getDocument());
+        }
+    }
+
+    public function getRollbackFreeze() {
+        return $this->rollbackFreeze;
+    }
+
+    public function setRollbackFreeze($rollbackFreeze) {
+        $this->rollbackFreeze = $rollbackFreeze;
+    }
+
+    public function getRollbackThaw() {
+        return $this->rollbackThaw;
+    }
+
+    public function setRollbackThaw($rollbackThaw) {
+        $this->rollbackThaw = $rollbackThaw;
+    }
+
+    public function getCalls() {
+        return $this->calls;
+    }
+
+    public function __call($name, $arguments){
+        $this->calls[$name] = $arguments[0];
     }
 }

@@ -19,32 +19,10 @@ use Sds\DoctrineExtensions\Annotations as Sds;
 trait FreezeableTrait {
 
     /**
-     * @ODM\Field(type="boolean")
+     * @ODM\Boolean
      * @Sds\Freeze
-     * @Sds\AccessControl(@Sds\AccessControl\Update(false))
+     * @Sds\AccessControl\IgnoreUpdate
      */
     protected $frozen = false;
 
-    /**
-     * Check if object has been frozen
-     *
-     * @return boolean
-     */
-    public function getFrozen(){
-        return $this->frozen;
-    }
-
-    /**
-     * Freeze the object
-     */
-    public function freeze() {
-        $this->frozen = true;
-    }
-
-    /**
-     * Thaw the object
-     */
-    public function thaw() {
-        $this->frozen = false;
-    }
 }

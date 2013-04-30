@@ -54,7 +54,7 @@ class EventArgs extends BaseEventArgs {
     }
 
     /**
-     * 
+     *
      * @return \Sds\Common\State\Transition
      */
     public function getTransition() {

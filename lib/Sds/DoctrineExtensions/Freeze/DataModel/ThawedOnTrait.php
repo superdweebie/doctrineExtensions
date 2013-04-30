@@ -17,17 +17,10 @@ use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
 trait ThawedOnTrait {
 
     /**
-     * @ODM\Field(type="timestamp")
+     * @ODM\Timestamp
+     * @Sds\Freeze\ThawedOn
      */
     protected $thawedOn;
-
-    /**
-     *
-     * @param timestamp $timestamp
-     */
-    public function setThawedOn($timestamp){
-        $this->thawedOn = $timestamp;
-    }
 
     /**
      *

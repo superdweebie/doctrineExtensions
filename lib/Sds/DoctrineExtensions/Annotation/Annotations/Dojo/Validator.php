@@ -11,7 +11,7 @@ namespace Sds\DoctrineExtensions\Annotation\Annotations\Dojo;
  * @author  Tim Roediger <superdweebie@gmail.com>
  *
  * The main annotaion for defineing the behaviour of Dojo Validator generation.
- * It may be used as a property annotation.
+ * It may be used as a field annotation.
  *
  * @Annotation
  */

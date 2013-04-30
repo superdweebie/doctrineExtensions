@@ -14,7 +14,7 @@ namespace Sds\DoctrineExtensions\Serializer\Type;
  */
 interface TypeSerializerInterface {
 
-    public static function serialize($value);
+    public function serialize($value);
 
-    public static function unserialize($value);
+    public function unserialize($value);
 }

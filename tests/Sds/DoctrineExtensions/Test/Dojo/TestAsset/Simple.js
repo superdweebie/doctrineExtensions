@@ -10,7 +10,6 @@ function(
     // Will return a model for Sds\DoctrineExtensions\Test\Dojo\TestAsset\Document\Simple
 
     return declare(
-        'Sds/DoctrineExtensions/Test/Dojo/TestAsset/Document/Simple',
         [            
             BaseModel        
         ],
@@ -19,7 +18,7 @@ function(
             	"id",
             	"name",
             	"country",
-            	"camelCaseProperty",
+            	"camelCaseField",
             	"_className"
             ],
             

@@ -2,17 +2,16 @@
 
 namespace Sds\DoctrineExtensions\Test\State\TestAsset\Document;
 
-use Sds\Common\State\StateAwareInterface;
-use Sds\DoctrineExtensions\State\DataModel\StateAwareTrait;
+use Sds\DoctrineExtensions\State\DataModel\StateTrait;
 
 //Annotation imports
 use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
 use Sds\DoctrineExtensions\Annotation\Annotations as Sds;
 
 /** @ODM\Document */
-class Simple implements StateAwareInterface {
+class Simple {
 
-    use StateAwareTrait;
+    use StateTrait;
 
     /**
      * @ODM\Id(strategy="UUID")

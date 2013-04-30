@@ -9,7 +9,7 @@ namespace Sds\DoctrineExtensions\Annotation\Annotations\Validator;
 use Doctrine\Common\Annotations\Annotation;
 
 /**
- * Annotation to mark a property as required
+ * Annotation to mark a field as required
  *
  * @since   1.0
  * @author  Tim Roediger <superdweebie@gmail.com>

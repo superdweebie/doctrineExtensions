@@ -7,11 +7,6 @@
 namespace Sds\DoctrineExtensions\SoftDelete;
 
 use Doctrine\ODM\MongoDB\Event\LifecycleEventArgs;
-use Sds\Common\SoftDelete\SoftDeletedByInterface;
-use Sds\Common\SoftDelete\SoftDeletedOnInterface;
-use Sds\Common\SoftDelete\RestoredByInterface;
-use Sds\Common\SoftDelete\RestoredOnInterface;
-use Sds\DoctrineExtensions\SoftDelete\Events as SoftDeleteEvents;
 use Sds\DoctrineExtensions\Stamp\AbstractStampSubscriber;
 
 /**
@@ -26,11 +21,11 @@ class StampSubscriber extends AbstractStampSubscriber {
      *
      * @return array
      */
-    public function getSubscribedEvents() {
-        return array(
-            SoftDeleteEvents::postSoftDelete,
-            SoftDeleteEvents::postRestore
-        );
+    public static function getStaticSubscribedEvents() {
+        return [
+            Events::postSoftDelete,
+            Events::postRestore
+        ];
     }
 
     /**
@@ -40,12 +35,14 @@ class StampSubscriber extends AbstractStampSubscriber {
     public function postSoftDelete(LifecycleEventArgs $eventArgs) {
         $recomputeChangeSet = false;
         $document = $eventArgs->getDocument();
-        if($document instanceof SoftDeletedByInterface){
-            $document->setSoftDeletedBy($this->identityName);
+        $metadata = $eventArgs->getDocumentManager()->getClassMetadata(get_class($document));
+
+        if(isset($metadata->softDelete['deletedBy'])){
+            $metadata->reflFields[$metadata->softDelete['deletedBy']]->setValue($document, $this->getIdentityName());
             $recomputeChangeSet = true;
         }
-        if($document instanceof SoftDeletedOnInterface){
-            $document->setSoftDeletedOn(time());
+        if(isset($metadata->softDelete['deletedOn'])){
+            $metadata->reflFields[$metadata->softDelete['deletedOn']]->setValue($document, time());
             $recomputeChangeSet = true;
         }
         if ($recomputeChangeSet) {
@@ -60,12 +57,14 @@ class StampSubscriber extends AbstractStampSubscriber {
     public function postRestore(LifecycleEventArgs $eventArgs) {
         $recomputeChangeSet = false;
         $document = $eventArgs->getDocument();
-        if($document instanceof RestoredByInterface){
-            $document->setRestoredBy($this->identityName);
+        $metadata = $eventArgs->getDocumentManager()->getClassMetadata(get_class($document));
+
+        if(isset($metadata->softDelete['restoredBy'])){
+            $metadata->reflFields[$metadata->softDelete['restoredBy']]->setValue($document, $this->getIdentityName());
             $recomputeChangeSet = true;
         }
-        if($document instanceof RestoredOnInterface){
-            $document->setRestoredOn(time());
+        if(isset($metadata->softDelete['restoredOn'])){
+            $metadata->reflFields[$metadata->softDelete['restoredOn']]->setValue($document, time());
             $recomputeChangeSet = true;
         }
         if ($recomputeChangeSet) {

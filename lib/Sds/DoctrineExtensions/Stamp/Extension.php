@@ -9,24 +9,20 @@ namespace Sds\DoctrineExtensions\Stamp;
 use Sds\DoctrineExtensions\AbstractExtension;
 
 /**
- * Defines the resouces this extension provies
+ * Defines the resouces this extension requires
  *
  * @since   1.0
  * @author  Tim Roediger <superdweebie@gmail.com>
  */
 class Extension extends AbstractExtension {
 
-    public function __construct($config){
+    protected $subscribers = [
+        'Sds\DoctrineExtensions\Stamp\MainSubscriber',
+        'Sds\DoctrineExtensions\Stamp\AnnotationSubscriber',
+    ];
 
-        $this->configClass = __NAMESPACE__ . '\ExtensionConfig';
-        parent::__construct($config);
-        $config = $this->getConfig();
-
-        $this->subscribers = array(new Subscriber($config->getIdentityName()));
-    }
-
-    public function setIdentity($identity){
-        parent::setIdentity($identity);
-        $this->subscribers[0]->setIdentityName($identity->getName());
-    }
+    protected $dependencies = [
+        'Sds\DoctrineExtensions\Annotation' => true,
+        'Sds\DoctrineExtensions\Identity' => true,
+    ];
 }

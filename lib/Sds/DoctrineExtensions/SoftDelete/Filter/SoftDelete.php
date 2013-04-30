@@ -47,11 +47,11 @@ class SoftDelete extends BsonFilter
      * @param \Doctrine\ODM\MongoDB\Mapping\ClassMetadata $targetMetadata
      * @return array
      */
-    public function addFilterCriteria(ClassMetadata $targetMetadata)
+    public function addFilterCriteria(ClassMetadata $metadata)
     {
-        if (isset($targetMetadata->softDelete)) {
-            return array($targetMetadata->softDelete => $this->parameters['softDeleted']);
+        if (isset($metadata->softDelete['flag'])) {
+            return [$metadata->softDelete['flag'] => $this->parameters['softDeleted']];
         }
-        return array();
+        return [];
     }
 }

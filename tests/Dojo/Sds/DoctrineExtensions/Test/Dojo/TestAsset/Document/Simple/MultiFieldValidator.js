@@ -14,14 +14,19 @@ function(
     // Will return a multi field validator
 
     return declare(
-        'Sds/DoctrineExtensions/Test/Dojo/TestAsset/Document/Simple/MultiFieldValidator',
         [            
             Group        
         ],
         {
             validators: [
-            	"new ClassValidator1",
-            	"new ClassValidator2({\n    \u0022option1\u0022: \u0022a\u0022,\n    \u0022option2\u0022: \u0022b\u0022\n})"
+            	new ClassValidator1,
+            	new ClassValidator2({
+            		
+                "option1": "a",
+            		
+                "option2": "b"
+            
+            	}	)
             ]
         }
     );

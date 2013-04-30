@@ -3,7 +3,6 @@
 namespace Sds\DoctrineExtensions\Test\Dojo;
 
 use Sds\DoctrineExtensions\Generator\Generator;
-use Sds\DoctrineExtensions\Generator\GenerateEventArgs;
 use Sds\DoctrineExtensions\Test\BaseTest;
 
 class DojoTest extends BaseTest {
@@ -17,11 +16,12 @@ class DojoTest extends BaseTest {
 
         $this->path = __DIR__ . '/../../../../Dojo';
 
-        $manifest = $this->getManifest(['Sds\DoctrineExtensions\Dojo' => [
-            'destPaths' => [
+        $manifest = $this->getManifest(['extensionConfigs' => ['Sds\DoctrineExtensions\Dojo' => [
+            'persistToFile' => true,
+            'filePaths' => [
                 ['filter' => '', 'path' => $this->path]
             ]
-        ]]);
+        ]]]);
 
         $this->configDoctrine(
             array_merge(
@@ -31,23 +31,18 @@ class DojoTest extends BaseTest {
             $manifest->getFilters(),
             $manifest->getSubscribers()
         );
+        $manifest->setDocumentManagerService($this->documentManager)->bootstrapped();
+        $this->generator = $manifest->getServiceManager()->get('generator');
     }
 
     public function testInputGenerator(){
 
-        $documentManager = $this->documentManager;
-        $eventManager = $documentManager->getEventManager();
+        $generator = $this->generator;
+        $map = $generator->getResourceMap()->getMap();
 
-        $messages = new \ArrayObject();
-        $eventManager->dispatchEvent(
-            Generator::event,
-            new GenerateEventArgs(
-                $documentManager->getClassMetadata('Sds\DoctrineExtensions\Test\Dojo\TestAsset\Document\Simple'),
-                $documentManager,
-                $eventManager,
-                $messages
-           )
-        );
+        foreach ($map as $resourceName => $config){
+            $generator->generate($resourceName);
+        }
 
         $this->assertEquals(
             file_get_contents(__DIR__ . '/TestAsset/Simple.js'),

@@ -6,7 +6,7 @@ define([
     'Sds/DoctrineExtensions/Test/Dojo/TestAsset/Document/Simple/Id/Input',
     'Sds/DoctrineExtensions/Test/Dojo/TestAsset/Document/Simple/Name/Input',
     'Sds/DoctrineExtensions/Test/Dojo/TestAsset/Document/Simple/Country/Input',
-    'Sds/DoctrineExtensions/Test/Dojo/TestAsset/Document/Simple/CamelCaseProperty/Input'
+    'Sds/DoctrineExtensions/Test/Dojo/TestAsset/Document/Simple/CamelCaseField/Input'
 ],
 function(
     declare,    
@@ -15,12 +15,11 @@ function(
     IdInput,
     NameInput,
     CountryInput,
-    CamelCasePropertyInput
+    CamelCaseFieldInput
 ){
     // Will return a form for Sds\DoctrineExtensions\Test\Dojo\TestAsset\Document\Simple
 
     return declare(
-        'Sds/DoctrineExtensions/Test/Dojo/TestAsset/Document/Simple/Form',
         [            
             ValidationControlGroup        
         ],
@@ -31,7 +30,7 @@ function(
             	new IdInput,
             	new NameInput,
             	new CountryInput,
-            	new CamelCasePropertyInput
+            	new CamelCaseFieldInput
             ]
         }
     );

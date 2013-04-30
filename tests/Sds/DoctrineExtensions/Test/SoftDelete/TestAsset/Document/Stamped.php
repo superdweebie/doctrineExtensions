@@ -2,28 +2,18 @@
 
 namespace Sds\DoctrineExtensions\Test\SoftDelete\TestAsset\Document;
 
-use Sds\DoctrineExtensions\SoftDelete\DataModel\SoftStampTrait;
-use Sds\Common\SoftDelete\SoftDeletedByInterface;
-use Sds\Common\SoftDelete\SoftDeletedOnInterface;
-use Sds\Common\SoftDelete\RestoredByInterface;
-use Sds\Common\SoftDelete\RestoredOnInterface;
+use Sds\DoctrineExtensions\SoftDelete\DataModel\SoftDeleteStampTrait;
 use Sds\DoctrineExtensions\SoftDelete\DataModel\SoftDeleteableTrait;
-use Sds\Common\SoftDelete\SoftDeleteableInterface;
 
 //Annotation imports
 use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
 use Sds\DoctrineExtensions\Annotation\Annotations as Sds;
 
 /** @ODM\Document */
-class Stamped implements
-    SoftDeleteableInterface,
-    SoftDeletedByInterface,
-    SoftDeletedOnInterface,
-    RestoredByInterface,
-    RestoredOnInterface
-{
+class Stamped {
+
     use SoftDeleteableTrait;
-    use SoftStampTrait;
+    use SoftDeleteStampTrait;
 
     /**
      * @ODM\Id(strategy="UUID")
@@ -31,7 +21,7 @@ class Stamped implements
     protected $id;
 
     /**
-     * @ODM\Field(type="string")
+     * @ODM\String
      */
     protected $name;
 

@@ -8,13 +8,9 @@ use Sds\DoctrineExtensions\Annotation\Annotations as Sds;
 
 /**
  * @ODM\Document
- * @Sds\DoNotHardDelete
- * @Sds\Serializer(
- *     @Sds\ClassName,
- *     @Sds\Discriminator
- * )
+ * @Sds\Serializer\ClassName
+ * @Sds\Serializer\Discriminator
  * @Sds\Validator(class = "ParentValidator")
- * @Sds\Workflow("ParentWorkflow")
  */
 class ParentClass {
 
@@ -24,8 +20,8 @@ class ParentClass {
     protected $id;
 
     /**
-     * @ODM\Field(type="string")
-     * @Sds\Serializer(@Sds\Ignore)
+     * @ODM\String
+     * @Sds\Serializer\Ignore
      */
     protected $name;
 

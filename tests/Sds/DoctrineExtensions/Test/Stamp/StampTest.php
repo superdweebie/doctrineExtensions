@@ -15,7 +15,7 @@ class StampTest extends BaseTest {
 
         $this->configIdentity();
 
-        $manifest = $this->getManifest(array('Sds\DoctrineExtensions\Stamp' => true));
+        $manifest = $this->getManifest(['extensionConfigs' => ['Sds\DoctrineExtensions\Stamp' => true]]);
 
         $this->configDoctrine(
             array_merge(
@@ -25,6 +25,7 @@ class StampTest extends BaseTest {
             $manifest->getFilters(),
             $manifest->getSubscribers()
         );
+        $manifest->setDocumentManagerService($this->documentManager)->bootstrapped();
 
         $this->subscriber = $manifest->getSubscribers()[0];
     }
@@ -47,11 +48,8 @@ class StampTest extends BaseTest {
         $this->assertEquals('version1', $testDoc->getName());
         $this->assertEquals('toby', $testDoc->getCreatedBy());
         $this->assertNotNull($testDoc->getCreatedOn());
-        $this->assertNull($testDoc->getUpdatedBy());
-        $this->assertNull($testDoc->getUpdatedOn());
-
-        $this->identity->setIdentityName('lucy');
-        $this->subscriber->setIdentityName($this->identity->getIdentityName());
+        $this->assertEquals('toby', $testDoc->getUpdatedBy());
+        $this->assertNotNull($testDoc->getUpdatedOn());
 
         $testDoc->setName('version2');
 
@@ -66,7 +64,7 @@ class StampTest extends BaseTest {
         $this->assertEquals('version2', $testDoc->getName());
         $this->assertEquals('toby', $testDoc->getCreatedBy());
         $this->assertNotNull($testDoc->getCreatedOn());
-        $this->assertEquals('lucy', $testDoc->getUpdatedBy());
+        $this->assertEquals('toby', $testDoc->getUpdatedBy());
         $this->assertNotNull($testDoc->getUpdatedOn());
     }
 }

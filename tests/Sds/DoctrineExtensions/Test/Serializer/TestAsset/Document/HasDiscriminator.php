@@ -11,7 +11,7 @@ use Sds\DoctrineExtensions\Annotation\Annotations as Sds;
  * @ODM\InheritanceType("SINGLE_COLLECTION")
  * @ODM\DiscriminatorField(fieldName="type")
  * @ODM\DiscriminatorMap({"hasDiscriminator"="Sds\DoctrineExtensions\Test\Serializer\TestAsset\Document\HasDiscriminator"})
- * @Sds\Serializer(@Sds\Discriminator)
+ * @Sds\Serializer\Discriminator
  */
 class HasDiscriminator {
 

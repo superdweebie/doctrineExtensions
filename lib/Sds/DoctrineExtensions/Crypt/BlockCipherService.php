@@ -6,7 +6,6 @@
  */
 namespace Sds\DoctrineExtensions\Crypt;
 
-use Sds\DoctrineExtensions\Accessor\Accessor;
 use Sds\DoctrineExtensions\Annotation\Annotations as Sds;
 
 /**
@@ -29,17 +28,25 @@ class BlockCipherService {
     }
 
     public static function encryptField($field, $document, $metadata){
-        $getMethod = Accessor::getGetter($metadata, $field, $document);
-        $setMethod = Accessor::getSetter($metadata, $field, $document);
 
-        $document->$setMethod(self::encryptValue($document->$getMethod(), $metadata->crypt['blockCipher'][$field]));
+        $metadata->reflFields[$field]->setValue(
+            $document,
+            self::encryptValue(
+                $metadata->reflFields[$field]->getValue($document),
+                $metadata->crypt['blockCipher'][$field]
+            )
+        );
     }
 
     public static function decryptField($field, $document, $metadata){
-        $getMethod = Accessor::getGetter($metadata, $field, $document);
-        $setMethod = Accessor::getSetter($metadata, $field, $document);
 
-        $document->$setMethod(self::decryptValue($document->$getMethod(), $metadata->crypt['blockCipher'][$field]));
+        $metadata->reflFields[$field]->setValue(
+            $document,
+            self::decryptValue(
+                $metadata->reflFields[$field]->getValue($document),
+                $metadata->crypt['blockCipher'][$field]
+            )
+        );
     }
 
     public static function encryptDocument($document, $metadata){

@@ -6,8 +6,10 @@
  */
 namespace Sds\DoctrineExtensions\Stamp;
 
-use Doctrine\Common\EventSubscriber;
 use Doctrine\ODM\MongoDB\Event\LifecycleEventArgs;
+use Sds\DoctrineExtensions\AbstractLazySubscriber;
+use Zend\ServiceManager\ServiceLocatorAwareInterface;
+use Zend\ServiceManager\ServiceLocatorAwareTrait;
 
 /**
  * Adds create and update stamps during persist
@@ -15,25 +17,9 @@ use Doctrine\ODM\MongoDB\Event\LifecycleEventArgs;
  * @since   1.0
  * @author  Tim Roediger <superdweebie@gmail.com>
  */
-abstract class AbstractStampSubscriber implements EventSubscriber {
+abstract class AbstractStampSubscriber extends AbstractLazySubscriber implements ServiceLocatorAwareInterface {
 
-    protected $identityName;
-
-    public function getIdentityName() {
-        return $this->identityName;
-    }
-
-    public function setIdentityName($identityName) {
-        $this->identityName = (string) $identityName;
-    }
-
-    /**
-     *
-     * @param string $identityName
-     */
-    public function __construct($identityName = null) {
-        isset($identityName) ? $this->setIdentityName($identityName) : null;
-    }
+    use ServiceLocatorAwareTrait;
 
     /**
      *
@@ -45,5 +31,9 @@ abstract class AbstractStampSubscriber implements EventSubscriber {
         $unitOfWork = $documentManager->getUnitOfWork();
         $metadata = $documentManager->getClassMetadata(get_class($document));
         $unitOfWork->recomputeSingleDocumentChangeSet($metadata, $document);
+    }
+
+    protected function getIdentityName(){
+        return $this->serviceLocator->get('Sds\DoctrineExtensions\Identity')->getIdentityName();
     }
 }

@@ -15,11 +15,11 @@ use Sds\DoctrineExtensions\Serializer\Type\TypeSerializerInterface;
  */
 class StringSerializer implements TypeSerializerInterface {
 
-    public static function serialize($value) {
+    public function serialize($value) {
         return ucfirst($value);
     }
 
-    public static function unserialize($value) {
+    public function unserialize($value) {
         return lcfirst($value);
     }
 }

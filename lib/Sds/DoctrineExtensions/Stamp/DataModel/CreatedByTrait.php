@@ -11,7 +11,6 @@ use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
 use Sds\DoctrineExtensions\Annotations as Sds;
 
 /**
- * Implements \Sds\Common\Stamp\CreatedByInterface
  *
  * @since   1.0
  * @author  Tim Roediger <superdweebie@gmail.com>
@@ -19,18 +18,11 @@ use Sds\DoctrineExtensions\Annotations as Sds;
 trait CreatedByTrait {
 
     /**
-     * @ODM\Field(type="string")
+     * @ODM\String
+     * @Sds\Stamp\CreatedBy
      * @Sds\Readonly
      */
     protected $createdBy;
-
-    /**
-     *
-     * @param string $name
-     */
-    public function setCreatedBy($name){
-        $this->createdBy = (string) $name;
-    }
 
     /**
      *

@@ -10,7 +10,6 @@ function(
     // Will return an input for the camelCaseProperty field
 
     return declare(
-        'Sds/DoctrineExtensions/Test/Dojo/TestAsset/Document/Simple/CamelCaseProperty/Input',
         [            
             TextBox        
         ],

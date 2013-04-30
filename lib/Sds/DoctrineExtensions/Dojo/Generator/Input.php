@@ -19,10 +19,22 @@ class Input extends AbstractDojoGenerator
 
     const event = 'generatorDojoInput';
 
-    public function getSubscribedEvents(){
+    public static function getStaticSubscribedEvents(){
         return [
             self::event,
         ];
+    }
+
+    public function getFilePath($className, $fieldName){
+        return parent::getFilePath($className) . '/' . ucfirst($fieldName) . '/Input.js';
+    }
+
+    static public function getResourceName($className, $fieldName){
+        return parent::getResourceName($className) . '/' . ucfirst($fieldName) . '/Input.js';
+    }
+
+    static public function getMid($className, $fieldName){
+        return parent::getMid($className) . '/' . ucfirst($fieldName) . '/Input';
     }
 
     /**
@@ -32,79 +44,31 @@ class Input extends AbstractDojoGenerator
     public function generatorDojoInput(GenerateEventArgs $eventArgs)
     {
 
-        $metadata = $eventArgs->getMetadata();
-        $eventManager = $eventArgs->getEventManager();
-        $field = $eventArgs->getOptions()['property'];
-        $results = $eventArgs->getResults();
+        $metadata = $eventArgs->getDocumentManager()->getClassMetadata($eventArgs->getClassName());
         $options = $eventArgs->getOptions();
-
-        $path = $this->getPath($metadata->name);
-        if (! $path){
-            return;
-        }
-
-        $path .= '/' . ucfirst($field) . '/Input.js';
-        foreach ($results as $result){
-            if ($result->getFileGenerated() == $path){
-                //File has already been generated
-                return;
-            }
-        }
-
-        //generate any required validators
-        $validatorOptions = ['property' => $field];
-        foreach ($metadata->generator as $config){
-            if (
-                $config['class'] == 'Sds\DoctrineExtensions\Dojo\Generator\Validator' &&
-                $config['options']['property'] == $field
-            ){
-                $validatorOptions = $config['options'];
-                break;
-            }
-        }
-
-        $eventManager->dispatchEvent(
-            Validator::event,
-            new GenerateEventArgs(
-                $metadata,
-                $eventArgs->getDocumentManager(),
-                $eventManager,
-                $results,
-                $validatorOptions
-            )
-        );
-
+        $resource = $eventArgs->getResource();
+        $field = $options['field'];
+        $defaultMixins = $this->getDefaultMixins();
 
         $templateArgs = [];
 
-        $midBase = str_replace('\\', '/', $metadata->name)  . '/' . ucfirst($field);
-        $mid = $midBase . '/Input';
-        $validatorMid = $midBase . '/Validator';
-        $templateArgs['mid'] = $mid;
-
-        $hasValidator = false;
-        foreach ($results as $result){
-            if ($result->getMid() == $validatorMid){
-                $hasValidator = true;
-                break;
-            }
-        }
+        $hasValidator = array_key_exists(Validator::getResourceName($metadata->name, $field), $metadata->generator);
 
         $params = [];
 
         if ($hasValidator){
             switch ($metadata->fieldMappings[$field]['type']){
                 case 'int':
-                    $defaultMids = $this->defaultMixins['input']['intWithValidator'];
+                    $defaultMids = $defaultMixins['input']['intWithValidator'];
                     break;
                 case 'float':
-                    $defaultMids = $this->defaultMixins['input']['floatWithValidator'];
+                    $defaultMids = $defaultMixins['input']['floatWithValidator'];
                     break;
                 case 'custom_id':
                     $params['type'] = "hidden";
                 case 'string':
                 default:
-                    $defaultMids = $this->defaultMixins['input']['stringWithValidator'];
+                    $defaultMids = $defaultMixins['input']['stringWithValidator'];
                     break;
             }
             if (isset($options['mixins'])){
@@ -115,22 +79,22 @@ class Input extends AbstractDojoGenerator
             $templateArgs['dependencies'] = $this->namesFromMids($templateArgs['dependencyMids']);
             $templateArgs['mixins'] = $this->namesFromMids($templateArgs['dependencyMids']);
 
-            $templateArgs['dependencyMids'][] = $validatorMid;
+            $templateArgs['dependencyMids'][] = Validator::getMid($metadata->name, $field);
             $templateArgs['dependencies'][] = ucfirst($field) . 'Validator';
             $params['validator'] = new Expr('new ' . ucfirst($field) . 'Validator');
         } else {
             switch ($metadata->fieldMappings[$field]['type']){
                 case 'int':
-                    $defaultMids = $this->defaultMixins['input']['int'];
+                    $defaultMids = $defaultMixins['input']['int'];
                     break;
                 case 'float':
-                    $defaultMids = $this->defaultMixins['input']['float'];
+                    $defaultMids = $defaultMixins['input']['float'];
                     break;
                 case 'custom_id':
                     $params['type'] = 'hidden';
                 case 'string':
                 default:
-                    $defaultMids = $this->defaultMixins['input']['string'];
+                    $defaultMids = $defaultMixins['input']['string'];
                     break;
             }
 
@@ -147,10 +111,7 @@ class Input extends AbstractDojoGenerator
         $params['name'] = $field;
 
         //Camel case splitting regex
-        $regex = '/# Match position between camelCase "words".
-            (?<=[a-z]) # Position is after a lowercase,
-            (?=[A-Z]) # and before an uppercase letter.
-            /x';
+        $regex = '/(?<=[a-z])(?=[A-Z])/x';
 
         $params['label'] = ucfirst(implode(' ', preg_split($regex, $field)));
 
@@ -166,24 +127,12 @@ class Input extends AbstractDojoGenerator
         $templateArgs['params'] = $this->implodeParams($params);
         $templateArgs['comment'] = $this->indent("// Will return an input for the $field field");
 
-        $content = $this->populateTemplate(
+        $resource->content = $this->populateTemplate(
             file_get_contents(__DIR__ . '/Template/Module.js.template'),
             $templateArgs
         );
 
-        $dir = dirname($path);
-
-        if ( ! is_dir($dir)) {
-            mkdir($dir, 0777, true);
-        }
-
-        file_put_contents($path, $content);
-
-        $results[] = new GeneratorResult([
-            'fileGenerated' => $path,
-            'mid' => $mid,
-            'message' => "Input for $metadata->name::$field generated to $path"
-        ]);
+        $this->persistToFile($this->getFilePath($metadata->name, $field), $resource->content);
 
     }
 }

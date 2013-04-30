@@ -25,11 +25,48 @@ class ClassMetadata extends DoctrineClassMetadata
      */
     public function __sleep()
     {
-        return array_merge(parent::__sleep(), [
-            'accessControl',
-            'rest',
-            'serializer',
-            'zones'
-        ]);
+        $serialized = parent::__sleep();
+
+        if (isset($this->accessControl)){
+            $serialized[] = 'accessControl';
+        }
+        if (isset($this->crypt)){
+            $serialized[] = 'crypt';
+        }
+        if (isset($this->generator)){
+            $serialized[] = 'generator';
+        }
+        if (isset($this->freeze)){
+            $serialized[] = 'freeze';
+        }
+        if (isset($this->permissions)){
+            $serialized[] = 'permissions';
+        }
+        if (isset($this->rest)){
+            $serialized[] = 'rest';
+        }
+        if (isset($this->roles)){
+            $serialized[] = 'roles';
+        }
+        if (isset($this->serializer)){
+            $serialized[] = 'serializer';
+        }
+        if (isset($this->softDelete)){
+            $serialized[] = 'softDelete';
+        }
+        if (isset($this->stamp)){
+            $serialized[] = 'stamp';
+        }
+        if (isset($this->state)){
+            $serialized[] = 'state';
+        }
+        if (isset($this->validator)){
+            $serialized[] = 'validator';
+        }
+        if (isset($this->zones)){
+            $serialized[] = 'zones';
+        }
+
+        return $serialized;
     }
 }

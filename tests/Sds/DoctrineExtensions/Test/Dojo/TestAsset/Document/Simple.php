@@ -8,21 +8,18 @@ use Sds\DoctrineExtensions\Annotation\Annotations as Sds;
 
 /**
  * @ODM\Document
- * @Sds\Serializer(@Sds\ClassName)
  * @Sds\Validator(class = "Sds/Test/ClassValidator1"),
  * @Sds\Validator(class = "Sds/Test/ClassValidator2", options = {"option1" = "a", "option2" = "b"})
- * @Sds\Generator({
- *     @Sds\Dojo\Model,
- *     @Sds\Dojo\Form,
- *     @Sds\Dojo\ModelValidator,
- *     @Sds\Dojo\JsonRest
- * })
+ * @Sds\Dojo\Model,
+ * @Sds\Dojo\Form,
+ * @Sds\Dojo\ModelValidator,
+ * @Sds\Dojo\JsonRest
+ * @Sds\Serializer\ClassName
  */
 class Simple {
 
     /**
      * @ODM\Id(strategy="UUID")
-     * @Sds\Serializer(@Sds\ClassName)
      */
     protected $id;
 
@@ -31,14 +28,12 @@ class Simple {
      * @Sds\Validator\Required,
      * @Sds\Validator(class = "Sds/Test/NameValidator1"),
      * @Sds\Validator(class = "Sds/Test/NameValidator2", options = {"option1" = "b", "option2" = "b"})
-     * @Sds\Generator(
-     *     @Sds\Dojo\Input(
-     *         params = {
-     *             "label" = "NAME",
-     *             "tooltip" = "The simple's name",
-     *             "description" = "This is a longer description"
-     *         }
-     *     )
+     * @Sds\Dojo\Input(
+     *     params = {
+     *         "label" = "NAME",
+     *         "tooltip" = "The document name",
+     *         "description" = "This is a longer description"
+     *     }
      * )
      */
     protected $name;
@@ -46,25 +41,23 @@ class Simple {
     /**
      * @ODM\String
      * @Sds\Validator(class = "Sds/Test/CountryValidator1")
-     * @Sds\Generator(
-     *     @Sds\Dojo\Input(
-     *         mixins = {"Sds/Common/Form/ValidationTextarea"}
-     *     )
-     * )
+     * @Sds\Dojo\Input(
+     *     mixins = {"Sds/Common/Form/ValidationTextarea"}
+     *  )
      */
     protected $country;
 
     /**
      * @ODM\String
      */
-    protected $camelCaseProperty;
+    protected $camelCaseField;
 
     /**
      * @ODM\String
-     * @Sds\Serializer(@Sds\Ignore)
+     * @Sds\Serializer\Ignore
      * @Sds\Validator\NotRequired
      */
-    protected $ignoreProperty;
+    protected $ignoreField;
 
     public function getId() {
         return $this->id;
@@ -86,19 +79,19 @@ class Simple {
         $this->country = $country;
     }
 
-    public function getCamelCaseProperty() {
-        return $this->camelCaseProperty;
+    public function getCamelCaseField() {
+        return $this->camelCaseField;
     }
 
-    public function setCamelCaseProperty($camelCaseProperty) {
-        $this->camelCaseProperty = $camelCaseProperty;
+    public function setCamelCaseField($camelCaseField) {
+        $this->camelCaseField = $camelCaseField;
     }
 
-    public function getIgnoreProperty() {
-        return $this->ignoreProperty;
+    public function getIgnoreField() {
+        return $this->ignoreField;
     }
 
-    public function setIgnoreProperty($ignoreProperty) {
-        $this->ignoreProperty = $ignoreProperty;
+    public function setIgnoreField($ignoreField) {
+        $this->ignoreField = $ignoreField;
     }
 }

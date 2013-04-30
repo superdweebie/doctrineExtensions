@@ -3,7 +3,6 @@
 namespace Sds\DoctrineExtensions\Test\Serializer;
 
 use Sds\DoctrineExtensions\Test\BaseTest;
-use Sds\DoctrineExtensions\Serializer\Serializer;
 use Sds\DoctrineExtensions\Test\Serializer\TestAsset\Document\Flavour;
 
 class SerializerCustomTypeSerializerTest extends BaseTest {
@@ -11,11 +10,20 @@ class SerializerCustomTypeSerializerTest extends BaseTest {
     public function setUp(){
 
         parent::setUp();
-        $manifest = $this->getManifest(array('Sds\DoctrineExtensions\Serializer' => [
-            'typeSerializers' => [
-                'string' => 'Sds\DoctrineExtensions\Test\Serializer\TestAsset\StringSerializer'
+        $manifest = $this->getManifest([
+            'extensionConfigs' => [
+                'Sds\DoctrineExtensions\Serializer' => [
+                    'typeSerializers' => [
+                        'string' => 'stringTypeSerializer'
+                    ],
+                    'typeSerializerServiceConfig' => [
+                        'invokables' => [
+                            'stringTypeSerializer' => 'Sds\DoctrineExtensions\Test\Serializer\TestAsset\StringSerializer'
+                        ]
+                    ],
+                ]
             ]
-        ]));
+        ]);
 
         $this->configDoctrine(
             array_merge(
@@ -25,18 +33,15 @@ class SerializerCustomTypeSerializerTest extends BaseTest {
             $manifest->getFilters(),
             $manifest->getSubscribers()
         );
+        $manifest->setDocumentManagerService($this->documentManager)->bootstrapped();
+        $this->serializer = $manifest->getServiceManager()->get('serializer');
     }
 
-    public function tearDown() {
-        Serializer::removeTypeSerializer('string');
-        parent::tearDown();
-    }
-    
     public function testSerializer(){
 
         $flavour = new Flavour('cherry');
 
-        $array = Serializer::toArray($flavour, $this->documentManager);
+        $array = $this->serializer->toArray($flavour, $this->documentManager);
 
         $this->assertEquals('Cherry', $array['name']);
     }
@@ -44,10 +49,9 @@ class SerializerCustomTypeSerializerTest extends BaseTest {
 
     public function testApplySerializeMetadataToArray(){
 
-        $array = Serializer::ApplySerializeMetadataToArray(
+        $array = $this->serializer->ApplySerializeMetadataToArray(
             ['name' => 'cherry'],
-            'Sds\DoctrineExtensions\Test\Serializer\TestAsset\Document\Flavour',
-            $this->documentManager
+            'Sds\DoctrineExtensions\Test\Serializer\TestAsset\Document\Flavour'
         );
 
         $this->assertEquals('Cherry', $array['name']);
@@ -59,10 +63,8 @@ class SerializerCustomTypeSerializerTest extends BaseTest {
             'name' => 'Cherry'
         );
 
-        $flavour = Serializer::fromArray(
+        $flavour = $this->serializer->fromArray(
             $data,
-            $this->documentManager,
-            null,
             'Sds\DoctrineExtensions\Test\Serializer\TestAsset\Document\Flavour'
         );
 

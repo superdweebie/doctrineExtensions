@@ -2,9 +2,6 @@
 
 namespace Sds\DoctrineExtensions\Test\Freeze\TestAsset\Document;
 
-use Sds\Common\AccessControl\AccessControlledInterface;
-use Sds\Common\Freeze\FreezeableInterface;
-use Sds\DoctrineExtensions\AccessControl\DataModel\AccessControlledTrait;
 use Sds\DoctrineExtensions\Freeze\DataModel\FreezeableTrait;
 
 //Annotation imports
@@ -13,16 +10,13 @@ use Sds\DoctrineExtensions\Annotation\Annotations as Sds;
 
 /**
  * @ODM\Document
- * @Sds\AccessControl(
- *     @Sds\AccessControl\DefaultValue(false),
- *     @Sds\AccessControl\Freeze(true),
- *     @Sds\AccessControl\Thaw(true)
- * )
+ * @Sds\Permission\Basic(roles="all", allow={"create", "read"})
+ * @Sds\Permission\Basic(roles={"user", "admin"}, allow="freeze")
+ * @Sds\Permission\Basic(roles="admin", allow="thaw")
  */
-class AccessControlled implements FreezeableInterface, AccessControlledInterface {
+class AccessControlled {
 
     use FreezeableTrait;
-    use AccessControlledTrait;
 
     /**
      * @ODM\Id(strategy="UUID")

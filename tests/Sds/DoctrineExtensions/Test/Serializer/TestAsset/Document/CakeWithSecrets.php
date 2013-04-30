@@ -10,7 +10,8 @@ use Sds\DoctrineExtensions\Annotation\Annotations as Sds;
 
 /**
  * @ODM\Document
- * @Sds\Serializer(@Sds\ClassName)
+ * @Sds\Serializer\ClassName
+ * @Sds\Permission\Basic(roles="all", allow="all")
  */
 class CakeWithSecrets {
 
@@ -21,13 +22,13 @@ class CakeWithSecrets {
 
     /**
      * @ODM\ReferenceMany(targetDocument="Ingredient", simple=true, cascade="all")
-     * @Sds\Serializer(@Sds\Eager)
+     * @Sds\Serializer\Eager
      */
     protected $ingredients;
 
     /**
      * @ODM\ReferenceMany(targetDocument="SecretIngredient", simple=true, cascade="all")
-     * @Sds\Serializer(@Sds\Eager)
+     * @Sds\Serializer\Eager
      */
     protected $secretIngredients;
 

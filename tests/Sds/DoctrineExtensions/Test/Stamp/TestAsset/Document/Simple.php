@@ -3,19 +3,13 @@
 namespace Sds\DoctrineExtensions\Test\Stamp\TestAsset\Document;
 
 use Sds\DoctrineExtensions\Stamp\DataModel\StampTrait;
-use Sds\Common\Stamp;
 
 //Annotation imports
 use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
 use Sds\DoctrineExtensions\Annotation\Annotations as Sds;
 
 /** @ODM\Document */
-class Simple implements
-    Stamp\CreatedByInterface,
-    Stamp\CreatedOnInterface,
-    Stamp\UpdatedByInterface,
-    Stamp\UpdatedOnInterface
-{
+class Simple {
     use StampTrait;
 
     /**
@@ -24,7 +18,7 @@ class Simple implements
     protected $id;
 
     /**
-     * @ODM\Field(type="string")
+     * @ODM\String
      */
     protected $name;
 

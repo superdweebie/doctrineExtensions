@@ -7,9 +7,9 @@
 namespace Sds\DoctrineExtensions\SoftDelete\DataModel;
 
 use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
+use Sds\DoctrineExtensions\Annotation\Annotations as Sds;
 
 /**
- * Implements \Sds\Common\SoftDelete\RestoredByInterface
  *
  * @since   1.0
  * @author  Tim Roediger <superdweebie@gmail.com>
@@ -17,19 +17,12 @@ use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
 trait RestoredByTrait {
 
     /**
-     * @ODM\Field(type="string")
+     * @ODM\String
      * @ODM\Index
+     * @Sds\SoftDelete\RestoredBy
      * @Sds\Validator(class = "Sds\Validator\Identifier")
      */
     protected $restoredBy;
-
-    /**
-     *
-     * @param string $name
-     */
-    public function setRestoredBy($name){
-        $this->restoredBy = (string) $name;
-    }
 
     /**
      *

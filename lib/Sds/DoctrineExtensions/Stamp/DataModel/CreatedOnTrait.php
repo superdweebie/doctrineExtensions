@@ -11,7 +11,6 @@ use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
 use Sds\DoctrineExtensions\Annotations as Sds;
 
 /**
- * Implements \Sds\Common\Stamp\CreatedOnInterface
  *
  * @since   1.0
  * @author  Tim Roediger <superdweebie@gmail.com>
@@ -19,18 +18,11 @@ use Sds\DoctrineExtensions\Annotations as Sds;
 trait CreatedOnTrait {
 
     /**
-     * @ODM\Field(type="timestamp")
+     * @ODM\Timestamp
+     * @Sds\Stamp\CreatedOn
      * @Sds\Readonly
      */
     protected $createdOn;
-
-    /**
-     *
-     * @param timestamp $timestamp
-     */
-    public function setCreatedOn($timestamp){
-        $this->createdOn = $timestamp;
-    }
 
     /**
      *

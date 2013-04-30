@@ -23,7 +23,7 @@ class User {
 
     /**
      * @ODM\Field(type="string")
-     * @Sds\Serializer(@Sds\Ignore)
+     * @Sds\Serializer\Ignore
      */
     protected $password;
 
@@ -36,8 +36,6 @@ class User {
 
     /**
      * @ODM\Field(type="string")
-     * @Sds\Getter("location")
-     * @Sds\Setter("defineLocation")
      */
     protected $location;
 

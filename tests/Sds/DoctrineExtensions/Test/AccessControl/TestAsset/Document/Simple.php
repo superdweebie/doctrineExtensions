@@ -2,19 +2,21 @@
 
 namespace Sds\DoctrineExtensions\Test\AccessControl\TestAsset\Document;
 
-use Sds\Common\AccessControl\AccessControlledInterface;
-use Sds\DoctrineExtensions\AccessControl\DataModel\AccessControlledTrait;
-
 //Annotation imports
 use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
 use Sds\DoctrineExtensions\Annotation\Annotations as Sds;
 
 /**
  * @ODM\Document
+ * @Sds\Permission\Basic(roles="all", allow="read")
+ * @Sds\Permission\Basic(roles="creator", allow="create", deny="read")
+ * @Sds\Permission\Basic(roles="reader", allow="read")
+ * @Sds\Permission\Basic(roles="updater", allow="update")
+ * @Sds\Permission\Basic(roles="deletor", allow="delete")
+ * @Sds\Permission\Basic(roles="admin", allow="all", deny="delete")
+ * @Sds\Permission\Basic(roles="superadmin", allow="all")
  */
-class Simple implements AccessControlledInterface {
-
-    use AccessControlledTrait;
+class Simple {
 
     /**
      * @ODM\Id(strategy="UUID")
@@ -22,7 +24,7 @@ class Simple implements AccessControlledInterface {
     protected $id;
 
     /**
-     * @ODM\Field(type="string")
+     * @ODM\String
      */
     protected $name;
 

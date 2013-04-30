@@ -8,7 +8,8 @@ use Sds\DoctrineExtensions\Annotation\Annotations as Sds;
 
 /**
  * @ODM\Document
- * @Sds\Serializer(@Sds\ClassName)
+ * @Sds\Serializer\ClassName
+ * @Sds\Permission\Basic(roles="all", allow="all")
  */
 class Ingredient
 {

@@ -8,14 +8,13 @@ use Sds\DoctrineExtensions\Test\Validator\TestAsset\Document\Simple;
 
 class ValidatorTest extends BaseTest {
 
-    protected $calls = array();
+    protected $calls = [];
 
     public function setUp(){
 
         parent::setUp();
 
-        $manifest = $this->getManifest(array('Sds\DoctrineExtensions\Validator' => ['validateOnFlush' => true]));
-
+        $manifest = $this->getManifest(['extensionConfigs' => ['Sds\DoctrineExtensions\Validator' => true]]);
         $this->configDoctrine(
             array_merge(
                 $manifest->getDocuments(),
@@ -24,10 +23,9 @@ class ValidatorTest extends BaseTest {
             $manifest->getFilters(),
             $manifest->getSubscribers()
         );
+        $manifest->setDocumentManagerService($this->documentManager)->bootstrapped();
 
-        $documentManager = $this->documentManager;
-        $eventManager = $documentManager->getEventManager();
-
+        $eventManager = $this->documentManager->getEventManager();
         $eventManager->addEventListener(Events::invalidCreate, $this);
         $eventManager->addEventListener(Events::invalidUpdate, $this);
 
@@ -44,7 +42,7 @@ class ValidatorTest extends BaseTest {
 
         $this->assertTrue(isset($this->calls[Events::invalidCreate]));
         $this->assertFalse(isset($this->calls[Events::invalidUpdate]));
-        $this->assertEquals(array('Field name: This value is required.'), $this->calls[Events::invalidCreate][0]->getMessages());
+        $this->assertCount(1, $this->calls[Events::invalidCreate][0]->getMessages()['name']);
 
         $id = $testDoc->getId();
         $documentManager->clear();
@@ -67,7 +65,7 @@ class ValidatorTest extends BaseTest {
 
         $this->assertTrue(isset($this->calls[Events::invalidCreate]));
         $this->assertFalse(isset($this->calls[Events::invalidUpdate]));
-        $this->assertEquals(array('Field name: invalid name 1', 'Field name: invalid name 2'), $this->calls[Events::invalidCreate][0]->getMessages());
+        $this->assertCount(2, $this->calls[Events::invalidCreate][0]->getMessages()['name']);
 
         $id = $testDoc->getId();
         $documentManager->clear();
@@ -120,7 +118,7 @@ class ValidatorTest extends BaseTest {
 
         $this->assertFalse(isset($this->calls[Events::invalidCreate]));
         $this->assertTrue(isset($this->calls[Events::invalidUpdate]));
-        $this->assertEquals(array('Field name: invalid name 1', 'Field name: invalid name 2'), $this->calls[Events::invalidUpdate][0]->getMessages());
+        $this->assertCount(2, $this->calls[Events::invalidUpdate][0]->getMessages()['name']);
 
         $documentManager->clear();
         $testDoc = $repository->find($id);

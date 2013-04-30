@@ -11,7 +11,6 @@ function(
     // the country field
 
     return declare(
-        'Sds/DoctrineExtensions/Test/Dojo/TestAsset/Document/Simple/Country/Validator',
         [            
             CountryValidator1        
         ],

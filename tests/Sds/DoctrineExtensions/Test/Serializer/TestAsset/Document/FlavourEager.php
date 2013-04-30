@@ -8,7 +8,7 @@ use Sds\DoctrineExtensions\Annotation\Annotations as Sds;
 
 /**
  * @ODM\Document
- * @Sds\Serializer(@Sds\ClassName)
+ * @Sds\Serializer\ClassName
  */
 class FlavourEager
 {
@@ -23,7 +23,7 @@ class FlavourEager
 
     /**
      * @ODM\ReferenceMany(targetDocument="CakeEager")
-     * @Sds\Serializer(@Sds\Eager)
+     * @Sds\Serializer\Eager
      */
     protected $cakes;
 

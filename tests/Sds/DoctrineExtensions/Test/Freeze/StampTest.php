@@ -4,7 +4,6 @@ namespace Sds\DoctrineExtensions\Test\Freeze;
 
 use Sds\DoctrineExtensions\Test\BaseTest;
 use Sds\DoctrineExtensions\Test\Freeze\TestAsset\Document\Stamped;
-use Sds\DoctrineExtensions\Freeze\ExtensionConfig;
 
 class StampTest extends BaseTest {
 
@@ -14,9 +13,7 @@ class StampTest extends BaseTest {
 
         $this->configIdentity();
 
-        $extensionConfig = new ExtensionConfig();
-        $extensionConfig->setEnableFreezeStamps(true);
-        $manifest = $this->getManifest(array('Sds\DoctrineExtensions\Freeze' => $extensionConfig));
+        $manifest = $this->getManifest(['extensionConfigs' => ['Sds\DoctrineExtensions\Freeze' => true]]);
 
         $this->configDoctrine(
             array_merge(
@@ -26,6 +23,8 @@ class StampTest extends BaseTest {
             $manifest->getFilters(),
             $manifest->getSubscribers()
         );
+        $manifest->setDocumentManagerService($this->documentManager)->bootstrapped();
+        $this->freezer = $manifest->getServiceManager()->get('freezer');
     }
 
     public function testStamps() {
@@ -48,7 +47,7 @@ class StampTest extends BaseTest {
         $this->assertNull($testDoc->getThawedBy());
         $this->assertNull($testDoc->getThawedOn());
 
-        $testDoc->freeze();
+        $this->freezer->freeze($testDoc);
 
         $documentManager->flush();
         $documentManager->clear();
@@ -61,7 +60,7 @@ class StampTest extends BaseTest {
         $this->assertNull($testDoc->getThawedBy());
         $this->assertNull($testDoc->getThawedOn());
 
-        $testDoc->thaw();
+        $this->freezer->thaw($testDoc);
 
         $documentManager->flush();
         $documentManager->clear();

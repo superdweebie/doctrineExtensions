@@ -7,9 +7,9 @@
 namespace Sds\DoctrineExtensions\Stamp\DataModel;
 
 use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
+use Sds\DoctrineExtensions\Annotations as Sds;
 
 /**
- * Implements \Sds\Common\Stamp\UpdatedByInterface
  *
  * @since   1.0
  * @author  Tim Roediger <superdweebie@gmail.com>
@@ -17,17 +17,10 @@ use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
 trait UpdatedByTrait {
 
     /**
-     * @ODM\Field(type="string")
+     * @ODM\String
+     * @Sds\Stamp\UpdatedBy
      */
     protected $updatedBy;
-
-    /**
-     *
-     * @param string $name
-     */
-    public function setUpdatedBy($name){
-        $this->updatedBy = (string) $name;
-    }
 
     /**
      *

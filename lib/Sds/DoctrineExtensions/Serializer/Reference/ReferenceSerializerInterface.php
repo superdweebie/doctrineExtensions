@@ -6,8 +6,6 @@
  */
 namespace Sds\DoctrineExtensions\Serializer\Reference;
 
-use Doctrine\ODM\MongoDB\DocumentManager;
-
 /**
  *
  * @since   1.0
@@ -15,5 +13,5 @@ use Doctrine\ODM\MongoDB\DocumentManager;
  */
 interface ReferenceSerializerInterface{
 
-    public static function serialize($id, array $mapping, DocumentManager $documentManager);
+    public function serialize($id, array $mapping);
 }

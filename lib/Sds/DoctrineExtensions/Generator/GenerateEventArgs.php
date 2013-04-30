@@ -7,9 +7,7 @@
 namespace Sds\DoctrineExtensions\Generator;
 
 use Doctrine\Common\EventArgs as BaseEventArgs;
-use Doctrine\Common\EventManager;
 use Doctrine\ODM\MongoDB\DocumentManager;
-use Doctrine\ODM\MongoDB\Mapping\ClassMetadataInfo;
 
 /**
  * Arguments for generate events
@@ -19,56 +17,48 @@ use Doctrine\ODM\MongoDB\Mapping\ClassMetadataInfo;
  */
 class GenerateEventArgs extends BaseEventArgs {
 
-    protected $metadata;
+    protected $resourceName;
+
+    protected $className;
 
     protected $documentManager;
 
-    protected $eventManager;
-
-    protected $results;
-
     protected $options;
 
-    /**
-     *
-     * @param \Doctrine\ODM\MongoDB\Mapping\ClassMetadataInfo $metadata
-     * @param \Doctrine\ODM\MongoDB\DocumentManager $documentManager
-     * @param \Doctrine\Common\EventManager $eventManager
-     * @param \ArrayObject $results
-     * @param array $options
-     */
+    protected $resource;
+
     public function __construct(
-        ClassMetadataInfo $metadata,
+        $resourceName,
+        $className,
         DocumentManager $documentManager,
-        EventManager $eventManager,
-        \ArrayObject $results,
-        array $options = []
+        array $options = [],
+        \stdClass $resource
     ) {
-        $this->metadata = $metadata;
+        $this->resourceName = $resourceName;
+        $this->className = $className;
         $this->documentManager = $documentManager;
-        $this->eventManager = $eventManager;
-        $this->results = $results;
         $this->options = $options;
+        $this->resource = $resource;
     }
 
-    public function getMetadata() {
-        return $this->metadata;
+    public function getResourceName() {
+        return $this->resourceName;
+    }
+
+    public function getClassName() {
+        return $this->className;
     }
 
     public function getDocumentManager() {
         return $this->documentManager;
     }
 
-    public function getEventManager() {
-        return $this->eventManager;
-    }
-
-    public function getResults() {
-        return $this->results;
-    }
-
     public function getOptions() {
         return $this->options;
+    }
+
+    public function getResource() {
+        return $this->resource;
     }
 
 }

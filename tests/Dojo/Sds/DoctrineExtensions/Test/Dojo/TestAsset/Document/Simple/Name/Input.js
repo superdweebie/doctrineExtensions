@@ -12,7 +12,6 @@ function(
     // Will return an input for the name field
 
     return declare(
-        'Sds/DoctrineExtensions/Test/Dojo/TestAsset/Document/Simple/Name/Input',
         [            
             ValidationTextBox        
         ],
@@ -23,7 +22,7 @@ function(
             
             label: 'NAME',
             
-            tooltip: 'The simple's name',
+            tooltip: 'The document name',
             
             description: 'This is a longer description'
         }

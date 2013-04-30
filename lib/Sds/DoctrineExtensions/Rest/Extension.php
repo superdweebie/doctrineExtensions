@@ -9,22 +9,28 @@ namespace Sds\DoctrineExtensions\Rest;
 use Sds\DoctrineExtensions\AbstractExtension;
 
 /**
- * Defines the resouces this extension provies
+ * Defines the resouces this extension requires
  *
  * @since   1.0
  * @author  Tim Roediger <superdweebie@gmail.com>
  */
 class Extension extends AbstractExtension {
 
-    public function __construct($config){
+    protected $subscribers = [
+        'Sds\DoctrineExtensions\Rest\AnnotationSubscriber'
+    ];
 
-        $this->configClass = __NAMESPACE__ . '\ExtensionConfig';
-        parent::__construct($config);
-        $config = $this->getConfig();
+    protected $defaultServiceManagerConfig = [
+        'invokables' => [
+            'endpointMap' => 'Sds\DoctrineExtensions\Rest\EndpointMap'
+        ]
+    ];
 
-        $this->subscribers = array(new Subscriber(
-            $config->getAnnotationReader(),
-            $config->getBasePath()
-        ));
-    }
+    /**
+     *
+     * @var array
+     */
+    protected $dependencies = array(
+        'Sds\DoctrineExtensions\Annotation' => true
+    );
 }

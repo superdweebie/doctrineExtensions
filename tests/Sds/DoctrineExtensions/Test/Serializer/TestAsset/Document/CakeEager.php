@@ -10,7 +10,7 @@ use Sds\DoctrineExtensions\Annotation\Annotations as Sds;
 
 /**
  * @ODM\Document
- * @Sds\Serializer(@Sds\ClassName)
+ * @Sds\Serializer\ClassName
  */
 class CakeEager {
 
@@ -21,13 +21,13 @@ class CakeEager {
 
     /**
      * @ODM\ReferenceMany(targetDocument="Ingredient")
-     * @Sds\Serializer(@Sds\Eager)
+     * @Sds\Serializer\Eager
      */
     protected $ingredients;
 
     /**
      * @ODM\ReferenceOne(targetDocument="FlavourEager")
-     * @Sds\Serializer(@Sds\Eager)
+     * @Sds\Serializer\Eager
      */
     protected $flavour;
 

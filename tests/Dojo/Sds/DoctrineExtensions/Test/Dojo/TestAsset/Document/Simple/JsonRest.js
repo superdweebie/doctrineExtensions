@@ -12,14 +12,13 @@ function(
     // Will return create a dojo JsonRest store for Sds\DoctrineExtensions\Test\Dojo\TestAsset\Document\Simple
 
     return declare(
-        'Sds/DoctrineExtensions/Test/Dojo/TestAsset/Document/Simple/JsonRest',
         [            
             JsonRest        
         ],
         {
             name: 'Simple',
             
-            idProperty: 'id',
+            idField: 'id',
             
             target: 'Simple',
             

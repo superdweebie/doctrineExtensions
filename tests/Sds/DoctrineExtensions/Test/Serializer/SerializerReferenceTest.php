@@ -3,7 +3,6 @@
 namespace Sds\DoctrineExtensions\Test\Serializer;
 
 use Sds\DoctrineExtensions\Test\BaseTest;
-use Sds\DoctrineExtensions\Serializer\Serializer;
 use Sds\DoctrineExtensions\Test\Serializer\TestAsset\Document\CakeEager;
 use Sds\DoctrineExtensions\Test\Serializer\TestAsset\Document\CakeEagerSimpleReference;
 use Sds\DoctrineExtensions\Test\Serializer\TestAsset\Document\CakeRefLazy;
@@ -17,7 +16,7 @@ class SerializerReferenceTest extends BaseTest {
     public function setUp(){
 
         parent::setUp();
-        $manifest = $this->getManifest(array('Sds\DoctrineExtensions\Serializer' => true));
+        $manifest = $this->getManifest(['extensionConfigs' => ['Sds\DoctrineExtensions\Serializer' => true]]);
 
         $this->configDoctrine(
             array_merge(
@@ -27,6 +26,8 @@ class SerializerReferenceTest extends BaseTest {
             $manifest->getFilters(),
             $manifest->getSubscribers()
         );
+        $manifest->setDocumentManagerService($this->documentManager)->bootstrapped();
+        $this->serializer = $manifest->getServiceManager()->get('serializer');
     }
 
     public function testEagerSerializer(){
@@ -54,8 +55,8 @@ class SerializerReferenceTest extends BaseTest {
 
         $cake = $documentManager->getRepository('Sds\DoctrineExtensions\Test\Serializer\TestAsset\Document\CakeEager')->findOneBy(['id' => $id]);
 
-        Serializer::setMaxNestingDepth(1);
-        $array = Serializer::toArray($cake, $documentManager);
+        $this->serializer->setMaxNestingDepth(1);
+        $array = $this->serializer->toArray($cake);
 
         $this->assertCount(4, $array['ingredients']);
         $this->assertEquals('flour', $array['ingredients'][0]['name']);
@@ -64,14 +65,14 @@ class SerializerReferenceTest extends BaseTest {
         // maxNestingDepth = 1 should not display cakes
         $this->assertArrayNotHasKey('cakes', $array['flavour']);
 
-        Serializer::setMaxNestingDepth(2);
-        $array = Serializer::toArray($cake, $documentManager);
+        $this->serializer->setMaxNestingDepth(2);
+        $array = $this->serializer->toArray($cake);
 
         // maxNestingDepth = 2 should display cakes
         $this->assertArrayHasKey('cakes', $array['flavour']);
 
         $array['ingredients'][3] = ['name' => 'coconut'];
-        $cake = Serializer::fromArray($array, $documentManager);
+        $cake = $this->serializer->fromArray($array);
 
         $this->assertInstanceOf('Sds\DoctrineExtensions\Test\Serializer\TestAsset\Document\CakeEager', $cake);
         $this->assertEquals('chocolate', $cake->getFlavour()->getName());
@@ -104,7 +105,7 @@ class SerializerReferenceTest extends BaseTest {
 
         $cake = $documentManager->getRepository('Sds\DoctrineExtensions\Test\Serializer\TestAsset\Document\CakeRefLazy')->findOneBy(['id' => $id]);
 
-        $array = Serializer::toArray($cake, $this->documentManager);
+        $array = $this->serializer->toArray($cake);
 
         $this->assertCount(4, $array['ingredients']);
         $this->assertArrayHasKey('$ref', $array['ingredients'][0]);
@@ -119,7 +120,7 @@ class SerializerReferenceTest extends BaseTest {
 
 
         $array['ingredients'][3] = ['name' => 'coconut'];
-        $cake = Serializer::fromArray($array, $documentManager);
+        $cake = $this->serializer->fromArray($array);
 
         $this->assertInstanceOf('Sds\DoctrineExtensions\Test\Serializer\TestAsset\Document\CakeRefLazy', $cake);
         $this->assertEquals('carrot', $cake->getFlavour()->getName());
@@ -159,10 +160,9 @@ class SerializerReferenceTest extends BaseTest {
             ->getQuery()
             ->getSingleResult();
 
-        $array = Serializer::applySerializeMetadataToArray(
+        $array = $this->serializer->applySerializeMetadataToArray(
             $cakeArray,
-            'Sds\DoctrineExtensions\Test\Serializer\TestAsset\Document\CakeEager',
-            $this->documentManager
+            'Sds\DoctrineExtensions\Test\Serializer\TestAsset\Document\CakeEager'
         );
 
         $this->assertCount(4, $array['ingredients']);
@@ -201,10 +201,9 @@ class SerializerReferenceTest extends BaseTest {
             ->getQuery()
             ->getSingleResult();
 
-        $array = Serializer::applySerializeMetadataToArray(
+        $array = $this->serializer->applySerializeMetadataToArray(
             $cakeArray,
-            'Sds\DoctrineExtensions\Test\Serializer\TestAsset\Document\CakeRefLazy',
-            $this->documentManager
+            'Sds\DoctrineExtensions\Test\Serializer\TestAsset\Document\CakeRefLazy'
         );
 
         $this->assertCount(4, $array['ingredients']);
@@ -235,7 +234,7 @@ class SerializerReferenceTest extends BaseTest {
 
         $cake = $documentManager->getRepository('Sds\DoctrineExtensions\Test\Serializer\TestAsset\Document\CakeEager')->findOneBy(['id' => $id]);
 
-        $array = Serializer::toArray($cake, $documentManager);
+        $array = $this->serializer->toArray($cake);
 
         $this->assertArrayNotHasKey('ingredients', $array);
         $this->assertArrayNotHasKey('flavour', $array);
@@ -267,14 +266,14 @@ class SerializerReferenceTest extends BaseTest {
 
         $cake = $documentManager->getRepository('Sds\DoctrineExtensions\Test\Serializer\TestAsset\Document\CakeEagerSimpleReference')->findOneBy(['id' => $id]);
 
-        $array = Serializer::toArray($cake, $documentManager);
+        $array = $this->serializer->toArray($cake);
 
         $this->assertCount(4, $array['ingredients']);
         $this->assertEquals('flour', $array['ingredients'][0]['name']);
         $this->assertEquals('chocolate', $array['flavour']['name']);
 
         $array['ingredients'][3] = ['name' => 'coconut'];
-        $cake = Serializer::fromArray($array, $documentManager);
+        $cake = $this->serializer->fromArray($array);
 
         $this->assertInstanceOf('Sds\DoctrineExtensions\Test\Serializer\TestAsset\Document\CakeEagerSimpleReference', $cake);
         $this->assertEquals('chocolate', $cake->getFlavour()->getName());
@@ -313,10 +312,9 @@ class SerializerReferenceTest extends BaseTest {
             ->getQuery()
             ->getSingleResult();
 
-        $array = Serializer::applySerializeMetadataToArray(
+        $array = $this->serializer->applySerializeMetadataToArray(
             $cakeArray,
-            'Sds\DoctrineExtensions\Test\Serializer\TestAsset\Document\CakeSimpleLazySimpleReference',
-            $this->documentManager
+            'Sds\DoctrineExtensions\Test\Serializer\TestAsset\Document\CakeSimpleLazySimpleReference'
         );
 
         $this->assertCount(4, $array['ingredients']);

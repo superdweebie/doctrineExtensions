@@ -7,118 +7,142 @@
 namespace Sds\DoctrineExtensions;
 
 use Sds\DoctrineExtensions\Exception;
+use Zend\Stdlib\ArrayUtils;
 
 /**
- * A base class which extensions may extend
+ * A base class which extensions configs must extend
  *
  * @since   1.0
  * @author  Tim Roediger <superdweebie@gmail.com>
  */
-abstract class AbstractExtension implements ExtensionInterface {
+abstract class AbstractExtension {
+
+    protected $documents = [];
+
+    protected $filters = [];
+
+    protected $subscribers = [];
+
+    protected $cliCommands = [];
+
+    protected $cliHelpers = [];
+
+    protected $defaultServiceManagerConfig = [];
+
+    protected $serviceManagerConfig = [];
 
     /**
-     *
-     * @var string
-     */
-    protected $configClass;
-
-    /**
-     *
-     * @var \SdsDoctrineExtensions\AbstractExtensionConfig
-     */
-    protected $config;
-
-    /**
-     *
-     * @var array
-     */
-    protected $filters = array();
-
-    /**
+     * List of other extensions which must be loaded
+     * for this extension to work
      *
      * @var array
      */
-    protected $subscribers = array();
+    protected $dependencies = [];
 
-    /**
-     *
-     * @var array
-     */
-    protected $documents = array();
-
-    /**
-     *
-     * @var array
-     */
-    protected $cliCommands = array();
-
-    /**
-     *
-     * @var array
-     */
-    protected $cliHelpers = array();
-
-    /**
-     *
-     * @param \SdsDoctrineExtensions\AbstractExtensionConfig $config
-     */
-    public function __construct($config = null){
-        $configClass = $this->configClass;
-
-        if (is_array($config) ||
-            ($config instanceof \Traversable)
-        ) {
-            $config = new $configClass($config);
-        } elseif (!($config instanceof $configClass) && isset($config)) {
-            throw new Exception\InvalidArgumentException(sprintf('Argument supplied to Extension constructor must be array, implement Traversable, or instance of %s',
-                $configClass));
-        }
-        $this->config = $config;
+    public function getServiceManagerConfig() {
+        return ArrayUtils::merge($this->defaultServiceManagerConfig, $this->serviceManagerConfig);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getConfig(){
-        return $this->config;
+    public function setServiceManagerConfig($serviceManagerConfig) {
+        $this->serviceManagerConfig = $serviceManagerConfig;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getFilters(){
-        return $this->filters;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getSubscribers(){
-        return $this->subscribers;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getDocuments(){
+    public function getDocuments() {
         return $this->documents;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getCliCommands(){
+    public function setDocuments($documents) {
+        $this->documents = $documents;
+    }
+
+    public function getFilters() {
+        return $this->filters;
+    }
+
+    public function setFilters($filters) {
+        $this->filters = $filters;
+    }
+
+    public function getSubscribers() {
+        return $this->subscribers;
+    }
+
+    public function setSubscribers($subscribers) {
+        $this->subscribers = $subscribers;
+    }
+
+    public function getCliCommands() {
         return $this->cliCommands;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getCliHelpers(){
+    public function setCliCommands($cliCommands) {
+        $this->cliCommands = $cliCommands;
+    }
+
+    public function getCliHelpers() {
         return $this->cliHelpers;
     }
 
-    public function setIdentity($identity){
-        $this->config->setIdentity($identity);
+    public function setCliHelpers($cliHelpers) {
+        $this->cliHelpers = $cliHelpers;
+    }
+
+    /**
+     *
+     * @return array
+     */
+    public function getDependencies() {
+        return $this->dependencies;
+    }
+
+    /**
+     *
+     * @param array $dependencies
+     */
+    public function setDependencies(array $dependencies) {
+        $this->dependencies = $dependencies;
+    }
+
+    /**
+     * @param  array|Traversable|null $options
+     * @return AbstractOptions
+     * @throws Exception\InvalidArgumentException
+     */
+    public function __construct(array $options = null)
+    {
+        if (null !== $options) {
+            $this->setFromArray($options);
+        }
+    }
+
+    /**
+     * @param  array|Traversable $options
+     * @return void
+     */
+    public function setFromArray($options)
+    {
+        if (!is_array($options) && !$options instanceof Traversable) {
+            throw new Exception\InvalidArgumentException(sprintf(
+                'Options provided to %s must be an array or Traversable',
+                __METHOD__
+            ));
+        }
+
+        foreach ($options as $key => $value) {
+            $this->__set($key, $value);
+        }
+    }
+
+    /**
+     * @param string $key
+     * @param mixed $value
+     * @return void
+     */
+    public function __set($key, $value)
+    {
+        $setter = 'set' . ucfirst($key);
+        if (method_exists($this, $setter)){
+            $this->{$setter}($value);
+        }
     }
 }

@@ -13,7 +13,7 @@ class ReadonlyTest extends BaseTest {
     public function setUp(){
 
         parent::setUp();
-        $manifest = $this->getManifest(array('Sds\DoctrineExtensions\Readonly' => true));
+        $manifest = $this->getManifest(['extensionConfigs' => ['Sds\DoctrineExtensions\Readonly' => true]]);
 
         $this->configDoctrine(
             array_merge(
@@ -23,6 +23,7 @@ class ReadonlyTest extends BaseTest {
             $manifest->getFilters(),
             $manifest->getSubscribers()
         );
+        $manifest->setDocumentManagerService($this->documentManager)->bootstrapped();
     }
 
     public function testBasicFunction(){
@@ -57,61 +58,6 @@ class ReadonlyTest extends BaseTest {
         $this->assertNotNull($testDoc);
         $this->assertEquals('cannot-change', $testDoc->getReadonlyField());
         $this->assertEquals('mutable-changed', $testDoc->getMutableField());
-    }
-
-    public function testAternateSetMethod() {
-
-        $documentManager = $this->documentManager;
-        $testDoc = new SetMethod();
-
-        $testDoc->good('cannot-change');
-
-        $documentManager->persist($testDoc);
-        $documentManager->flush();
-        $id = $testDoc->getId();
-        $documentManager->clear();
-
-        $repository = $documentManager->getRepository(get_class($testDoc));
-        $testDoc = null;
-        $testDoc = $repository->find($id);
-
-        $this->assertNotNull($testDoc);
-        $this->assertEquals('cannot-change', $testDoc->getGoodField());
-
-        $testDoc->good('changed');
-        $documentManager->flush();
-        $documentManager->clear();
-        $testDoc = null;
-        $testDoc = $repository->find($id);
-
-        $this->assertNotNull($testDoc);
-        $this->assertEquals('cannot-change', $testDoc->getGoodField());
-    }
-
-    /**
-     * @expectedException BadMethodCallException
-     */
-    public function testSetMethodNotFound() {
-
-        $documentManager = $this->documentManager;
-        $testDoc = new SetMethod();
-
-        $testDoc->bad('cannot-change');
-
-        $documentManager->persist($testDoc);
-        $documentManager->flush();
-        $id = $testDoc->getId();
-        $documentManager->clear();
-
-        $repository = $documentManager->getRepository(get_class($testDoc));
-        $testDoc = null;
-        $testDoc = $repository->find($id);
-
-        $this->assertNotNull($testDoc);
-        $this->assertEquals('cannot-change', $testDoc->getBadField());
-
-        $testDoc->bad('changed');
-        $documentManager->flush();
     }
 
     public function testEvents() {

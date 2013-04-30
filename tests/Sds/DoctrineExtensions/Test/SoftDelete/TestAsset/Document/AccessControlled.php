@@ -2,9 +2,6 @@
 
 namespace Sds\DoctrineExtensions\Test\SoftDelete\TestAsset\Document;
 
-use Sds\Common\AccessControl\AccessControlledInterface;
-use Sds\Common\SoftDelete\SoftDeleteableInterface;
-use Sds\DoctrineExtensions\AccessControl\DataModel\AccessControlledTrait;
 use Sds\DoctrineExtensions\SoftDelete\DataModel\SoftDeleteableTrait;
 
 //Annotation imports
@@ -13,16 +10,13 @@ use Sds\DoctrineExtensions\Annotation\Annotations as Sds;
 
 /**
  * @ODM\Document
- * @Sds\AccessControl(
- *     @Sds\AccessControl\DefaultValue(false),
- *     @Sds\AccessControl\SoftDelete(true),
- *     @Sds\AccessControl\Restore(true)
- * )
+ * @Sds\Permission\Basic(roles="all", allow={"create", "read"})
+ * @Sds\Permission\Basic(roles={"user", "admin"}, allow="softDelete")
+ * @Sds\Permission\Basic(roles="admin", allow="restore")
  */
-class AccessControlled implements SoftDeleteableInterface, AccessControlledInterface {
+class AccessControlled {
 
     use SoftDeleteableTrait;
-    use AccessControlledTrait;
 
     /**
      * @ODM\Id(strategy="UUID")

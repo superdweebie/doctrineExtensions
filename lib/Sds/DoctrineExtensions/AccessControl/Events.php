@@ -13,6 +13,7 @@ namespace Sds\DoctrineExtensions\AccessControl;
  */
 final class Events
 {
+
     /**
      * Triggered when identity attempts to create a document they don't have permission
      * for

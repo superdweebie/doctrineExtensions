@@ -11,11 +11,11 @@ use Sds\DoctrineExtensions\Annotation\Annotations as Sds;
 
 /**
  * @ODM\Document
- * @Sds\Serializer(@Sds\ClassName)
+ * @Sds\Serializer\ClassName
+ * @Sds\Permission\Basic(roles="all", allow="create")
+ * @Sds\Permission\Basic(roles="user", allow="read")
  */
-class SecretIngredient implements AccessControlledInterface {
-
-    use AccessControlledTrait;
+class SecretIngredient {
 
     /**
      * @ODM\Id(strategy="UUID")

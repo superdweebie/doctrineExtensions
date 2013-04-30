@@ -7,27 +7,33 @@
 namespace Sds\DoctrineExtensions\Generator;
 
 use Sds\DoctrineExtensions\AbstractExtension;
-use Sds\DoctrineExtensions\Generator\Console\Command\GenerateCommand;
 
 /**
- * Defines the resouces this extension provies
+ * Defines the resouces this extension requires
  *
  * @since   1.0
  * @author  Tim Roediger <superdweebie@gmail.com>
  */
 class Extension extends AbstractExtension {
 
-    public function __construct($config){
+    protected $defaultServiceManagerConfig = [
+        'invokables' => [
+            'resourceMap' => 'Sds\DoctrineExtensions\Generator\ResourceMap',
+            'generator' => 'Sds\DoctrineExtensions\Generator\Generator'
+        ]
+    ];
 
-        $this->configClass = __NAMESPACE__ . '\ExtensionConfig';
-        parent::__construct($config);
-        $config = $this->getConfig();
+    protected $cliCommands = [
+        'Sds\DoctrineExtensions\Generator\Console\Command\GenerateCommand'
+    ];
 
-        $this->subscribers = [
-            new Subscriber($config->getAnnotationReader()),
-            new Generator()
-        ];
+    public function getCliCommands(){
+        foreach ($this->cliCommands as $key => $command){
+            if (is_string($command)){
+                $this->cliCommands[$key] = new $command;
+            }
+        }
 
-        $this->cliCommands = [new GenerateCommand()];
+        return $this->cliCommands;
     }
 }
