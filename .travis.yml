@@ -11,10 +11,6 @@ services: mongodb
 
 before_script:
   - pecl -q install -f mongo-${MONGO_VERSION} && echo "extension=mongo.so" >> `php --ini | grep "Loaded Configuration" | sed -e "s|.*:\s*||"`
-  - php composer.phar install
-
-before_script:
-  - cp .travis/composer.json ./
   - composer update --dev
 
 script:
