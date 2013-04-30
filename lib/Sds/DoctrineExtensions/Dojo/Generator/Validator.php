@@ -25,15 +25,15 @@ class Validator extends AbstractDojoGenerator
         ];
     }
 
-    public function getFilePath($className, $fieldName){
+    public function getFilePath($className, $fieldName = null){
         return parent::getFilePath($className) . '/' . ucfirst($fieldName) . '/Validator.js';
     }
 
-    static public function getResourceName($className, $fieldName){
+    static public function getResourceName($className, $fieldName = null){
         return parent::getResourceName($className) . '/' . ucfirst($fieldName) . '/Validator.js';
     }
 
-    static public function getMid($className, $fieldName){
+    static public function getMid($className, $fieldName = null){
         return parent::getMid($className) . '/' . ucfirst($fieldName) . '/Validator';
     }
 

@@ -18,8 +18,6 @@ class RefLazy implements ReferenceSerializerInterface, DocumentManagerAwareInter
 
     use DocumentManagerAwareTrait;
 
-    protected $documentManager;
-
     public function serialize($id, array $mapping){
 
         return ['$ref' => $this->documentManager->getClassMetadata($mapping['targetDocument'])->collection . '/' . $id];
