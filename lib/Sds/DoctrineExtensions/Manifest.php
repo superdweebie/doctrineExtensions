@@ -81,6 +81,7 @@ class Manifest extends AbstractExtension {
 
     protected function getExtensions(){
         if ( ! isset($this->extensions)){
+            $this->extensions = [];
             foreach ($this->extensionConfigs as $namespace => $extensionConfig){
                 $this->addExtension($namespace, $extensionConfig);
             }

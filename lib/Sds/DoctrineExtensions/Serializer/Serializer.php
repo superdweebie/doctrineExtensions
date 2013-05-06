@@ -271,6 +271,9 @@ class Serializer implements ServiceLocatorAwareInterface, DocumentManagerAwareIn
 
     public function isSerializableField($field, ClassMetadata $classMetadata){
 
+        if (!isset($classMetadata->fieldMappings[$field])){
+            return false;
+        }
         if (isset($classMetadata->serializer['fields'][$field]['ignore']) &&
             (
                 $classMetadata->serializer['fields'][$field]['ignore'] == self::IGNORE_WHEN_SERIALIZING ||
@@ -407,9 +410,10 @@ class Serializer implements ServiceLocatorAwareInterface, DocumentManagerAwareIn
     public function fromArray(
         array $data,
         $className = null,
-        $mode = self::UNSERIALIZE_PATCH
+        $mode = self::UNSERIALIZE_PATCH,
+        $document = null
     ) {
-        return $this->unserialize($data, $className, $mode);
+        return $this->unserialize($data, $className, $mode, $document);
     }
 
     /**
@@ -424,24 +428,26 @@ class Serializer implements ServiceLocatorAwareInterface, DocumentManagerAwareIn
     public function fromJson(
         $data,
         $className = null,
-        $mode = self::UNSERIALIZE_PATCH
+        $mode = self::UNSERIALIZE_PATCH,
+        $document = null
     ) {
-        return $this->unserialize(json_dencode($data), $className, $mode);
+        return $this->unserialize(json_dencode($data), $className, $mode, $document);
     }
 
     /**
      *
      * @param array $data
-     * @param \Doctrine\ODM\MongoDB\DocumentManager $documentManager
-     * @param string $className
-     * @return \Sds\DoctrineExtensions\Serializer\className
-     * @throws \Exception
-     * @throws \BadMethodCallException
+     * @param array $className
+     * @param type $mode
+     * @param type $document
+     * @return type
+     * @throws Exception\ClassNotFoundException
      */
     protected function unserialize(
         array $data,
         $className = null,
-        $mode = self::UNSERIALIZE_PATCH
+        $mode = self::UNSERIALIZE_PATCH,
+        $document = null
     ) {
 
         if ( ! isset($className)){
@@ -463,7 +469,7 @@ class Serializer implements ServiceLocatorAwareInterface, DocumentManagerAwareIn
         }
 
         // Attempt to load prexisting document from db
-        if (isset($data[$metadata->identifier])){
+        if (!isset($document) && isset($data[$metadata->identifier])){
             $document = $documentManager
                 ->createQueryBuilder()
                 ->find($metadata->name)
@@ -472,15 +478,15 @@ class Serializer implements ServiceLocatorAwareInterface, DocumentManagerAwareIn
                 ->getSingleResult();
         }
         if (isset($document)){
-            $loadedFromDocumentManager = true;
+            $newInstance = false;
         } else {
-            $loadedFromDocumentManager = false;
+            $newInstance = true;
             $document = $metadata->newInstance();
         }
 
         foreach ($this->fieldListForUnserialize($metadata) as $field){
 
-            if ($field == $metadata->identifier && $loadedFromDocumentManager){
+            if ($field == $metadata->identifier && !$newInstance){
                 continue;
             }
 

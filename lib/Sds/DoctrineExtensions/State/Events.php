@@ -28,4 +28,10 @@ final class Events
      * Called after state change complete
      */
     const postTransition = 'postTransition';
+
+    /**
+     * Triggered when active identity attempts to change state of a document they don't have permission
+     * for
+     */
+    const transitionDenied = 'transitionDenied';
 }

@@ -11,8 +11,6 @@ use Doctrine\ODM\MongoDB\Events as ODMEvents;
 use Doctrine\ODM\MongoDB\Event\LifecycleEventArgs;
 use Sds\DoctrineExtensions\AbstractLazySubscriber;
 use Sds\DoctrineExtensions\AccessControl\EventArgs as AccessControlEventArgs;
-use Sds\DoctrineExtensions\Annotation\Annotations as Sds;
-use Sds\DoctrineExtensions\Annotation\AnnotationEventArgs;
 use Zend\ServiceManager\ServiceLocatorAwareInterface;
 use Zend\ServiceManager\ServiceLocatorAwareTrait;
 

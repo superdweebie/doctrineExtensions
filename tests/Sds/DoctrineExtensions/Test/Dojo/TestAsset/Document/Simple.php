@@ -10,9 +10,9 @@ use Sds\DoctrineExtensions\Annotation\Annotations as Sds;
  * @ODM\Document
  * @Sds\Validator(class = "Sds/Test/ClassValidator1"),
  * @Sds\Validator(class = "Sds/Test/ClassValidator2", options = {"option1" = "a", "option2" = "b"})
- * @Sds\Dojo\Model,
- * @Sds\Dojo\Form,
- * @Sds\Dojo\ModelValidator,
+ * @Sds\Dojo\Model
+ * @Sds\Dojo\Form
+ * @Sds\Dojo\ModelValidator
  * @Sds\Dojo\JsonRest
  * @Sds\Serializer\ClassName
  */

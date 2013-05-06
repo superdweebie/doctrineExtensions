@@ -27,7 +27,7 @@ class Generator implements ServiceLocatorAwareInterface, DocumentManagerAwareInt
     protected $resourceMap;
 
     public function canGenerate($resource){
-        return $this->resourceMap->has($resource);
+        return $this->getResourceMap()->has($resource);
     }
 
     public function generate($resourceName){
