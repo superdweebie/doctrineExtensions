@@ -9,9 +9,8 @@ namespace Sds\DoctrineExtensions\State\AccessControl;
 use Sds\DoctrineExtensions\AccessControl\AbstractAccessControlSubscriber;
 use Sds\DoctrineExtensions\Annotation\Annotations as Sds;
 use Sds\DoctrineExtensions\Annotation\AnnotationEventArgs;
-use Sds\DoctrineExtensions\State\AccessControl\Events as StateAccessControlEvents;
 use Sds\DoctrineExtensions\State\EventArgs as TransitionEventArgs;
-use Sds\DoctrineExtensions\State\Events as StateEvents;
+use Sds\DoctrineExtensions\State\Events as Events;
 
 /**
  *
@@ -27,7 +26,7 @@ class TransitionPermissionSubscriber extends AbstractAccessControlSubscriber {
     public static function getStaticSubscribedEvents(){
         return [
             Sds\Permission\Transition::event,
-            StateEvents::preTransition
+            Events::preTransition
         ];
     }
 
@@ -74,9 +73,9 @@ class TransitionPermissionSubscriber extends AbstractAccessControlSubscriber {
             $document->setState($eventArgs->getTransition()->getFrom());
 
             $eventManager = $eventArgs->getDocumentManager()->getEventManager();
-            if ($eventManager->hasListeners(StateAccessControlEvents::transitionDenied)) {
+            if ($eventManager->hasListeners(Events::transitionDenied)) {
                 $eventManager->dispatchEvent(
-                    StateAccessControlEvents::transitionDenied,
+                    Events::transitionDenied,
                     $eventArgs
                 );
             }
