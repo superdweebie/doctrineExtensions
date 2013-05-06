@@ -7,7 +7,7 @@ php:
 matrix:
   allow_failures:
     - php: 5.5
-    
+
 env:
   - MONGO_VERSION=1.2.12
 
@@ -15,7 +15,7 @@ services: mongodb
 
 before_script:
   - echo "extension = mongo.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
-  - composer update --dev
+  - composer install --prefer-source --dev
 
 script:
   - cd ./tests
