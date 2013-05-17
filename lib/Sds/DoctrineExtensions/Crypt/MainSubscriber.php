@@ -6,11 +6,10 @@
  */
 namespace Sds\DoctrineExtensions\Crypt;
 
+use Doctrine\Common\EventSubscriber;
 use Doctrine\ODM\MongoDB\Event\LifecycleEventArgs;
 use Doctrine\ODM\MongoDB\Event\OnFlushEventArgs;
 use Doctrine\ODM\MongoDB\Events as ODMEvents;
-use Sds\DoctrineExtensions\AbstractLazySubscriber;
-
 
 /**
  * Listener hashes fields marked with CryptHash annotation
@@ -18,13 +17,13 @@ use Sds\DoctrineExtensions\AbstractLazySubscriber;
  * @since   1.0
  * @author  Tim Roediger <superdweebie@gmail.com>
  */
-class MainSubscriber extends AbstractLazySubscriber
+class MainSubscriber implements EventSubscriber
 {
 
     /**
      * @return array
      */
-    public static function getStaticSubscribedEvents(){
+    public function getSubscribedEvents(){
         return [
             ODMEvents::prePersist,
             ODMEvents::onFlush

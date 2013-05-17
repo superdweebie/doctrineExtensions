@@ -19,7 +19,7 @@ class MultiFieldValidator extends AbstractDojoGenerator
 
     const event = 'generatorDojoMultiFieldValidator';
 
-    public static function getStaticSubscribedEvents(){
+    public function getSubscribedEvents(){
         return [
             self::event,
         ];

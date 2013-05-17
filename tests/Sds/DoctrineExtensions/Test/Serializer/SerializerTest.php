@@ -2,6 +2,7 @@
 
 namespace Sds\DoctrineExtensions\Test\Serializer;
 
+use Sds\DoctrineExtensions\Manifest;
 use Sds\DoctrineExtensions\Test\BaseTest;
 use Sds\DoctrineExtensions\Test\Serializer\TestAsset\Document\User;
 use Sds\DoctrineExtensions\Test\Serializer\TestAsset\Document\Group;
@@ -13,18 +14,21 @@ class SerializerTest extends BaseTest {
 
     public function setUp(){
 
-        parent::setUp();
-        $manifest = $this->getManifest(['extensionConfigs' => ['Sds\DoctrineExtensions\Serializer' => true]]);
+        $manifest = new Manifest([
+            'documents' => [
+                __NAMESPACE__ . '\TestAsset\Document' => __DIR__ . '/TestAsset/Document'
+            ],
+            'extension_configs' => [
+                'extension.serializer' => true
+            ],
+            'document_manager' => 'testing.documentmanager',
+            'service_manager_config' => [
+                'factories' => [
+                    'testing.documentmanager' => 'Sds\DoctrineExtensions\Test\TestAsset\DocumentManagerFactory',
+                ]
+            ]
+        ]);
 
-        $this->configDoctrine(
-            array_merge(
-                $manifest->getDocuments(),
-                array('Sds\DoctrineExtensions\Test\Serializer\TestAsset\Document' => __DIR__ . '/TestAsset/Document')
-            ),
-            $manifest->getFilters(),
-            $manifest->getSubscribers()
-        );
-        $manifest->setDocumentManagerService($this->documentManager)->bootstrapped();
         $this->serializer = $manifest->getServiceManager()->get('serializer');
     }
 

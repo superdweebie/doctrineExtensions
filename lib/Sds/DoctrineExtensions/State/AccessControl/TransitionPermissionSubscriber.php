@@ -23,7 +23,7 @@ class TransitionPermissionSubscriber extends AbstractAccessControlSubscriber {
      *
      * @return array
      */
-    public static function getStaticSubscribedEvents(){
+    public function getSubscribedEvents(){
         return [
             Sds\Permission\Transition::event,
             Events::preTransition

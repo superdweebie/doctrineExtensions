@@ -2,28 +2,36 @@
 
 namespace Sds\DoctrineExtensions\Test\Freeze;
 
+use Sds\DoctrineExtensions\Manifest;
 use Sds\DoctrineExtensions\Test\BaseTest;
 use Sds\DoctrineExtensions\Test\Freeze\TestAsset\Document\Stamped;
+use Sds\DoctrineExtensions\Test\TestAsset\Identity;
 
 class StampTest extends BaseTest {
 
     public function setUp(){
 
-        parent::setUp();
+        $manifest = new Manifest([
+            'documents' => [
+                __NAMESPACE__ . '\TestAsset\Document' => __DIR__ . '/TestAsset/Document'
+            ],
+            'extension_configs' => [
+                'extension.freeze' => true
+            ],
+            'document_manager' => 'testing.documentmanager',
+            'service_manager_config' => [
+                'factories' => [
+                    'testing.documentmanager' => 'Sds\DoctrineExtensions\Test\TestAsset\DocumentManagerFactory',
+                    'identity' => function(){
+                        $identity = new Identity();
+                        $identity->setIdentityName('toby');
+                        return $identity;
+                    }
+                ]
+            ]
+        ]);
 
-        $this->configIdentity();
-
-        $manifest = $this->getManifest(['extensionConfigs' => ['Sds\DoctrineExtensions\Freeze' => true]]);
-
-        $this->configDoctrine(
-            array_merge(
-                $manifest->getDocuments(),
-                array('Sds\DoctrineExtensions\Test\Freeze\TestAsset\Document' => __DIR__ . '/TestAsset/Document')
-            ),
-            $manifest->getFilters(),
-            $manifest->getSubscribers()
-        );
-        $manifest->setDocumentManagerService($this->documentManager)->bootstrapped();
+        $this->documentManager = $manifest->getServiceManager()->get('testing.documentmanager');
         $this->freezer = $manifest->getServiceManager()->get('freezer');
     }
 

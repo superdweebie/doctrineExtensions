@@ -19,7 +19,7 @@ class Input extends AbstractDojoGenerator
 
     const event = 'generatorDojoInput';
 
-    public static function getStaticSubscribedEvents(){
+    public function getSubscribedEvents(){
         return [
             self::event,
         ];

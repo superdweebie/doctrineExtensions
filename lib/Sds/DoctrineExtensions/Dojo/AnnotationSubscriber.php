@@ -6,8 +6,8 @@
  */
 namespace Sds\DoctrineExtensions\Dojo;
 
+use Doctrine\Common\EventSubscriber;
 use Doctrine\ODM\MongoDB\Event\LoadClassMetadataEventArgs;
-use Sds\DoctrineExtensions\AbstractLazySubscriber;
 use Sds\DoctrineExtensions\Annotation\Annotations as Sds;
 use Sds\DoctrineExtensions\Annotation\AnnotationEventArgs;
 use Sds\DoctrineExtensions\Annotation\Events as AnnotationEvents;
@@ -22,7 +22,7 @@ use Zend\ServiceManager\ServiceLocatorAwareTrait;
  * @since   1.0
  * @author  Tim Roediger <superdweebie@gmail.com>
  */
-class AnnotationSubscriber extends AbstractLazySubscriber implements ServiceLocatorAwareInterface
+class AnnotationSubscriber implements EventSubscriber, ServiceLocatorAwareInterface
 {
 
     use ServiceLocatorAwareTrait;
@@ -33,7 +33,7 @@ class AnnotationSubscriber extends AbstractLazySubscriber implements ServiceLoca
      *
      * @return array
      */
-    public static function getStaticSubscribedEvents(){
+    public function getSubscribedEvents(){
         return array(
             Sds\Dojo\Model::event,
             Sds\Dojo\Input::event,

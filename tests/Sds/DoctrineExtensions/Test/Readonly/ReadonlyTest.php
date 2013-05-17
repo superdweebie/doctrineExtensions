@@ -2,28 +2,32 @@
 
 namespace Sds\DoctrineExtensions\Test\Readonly;
 
+use Sds\DoctrineExtensions\Manifest;
 use Sds\DoctrineExtensions\Readonly\Events;
 use Sds\DoctrineExtensions\Test\BaseTest;
 use Sds\DoctrineExtensions\Test\Readonly\TestAsset\Document\Simple;
-use Sds\DoctrineExtensions\Test\Readonly\TestAsset\Document\SetMethod;
 use Sds\DoctrineExtensions\Test\Readonly\TestAsset\Subscriber;
 
 class ReadonlyTest extends BaseTest {
 
     public function setUp(){
 
-        parent::setUp();
-        $manifest = $this->getManifest(['extensionConfigs' => ['Sds\DoctrineExtensions\Readonly' => true]]);
+        $manifest = new Manifest([
+            'documents' => [
+                __NAMESPACE__ . '\TestAsset\Document' => __DIR__ . '/TestAsset/Document'
+            ],
+            'extension_configs' => [
+                'extension.readonly' => true
+            ],
+            'document_manager' => 'testing.documentmanager',
+            'service_manager_config' => [
+                'factories' => [
+                    'testing.documentmanager' => 'Sds\DoctrineExtensions\Test\TestAsset\DocumentManagerFactory',
+                ]
+            ]
+        ]);
 
-        $this->configDoctrine(
-            array_merge(
-                $manifest->getDocuments(),
-                array('Sds\DoctrineExtensions\Test\Readonly\TestAsset\Document' => __DIR__ . '/TestAsset/Document')
-            ),
-            $manifest->getFilters(),
-            $manifest->getSubscribers()
-        );
-        $manifest->setDocumentManagerService($this->documentManager)->bootstrapped();
+        $this->documentManager = $manifest->getServiceManager()->get('testing.documentmanager');
     }
 
     public function testBasicFunction(){

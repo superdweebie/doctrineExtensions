@@ -6,7 +6,7 @@
  */
 namespace Sds\DoctrineExtensions\Crypt;
 
-use Sds\DoctrineExtensions\AbstractLazySubscriber;
+use Doctrine\Common\EventSubscriber;
 use Sds\DoctrineExtensions\Annotation\Annotations as Sds;
 use Sds\DoctrineExtensions\Annotation\AnnotationEventArgs;
 use Sds\DoctrineExtensions\Exception;
@@ -17,13 +17,13 @@ use Sds\DoctrineExtensions\Exception;
  * @since   1.0
  * @author  Tim Roediger <superdweebie@gmail.com>
  */
-class AnnotationSubscriber extends AbstractLazySubscriber
+class AnnotationSubscriber implements EventSubscriber
 {
 
     /**
      * @return array
      */
-    public static function getStaticSubscribedEvents(){
+    public function getSubscribedEvents(){
         return [
             Sds\Crypt\Hash::event,
             Sds\Crypt\BlockCipher::event

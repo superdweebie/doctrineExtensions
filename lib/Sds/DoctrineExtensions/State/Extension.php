@@ -17,10 +17,19 @@ use Sds\DoctrineExtensions\AbstractExtension;
 class Extension extends AbstractExtension {
 
     protected $subscribers = [
-        'Sds\DoctrineExtensions\State\MainSubscriber',
-        'Sds\DoctrineExtensions\State\AnnotationSubscriber',
-        'Sds\DoctrineExtensions\State\AccessControl\StatePermissionSubscriber',
-        'Sds\DoctrineExtensions\State\AccessControl\TransitionPermissionSubscriber'
+        'subscriber.state.mainsubscriber',
+        'subscriber.state.annotationsubscriber',
+        'subscirber.state.statePermissionSubscirber',
+        'subscirber.state.transitionPermissionSubscriber'
+    ];
+
+    protected $serviceManagerConfig = [
+        'invokables' => [
+            'subscriber.state.mainsubscriber' => 'Sds\DoctrineExtensions\State\MainSubscriber',
+            'subscriber.state.annotationsubscriber' => 'Sds\DoctrineExtensions\State\AnnotationSubscriber',
+            'subscirber.state.statePermissionSubscirber' => 'Sds\DoctrineExtensions\State\AccessControl\StatePermissionSubscriber',
+            'subscirber.state.transitionPermissionSubscriber' => 'Sds\DoctrineExtensions\State\AccessControl\TransitionPermissionSubscriber'
+        ]
     ];
 
     protected $filters = [
@@ -28,6 +37,6 @@ class Extension extends AbstractExtension {
     ];
 
     protected $dependencies = [
-        'Sds\DoctrineExtensions\Annotation' => true,
+        'extension.annotation' => true,
     ];
 }

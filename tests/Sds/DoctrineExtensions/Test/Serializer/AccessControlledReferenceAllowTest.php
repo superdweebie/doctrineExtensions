@@ -2,34 +2,39 @@
 
 namespace Sds\DoctrineExtensions\Test\Serializer;
 
+use Sds\DoctrineExtensions\Manifest;
 use Sds\DoctrineExtensions\Test\BaseTest;
 use Sds\DoctrineExtensions\Test\Serializer\TestAsset\Document\CakeWithSecrets;
 use Sds\DoctrineExtensions\Test\Serializer\TestAsset\Document\SecretIngredient;
 use Sds\DoctrineExtensions\Test\Serializer\TestAsset\Document\Ingredient;
+use Sds\DoctrineExtensions\Test\TestAsset\RoleAwareIdentity;
 
 class AccessControlledReferenceAllowTest extends BaseTest {
 
     public function setUp(){
 
-        parent::setUp();
+        $manifest = new Manifest([
+            'documents' => [
+                __NAMESPACE__ . '\TestAsset\Document' => __DIR__ . '/TestAsset/Document'
+            ],
+            'extension_configs' => [
+                'extension.accessControl' => true,
+                'extension.serializer' => true
+            ],
+            'document_manager' => 'testing.documentmanager',
+            'service_manager_config' => [
+                'factories' => [
+                    'testing.documentmanager' => 'Sds\DoctrineExtensions\Test\TestAsset\DocumentManagerFactory',
+                    'identity' => function(){
+                        $identity = new RoleAwareIdentity();
+                        $identity->setIdentityName('toby')->addRole('user');
+                        return $identity;
+                    }
+                ]
+            ]
+        ]);
 
-        $this->configIdentity(true);
-        $this->identity->addRole('user');
-
-        $manifest = $this->getManifest(['extensionConfigs' => [
-            'Sds\DoctrineExtensions\AccessControl' => true,
-            'Sds\DoctrineExtensions\Serializer' => true
-        ]]);
-
-        $this->configDoctrine(
-            array_merge(
-                $manifest->getDocuments(),
-                array('Sds\DoctrineExtensions\Test\Serializer\TestAsset\Document' => __DIR__ . '/TestAsset/Document')
-            ),
-            $manifest->getFilters(),
-            $manifest->getSubscribers()
-        );
-        $manifest->setDocumentManagerService($this->documentManager)->bootstrapped();
+        $this->documentManager = $manifest->getServiceManager()->get('testing.documentmanager');
         $this->serializer = $manifest->getServiceManager()->get('serializer');
     }
 

@@ -18,17 +18,20 @@ class Extension extends AbstractExtension
 {
 
     protected $subscribers = [
-        'Sds\DoctrineExtensions\AccessControl\MainSubscriber',
-        'Sds\DoctrineExtensions\AccessControl\AnnotationSubscriber',
-        'Sds\DoctrineExtensions\AccessControl\BasicPermissionSubscriber'
+        'subscriber.accessControl.mainsubscriber',
+        'subscriber.accessControl.annotationsubscriber',
+        'subscriber.accessControl.basicPermissionSubscriber'
     ];
 
     protected $filters = [
         'readAccessControl' => 'Sds\DoctrineExtensions\AccessControl\Filter\ReadAccessControl'
     ];
 
-    protected $defaultServiceManagerConfig = [
+    protected $serviceManagerConfig = [
         'invokables' => [
+            'subscriber.accessControl.mainsubscriber' => 'Sds\DoctrineExtensions\AccessControl\MainSubscriber',
+            'subscriber.accessControl.annotationsubscriber' => 'Sds\DoctrineExtensions\AccessControl\AnnotationSubscriber',
+            'subscriber.accessControl.basicPermissionSubscriber' => 'Sds\DoctrineExtensions\AccessControl\BasicPermissionSubscriber',
             'accessController' => 'Sds\DoctrineExtensions\AccessControl\AccessController'
         ]
     ];
@@ -38,7 +41,7 @@ class Extension extends AbstractExtension
      * @var array
      */
     protected $dependencies = [
-        'Sds\DoctrineExtensions\Annotation' => true,
-        'Sds\DoctrineExtensions\Identity' => true,
+        'extension.annotation' => true,
+        'extension.identity' => true,
     ];
 }

@@ -6,7 +6,7 @@
  */
 namespace Sds\DoctrineExtensions\Validator;
 
-use Sds\DoctrineExtensions\AbstractLazySubscriber;
+use Doctrine\Common\EventSubscriber;
 use Sds\DoctrineExtensions\Annotation\Annotations as Sds;
 use Sds\DoctrineExtensions\Annotation\AnnotationEventArgs;
 use Sds\DoctrineExtensions\Annotation\EventType;
@@ -16,13 +16,13 @@ use Sds\DoctrineExtensions\Annotation\EventType;
  * @since   1.0
  * @author  Tim Roediger <superdweebie@gmail.com>
  */
-class AnnotationSubscriber extends AbstractLazySubscriber {
+class AnnotationSubscriber implements EventSubscriber {
 
     /**
      *
      * @return array
      */
-    public static function getStaticSubscribedEvents(){
+    public function getSubscribedEvents(){
         $events = [
             Sds\Validator\Alpha::event,
             Sds\Validator\Credential::event,

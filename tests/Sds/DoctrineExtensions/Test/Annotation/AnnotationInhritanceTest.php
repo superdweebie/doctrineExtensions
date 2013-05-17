@@ -2,36 +2,44 @@
 
 namespace Sds\DoctrineExtensions\Test\Annotation;
 
+use Sds\DoctrineExtensions\Manifest;
 use Sds\DoctrineExtensions\Test\Annotation\TestAsset\Document\ChildA;
 use Sds\DoctrineExtensions\Test\Annotation\TestAsset\Document\ChildB;
 use Sds\DoctrineExtensions\Test\BaseTest;
+use Sds\DoctrineExtensions\Test\TestAsset\Identity;
 
 class AnnotationInheritaceTest extends BaseTest {
 
     public function setUp(){
-        parent::setUp();
 
-        $this->configIdentity(true);
+        $manifest = new Manifest([
+            'documents' => [
+                __NAMESPACE__ . '\TestAsset\Document' => __DIR__ . '/TestAsset/Document'
+            ],
+            'extension_configs' => [
+                'extension.dojo' => [
+                    'file_paths' => [[
+                        'filter' => '',
+                        'path' => __DIR__ . '/../../../../Dojo'
+                    ]]
+                ],
+                'extension.serializer' => true,
+                'extension.validator' => true,
+            ],
+            'document_manager' => 'testing.documentmanager',
+            'service_manager_config' => [
+                'factories' => [
+                    'testing.documentmanager' => 'Sds\DoctrineExtensions\Test\TestAsset\DocumentManagerFactory',
+                    'identity' => function(){
+                        $identity = new Identity();
+                        return $identity;
+                    }
+                ]
+            ]
+       ]);
 
-        $manifest = $this->getManifest(['extensionConfigs' => [
-            'Sds\DoctrineExtensions\Dojo' => [
-                'filePaths' => [
-                    'filter' => '',
-                    'path' => __DIR__ . '/../../../../Dojo'
-            ]],
-            'Sds\DoctrineExtensions\Serializer' => true,
-            'Sds\DoctrineExtensions\Validator' => true
-        ]]);
+       $this->documentManager = $manifest->getServiceManager()->get('testing.documentmanager');
 
-        $this->configDoctrine(
-            array_merge(
-                $manifest->getDocuments(),
-                array('Sds\DoctrineExtensions\Test\Annotation\TestAsset\Document' => __DIR__ . '/TestAsset/Document')
-            ),
-            $manifest->getFilters(),
-            $manifest->getSubscribers()
-        );
-        $manifest->setDocumentManagerService($this->documentManager)->bootstrapped();
     }
 
     public function testAnnotationInheritance(){

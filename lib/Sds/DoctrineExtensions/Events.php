@@ -13,7 +13,5 @@ namespace Sds\DoctrineExtensions;
  */
 final class Events
 {
-
-    const onBootstrapped = 'onBootstrapped';
-
+    const onBootstrap = 'onBootstrap';
 }

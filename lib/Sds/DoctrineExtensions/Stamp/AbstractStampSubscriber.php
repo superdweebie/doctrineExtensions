@@ -6,8 +6,8 @@
  */
 namespace Sds\DoctrineExtensions\Stamp;
 
+use Doctrine\Common\EventSubscriber;
 use Doctrine\ODM\MongoDB\Event\LifecycleEventArgs;
-use Sds\DoctrineExtensions\AbstractLazySubscriber;
 use Zend\ServiceManager\ServiceLocatorAwareInterface;
 use Zend\ServiceManager\ServiceLocatorAwareTrait;
 
@@ -17,7 +17,7 @@ use Zend\ServiceManager\ServiceLocatorAwareTrait;
  * @since   1.0
  * @author  Tim Roediger <superdweebie@gmail.com>
  */
-abstract class AbstractStampSubscriber extends AbstractLazySubscriber implements ServiceLocatorAwareInterface {
+abstract class AbstractStampSubscriber implements EventSubscriber, ServiceLocatorAwareInterface {
 
     use ServiceLocatorAwareTrait;
 
@@ -34,6 +34,6 @@ abstract class AbstractStampSubscriber extends AbstractLazySubscriber implements
     }
 
     protected function getIdentityName(){
-        return $this->serviceLocator->get('Sds\DoctrineExtensions\Identity')->getIdentityName();
+        return $this->serviceLocator->get('identity')->getIdentityName();
     }
 }

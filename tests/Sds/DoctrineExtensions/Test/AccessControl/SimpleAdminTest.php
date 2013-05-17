@@ -3,30 +3,38 @@
 namespace Sds\DoctrineExtensions\Test\AccessControl;
 
 use Sds\DoctrineExtensions\AccessControl\Events as AccessControlEvents;
+use Sds\DoctrineExtensions\Manifest;
 use Sds\DoctrineExtensions\Test\AccessControl\TestAsset\Document\Simple;
 use Sds\DoctrineExtensions\Test\BaseTest;
+use Sds\DoctrineExtensions\Test\TestAsset\RoleAwareIdentity;
 
 class SimpleAdminTest extends BaseTest {
 
     protected $calls = array();
 
     public function setUp(){
-        parent::setUp();
 
-        $this->configIdentity(true);
-        $this->identity->addRole('admin');
+        $manifest = new Manifest([
+            'documents' => [
+                __NAMESPACE__ . '\TestAsset\Document' => __DIR__ . '/TestAsset/Document'
+            ],
+            'extension_configs' => [
+                'extension.accessControl' => true
+            ],
+            'document_manager' => 'testing.documentmanager',
+            'service_manager_config' => [
+                'factories' => [
+                    'testing.documentmanager' => 'Sds\DoctrineExtensions\Test\TestAsset\DocumentManagerFactory',
+                    'identity' => function(){
+                        $identity = new RoleAwareIdentity();
+                        $identity->setIdentityName('toby')->addRole('admin');
+                        return $identity;
+                    }
+                ]
+            ]
+       ]);
 
-        $manifest = $this->getManifest(['extensionConfigs' => ['Sds\DoctrineExtensions\AccessControl' => true]]);
-
-        $this->configDoctrine(
-            array_merge(
-                $manifest->getDocuments(),
-                array('Sds\DoctrineExtensions\Test\AccessControl\TestAsset\Document' => __DIR__ . '/TestAsset/Document')
-            ),
-            $manifest->getFilters(),
-            $manifest->getSubscribers()
-        );
-        $manifest->setDocumentManagerService($this->documentManager)->bootstrapped();
+       $this->documentManager = $manifest->getServiceManager()->get('testing.documentmanager');
     }
 
     public function testUpdateAllow(){

@@ -6,7 +6,7 @@
  */
 namespace Sds\DoctrineExtensions\Serializer;
 
-use Sds\DoctrineExtensions\AbstractLazySubscriber;
+use Doctrine\Common\EventSubscriber;
 use Sds\DoctrineExtensions\Annotation\Annotations as Sds;
 use Sds\DoctrineExtensions\Annotation\AnnotationEventArgs;
 
@@ -16,14 +16,14 @@ use Sds\DoctrineExtensions\Annotation\AnnotationEventArgs;
  * @since   1.0
  * @author  Tim Roediger <superdweebie@gmail.com>
  */
-class AnnotationSubscriber extends AbstractLazySubscriber
+class AnnotationSubscriber implements EventSubscriber
 {
 
     /**
      *
      * @return array
      */
-    public static function getStaticSubscribedEvents(){
+    public function getSubscribedEvents(){
         return [
             Sds\Serializer\ClassName::event,
             Sds\Serializer\Discriminator::event,
@@ -68,7 +68,7 @@ class AnnotationSubscriber extends AbstractLazySubscriber
         $metadata = $eventArgs->getMetadata();
         $this->createMetadata($metadata);
         $metadata->serializer['fields'][$eventArgs->getReflection()->getName()]['referenceSerializer'] =
-            'eagerReferenceSerializer';
+            'serializer.reference.eager';
     }
 
     /**
@@ -93,7 +93,7 @@ class AnnotationSubscriber extends AbstractLazySubscriber
         $metadata = $eventArgs->getMetadata();
         $this->createMetadata($metadata);
         $metadata->serializer['fields'][$eventArgs->getReflection()->getName()]['referenceSerializer'] =
-            'refLazyReferenceSerializer';
+            'serializer.reference.refLazy';
     }
 
     /**
@@ -118,7 +118,7 @@ class AnnotationSubscriber extends AbstractLazySubscriber
         $metadata = $eventArgs->getMetadata();
         $this->createMetadata($metadata);
         $metadata->serializer['fields'][$eventArgs->getReflection()->getName()]['referenceSerializer'] =
-            'simpleLazyReferenceSerializer';
+            'serializer.reference.simpleLazy';
     }
 
     protected function createMetadata($metadata){

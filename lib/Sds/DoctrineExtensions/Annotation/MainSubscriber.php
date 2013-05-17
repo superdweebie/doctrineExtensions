@@ -7,17 +7,17 @@
 namespace Sds\DoctrineExtensions\Annotation;
 
 use Doctrine\Common\Annotations;
+use Doctrine\Common\EventSubscriber;
 use Doctrine\ODM\MongoDB\Event\LoadClassMetadataEventArgs;
 use Doctrine\ODM\MongoDB\Events as ODMEvents;
 use Doctrine\ODM\MongoDB\Mapping\ClassMetadata;
-use Sds\DoctrineExtensions\AbstractLazySubscriber;
 
 /**
  *
  * @since   1.0
  * @author  Tim Roediger <superdweebie@gmail.com>
  */
-class MainSubscriber extends AbstractLazySubscriber
+class MainSubscriber implements EventSubscriber
 {
 
     protected $annotationReader;
@@ -26,7 +26,7 @@ class MainSubscriber extends AbstractLazySubscriber
      *
      * @return array
      */
-    public static function getStaticSubscribedEvents(){
+    public function getSubscribedEvents(){
         return [
             ODMEvents::loadClassMetadata
         ];

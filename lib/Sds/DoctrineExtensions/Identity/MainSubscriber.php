@@ -6,22 +6,22 @@
  */
 namespace Sds\DoctrineExtensions\Identity;
 
+use Doctrine\Common\EventSubscriber;
 use Doctrine\ODM\MongoDB\Event\OnFlushEventArgs;
 use Doctrine\ODM\MongoDB\Events as ODMEvents;
-use Sds\DoctrineExtensions\AbstractLazySubscriber;
 
 /**
  *
  * @since   1.0
  * @author  Tim Roediger <superdweebie@gmail.com>
  */
-class MainSubscriber extends AbstractLazySubscriber {
+class MainSubscriber implements EventSubscriber {
 
     /**
      *
      * @return array
      */
-    public static function getStaticSubscribedEvents(){
+    public function getSubscribedEvents(){
         return [
             ODMEvents::onFlush
         ];
@@ -81,7 +81,7 @@ class MainSubscriber extends AbstractLazySubscriber {
             // Force change set update
             $unitOfWork->recomputeSingleDocumentChangeSet($metadata, $document);
 
-            // Raise postUpdatePermissions
+            // Raise postUpdateRoles
             if ($eventManager->hasListeners(Events::postUpdateRoles)) {
                 $eventManager->dispatchEvent(
                     Events::postUpdateRoles,

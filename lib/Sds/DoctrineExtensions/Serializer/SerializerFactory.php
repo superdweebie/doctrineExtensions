@@ -24,14 +24,12 @@ class SerializerFactory implements FactoryInterface
      */
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
-        $extension = $serviceLocator->get('Sds\DoctrineExtensions\Serializer\Extension');
+        $extension = $serviceLocator->get('extension.serializer');
         $instance = new Serializer;
 
         $instance->setClassNameField($extension->getClassNameField());
         $instance->setMaxNestingDepth($extension->getMaxNestingDepth());
         $instance->setTypeSerializers($extension->getTypeSerializers());
-        $instance->setReferenceSerializerServiceConfig($extension->getReferenceSerializerServiceConfig());
-        $instance->setTypeSerializerServiceConfig($extension->getTypeSerializerServiceConfig());
 
         return $instance;
     }

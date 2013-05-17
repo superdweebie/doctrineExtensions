@@ -6,10 +6,10 @@
  */
 namespace Sds\DoctrineExtensions\Freeze;
 
+use Doctrine\Common\EventSubscriber;
 use Doctrine\ODM\MongoDB\Event\OnFlushEventArgs;
 use Doctrine\ODM\MongoDB\Events as ODMEvents;
 use Doctrine\ODM\MongoDB\Event\LifecycleEventArgs;
-use Sds\DoctrineExtensions\AbstractLazySubscriber;
 use Sds\DoctrineExtensions\AccessControl\EventArgs as AccessControlEventArgs;
 use Zend\ServiceManager\ServiceLocatorAwareInterface;
 use Zend\ServiceManager\ServiceLocatorAwareTrait;
@@ -20,7 +20,7 @@ use Zend\ServiceManager\ServiceLocatorAwareTrait;
  * @since   1.0
  * @author  Tim Roediger <superdweebie@gmail.com>
  */
-class MainSubscriber extends AbstractLazySubscriber implements ServiceLocatorAwareInterface
+class MainSubscriber implements EventSubscriber, ServiceLocatorAwareInterface
 {
     use ServiceLocatorAwareTrait;
 
@@ -30,7 +30,7 @@ class MainSubscriber extends AbstractLazySubscriber implements ServiceLocatorAwa
      *
      * @return array
      */
-    public static function getStaticSubscribedEvents(){
+    public function getSubscribedEvents(){
         return [
             ODMEvents::onFlush
         ];

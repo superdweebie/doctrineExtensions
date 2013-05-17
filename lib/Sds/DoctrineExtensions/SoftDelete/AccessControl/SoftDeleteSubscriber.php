@@ -24,7 +24,7 @@ class SoftDeleteSubscriber extends AbstractAccessControlSubscriber
      *
      * @return array
      */
-    public static function getStaticSubscribedEvents(){
+    public function getSubscribedEvents(){
         return [
             Events::preSoftDelete,
             Events::preRestore

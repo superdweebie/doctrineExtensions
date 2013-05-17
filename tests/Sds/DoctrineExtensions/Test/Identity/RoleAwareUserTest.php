@@ -2,14 +2,27 @@
 
 namespace Sds\DoctrineExtensions\Test\User;
 
+use Sds\DoctrineExtensions\Manifest;
 use Sds\DoctrineExtensions\Test\BaseTest;
+use Sds\DoctrineExtensions\Test\TestAsset\RoleAwareIdentity;
 
 class RoleAwareUserTest extends BaseTest {
 
     public function setUp(){
-        parent::setUp();
 
-        $this->configIdentity(true);
+        $manifest = new Manifest([
+            'service_manager_config' => [
+                'factories' => [
+                    'identity' => function(){
+                        $identity = new RoleAwareIdentity();
+                        $identity->setIdentityName('toby');
+                        return $identity;
+                    }
+                ]
+            ]
+        ]);
+
+        $this->identity = $manifest->getServiceManager()->get('identity');
     }
 
     public function testRoleAddandRemove(){

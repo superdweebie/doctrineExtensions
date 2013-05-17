@@ -19,7 +19,7 @@ class ModelValidator extends AbstractDojoGenerator
 
     const event = 'generatorDojoModelValidator';
 
-    public static function getStaticSubscribedEvents(){
+    public function getSubscribedEvents(){
         return [
             self::event,
         ];

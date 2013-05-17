@@ -17,12 +17,19 @@ use Sds\DoctrineExtensions\AbstractExtension;
 class Extension extends AbstractExtension {
 
     protected $subscribers = [
-        'Sds\DoctrineExtensions\Stamp\MainSubscriber',
-        'Sds\DoctrineExtensions\Stamp\AnnotationSubscriber',
+        'subscriber.stamp.mainsubscriber',
+        'subscriber.stamp.annotationsubscriber',
+    ];
+
+    protected $serviceManagerConfig = [
+        'invokables' => [
+            'subscriber.stamp.mainsubscriber' => 'Sds\DoctrineExtensions\Stamp\MainSubscriber',
+            'subscriber.stamp.annotationsubscriber' => 'Sds\DoctrineExtensions\Stamp\AnnotationSubscriber',
+        ]
     ];
 
     protected $dependencies = [
-        'Sds\DoctrineExtensions\Annotation' => true,
-        'Sds\DoctrineExtensions\Identity' => true,
+        'extension.annotation' => true,
+        'extension.identity' => true,
     ];
 }

@@ -2,6 +2,7 @@
 
 namespace Sds\DoctrineExtensions\Test\SoftDelete;
 
+use Sds\DoctrineExtensions\Manifest;
 use Sds\DoctrineExtensions\SoftDelete\Events;
 use Sds\DoctrineExtensions\Test\BaseTest;
 use Sds\DoctrineExtensions\Test\SoftDelete\TestAsset\Document\AccessControlled;
@@ -12,22 +13,23 @@ class AccessControlSoftDeleteDenyTest extends BaseTest {
 
     public function setUp(){
 
-        parent::setUp();
+        $manifest = new Manifest([
+            'documents' => [
+                __NAMESPACE__ . '\TestAsset\Document' => __DIR__ . '/TestAsset/Document'
+            ],
+            'extension_configs' => [
+                'extension.softDelete' => true,
+                'extension.accessControl' => true
+            ],
+            'document_manager' => 'testing.documentmanager',
+            'service_manager_config' => [
+                'factories' => [
+                    'testing.documentmanager' => 'Sds\DoctrineExtensions\Test\TestAsset\DocumentManagerFactory',
+                ]
+            ]
+        ]);
 
-        $manifest = $this->getManifest(['extensionConfigs' => [
-            'Sds\DoctrineExtensions\SoftDelete' => true,
-            'Sds\DoctrineExtensions\AccessControl' => true
-        ]]);
-
-        $this->configDoctrine(
-            array_merge(
-                $manifest->getDocuments(),
-                array('Sds\DoctrineExtensions\Test\SoftDelete\TestAsset\Document' => __DIR__ . '/TestAsset/Document')
-            ),
-            $manifest->getFilters(),
-            $manifest->getSubscribers()
-        );
-        $manifest->setDocumentManagerService($this->documentManager)->bootstrapped();
+        $this->documentManager = $manifest->getServiceManager()->get('testing.documentmanager');
         $this->softDeleter = $manifest->getServiceManager()->get('softDeleter');
     }
 

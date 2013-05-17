@@ -6,23 +6,22 @@
  */
 namespace Sds\DoctrineExtensions\Stamp;
 
-use Sds\DoctrineExtensions\AbstractLazySubscriber;
+use Doctrine\Common\EventSubscriber;
 use Sds\DoctrineExtensions\Annotation\Annotations as Sds;
 use Sds\DoctrineExtensions\Annotation\AnnotationEventArgs;
 
 /**
- * Adds create and update stamps during persist
  *
  * @since   1.0
  * @author  Tim Roediger <superdweebie@gmail.com>
  */
-class AnnotationSubscriber extends AbstractLazySubscriber {
+class AnnotationSubscriber implements EventSubscriber {
 
     /**
      *
      * @return array
      */
-    public static function getStaticSubscribedEvents() {
+    public function getSubscribedEvents() {
         return [
             Sds\Stamp\CreatedBy::event,
             Sds\Stamp\CreatedOn::event,

@@ -18,12 +18,12 @@ use Sds\DoctrineExtensions\AccessControl\AbstractAccessControlSubscriber;
  */
 class UpdateRolesSubscriber extends AbstractAccessControlSubscriber
 {
-    
+
     /**
      *
      * @return array
      */
-    public static function getStaticSubscribedEvents(){
+    public function getSubscribedEvents(){
         return [
             Events::preUpdateRoles
         ];

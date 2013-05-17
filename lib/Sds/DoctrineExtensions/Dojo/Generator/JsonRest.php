@@ -19,7 +19,7 @@ class JsonRest extends AbstractDojoGenerator
 
     const event = 'generatorDojoJsonRest';
 
-    public static function getStaticSubscribedEvents(){
+    public function getSubscribedEvents(){
         return [
             self::event,
         ];

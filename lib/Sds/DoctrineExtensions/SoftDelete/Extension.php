@@ -17,25 +17,29 @@ use Sds\DoctrineExtensions\AbstractExtension;
 class Extension extends AbstractExtension
 {
 
-    protected $subscribers = [
-        'Sds\DoctrineExtensions\SoftDelete\MainSubscriber',
-        'Sds\DoctrineExtensions\SoftDelete\StampSubscriber',
-        'Sds\DoctrineExtensions\SoftDelete\AnnotationSubscriber',
-        'Sds\DoctrineExtensions\SoftDelete\AccessControl\SoftDeleteSubscriber'
-    ];
-
     protected $filters = [
         'softDelete' => 'Sds\DoctrineExtensions\SoftDelete\Filter\SoftDelete'
     ];
 
-    protected $defaultServiceManagerConfig = [
+    protected $subscribers = [
+        'subscriber.softdelete.mainsubscriber',
+        'subscriber.softdelete.stampsubscriber',
+        'subscriber.softdelete.annotationsubscriber',
+        'subscriber.softdelete.softdeletesubscriber'
+    ];
+
+    protected $serviceManagerConfig = [
         'invokables' => [
-            'softDeleter' => 'Sds\DoctrineExtensions\SoftDelete\SoftDeleter'
+            'softDeleter' => 'Sds\DoctrineExtensions\SoftDelete\SoftDeleter',
+            'subscriber.softdelete.mainsubscriber' => 'Sds\DoctrineExtensions\SoftDelete\MainSubscriber',
+            'subscriber.softdelete.stampsubscriber' => 'Sds\DoctrineExtensions\SoftDelete\StampSubscriber',
+            'subscriber.softdelete.annotationsubscriber' => 'Sds\DoctrineExtensions\SoftDelete\AnnotationSubscriber',
+            'subscriber.softdelete.softdeletesubscriber' => 'Sds\DoctrineExtensions\SoftDelete\AccessControl\SoftDeleteSubscriber'
         ]
     ];
 
     protected $dependencies = [
-        'Sds\DoctrineExtensions\Annotation' => true,
-        'Sds\DoctrineExtensions\Identity' => true,
+        'extension.annotation' => true,
+        'extension.identity' => true
     ];
 }

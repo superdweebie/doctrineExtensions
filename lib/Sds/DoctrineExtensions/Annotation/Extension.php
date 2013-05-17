@@ -17,6 +17,12 @@ use Sds\DoctrineExtensions\AbstractExtension;
 class Extension extends AbstractExtension
 {
     protected $subscribers = [
-        'Sds\DoctrineExtensions\Annotation\MainSubscriber'
+        'subscriber.annotation.mainsubscriber'
+    ];
+
+    protected $serviceManagerConfig = [
+        'invokables' => [
+            'subscriber.annotation.mainsubscriber' => 'Sds\DoctrineExtensions\Annotation\MainSubscriber',
+        ],
     ];
 }

@@ -6,8 +6,7 @@
  */
 namespace Sds\DoctrineExtensions;
 
-use Sds\DoctrineExtensions\Exception;
-use Zend\Stdlib\ArrayUtils;
+use Zend\StdLib\AbstractOptions;
 
 /**
  * A base class which extensions configs must extend
@@ -15,7 +14,7 @@ use Zend\Stdlib\ArrayUtils;
  * @since   1.0
  * @author  Tim Roediger <superdweebie@gmail.com>
  */
-abstract class AbstractExtension {
+abstract class AbstractExtension extends AbstractOptions {
 
     protected $documents = [];
 
@@ -26,8 +25,6 @@ abstract class AbstractExtension {
     protected $cliCommands = [];
 
     protected $cliHelpers = [];
-
-    protected $defaultServiceManagerConfig = [];
 
     protected $serviceManagerConfig = [];
 
@@ -40,7 +37,7 @@ abstract class AbstractExtension {
     protected $dependencies = [];
 
     public function getServiceManagerConfig() {
-        return ArrayUtils::merge($this->defaultServiceManagerConfig, $this->serviceManagerConfig);
+        return $this->serviceManagerConfig;
     }
 
     public function setServiceManagerConfig($serviceManagerConfig) {
@@ -101,48 +98,5 @@ abstract class AbstractExtension {
      */
     public function setDependencies(array $dependencies) {
         $this->dependencies = $dependencies;
-    }
-
-    /**
-     * @param  array|Traversable|null $options
-     * @return AbstractOptions
-     * @throws Exception\InvalidArgumentException
-     */
-    public function __construct(array $options = null)
-    {
-        if (null !== $options) {
-            $this->setFromArray($options);
-        }
-    }
-
-    /**
-     * @param  array|Traversable $options
-     * @return void
-     */
-    public function setFromArray($options)
-    {
-        if (!is_array($options) && !$options instanceof Traversable) {
-            throw new Exception\InvalidArgumentException(sprintf(
-                'Options provided to %s must be an array or Traversable',
-                __METHOD__
-            ));
-        }
-
-        foreach ($options as $key => $value) {
-            $this->__set($key, $value);
-        }
-    }
-
-    /**
-     * @param string $key
-     * @param mixed $value
-     * @return void
-     */
-    public function __set($key, $value)
-    {
-        $setter = 'set' . ucfirst($key);
-        if (method_exists($this, $setter)){
-            $this->{$setter}($value);
-        }
     }
 }

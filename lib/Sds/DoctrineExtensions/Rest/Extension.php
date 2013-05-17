@@ -17,12 +17,13 @@ use Sds\DoctrineExtensions\AbstractExtension;
 class Extension extends AbstractExtension {
 
     protected $subscribers = [
-        'Sds\DoctrineExtensions\Rest\AnnotationSubscriber'
+        'subscriber.rest.annotationsubscriber'
     ];
 
-    protected $defaultServiceManagerConfig = [
+    protected $serviceManagerConfig = [
         'invokables' => [
-            'endpointMap' => 'Sds\DoctrineExtensions\Rest\EndpointMap'
+            'endpointMap' => 'Sds\DoctrineExtensions\Rest\EndpointMap',
+            'subscriber.rest.annotationsubscriber' => 'Sds\DoctrineExtensions\Rest\AnnotationSubscriber'
         ]
     ];
 
@@ -31,6 +32,7 @@ class Extension extends AbstractExtension {
      * @var array
      */
     protected $dependencies = array(
-        'Sds\DoctrineExtensions\Annotation' => true
+        'extension.annotation' => true,
+        'extension.reference' => true
     );
 }

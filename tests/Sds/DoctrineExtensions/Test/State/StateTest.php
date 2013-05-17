@@ -2,6 +2,7 @@
 
 namespace Sds\DoctrineExtensions\Test\State;
 
+use Sds\DoctrineExtensions\Manifest;
 use Sds\DoctrineExtensions\State\Events;
 use Sds\DoctrineExtensions\Test\BaseTest;
 use Sds\DoctrineExtensions\Test\State\TestAsset\Document\Simple;
@@ -11,19 +12,22 @@ class StateTest extends BaseTest {
 
     public function setUp(){
 
-        parent::setUp();
+        $manifest = new Manifest([
+            'documents' => [
+                __NAMESPACE__ . '\TestAsset\Document' => __DIR__ . '/TestAsset/Document'
+            ],
+            'extension_configs' => [
+                'extension.state' => true
+            ],
+            'document_manager' => 'testing.documentmanager',
+            'service_manager_config' => [
+                'factories' => [
+                    'testing.documentmanager' => 'Sds\DoctrineExtensions\Test\TestAsset\DocumentManagerFactory',
+                ]
+            ]
+        ]);
 
-        $manifest = $this->getManifest(['extensionConfigs' => ['Sds\DoctrineExtensions\State' => true]]);
-
-        $this->configDoctrine(
-            array_merge(
-                $manifest->getDocuments(),
-                array('Sds\DoctrineExtensions\Test\State\TestAsset\Document' => __DIR__ . '/TestAsset/Document')
-            ),
-            $manifest->getFilters(),
-            $manifest->getSubscribers()
-        );
-        $manifest->setDocumentManagerService($this->documentManager)->bootstrapped();
+        $this->documentManager = $manifest->getServiceManager()->get('testing.documentmanager');
     }
 
     public function testBasicFunction(){

@@ -10,7 +10,6 @@ use Doctrine\ODM\MongoDB\Event\LifecycleEventArgs;
 use Sds\DoctrineExtensions\AccessControl\AbstractAccessControlSubscriber;
 use Sds\DoctrineExtensions\AccessControl\EventArgs as AccessControlEventArgs;
 use Sds\DoctrineExtensions\Freeze\Events;
-use Zend\ServiceManager\ServiceLocatorInterface;
 
 /**
  *
@@ -26,7 +25,7 @@ class FreezeSubscriber extends AbstractAccessControlSubscriber
      *
      * @return array
      */
-    public static function getStaticSubscribedEvents(){
+    public function getSubscribedEvents(){
         return [
             Events::preFreeze,
             Events::preThaw

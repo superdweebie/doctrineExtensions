@@ -24,6 +24,10 @@ class AccessController implements ServiceLocatorAwareInterface, DocumentManagerA
     use ServiceLocatorAwareTrait;
     use DocumentManagerAwareTrait;
 
+    const owner = 'owner';
+    const creator = 'creator';
+    const updater = 'updater';
+
     protected $permissions = [];
 
     protected $roles;
@@ -55,6 +59,25 @@ class AccessController implements ServiceLocatorAwareInterface, DocumentManagerA
             $this->permissions[$metadata->name] = [];
         }
 
+        $roles = $this->getRoles();
+        if (isset($document) && $identityName = $this->getIdentityName()){
+            if (isset($metadata->owner) &&
+                $metadata->reflFields[$metadata->owner]->getValue($document) == $identityName
+            ){
+                $roles[] = self::owner;
+            }
+            if (isset($metadata->stamp) && isset($metadata->stamp['createdBy']) &&
+                $metadata->reflFields[$metadata->stamp['createdBy']]->getValue($document) == $identityName
+            ){
+                $roles[] = self::creator;
+            }
+            if (isset($metadata->stamp) && isset($metadata->stamp['updatedBy']) &&
+                $metadata->reflFields[$metadata->stamp['updatedBy']]->getValue($document) == $identityName
+            ){
+                $roles[] = self::updater;
+            }
+        }
+
         foreach($metadata->permissions as $index => $permissionMetadata){
 
             if ( !isset($this->permissions[$metadata->name][$index])){
@@ -63,7 +86,7 @@ class AccessController implements ServiceLocatorAwareInterface, DocumentManagerA
             }
 
             $permission = $this->permissions[$metadata->name][$index];
-            $newResult = $permission->isAllowed($this->getRoles(), $action);
+            $newResult = $permission->isAllowed($roles, $action);
             $isAllowed = $newResult->getIsAllowed();
             if ( ! isset($isAllowed)){
                 continue;
@@ -108,8 +131,8 @@ class AccessController implements ServiceLocatorAwareInterface, DocumentManagerA
     protected function getRoles($flush = false){
 
         if (!isset($this->roles) || $flush){
-            if ($this->serviceLocator->has('Sds\DoctrineExtensions\Identity') &&
-                $identity = $this->serviceLocator->get('Sds\DoctrineExtensions\Identity')
+            if ($this->serviceLocator->has('identity') &&
+                $identity = $this->serviceLocator->get('identity')
             ){
                 if ($identity instanceof RoleAwareIdentityInterface){
                     $this->roles = $identity->getRoles();
@@ -121,5 +144,13 @@ class AccessController implements ServiceLocatorAwareInterface, DocumentManagerA
             }
         }
         return $this->roles;
+    }
+
+    protected function getIdentityName(){
+        if ($this->serviceLocator->has('identity') &&
+            $identity = $this->serviceLocator->get('identity')
+        ){
+            return $identity->getIdentityName();
+        }
     }
 }

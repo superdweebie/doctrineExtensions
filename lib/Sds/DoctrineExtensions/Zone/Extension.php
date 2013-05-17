@@ -18,7 +18,13 @@ class Extension extends AbstractExtension
 {
 
     protected $subscribers = [
-        'Sds\DoctrineExtensions\Zone\AnnotationSubscriber'
+        'subscriber.zone.annotationsubscriber'
+    ];
+
+    protected $serviceManagerConfig = [
+        'invokables' => [
+            'subscriber.zone.annotationsubscriber' => 'Sds\DoctrineExtensions\Zone\AnnotationSubscriber'
+        ]
     ];
 
     protected $filters = [
@@ -26,6 +32,6 @@ class Extension extends AbstractExtension
     ];
 
     protected $dependencies = [
-        'Sds\DoctrineExtensions\Annotation' => true,
+        'extension.annotation' => true,
     ];
 }

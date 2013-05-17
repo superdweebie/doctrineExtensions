@@ -25,5 +25,6 @@ trait IdentityTrait {
 
     public function setIdentityName($identityName) {
         $this->identityName = (string) $identityName;
+        return $this;
     }
 }

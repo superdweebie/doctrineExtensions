@@ -3,8 +3,10 @@
 namespace Sds\DoctrineExtensions\Test\Freeze;
 
 use Sds\DoctrineExtensions\Freeze\Events;
+use Sds\DoctrineExtensions\Manifest;
 use Sds\DoctrineExtensions\Test\BaseTest;
 use Sds\DoctrineExtensions\Test\Freeze\TestAsset\Document\AccessControlled;
+use Sds\DoctrineExtensions\Test\TestAsset\RoleAwareIdentity;
 
 class AccessControlThawDenyTest extends BaseTest {
 
@@ -12,25 +14,28 @@ class AccessControlThawDenyTest extends BaseTest {
 
     public function setUp(){
 
-        parent::setUp();
+        $manifest = new Manifest([
+            'documents' => [
+                __NAMESPACE__ . '\TestAsset\Document' => __DIR__ . '/TestAsset/Document'
+            ],
+            'extension_configs' => [
+                'extension.freeze' => true,
+                'extension.accessControl' => true
+            ],
+            'document_manager' => 'testing.documentmanager',
+            'service_manager_config' => [
+                'factories' => [
+                    'testing.documentmanager' => 'Sds\DoctrineExtensions\Test\TestAsset\DocumentManagerFactory',
+                    'identity' => function(){
+                        $identity = new RoleAwareIdentity();
+                        $identity->setIdentityName('toby')->addRole('user');
+                        return $identity;
+                    }
+                ]
+            ]
+        ]);
 
-        $manifest = $this->getManifest(['extensionConfigs' => [
-            'Sds\DoctrineExtensions\Freeze' => true,
-            'Sds\DoctrineExtensions\AccessControl' => true
-        ]]);
-
-        $this->configIdentity(true);
-        $this->identity->addRole('user');
-
-        $this->configDoctrine(
-            array_merge(
-                $manifest->getDocuments(),
-                array('Sds\DoctrineExtensions\Test\Freeze\TestAsset\Document' => __DIR__ . '/TestAsset/Document')
-            ),
-            $manifest->getFilters(),
-            $manifest->getSubscribers()
-        );
-        $manifest->setDocumentManagerService($this->documentManager)->bootstrapped();
+        $this->documentManager = $manifest->getServiceManager()->get('testing.documentmanager');
         $this->freezer = $manifest->getServiceManager()->get('freezer');
     }
 

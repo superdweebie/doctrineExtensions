@@ -2,7 +2,7 @@
 
 namespace Sds\DoctrineExtensions\Test\Dojo;
 
-use Sds\DoctrineExtensions\Generator\Generator;
+use Sds\DoctrineExtensions\Manifest;
 use Sds\DoctrineExtensions\Test\BaseTest;
 
 class DojoTest extends BaseTest {
@@ -12,27 +12,31 @@ class DojoTest extends BaseTest {
     protected $path;
 
     public function setUp(){
-        parent::setUp();
 
         $this->path = __DIR__ . '/../../../../Dojo';
 
-        $manifest = $this->getManifest(['extensionConfigs' => ['Sds\DoctrineExtensions\Dojo' => [
-            'persistToFile' => true,
-            'filePaths' => [
-                ['filter' => '', 'path' => $this->path]
+        $manifest = new Manifest([
+            'documents' => [
+                __NAMESPACE__ . '\TestAsset\Document' => __DIR__ . '/TestAsset/Document'
+            ],
+            'extension_configs' => [
+                'extension.dojo' => [
+                    'persist_to_file' => true,
+                    'file_paths' => [[
+                        'filter' => '',
+                        'path' => $this->path
+                    ]]
+                ],
+            ],
+            'document_manager' => 'testing.documentmanager',
+            'service_manager_config' => [
+                'factories' => [
+                    'testing.documentmanager' => 'Sds\DoctrineExtensions\Test\TestAsset\DocumentManagerFactory',
+                ]
             ]
-        ]]]);
+       ]);
 
-        $this->configDoctrine(
-            array_merge(
-                $manifest->getDocuments(),
-                array('Sds\DoctrineExtensions\Test\Dojo\TestAsset\Document' => __DIR__ . '/TestAsset/Document')
-            ),
-            $manifest->getFilters(),
-            $manifest->getSubscribers()
-        );
-        $manifest->setDocumentManagerService($this->documentManager)->bootstrapped();
-        $this->generator = $manifest->getServiceManager()->get('generator');
+       $this->generator = $manifest->getServiceManager()->get('generator');
     }
 
     public function testInputGenerator(){

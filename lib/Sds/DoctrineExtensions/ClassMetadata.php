@@ -39,6 +39,9 @@ class ClassMetadata extends DoctrineClassMetadata
         if (isset($this->freeze)){
             $serialized[] = 'freeze';
         }
+        if (isset($this->owner)){
+            $serialized[] = 'owner';
+        }        
         if (isset($this->permissions)){
             $serialized[] = 'permissions';
         }

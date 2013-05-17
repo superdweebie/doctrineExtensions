@@ -21,7 +21,7 @@ class StampSubscriber extends AbstractStampSubscriber {
      *
      * @return array
      */
-    public static function getStaticSubscribedEvents() {
+    public function getSubscribedEvents() {
         return [
             Events::postFreeze,
             Events::postThaw

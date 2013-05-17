@@ -42,5 +42,6 @@ trait CredentialTrait {
      */
     public function setCredential($plaintext) {
         $this->credential = (string) $plaintext;
+        return $this;
     }
 }

@@ -2,6 +2,7 @@
 
 namespace Sds\DoctrineExtensions\Test\Zone;
 
+use Sds\DoctrineExtensions\Manifest;
 use Sds\DoctrineExtensions\Test\BaseTest;
 use Sds\DoctrineExtensions\Test\Zone\TestAsset\Document\Simple;
 
@@ -9,18 +10,22 @@ class ZoneTest extends BaseTest {
 
     public function setUp(){
 
-        parent::setUp();
-        $manifest = $this->getManifest(['extensionConfigs' => ['Sds\DoctrineExtensions\Zone' => true]]);
+        $manifest = new Manifest([
+            'documents' => [
+                __NAMESPACE__ . '\TestAsset\Document' => __DIR__ . '/TestAsset/Document'
+            ],
+            'extension_configs' => [
+                'extension.zone' => true
+            ],
+            'document_manager' => 'testing.documentmanager',
+            'service_manager_config' => [
+                'factories' => [
+                    'testing.documentmanager' => 'Sds\DoctrineExtensions\Test\TestAsset\DocumentManagerFactory',
+                ]
+            ]
+        ]);
 
-        $this->configDoctrine(
-            array_merge(
-                $manifest->getDocuments(),
-                ['Sds\DoctrineExtensions\Test\Zone\TestAsset\Document' => __DIR__ . '/TestAsset/Document']
-            ),
-            $manifest->getFilters(),
-            $manifest->getSubscribers()
-        );
-        $manifest->setDocumentManagerService($this->documentManager)->bootstrapped();
+        $this->documentManager = $manifest->getServiceManager()->get('testing.documentmanager');
     }
 
     public function testBasicFunction(){

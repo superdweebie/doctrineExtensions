@@ -17,8 +17,15 @@ use Sds\DoctrineExtensions\AbstractExtension;
 class Extension extends AbstractExtension {
 
     protected $subscribers = [
-        'Sds\DoctrineExtensions\Crypt\MainSubscriber',
-        'Sds\DoctrineExtensions\Crypt\AnnotationSubscriber'
+        'subscriber.crypt.mainsubscriber',
+        'subscriber.crypt.annotationsubscriber'
+    ];
+
+    protected $serviceManagerConfig = [
+        'invokables' => [
+            'subscriber.crypt.mainsubscriber' => 'Sds\DoctrineExtensions\Crypt\MainSubscriber',
+            'subscriber.crypt.annotationsubscriber' => 'Sds\DoctrineExtensions\Crypt\AnnotationSubscriber'
+        ]
     ];
 
     /**
@@ -26,6 +33,6 @@ class Extension extends AbstractExtension {
      * @var array
      */
     protected $dependencies = [
-        'Sds\DoctrineExtensions\Annotation' => true
+        'extension.annotation' => true
     ];
 }

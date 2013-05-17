@@ -6,7 +6,7 @@
  */
 namespace Sds\DoctrineExtensions\State\AccessControl;
 
-use Sds\DoctrineExtensions\AbstractLazySubscriber;
+use Doctrine\Common\EventSubscriber;
 use Sds\DoctrineExtensions\Annotation\Annotations as Sds;
 use Sds\DoctrineExtensions\Annotation\AnnotationEventArgs;
 
@@ -15,13 +15,13 @@ use Sds\DoctrineExtensions\Annotation\AnnotationEventArgs;
  * @since   1.0
  * @author  Tim Roediger <superdweebie@gmail.com>
  */
-class StatePermissionSubscriber extends AbstractLazySubscriber {
+class StatePermissionSubscriber implements EventSubscriber {
 
     /**
      *
      * @return array
      */
-    public static function getStaticSubscribedEvents(){
+    public function getSubscribedEvents(){
         return [Sds\Permission\State::event];
     }
 

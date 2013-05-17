@@ -16,7 +16,42 @@ use Sds\DoctrineExtensions\AbstractExtension;
  */
 class Extension extends AbstractExtension {
 
-    protected $filePaths;
+    protected $subscribers = [
+        'subscriber.dojo.annotationSubscriber',
+        'subscriber.dojo.generator.form',
+        'subscriber.dojo.generator.input',
+        'subscriber.dojo.generator.multifieldvalidator',
+        'subscriber.dojo.generator.validator',
+        'subscriber.dojo.generator.model',
+        'subscriber.dojo.generator.modelvalidator',
+        'subscriber.dojo.generator.jsonrest',
+    ];
+
+    protected $serviceManagerConfig = [
+        'invokables' => [
+            'subscriber.dojo.annotationSubscriber' => 'Sds\DoctrineExtensions\Dojo\AnnotationSubscriber',
+            'subscriber.dojo.generator.form' => 'Sds\DoctrineExtensions\Dojo\Generator\Form',
+            'subscriber.dojo.generator.input' => 'Sds\DoctrineExtensions\Dojo\Generator\Input',
+            'subscriber.dojo.generator.multifieldvalidator' => 'Sds\DoctrineExtensions\Dojo\Generator\MultiFieldValidator',
+            'subscriber.dojo.generator.validator' => 'Sds\DoctrineExtensions\Dojo\Generator\Validator',
+            'subscriber.dojo.generator.model' => 'Sds\DoctrineExtensions\Dojo\Generator\Model',
+            'subscriber.dojo.generator.modelvalidator' => 'Sds\DoctrineExtensions\Dojo\Generator\ModelValidator',
+            'subscriber.dojo.generator.jsonrest' => 'Sds\DoctrineExtensions\Dojo\Generator\JsonRest',
+        ]
+    ];
+
+    /**
+     *
+     * @var array
+     */
+    protected $dependencies = array(
+        'extension.generator' => true,
+        'extension.rest' => true,
+        'extension.serializer' => true,
+        'extension.validator' => true,
+    );
+
+    protected $filePaths = [];
 
     protected $defaultMixins = [
         'model'                    => ['Sds/Mvc/BaseModel'],
@@ -41,18 +76,7 @@ class Extension extends AbstractExtension {
             'jsonRest'             => ['Sds/Mvc/JsonRest']
         ]
     ];
-
-    protected $subscribers = [
-        'Sds\DoctrineExtensions\Dojo\AnnotationSubscriber',
-        'Sds\DoctrineExtensions\Dojo\Generator\Form',
-        'Sds\DoctrineExtensions\Dojo\Generator\Input',
-        'Sds\DoctrineExtensions\Dojo\Generator\MultiFieldValidator',
-        'Sds\DoctrineExtensions\Dojo\Generator\Validator',
-        'Sds\DoctrineExtensions\Dojo\Generator\Model',
-        'Sds\DoctrineExtensions\Dojo\Generator\ModelValidator',
-        'Sds\DoctrineExtensions\Dojo\Generator\JsonRest',
-    ];
-
+    
     protected $persistToFile = false;
 
     /**
@@ -86,15 +110,4 @@ class Extension extends AbstractExtension {
     public function setPersistToFile($persistToFile) {
         $this->persistToFile = $persistToFile;
     }
-
-    /**
-     *
-     * @var array
-     */
-    protected $dependencies = array(
-        'Sds\DoctrineExtensions\Generator' => true,
-        'Sds\DoctrineExtensions\Rest' => true,
-        'Sds\DoctrineExtensions\Serializer' => true,
-        'Sds\DoctrineExtensions\Validator' => true,
-    );
 }

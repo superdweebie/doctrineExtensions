@@ -29,6 +29,7 @@ trait RoleAwareIdentityTrait {
      */
     public function setRoles(array $roles){
         $this->roles = $roles;
+        return $this;
     }
 
     /**
@@ -37,6 +38,7 @@ trait RoleAwareIdentityTrait {
      */
     public function addRole($role){
         $this->roles[] = (string) $role;
+        return $this;
     }
 
     /**

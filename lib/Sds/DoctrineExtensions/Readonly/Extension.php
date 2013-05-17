@@ -17,8 +17,15 @@ use Sds\DoctrineExtensions\AbstractExtension;
 class Extension extends AbstractExtension {
 
     protected $subscribers = [
-        'Sds\DoctrineExtensions\Readonly\MainSubscriber',
-        'Sds\DoctrineExtensions\Readonly\AnnotationSubscriber',
+        'subscriber.readonly.mainsubscriber',
+        'subscriber.readonly.annotationsubscriber',
+    ];
+
+    protected $serviceManagerConfig = [
+        'invokables' => [
+            'subscriber.readonly.mainsubscriber' => 'Sds\DoctrineExtensions\Readonly\MainSubscriber',
+            'subscriber.readonly.annotationsubscriber' => 'Sds\DoctrineExtensions\Readonly\AnnotationSubscriber',
+        ]
     ];
 
     /**
@@ -26,6 +33,6 @@ class Extension extends AbstractExtension {
      * @var array
      */
     protected $dependencies = [
-        'Sds\DoctrineExtensions\Annotation' => true,
+        'extension.annotation' => true,
     ];
 }

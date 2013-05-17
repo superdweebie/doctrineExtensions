@@ -18,7 +18,7 @@ class Model extends AbstractDojoGenerator
 
     const event = 'generatorDojoModel';
 
-    public static function getStaticSubscribedEvents(){
+    public function getSubscribedEvents(){
         return [
             self::event,
         ];

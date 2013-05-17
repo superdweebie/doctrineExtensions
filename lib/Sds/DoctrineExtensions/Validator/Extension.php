@@ -18,17 +18,19 @@ class Extension extends AbstractExtension
 {
 
     protected $subscribers = [
-        'Sds\DoctrineExtensions\Validator\MainSubscriber',
-        'Sds\DoctrineExtensions\Validator\AnnotationSubscriber'
+        'subscriber.validator.mainsubscriber',
+        'subscriber.validator.annotationsubscriber'
     ];
 
     protected $dependencies = [
-        'Sds\DoctrineExtensions\Annotation' => true,
+        'extension.annotation' => true,
     ];
 
-    protected $defaultServiceManagerConfig = [
+    protected $serviceManagerConfig = [
         'invokables' => [
-            'documentValidator' => 'Sds\DoctrineExtensions\Validator\DocumentValidator'
+            'documentValidator' => 'Sds\DoctrineExtensions\Validator\DocumentValidator',
+            'subscriber.validator.mainsubscriber' => 'Sds\DoctrineExtensions\Validator\MainSubscriber',
+            'subscriber.validator.annotationsubscriber' => 'Sds\DoctrineExtensions\Validator\AnnotationSubscriber'
         ]
     ];
 }

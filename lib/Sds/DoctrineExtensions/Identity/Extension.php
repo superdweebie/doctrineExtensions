@@ -18,12 +18,20 @@ class Extension extends AbstractExtension
 {
 
     protected $subscribers = [
-        'Sds\DoctrineExtensions\Identity\MainSubscriber',
-        'Sds\DoctrineExtensions\Identity\AnnotationSubscriber',
-        'Sds\DoctrineExtensions\Identity\AccessControl\UpdateRolesSubscriber'
+        'subscriber.identity.mainsubscriber',
+        'subscriber.identity.annotationsubscriber',
+        'subscriber.identity.updateRolesSubscriber'
+    ];
+
+    protected $serviceManagerConfig = [
+        'invokables' => [
+            'subscriber.identity.mainsubscriber' => 'Sds\DoctrineExtensions\Identity\MainSubscriber',
+            'subscriber.identity.annotationsubscriber' => 'Sds\DoctrineExtensions\Identity\AnnotationSubscriber',
+            'subscriber.identity.updateRolesSubscriber' => 'Sds\DoctrineExtensions\Identity\AccessControl\UpdateRolesSubscriber',
+        ]
     ];
 
     protected $dependencies = [
-        'Sds\DoctrineExtensions\Annotation' => true,
+        'extension.annotation' => true,
     ];
 }

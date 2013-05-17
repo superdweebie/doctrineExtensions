@@ -22,14 +22,14 @@ class MainSubscriber extends AbstractAccessControlSubscriber {
      *
      * @return array
      */
-    public static function getStaticSubscribedEvents(){
+    public function getSubscribedEvents(){
         return [
-            ManifestEvents::onBootstrapped,
+            ManifestEvents::onBootstrap,
             ODMEvents::onFlush
         ];
     }
 
-    public function onBootstrapped()
+    public function onBootstrap()
     {
         $this->getAccessController()->enableReadFilter();
     }

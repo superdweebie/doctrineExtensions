@@ -21,7 +21,7 @@ class MainSubscriber extends AbstractStampSubscriber {
      *
      * @return array
      */
-    public static function getStaticSubscribedEvents() {
+    public function getSubscribedEvents() {
         return [
             ODMEvents::prePersist,
             ODMEvents::preUpdate

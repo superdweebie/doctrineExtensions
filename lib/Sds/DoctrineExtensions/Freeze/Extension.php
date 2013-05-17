@@ -17,24 +17,28 @@ use Sds\DoctrineExtensions\AbstractExtension;
 class Extension extends AbstractExtension
 {
     protected $dependencies = [
-        'Sds\DoctrineExtensions\Annotation' => true,
-        'Sds\DoctrineExtensions\Identity' => true,
+        'extension.annotation' => true,
+        'extension.identity' => true,
     ];
 
     protected $subscribers = [
-        'Sds\DoctrineExtensions\Freeze\MainSubscriber',
-        'Sds\DoctrineExtensions\Freeze\StampSubscriber',
-        'Sds\DoctrineExtensions\Freeze\AnnotationSubscriber',
-        'Sds\DoctrineExtensions\Freeze\AccessControl\FreezeSubscriber'
+        'subscriber.freeze.mainsubscriber',
+        'subscriber.freeze.stampsubscriber',
+        'subscriber.freeze.annotationsubscriber',
+        'subscriber.freeze.freezesubscriber'
     ];
 
     protected $filters = [
         'freeze' => 'Sds\DoctrineExtensions\Freeze\Filter\Freeze'
     ];
 
-    protected $defaultServiceManagerConfig = [
+    protected $serviceManagerConfig = [
         'invokables' => [
-            'freezer' => 'Sds\DoctrineExtensions\Freeze\Freezer'
+            'freezer' => 'Sds\DoctrineExtensions\Freeze\Freezer',
+            'subscriber.freeze.mainsubscriber' => 'Sds\DoctrineExtensions\Freeze\MainSubscriber',
+            'subscriber.freeze.stampsubscriber' => 'Sds\DoctrineExtensions\Freeze\StampSubscriber',
+            'subscriber.freeze.annotationsubscriber' => 'Sds\DoctrineExtensions\Freeze\AnnotationSubscriber',
+            'subscriber.freeze.freezesubscriber' => 'Sds\DoctrineExtensions\Freeze\AccessControl\FreezeSubscriber'
         ]
     ];
 }

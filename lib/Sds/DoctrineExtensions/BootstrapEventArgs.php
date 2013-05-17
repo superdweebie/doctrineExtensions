@@ -6,18 +6,12 @@
  */
 namespace Sds\DoctrineExtensions;
 
-use Doctrine\Common\EventSubscriber;
+use Doctrine\Common\EventArgs as BaseEventArgs;
 
 /**
  *
  * @since   1.0
  * @author  Tim Roediger <superdweebie@gmail.com>
  */
-interface LazySubscriberInterface extends EventSubscriber {
-
-    /**
-     *
-     * @return array
-     */
-    public static function getStaticSubscribedEvents();
+class BootstrapEventArgs extends BaseEventArgs {
 }

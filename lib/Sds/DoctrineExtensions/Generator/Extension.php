@@ -16,24 +16,17 @@ use Sds\DoctrineExtensions\AbstractExtension;
  */
 class Extension extends AbstractExtension {
 
-    protected $defaultServiceManagerConfig = [
+    protected $serviceManagerConfig = [
         'invokables' => [
             'resourceMap' => 'Sds\DoctrineExtensions\Generator\ResourceMap',
-            'generator' => 'Sds\DoctrineExtensions\Generator\Generator'
+            'cli.generate' => 'Sds\DoctrineExtensions\Generator\Console\Command\GenerateCommand'
+        ],
+        'factories' => [
+            'generator' => 'Sds\DoctrineExtensions\Generator\GeneratorFactory'
         ]
     ];
 
     protected $cliCommands = [
-        'Sds\DoctrineExtensions\Generator\Console\Command\GenerateCommand'
+        'generate'
     ];
-
-    public function getCliCommands(){
-        foreach ($this->cliCommands as $key => $command){
-            if (is_string($command)){
-                $this->cliCommands[$key] = new $command;
-            }
-        }
-
-        return $this->cliCommands;
-    }
 }

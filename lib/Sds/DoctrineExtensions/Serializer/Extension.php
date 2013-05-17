@@ -7,7 +7,6 @@
 namespace Sds\DoctrineExtensions\Serializer;
 
 use Sds\DoctrineExtensions\AbstractExtension;
-use Zend\StdLib\ArrayUtils;
 
 /**
  * Defines the resouces this extension requires
@@ -18,64 +17,37 @@ use Zend\StdLib\ArrayUtils;
 class Extension extends AbstractExtension {
 
     protected $subscribers = [
-        'Sds\DoctrineExtensions\Serializer\AnnotationSubscriber'
+        'subscriber.serializer.annotation'
     ];
 
-    protected $defaultServiceManagerConfig = [
+    protected $serviceManagerConfig = [
+        'invokables' => [
+            'subscriber.serializer.annotation' => 'Sds\DoctrineExtensions\Serializer\AnnotationSubscriber',
+            'serializer.reference.refLazy'     => 'Sds\DoctrineExtensions\Serializer\Reference\RefLazy',
+            'serializer.reference.simpleLazy'  => 'Sds\DoctrineExtensions\Serializer\Reference\SimpleLazy',
+            'serializer.reference.eager'       => 'Sds\DoctrineExtensions\Serializer\Reference\Eager',
+            'serializer.type.dateToISO8601'    => 'Sds\DoctrineExtensions\Serializer\Type\DateToISO8601',
+            'serializer.type.dateToTimestamp'  => 'Sds\DoctrineExtensions\Serializer\Type\DateToTimestamp'
+        ],
         'factories' => [
-            'serializer' => 'Sds\DoctrineExtensions\Serializer\SerializerFactory'
+            'serializer' => 'Sds\DoctrineExtensions\Serializer\SerializerFactory',
         ]
     ];
 
     /** @var array */
     protected $dependencies = [
-        'Sds\DoctrineExtensions\Annotation' => true
+        'extension.annotation' => true
     ];
-
-    protected $defaultReferenceSerializerServiceConfig = [
-        'invokables' => [
-            'refLazyReferenceSerializer' => 'Sds\DoctrineExtensions\Serializer\Reference\RefLazy',
-            'simpleLazyReferenceSerializer' => 'Sds\DoctrineExtensions\Serializer\Reference\SimpleLazy',
-            'eagerReferenceSerializer' => 'Sds\DoctrineExtensions\Serializer\Reference\Eager',
-        ]
-    ];
-
-    protected $referenceSerializerServiceConfig = [];
-
-    protected $defaultTypeSerializerServiceConfig = [
-        'invokables' => [
-            'dateToISO8601Serializer' => 'Sds\DoctrineExtensions\Serializer\Type\DateToISO8601',
-            'dateToTimestamp' => 'Sds\DoctrineExtensions\Serializer\Type\DateToTimestamp'
-        ],
-    ];
-
-    protected $typeSerializerServiceConfig = [];
 
     /** @var array */
     protected $typeSerializers = [
-        'date' => 'dateToISO8601Serializer'
+        'date' => 'serializer.type.dateToISO8601'
     ];
 
     /** @var int */
     protected $maxNestingDepth = 1;
 
     protected $classNameField = '_className';
-
-    public function getReferenceSerializerServiceConfig() {
-        return ArrayUtils::merge($this->defaultReferenceSerializerServiceConfig, $this->referenceSerializerServiceConfig);
-    }
-
-    public function setReferenceSerializerServiceConfig(array $referenceSerializerServiceConfig) {
-        $this->referenceSerializerServiceConfig = $referenceSerializerServiceConfig;
-    }
-
-    public function getTypeSerializerServiceConfig() {
-        return ArrayUtils::merge($this->defaultTypeSerializerServiceConfig, $this->typeSerializerServiceConfig);
-    }
-
-    public function setTypeSerializerServiceConfig(array $typeSerializerServiceConfig) {
-        $this->typeSerializerServiceConfig = $typeSerializerServiceConfig;
-    }
 
     public function getTypeSerializers() {
         return $this->typeSerializers;

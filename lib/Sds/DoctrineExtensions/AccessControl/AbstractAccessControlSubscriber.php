@@ -6,7 +6,7 @@
  */
 namespace Sds\DoctrineExtensions\AccessControl;
 
-use Sds\DoctrineExtensions\AbstractLazySubscriber;
+use Doctrine\Common\EventSubscriber;
 use Zend\ServiceManager\ServiceLocatorAwareInterface;
 use Zend\ServiceManager\ServiceLocatorAwareTrait;
 
@@ -15,22 +15,19 @@ use Zend\ServiceManager\ServiceLocatorAwareTrait;
  * @since   1.0
  * @author  Tim Roediger <superdweebie@gmail.com>
  */
-abstract class AbstractAccessControlSubscriber extends AbstractLazySubscriber implements ServiceLocatorAwareInterface
+abstract class AbstractAccessControlSubscriber implements EventSubscriber, ServiceLocatorAwareInterface
 {
 
     use ServiceLocatorAwareTrait;
 
     protected $accessController;
 
-    protected $hasAccessController;
-
     protected function getAccessController(){
-        if (!isset($this->hasAccessController)){
-            $this->hasAccessController = $this->serviceLocator->has('accessController');
-            if ($this->hasAccessController){
+        if (!isset($this->accessController)){
+            if ($this->serviceLocator->has('accessController')){
                 $this->accessController = $this->serviceLocator->get('accessController');
             }
-        }       
+        }
         return $this->accessController;
     }
 }

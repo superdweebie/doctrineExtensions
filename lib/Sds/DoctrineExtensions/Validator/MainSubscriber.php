@@ -6,9 +6,9 @@
  */
 namespace Sds\DoctrineExtensions\Validator;
 
+use Doctrine\Common\EventSubscriber;
 use Doctrine\ODM\MongoDB\Event\OnFlushEventArgs;
 use Doctrine\ODM\MongoDB\Events as ODMEvents;
-use Sds\DoctrineExtensions\AbstractLazySubscriber;
 use Zend\ServiceManager\ServiceLocatorAwareInterface;
 use Zend\ServiceManager\ServiceLocatorAwareTrait;
 
@@ -17,7 +17,7 @@ use Zend\ServiceManager\ServiceLocatorAwareTrait;
  * @since   1.0
  * @author  Tim Roediger <superdweebie@gmail.com>
  */
-class MainSubscriber extends AbstractLazySubscriber implements ServiceLocatorAwareInterface {
+class MainSubscriber implements EventSubscriber, ServiceLocatorAwareInterface {
 
     use ServiceLocatorAwareTrait;
 
@@ -31,7 +31,7 @@ class MainSubscriber extends AbstractLazySubscriber implements ServiceLocatorAwa
      *
      * @return array
      */
-    public static function getStaticSubscribedEvents(){
+    public function getSubscribedEvents(){
         $events = [
             ODMEvents::onFlush
         ];

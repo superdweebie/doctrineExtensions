@@ -19,7 +19,7 @@ class Form extends AbstractDojoGenerator
 
     const event = 'generatorDojoForm';
 
-    public static function getStaticSubscribedEvents(){
+    public function getSubscribedEvents(){
         return [
             self::event,
         ];

@@ -6,7 +6,7 @@
  */
 namespace Sds\DoctrineExtensions\Dojo\Generator;
 
-use Sds\DoctrineExtensions\AbstractLazySubscriber;
+use Doctrine\Common\EventSubscriber;
 use Sds\DoctrineExtensions\Generator\GeneratorInterface;
 use Zend\Json\Expr;
 use Zend\Json\Json;
@@ -18,7 +18,7 @@ use Zend\ServiceManager\ServiceLocatorAwareTrait;
  * @since   1.0
  * @author  Tim Roediger <superdweebie@gmail.com>
  */
-abstract class AbstractDojoGenerator extends AbstractLazySubscriber implements GeneratorInterface, ServiceLocatorAwareInterface
+abstract class AbstractDojoGenerator implements EventSubscriber, GeneratorInterface, ServiceLocatorAwareInterface
 {
 
     use ServiceLocatorAwareTrait;
@@ -56,7 +56,7 @@ abstract class AbstractDojoGenerator extends AbstractLazySubscriber implements G
 
     public function getExtension(){
         if (!isset($this->extension)){
-            $this->extension = $this->serviceLocator->get('Sds\DoctrineExtensions\Dojo\Extension');
+            $this->extension = $this->serviceLocator->get('extension.dojo');
         }
         return $this->extension;
     }

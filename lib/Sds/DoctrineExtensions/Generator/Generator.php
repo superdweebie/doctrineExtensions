@@ -8,8 +8,7 @@ namespace Sds\DoctrineExtensions\Generator;
 
 use Sds\DoctrineExtensions\DocumentManagerAwareInterface;
 use Sds\DoctrineExtensions\DocumentManagerAwareTrait;
-use Zend\ServiceManager\ServiceLocatorAwareInterface;
-use Zend\ServiceManager\ServiceLocatorAwareTrait;
+
 
 /**
  * Generate file from mapping information.
@@ -17,17 +16,24 @@ use Zend\ServiceManager\ServiceLocatorAwareTrait;
  * @since   1.0
  * @author  Tim Roediger <superdweebie@gmail.com>
  */
-class Generator implements ServiceLocatorAwareInterface, DocumentManagerAwareInterface
+class Generator implements DocumentManagerAwareInterface
 {
-    use ServiceLocatorAwareTrait;
     use DocumentManagerAwareTrait;
 
     protected $cacheSalt = 'Sds\Generator_';
 
     protected $resourceMap;
 
-    public function canGenerate($resource){
-        return $this->getResourceMap()->has($resource);
+    public function getResourceMap() {
+        return $this->resourceMap;
+    }
+
+    public function setResourceMap(ResourceMap $resourceMap) {
+        $this->resourceMap = $resourceMap;
+    }
+
+    public function canGenerate($resourceName){
+        return $this->getResourceMap()->has($resourceName);
     }
 
     public function generate($resourceName){
@@ -60,12 +66,5 @@ class Generator implements ServiceLocatorAwareInterface, DocumentManagerAwareInt
         $cacheDriver->save($id, $resource->content);
 
         return $resource->content;
-    }
-
-    public function getResourceMap(){
-        if (!isset($this->resourceMap)){
-            $this->resourceMap = $this->serviceLocator->get('resourceMap');
-        }
-        return $this->resourceMap;
     }
 }

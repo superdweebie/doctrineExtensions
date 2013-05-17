@@ -1,7 +1,8 @@
 <?php
 
-namespace Sds\DoctrineExtensions\Test\Readonly;
+namespace Sds\DoctrineExtensions\Test\Rest;
 
+use Sds\DoctrineExtensions\Manifest;
 use Sds\DoctrineExtensions\Test\BaseTest;
 use Sds\DoctrineExtensions\Test\Rest\TestAsset\Document\Explicit;
 use Sds\DoctrineExtensions\Test\Rest\TestAsset\Document\Implicit;
@@ -10,18 +11,22 @@ class RestTest extends BaseTest {
 
     public function setUp(){
 
-        parent::setUp();
-        $manifest = $this->getManifest(['extensionConfigs' => ['Sds\DoctrineExtensions\Rest' => true]]);
+        $manifest = new Manifest([
+            'documents' => [
+                __NAMESPACE__ . '\TestAsset\Document' => __DIR__ . '/TestAsset/Document'
+            ],
+            'extension_configs' => [
+                'extension.rest' => true
+            ],
+            'document_manager' => 'testing.documentmanager',
+            'service_manager_config' => [
+                'factories' => [
+                    'testing.documentmanager' => 'Sds\DoctrineExtensions\Test\TestAsset\DocumentManagerFactory',
+                ]
+            ]
+        ]);
 
-        $this->configDoctrine(
-            array_merge(
-                $manifest->getDocuments(),
-                array('Sds\DoctrineExtensions\Test\Rest\TestAsset\Document' => __DIR__ . '/TestAsset/Document')
-            ),
-            $manifest->getFilters(),
-            $manifest->getSubscribers()
-        );
-        $manifest->setDocumentManagerService($this->documentManager)->bootstrapped();
+        $this->documentManager = $manifest->getServiceManager()->get('testing.documentmanager');
     }
 
     public function testExplicit(){

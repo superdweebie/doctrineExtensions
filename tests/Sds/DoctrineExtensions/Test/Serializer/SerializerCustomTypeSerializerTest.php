@@ -2,6 +2,7 @@
 
 namespace Sds\DoctrineExtensions\Test\Serializer;
 
+use Sds\DoctrineExtensions\Manifest;
 use Sds\DoctrineExtensions\Test\BaseTest;
 use Sds\DoctrineExtensions\Test\Serializer\TestAsset\Document\Flavour;
 
@@ -9,32 +10,29 @@ class SerializerCustomTypeSerializerTest extends BaseTest {
 
     public function setUp(){
 
-        parent::setUp();
-        $manifest = $this->getManifest([
-            'extensionConfigs' => [
-                'Sds\DoctrineExtensions\Serializer' => [
-                    'typeSerializers' => [
+        $manifest = new Manifest([
+            'documents' => [
+                __NAMESPACE__ . '\TestAsset\Document' => __DIR__ . '/TestAsset/Document'
+            ],
+            'extension_configs' => [
+                'extension.serializer' => [
+                    'type_serializers' => [
                         'string' => 'stringTypeSerializer'
-                    ],
-                    'typeSerializerServiceConfig' => [
-                        'invokables' => [
-                            'stringTypeSerializer' => 'Sds\DoctrineExtensions\Test\Serializer\TestAsset\StringSerializer'
-                        ]
-                    ],
+                    ]
+                ]
+            ],
+            'document_manager' => 'testing.documentmanager',
+            'service_manager_config' => [
+                'factories' => [
+                    'testing.documentmanager' => 'Sds\DoctrineExtensions\Test\TestAsset\DocumentManagerFactory',
                 ]
             ]
         ]);
 
-        $this->configDoctrine(
-            array_merge(
-                $manifest->getDocuments(),
-                array('Sds\DoctrineExtensions\Test\Serializer\TestAsset\Document' => __DIR__ . '/TestAsset/Document')
-            ),
-            $manifest->getFilters(),
-            $manifest->getSubscribers()
-        );
-        $manifest->setDocumentManagerService($this->documentManager)->bootstrapped();
+        $manifest->getServiceManager()->setInvokableClass('stringTypeSerializer', 'Sds\DoctrineExtensions\Test\Serializer\TestAsset\StringSerializer');
+        $this->documentManager = $manifest->getServiceManager()->get('testing.documentmanager');
         $this->serializer = $manifest->getServiceManager()->get('serializer');
+
     }
 
     public function testSerializer(){

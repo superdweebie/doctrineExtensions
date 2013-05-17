@@ -2,6 +2,7 @@
 
 namespace Sds\DoctrineExtensions\Test\Validator;
 
+use Sds\DoctrineExtensions\Manifest;
 use Sds\DoctrineExtensions\Validator\Events;
 use Sds\DoctrineExtensions\Test\BaseTest;
 use Sds\DoctrineExtensions\Test\Validator\TestAsset\Document\Simple;
@@ -12,18 +13,22 @@ class ValidatorTest extends BaseTest {
 
     public function setUp(){
 
-        parent::setUp();
+        $manifest = new Manifest([
+            'documents' => [
+                __NAMESPACE__ . '\TestAsset\Document' => __DIR__ . '/TestAsset/Document'
+            ],
+            'extension_configs' => [
+                'extension.validator' => true
+            ],
+            'document_manager' => 'testing.documentmanager',
+            'service_manager_config' => [
+                'factories' => [
+                    'testing.documentmanager' => 'Sds\DoctrineExtensions\Test\TestAsset\DocumentManagerFactory',
+                ]
+            ]
+        ]);
 
-        $manifest = $this->getManifest(['extensionConfigs' => ['Sds\DoctrineExtensions\Validator' => true]]);
-        $this->configDoctrine(
-            array_merge(
-                $manifest->getDocuments(),
-                array(__NAMESPACE__ . '\TestAsset\Document' => __DIR__ . '/TestAsset/Document')
-            ),
-            $manifest->getFilters(),
-            $manifest->getSubscribers()
-        );
-        $manifest->setDocumentManagerService($this->documentManager)->bootstrapped();
+        $this->documentManager = $manifest->getServiceManager()->get('testing.documentmanager');
 
         $eventManager = $this->documentManager->getEventManager();
         $eventManager->addEventListener(Events::invalidCreate, $this);

@@ -13,8 +13,6 @@ use Doctrine\ODM\MongoDB\Proxy\Proxy;
 use Sds\DoctrineExtensions\DocumentManagerAwareInterface;
 use Sds\DoctrineExtensions\DocumentManagerAwareTrait;
 use Sds\DoctrineExtensions\Exception;
-use Zend\ServiceManager\Config as ServiceManagerConfig;
-use Zend\ServiceManager\ServiceManager;
 use Zend\ServiceManager\ServiceLocatorAwareInterface;
 use Zend\ServiceManager\ServiceLocatorAwareTrait;
 
@@ -38,7 +36,7 @@ class Serializer implements ServiceLocatorAwareInterface, DocumentManagerAwareIn
     const UNSERIALIZE_PATCH = 'unserliaze_patch';
 
     /** @var array */
-    protected $typeSerializers =[];
+    protected $typeSerializers = [];
 
     /** @var int */
     protected $maxNestingDepth;
@@ -47,16 +45,6 @@ class Serializer implements ServiceLocatorAwareInterface, DocumentManagerAwareIn
     protected $nestingDepth;
 
     protected $classNameField;
-
-    protected $referenceSerializers = [];
-
-    protected $referenceSerializerServiceConfig;
-
-    protected $referenceSerializerService;
-
-    protected $typeSerializerServiceConfig;
-
-    protected $typeSerializerService;
 
     public function setTypeSerializers(array $typeSerializers) {
         $this->typeSerializers = $typeSerializers;
@@ -71,14 +59,6 @@ class Serializer implements ServiceLocatorAwareInterface, DocumentManagerAwareIn
 
     public function setClassNameField($classNameField) {
         $this->classNameField = (string) $classNameField;
-    }
-
-    public function setReferenceSerializerServiceConfig(array $referenceSerializerServiceConfig) {
-        $this->referenceSerializerServiceConfig = $referenceSerializerServiceConfig;
-    }
-
-    public function setTypeSerializerServiceConfig(array $typeSerializerServiceConfig) {
-        $this->typeSerializerServiceConfig = $typeSerializerServiceConfig;
     }
 
     /**
@@ -366,37 +346,13 @@ class Serializer implements ServiceLocatorAwareInterface, DocumentManagerAwareIn
         if (isset($metadata->serializer['fields'][$field]['referenceSerializer'])){
             $name = $metadata->serializer['fields'][$field]['referenceSerializer'];
         } else {
-            $name = 'refLazyReferenceSerializer';
+            $name = 'serializer.reference.refLazy';
         }
-        if ( ! isset($this->referenceSerializers[$name])){
-            if ( ! isset($this->referenceSerializerService)){
-                $this->referenceSerializerService = new ServiceManager(
-                    new ServiceManagerConfig(
-                        $this->referenceSerializerServiceConfig
-                    )
-                );
-            }
-            $referenceSerializer = $this->referenceSerializerService->get($name);
-            $this->serviceLocator->initializeInstance($referenceSerializer);
-            $this->referenceSerializers[$name] = $referenceSerializer;
-        }
-        return $this->referenceSerializers[$name];
+        return $this->serviceLocator->get($name);
     }
 
     protected function getTypeSerializer($type){
-        if (is_string($this->typeSerializers[$type])){
-            if ( ! isset($this->typeSerializerService)){
-                $this->typeSerializerService = new ServiceManager(
-                    new ServiceManagerConfig(
-                        $this->typeSerializerServiceConfig
-                    )
-                );
-            }
-            $typeSerializer = $this->typeSerializerService->get($this->typeSerializers[$type]);
-            $this->serviceLocator->initializeInstance($typeSerializer);
-            $this->typeSerializers[$type] = $typeSerializer;
-        }
-        return $this->typeSerializers[$type];
+        return $this->serviceLocator->get($this->typeSerializers[$type]);
     }
 
     /**
