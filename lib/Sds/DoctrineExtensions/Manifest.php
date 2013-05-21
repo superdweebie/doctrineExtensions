@@ -144,6 +144,9 @@ class Manifest extends AbstractExtension {
         $serviceManagerConfig = new Config($this->serviceManagerConfig);
         $serviceManagerConfig->configureServiceManager($serviceManager);
 
+        //Make sure default service manager config is included in the main service manager config variable
+        $this->serviceManagerConfig = ArrayUtils::merge($this->defaultServiceManagerConfig, $this->serviceManagerConfig);
+
         //create lazySubscriber configuration
         $lazySubscriberConfig = [];
         foreach ($this->extensionConfigs as $extensionConfig){
@@ -216,6 +219,8 @@ class Manifest extends AbstractExtension {
     public function toArray()
     {
         $this->initalize();
-        return parent::toArray();
+        $array = parent::toArray();
+        unset($array['service_manager']);
+        return $array;
     }
 }
