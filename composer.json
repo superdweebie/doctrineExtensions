@@ -27,7 +27,7 @@
         "php": ">=5.4",
         "superdweebie/common":               "dev-develop as 0.3",
         "superdweebie/validator":            "dev-develop as 0.3",
-        "zendframework/zend-framework":      "dev-develop as 2.2"
+        "zendframework/zendframework":       "dev-develop as 2.2"
     },
     "autoload": {
         "psr-0": {
