@@ -18,10 +18,16 @@
         "superdweebie/common":               "~0.3",
         "superdweebie/validator":            "~0.3",
         "doctrine/mongodb-odm":              "1.0.0-BETA8",
-        "zendframework/zend-json":           "~2.1",
-        "zendframework/zend-crypt":          "~2.1",
-        "zendframework/zend-servicemanager": "~2.1",
-        "zendframework/zend-stdlib":         "~2.1"
+        "zendframework/zend-json":           "~2.2",
+        "zendframework/zend-crypt":          "~2.2",
+        "zendframework/zend-servicemanager": "~2.2",
+        "zendframework/zend-stdlib":         "~2.2"
+    },
+    "require-dev": {
+        "php": ">=5.4",
+        "superdweebie/common":               "dev-develop as 0.3",
+        "superdweebie/validator":            "dev-develop as 0.3",
+        "zendframework/zend-framework":      "dev-develop as ~2.2"
     },
     "autoload": {
         "psr-0": {
