@@ -6,7 +6,7 @@
  */
 namespace Sds\DoctrineExtensions;
 
-use Zend\StdLib\AbstractOptions;
+use Zend\Stdlib\AbstractOptions;
 
 /**
  * A base class which extensions configs must extend
