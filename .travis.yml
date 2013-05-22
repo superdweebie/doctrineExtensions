@@ -15,9 +15,9 @@ services: mongodb
 
 before_script:
   - echo "extension = mongo.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
+  - composer self-update
   - composer update --prefer-source --dev
 
 script:
-  - ls vendor
   - cd ./tests
   - phpunit
