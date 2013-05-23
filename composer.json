@@ -23,18 +23,9 @@
         "zendframework/zend-servicemanager": "~2.2",
         "zendframework/zend-stdlib":         "~2.2"
     },
-    "require-dev": {
-        "php": ">=5.4",
-        "superdweebie/common":               "dev-develop as 0.3",
-        "superdweebie/validator":            "dev-develop as 0.3",
-        "zendframework/zendframework":       "dev-develop as 2.2"
-    },
     "autoload": {
         "psr-0": {
             "Sds\\DoctrineExtensions": "lib/"
         }
-    },
-    "config": {
-        "github-protocols": ["http", "https", "git"]
     }
 }
