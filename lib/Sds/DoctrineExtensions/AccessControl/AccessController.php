@@ -37,6 +37,10 @@ class AccessController implements ServiceLocatorAwareInterface, DocumentManagerA
         $filter->setAccessController($this);
     }
 
+    public function resetRoles(){
+        $this->roles = null;
+    }
+
     /**
      * Determines if an action can be done by the current Identity
      *
@@ -128,9 +132,9 @@ class AccessController implements ServiceLocatorAwareInterface, DocumentManagerA
         return $result;
     }
 
-    protected function getRoles($flush = false){
+    protected function getRoles(){
 
-        if (!isset($this->roles) || $flush){
+        if (!isset($this->roles)){
             if ($this->serviceLocator->has('identity') &&
                 $identity = $this->serviceLocator->get('identity')
             ){
