@@ -8,7 +8,7 @@ namespace Sds\DoctrineExtensions\Identity\AccessControl;
 
 use Sds\DoctrineExtensions\Identity\Actions;
 use Sds\DoctrineExtensions\Identity\Events;
-use Sds\DoctrineExtensions\Identity\UpdateRolesEventArgs;
+use Sds\DoctrineExtensions\Identity\UpdateCredentialEventArgs;
 use Sds\DoctrineExtensions\AccessControl\AbstractAccessControlSubscriber;
 
 /**
@@ -16,7 +16,7 @@ use Sds\DoctrineExtensions\AccessControl\AbstractAccessControlSubscriber;
  * @since   1.0
  * @author  Tim Roediger <superdweebie@gmail.com>
  */
-class UpdateRolesSubscriber extends AbstractAccessControlSubscriber
+class UpdateCredentialSubscriber extends AbstractAccessControlSubscriber
 {
 
     /**
@@ -25,11 +25,11 @@ class UpdateRolesSubscriber extends AbstractAccessControlSubscriber
      */
     public function getSubscribedEvents(){
         return [
-            Events::preUpdateRoles
+            Events::preUpdateCredential
         ];
     }
 
-    public function preUpdateRoles(UpdateRolesEventArgs $eventArgs)
+    public function preUpdateCredential(UpdateCredentialEventArgs $eventArgs)
     {
         if (! ($accessController = $this->getAccessController())){
             //Access control is not enabled
@@ -38,14 +38,14 @@ class UpdateRolesSubscriber extends AbstractAccessControlSubscriber
 
         $document = $eventArgs->getDocument();
 
-        if ( ! $accessController->isAllowed(Actions::updateRoles, null, $document)->getIsAllowed()) {
+        if ( ! $accessController->isAllowed(Actions::updateCredential, null, $document)->getIsAllowed()) {
 
-            $document->setRoles($eventArgs->getOldRoles());
+            $document->setCredential($eventArgs->getOldCredential());
 
             $eventManager = $eventArgs->getDocumentManager()->getEventManager();
-            if ($eventManager->hasListeners(Events::updateRolesDenied)) {
+            if ($eventManager->hasListeners(Events::updateCredentialDenied)) {
                 $eventManager->dispatchEvent(
-                    Events::updateRolesDenied,
+                    Events::updateCredentialDenied,
                     $eventArgs
                 );
             }

@@ -4,8 +4,6 @@ namespace Sds\DoctrineExtensions\Test\Rest;
 
 use Sds\DoctrineExtensions\Manifest;
 use Sds\DoctrineExtensions\Test\BaseTest;
-use Sds\DoctrineExtensions\Test\Rest\TestAsset\Document\Explicit;
-use Sds\DoctrineExtensions\Test\Rest\TestAsset\Document\Implicit;
 
 class RestTest extends BaseTest {
 
@@ -16,7 +14,17 @@ class RestTest extends BaseTest {
                 __NAMESPACE__ . '\TestAsset\Document' => __DIR__ . '/TestAsset/Document'
             ],
             'extension_configs' => [
-                'extension.rest' => true
+                'extension.rest' => [
+                    'endpoint_map' => [
+                        'simple' => [
+                            'class' => 'Sds\DoctrineExtensions\Test\Rest\TestAsset\Document\Simple',
+                            'cache' => [
+                                'public'  => true,
+                                'max_age' => 10
+                            ]
+                        ]
+                    ]
+                ]
             ],
             'document_manager' => 'testing.documentmanager',
             'service_manager_config' => [
@@ -26,24 +34,26 @@ class RestTest extends BaseTest {
             ]
         ]);
 
-        $this->documentManager = $manifest->getServiceManager()->get('testing.documentmanager');
+        $this->endpointMap = $manifest->getServiceManager()->get('endpointmap');
     }
 
-    public function testExplicit(){
+    public function testHas(){
 
-        $documentManager = $this->documentManager;
-
-        $metadata = $documentManager->getClassMetadata(get_class(new Explicit));
-
-        $this->assertEquals('RestAPI/Explicit', $metadata->rest['endpoint']);
+        $this->assertTrue($this->endpointMap->has('simple'));
+        $this->assertFalse($this->endpointMap->has('does not exist'));
     }
 
-    public function testImplicit(){
+    public function testGetClass(){
+        $this->assertEquals('Sds\DoctrineExtensions\Test\Rest\TestAsset\Document\Simple', $this->endpointMap->getClass('simple'));
+    }
 
-        $documentManager = $this->documentManager;
+    public function testGetCacheOptions(){
+        $cacheOptions = $this->endpointMap->getCacheOptions('simple');
+        $this->assertTrue($cacheOptions->getPublic());
+        $this->assertEquals(10, $cacheOptions->getMaxAge());
+    }
 
-        $metadata = $documentManager->getClassMetadata(get_class(new Implicit));
-
-        $this->assertEquals('implicit', $metadata->rest['endpoint']);
+    public function testGetEndpoints(){
+        $this->assertEquals(['simple'], $this->endpointMap->getEndpoints('Sds\DoctrineExtensions\Test\Rest\TestAsset\Document\Simple'));
     }
 }

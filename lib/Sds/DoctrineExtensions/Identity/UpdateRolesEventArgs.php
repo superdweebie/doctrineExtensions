@@ -15,7 +15,7 @@ use Doctrine\ODM\MongoDB\DocumentManager;
  * @since   1.0
  * @author  Tim Roediger <superdweebie@gmail.com>
  */
-class EventArgs extends BaseEventArgs {
+class UpdateRolesEventArgs extends BaseEventArgs {
 
     protected $oldRoles;
 
@@ -34,12 +34,6 @@ class EventArgs extends BaseEventArgs {
      */
     protected $documentManager;
 
-    /**
-     *
-     * @param \Sds\Common\State\Transition $transition
-     * @param object $document
-     * @param \Doctrine\ODM\MongoDB\DocumentManager $documentManager
-     */
     public function __construct(
         $oldRoles,
         $newRoles,

@@ -3,7 +3,7 @@
  * @package    Sds
  * @license    MIT
  */
-namespace Sds\DoctrineExtensions;
+namespace Sds\DoctrineExtensions\Rest;
 
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
@@ -14,7 +14,7 @@ use Zend\ServiceManager\ServiceLocatorInterface;
  * @version $Revision$
  * @author  Tim Roediger <superdweebie@gmail.com>
  */
-class LazySubscriberFactory implements FactoryInterface
+class EndpointMapFactory implements FactoryInterface
 {
 
     /**
@@ -24,9 +24,11 @@ class LazySubscriberFactory implements FactoryInterface
      */
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
-        $instance = new LazySubscriber();
+        $extension = $serviceLocator->get('extension.rest');
+        $instance = new EndpointMap;
 
-        $instance->setConfig($serviceLocator->get('manifest')->getLazySubscriberConfig());
+        $instance->setMap($extension->getEndpointMap());
+
         return $instance;
     }
 }

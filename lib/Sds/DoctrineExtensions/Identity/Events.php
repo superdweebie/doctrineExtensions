@@ -34,4 +34,23 @@ final class Events
      */
     const updateRolesDenied = 'updateRolesDenied';
 
+    /**
+     * Called before roles change. Can be used to roll the roles change back
+     */
+    const preUpdateCredential = 'preUpdateCredential';
+
+    /**
+     * Called during roles change.
+     */
+    const onUpdateCredential = 'onUpdateCredential';
+
+    /**
+     * Called after roles change complete
+     */
+    const postUpdateCredential = 'postUpdateCredential';
+
+    /**
+     *
+     */
+    const updateCredentialDenied = 'updateCredentialDenied';
 }

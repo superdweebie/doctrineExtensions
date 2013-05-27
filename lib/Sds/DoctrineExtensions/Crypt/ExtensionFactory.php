@@ -3,9 +3,9 @@
  * @package    Sds
  * @license    MIT
  */
-namespace Sds\DoctrineExtensions;
+namespace Sds\DoctrineExtensions\Crypt;
 
-use Zend\ServiceManager\FactoryInterface;
+use Sds\DoctrineExtensions\AbstractExtensionFactory;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
 /**
@@ -14,8 +14,9 @@ use Zend\ServiceManager\ServiceLocatorInterface;
  * @version $Revision$
  * @author  Tim Roediger <superdweebie@gmail.com>
  */
-class LazySubscriberFactory implements FactoryInterface
+class ExtensionFactory extends AbstractExtensionFactory
 {
+    protected $extensionServiceName = 'extension.crypt';
 
     /**
      *
@@ -24,9 +25,6 @@ class LazySubscriberFactory implements FactoryInterface
      */
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
-        $instance = new LazySubscriber();
-
-        $instance->setConfig($serviceLocator->get('manifest')->getLazySubscriberConfig());
-        return $instance;
+        return new Extension($this->getConfig($serviceLocator));
     }
 }

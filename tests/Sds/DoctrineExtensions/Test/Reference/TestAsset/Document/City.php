@@ -8,7 +8,6 @@ use Sds\DoctrineExtensions\Annotation\Annotations as Sds;
 
 /**
  * @ODM\Document
- * @Sds\Rest
  */
 class City {
 

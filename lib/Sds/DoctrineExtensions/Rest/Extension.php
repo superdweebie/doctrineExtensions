@@ -16,14 +16,9 @@ use Sds\DoctrineExtensions\AbstractExtension;
  */
 class Extension extends AbstractExtension {
 
-    protected $subscribers = [
-        'subscriber.rest.annotationsubscriber'
-    ];
-
     protected $serviceManagerConfig = [
-        'invokables' => [
-            'endpointMap' => 'Sds\DoctrineExtensions\Rest\EndpointMap',
-            'subscriber.rest.annotationsubscriber' => 'Sds\DoctrineExtensions\Rest\AnnotationSubscriber'
+        'factories' => [
+            'endpointmap' => 'Sds\DoctrineExtensions\Rest\EndpointMapFactory'
         ]
     ];
 
@@ -32,7 +27,16 @@ class Extension extends AbstractExtension {
      * @var array
      */
     protected $dependencies = array(
-        'extension.annotation' => true,
         'extension.reference' => true
     );
+
+    protected $endpointMap;
+
+    public function getEndpointMap() {
+        return $this->endpointMap;
+    }
+
+    public function setEndpointMap($endpointMap) {
+        $this->endpointMap = $endpointMap;
+    }
 }

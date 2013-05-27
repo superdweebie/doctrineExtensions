@@ -6,59 +6,72 @@
  */
 namespace Sds\DoctrineExtensions\Rest;
 
-use Sds\DoctrineExtensions\DocumentManagerAwareInterface;
-use Sds\DoctrineExtensions\DocumentManagerAwareTrait;
-
 /**
  *
  * @since   1.0
  * @author  Tim Roediger <superdweebie@gmail.com>
  */
-class EndpointMap implements DocumentManagerAwareInterface
+class EndpointMap
 {
+    protected $map = [];
 
-    use DocumentManagerAwareTrait;
-
-    protected $cacheId = 'Sds\DoctrineExtensions\Rest\EndpointMap';
-
-    protected $map = null;
-
-    public function getCacheId() {
-        return $this->cacheId;
+    public function getMap() {
+        return $this->map;
     }
 
-    public function setCacheId($cacheId) {
-        $this->cacheId = $cacheId;
+    public function setMap($map) {
+        $this->map = $map;
     }
 
     public function has($endpoint){
-        return array_key_exists($endpoint, $this->getMap());
+        return array_key_exists($endpoint, $this->map);
     }
 
-    public function get($endpoint){
-        return $this->getMap()[$endpoint];
-    }
-
-    public function getMap(){
-
-        if (isset($this->map)){
-            return $this->map;
-        }
-
-        $cacheDriver = $this->documentManager->getConfiguration()->getMetadataCacheImpl();
-
-        if ($cacheDriver->contains($this->cacheId)){
-            $this->map = $cacheDriver->fetch($this->cacheId);
-        } else {
-            $this->map = [];
-            foreach($this->documentManager->getMetadataFactory()->getAllMetadata() as $metadata){
-                if (isset($metadata->rest)){
-                    $this->map[$metadata->rest['endpoint']] = ['className' => $metadata->name];
-                }
+    public function getClass($endpoint){
+        if (isset($this->map[$endpoint])){
+            if (is_string($this->map[$endpoint])){
+                return $this->map[$endpoint];
             }
-            $cacheDriver->save($this->cacheId, $this->map);
+            if (is_array($this->map[$endpoint])){
+                return $this->map[$endpoint]['class'];
+            }
         }
+        return false;
+    }
 
-        return $this->map;
+    public function getCacheOptions($endpoint = null, $class = null){
+
+        if (isset($class)){
+            $endpoints = array_keys(array_filter($this->map, function($value) use ($class){
+                if (is_string($value) && ($value == $class)){
+                    return true;
+                }
+                if (isset($value['class']) && $value['class'] == $class){
+                    return true;
+                }
+            }));
+            if (count($endpoints) > 0){
+                $endpoint = $endpoints[0];
+            }
+        }
+        if (isset($endpoint) && isset($this->map[$endpoint]) && isset($this->map[$endpoint]['cache'])){
+            $options = $this->map[$endpoint]['cache'];
+        } else {
+            $options = [];
+        }
+        return new CacheOptions($options);
+    }
+
+    public function getEndpoints($class){
+        return array_keys(
+            array_filter($this->map, function($value) use ($class){
+                if (is_string($value) && ($value == $class)){
+                    return true;
+                }
+                if (isset($value['class']) && $value['class'] == $class){
+                    return true;
+                }
+            })
+        );
     }
 }

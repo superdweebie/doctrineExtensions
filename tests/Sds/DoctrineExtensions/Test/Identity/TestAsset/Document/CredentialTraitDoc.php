@@ -9,7 +9,10 @@ use Sds\DoctrineExtensions\Identity\DataModel\CredentialTrait;
 use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
 use Sds\DoctrineExtensions\Annotation\Annotations as Sds;
 
-/** @ODM\Document */
+/** @ODM\Document
+ * @Sds\Permission\Basic(roles="all", allow={"create", "read", "update"})
+ * @Sds\Permission\Basic(roles="admin", allow="updateCredential")
+ */
 class CredentialTraitDoc implements CredentialInterface {
 
     use CredentialTrait;
@@ -19,4 +22,7 @@ class CredentialTraitDoc implements CredentialInterface {
      */
     protected $id;
 
+    public function getId() {
+        return $this->id;
+    }
 }

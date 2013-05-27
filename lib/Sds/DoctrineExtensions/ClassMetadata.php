@@ -30,6 +30,9 @@ class ClassMetadata extends DoctrineClassMetadata
         if (isset($this->accessControl)){
             $serialized[] = 'accessControl';
         }
+        if (isset($this->credential)){
+            $serialized[] = 'credential';
+        }
         if (isset($this->crypt)){
             $serialized[] = 'crypt';
         }
@@ -41,12 +44,9 @@ class ClassMetadata extends DoctrineClassMetadata
         }
         if (isset($this->owner)){
             $serialized[] = 'owner';
-        }        
+        }
         if (isset($this->permissions)){
             $serialized[] = 'permissions';
-        }
-        if (isset($this->rest)){
-            $serialized[] = 'rest';
         }
         if (isset($this->roles)){
             $serialized[] = 'roles';

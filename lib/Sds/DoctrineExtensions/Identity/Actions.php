@@ -15,6 +15,7 @@ namespace Sds\DoctrineExtensions\Identity;
 class Actions
 {
 
-    const updateRoles = 'updateRoles';
+    const updateRoles      = 'updateRoles';
 
+    const updateCredential = 'updateCredential';
 }

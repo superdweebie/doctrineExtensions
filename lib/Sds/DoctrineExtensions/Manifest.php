@@ -23,26 +23,26 @@ class Manifest extends AbstractExtension {
 
     protected $defaultServiceManagerConfig = [
         'invokables' => [
-            'extension.accessControl' => 'Sds\DoctrineExtensions\AccessControl\Extension',
-            'extension.annotation' => 'Sds\DoctrineExtensions\Annotation\Extension',
-            'extension.crypt' => 'Sds\DoctrineExtensions\Crypt\Extension',
-            'extension.dojo' => 'Sds\DoctrineExtensions\Dojo\Extension',
-            'extension.freeze' => 'Sds\DoctrineExtensions\Freeze\Extension',
-            'extension.generator' => 'Sds\DoctrineExtensions\Generator\Extension',
-            'extension.identity' => 'Sds\DoctrineExtensions\Identity\Extension',
-            'extension.owner' => 'Sds\DoctrineExtensions\Owner\Extension',
-            'extension.readonly' => 'Sds\DoctrineExtensions\Readonly\Extension',
-            'extension.reference' => 'Sds\DoctrineExtensions\Reference\Extension',
-            'extension.rest' => 'Sds\DoctrineExtensions\Rest\Extension',
-            'extension.serializer' => 'Sds\DoctrineExtensions\Serializer\Extension',
-            'extension.softdelete' => 'Sds\DoctrineExtensions\SoftDelete\Extension',
-            'extension.stamp' => 'Sds\DoctrineExtensions\Stamp\Extension',
-            'extension.state' => 'Sds\DoctrineExtensions\State\Extension',
-            'extension.validator' => 'Sds\DoctrineExtensions\Validator\Extension',
-            'extension.zone' => 'Sds\DoctrineExtensions\Zone\Extension',
             'documentManagerDelegatorFactory' => 'Sds\DoctrineExtensions\DocumentManagerDelegatorFactory'
         ],
         'factories' => [
+            'extension.accessControl' => 'Sds\DoctrineExtensions\AccessControl\ExtensionFactory',
+            'extension.annotation' => 'Sds\DoctrineExtensions\Annotation\ExtensionFactory',
+            'extension.crypt' => 'Sds\DoctrineExtensions\Crypt\ExtensionFactory',
+            'extension.dojo' => 'Sds\DoctrineExtensions\Dojo\ExtensionFactory',
+            'extension.freeze' => 'Sds\DoctrineExtensions\Freeze\ExtensionFactory',
+            'extension.generator' => 'Sds\DoctrineExtensions\Generator\ExtensionFactory',
+            'extension.identity' => 'Sds\DoctrineExtensions\Identity\ExtensionFactory',
+            'extension.owner' => 'Sds\DoctrineExtensions\Owner\ExtensionFactory',
+            'extension.readonly' => 'Sds\DoctrineExtensions\Readonly\ExtensionFactory',
+            'extension.reference' => 'Sds\DoctrineExtensions\Reference\ExtensionFactory',
+            'extension.rest' => 'Sds\DoctrineExtensions\Rest\ExtensionFactory',
+            'extension.serializer' => 'Sds\DoctrineExtensions\Serializer\ExtensionFactory',
+            'extension.softdelete' => 'Sds\DoctrineExtensions\SoftDelete\ExtensionFactory',
+            'extension.stamp' => 'Sds\DoctrineExtensions\Stamp\ExtensionFactory',
+            'extension.state' => 'Sds\DoctrineExtensions\State\ExtensionFactory',
+            'extension.validator' => 'Sds\DoctrineExtensions\Validator\ExtensionFactory',
+            'extension.zone' => 'Sds\DoctrineExtensions\Zone\ExtensionFactory',
             'subscriber.lazySubscriber' => 'Sds\DoctrineExtensions\LazySubscriberFactory',
         ],
     ];
@@ -64,7 +64,6 @@ class Manifest extends AbstractExtension {
     protected $initalized = false;
 
     public function getExtensionConfigs() {
-        $this->initalize();
         return $this->extensionConfigs;
     }
 
@@ -73,7 +72,6 @@ class Manifest extends AbstractExtension {
     }
 
     public function getLazySubscriberConfig() {
-        $this->initalize();
         return $this->lazySubscriberConfig;
     }
 
@@ -82,7 +80,6 @@ class Manifest extends AbstractExtension {
     }
 
     public function getDocumentManager() {
-        $this->initalize();
         return $this->documentManager;
     }
 
@@ -99,6 +96,14 @@ class Manifest extends AbstractExtension {
         return $this->serviceManager;
     }
 
+    public function getInitalized() {
+        return $this->initalized;
+    }
+
+    public function setInitalized($initalized) {
+        $this->initalized = $initalized;
+    }
+
     protected function initalize() {
         if ($this->initalized){
             return;
@@ -112,9 +117,10 @@ class Manifest extends AbstractExtension {
             $serviceManager = self::createServiceManager($this->defaultServiceManagerConfig);
             $this->serviceManager = $serviceManager;
         }
+        $serviceManager->setService('manifest', $this);
 
         foreach ($this->extensionConfigs as $name => $extensionConfig){
-            $this->expandExtensionConfig($name, $extensionConfig);
+            $this->expandExtensionConfig($name);
         }
 
         //merge all the configs
@@ -169,24 +175,17 @@ class Manifest extends AbstractExtension {
         }
         $this->lazySubscriberConfig = $lazySubscriberConfig;
         $this->subscribers = ['subscriber.lazySubscriber'];
-
-        $serviceManager->setService('manifest', $this->toArray());
     }
 
-    protected function expandExtensionConfig($name, $extensionConfig){
-
-        if (is_bool($extensionConfig) && $extensionConfig){
-            $extensionConfig = [];
-        }
+    protected function expandExtensionConfig($name){
 
         //Get extension
         $extension = $this->serviceManager->get($name);
-        $extension->setFromArray($extensionConfig);
 
         //ensure dependencies get expaned also
         foreach ($extension->getDependencies() as $dependencyName => $dependencyConfig){
             if ( ! isset($this->extensionConfigs[$dependencyName]) || is_bool($this->extensionConfigs[$dependencyName])){
-                $this->expandExtensionConfig($dependencyName, $dependencyConfig);
+                $this->expandExtensionConfig($dependencyName);
             }
         }
 
@@ -199,7 +198,7 @@ class Manifest extends AbstractExtension {
 
         $serviceManager->addInitializer(function($instance, ServiceLocatorInterface $serviceLocator){
             if ($instance instanceof DocumentManagerAwareInterface) {
-                $instance->setDocumentManager($serviceLocator->get($serviceLocator->get('manifest')['document_manager']));
+                $instance->setDocumentManager($serviceLocator->get($serviceLocator->get('manifest')->getDocumentManager()));
             }
         });
         $serviceManager->addInitializer(function($instance, ServiceLocatorInterface $serviceLocator){
@@ -220,6 +219,7 @@ class Manifest extends AbstractExtension {
     {
         $this->initalize();
         $array = parent::toArray();
+        unset($array['default_service_manager_config']);
         unset($array['service_manager']);
         return $array;
     }

@@ -52,20 +52,20 @@ class DocumentManagerFactory implements FactoryInterface
         //create driver chain
         $chain  = new MappingDriverChain;
 
-        foreach ($manifest['documents'] as $namespace => $path){
+        foreach ($manifest->getDocuments() as $namespace => $path){
             $driver = new AnnotationDriver(new AnnotationReader, $path);
             $chain->addDriver($driver, $namespace);
         }
         $config->setMetadataDriverImpl($chain);
 
         //register filters
-        foreach ($manifest['filters'] as $name => $class){
+        foreach ($manifest->getFilters() as $name => $class){
             $config->addFilter($name, $class);
         }
 
         //create event manager
         $eventManager = new EventManager();
-        foreach($manifest['subscribers'] as $subscriber){
+        foreach($manifest->getSubscribers() as $subscriber){
             $eventManager->addEventSubscriber($serviceLocator->get($subscriber));
         }
 

@@ -12,6 +12,7 @@ namespace Sds\DoctrineExtensions\Annotation\Annotations\Permission;
  * @author  Tim Roediger <superdweebie@gmail.com>
  *
  * @Annotation
+ * @Target({"CLASS"})
  */
 final class Transition extends AbstractPermission
 {

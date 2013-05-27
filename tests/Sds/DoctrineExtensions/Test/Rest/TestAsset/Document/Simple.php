@@ -8,9 +8,8 @@ use Sds\DoctrineExtensions\Annotation\Annotations as Sds;
 
 /**
  * @ODM\Document
- * @Sds\Rest("RestAPI/Explicit")
  */
-class Explicit {
+class Simple {
 
     /**
      * @ODM\Id(strategy="UUID")

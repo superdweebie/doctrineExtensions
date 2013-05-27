@@ -9,17 +9,17 @@ namespace Sds\DoctrineExtensions\Annotation\Annotations;
 use Doctrine\Common\Annotations\Annotation;
 
 /**
- * Annotation specify the url of a rest server to access a document
+ * Annotation to mark a field as the credential.
  *
  * @since   1.0
  * @author  Tim Roediger <superdweebie@gmail.com>
  *
  * @Annotation
- * @Target({"CLASS"})
+ * @Target({"PROPERTY"})
  */
-final class Rest extends Annotation
+final class Credential extends Annotation
 {
-    const event = 'annotationRest';
+    const event = 'annotationCredential';
 
-    public $value;
+    public $value = true;
 }

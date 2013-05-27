@@ -23,7 +23,8 @@ class AnnotationSubscriber implements EventSubscriber {
      */
     public function getSubscribedEvents(){
         return [
-            Sds\Roles::event
+            Sds\Roles::event,
+            Sds\Credential::event
         ];
     }
 
@@ -35,6 +36,17 @@ class AnnotationSubscriber implements EventSubscriber {
     {
         if ($eventArgs->getAnnotation()->value){
             $eventArgs->getMetadata()->roles = $eventArgs->getReflection()->getName();
+        }
+    }
+
+    /**
+     *
+     * @param \Sds\DoctrineExtensions\Annotation\AnnotationEventArgs $eventArgs
+     */
+    public function annotationCredential(AnnotationEventArgs $eventArgs)
+    {
+        if ($eventArgs->getAnnotation()->value){
+            $eventArgs->getMetadata()->credential = $eventArgs->getReflection()->getName();
         }
     }
 }
