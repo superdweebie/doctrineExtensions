@@ -8,52 +8,63 @@ namespace Sds\DoctrineExtensions\Generator;
 
 use Sds\DoctrineExtensions\DocumentManagerAwareInterface;
 use Sds\DoctrineExtensions\DocumentManagerAwareTrait;
+use Zend\ServiceManager\ServiceLocatorAwareInterface;
+use Zend\ServiceManager\ServiceLocatorAwareTrait;
 
 /**
  *
  * @since   1.0
  * @author  Tim Roediger <superdweebie@gmail.com>
  */
-class ResourceMap implements DocumentManagerAwareInterface
+class ResourceMap implements ServiceLocatorAwareInterface, DocumentManagerAwareInterface
 {
-
+    use ServiceLocatorAwareTrait;
     use DocumentManagerAwareTrait;
 
-    protected $cacheId = 'Sds\DoctrineExtensions\Generate\ResourceMap';
+    protected $cacheSalt = 'Sds\Generator_';
 
-    public function getCacheId() {
-        return $this->cacheId;
-    }
-
-    public function setCacheId($cacheId) {
-        $this->cacheId = $cacheId;
-    }
-
-    public function has($resource){
-        return array_key_exists($resource, $this->getMap());
-    }
-
-    public function get($resource){
-        return $this->getMap()[$resource];
-    }
+    protected $map = [];
 
     public function getMap(){
+        return $this->map;
+    }
 
-        $cacheDriver = $this->documentManager->getConfiguration()->getMetadataCacheImpl();
+    public function setMap(array $map) {
+        $this->map = $map;
+    }
 
-        if (! $this->map = $cacheDriver->fetch($this->cacheId)){
-            $this->map = [];
-            foreach($this->documentManager->getMetadataFactory()->getAllMetadata() as $metadata){
-                if (isset($metadata->generator)){
-                    foreach($metadata->generator as $resource => $config){
-                        $config['className'] = $metadata->name;
-                        $this->map[$resource] = $config;
-                    }
-                }
-            }
-            $cacheDriver->save($this->cacheId, $this->map);
+    public function setResourceConfig($name, $config){
+        $this->map[$name] = $config;
+    }
+
+    public function has($name){
+        return isset($this->map[$name]);
+    }
+
+    public function get($name)
+    {
+        if (! isset($this->map[$name])){
+            throw new \Exception('Resource does not exist in resource map');
         }
 
-        return $this->map;
+        $cacheDriver = $this->documentManager->getConfiguration()->getMetadataCacheImpl();
+        $id = $this->cacheSalt . $name;
+        if ($resourceValue = $cacheDriver->fetch($id)){
+            return $resourceValue;
+        }
+
+        $config = $this->map[$name];
+        if (isset($config['options'])){
+            $options = $config['options'];
+        } else {
+            $options = null;
+        }
+
+        $generator = $this->serviceLocator->get($config['generator']);
+        $resource = $generator->generate($name, $config['class'], $options);
+
+        $cacheDriver->save($id, $resource);
+
+        return $resource;
     }
 }

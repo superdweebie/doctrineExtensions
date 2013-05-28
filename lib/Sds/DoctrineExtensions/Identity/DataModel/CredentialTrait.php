@@ -25,7 +25,6 @@ trait CredentialTrait {
      * @Sds\Validator\Required
      * @Sds\Validator\Credential
      * @Sds\Crypt\Hash
-     * @Sds\Dojo\Input(mixins = {"Sds/Form/PasswordTextBox"})
      */
     protected $credential;
 

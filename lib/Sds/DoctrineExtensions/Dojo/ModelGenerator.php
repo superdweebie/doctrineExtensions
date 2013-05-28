@@ -4,49 +4,27 @@
  * @package    Sds
  * @license    MIT
  */
-namespace Sds\DoctrineExtensions\Dojo\Generator;
-
-use Sds\DoctrineExtensions\Generator\GenerateEventArgs;
+namespace Sds\DoctrineExtensions\Dojo;
 
 /**
  *
  * @since   1.0
  * @author  Tim Roediger <superdweebie@gmail.com>
  */
-class Model extends AbstractDojoGenerator
+class ModelGenerator extends AbstractDojoGenerator
 {
 
-    const event = 'generatorDojoModel';
+    protected $generatorName = 'generator.dojo.model';
 
-    public function getSubscribedEvents(){
-        return [
-            self::event,
-        ];
-    }
+    protected $resourceSuffix = 'Model';
 
-    public function getFilePath($className, $fieldName = null){
-        return parent::getFilePath($className) . '.js';
-    }
-
-    static public function getResourceName($className, $fieldName = null){
-        return parent::getResourceName($className) . '.js';
-    }
-
-    /**
-     *
-     * @param \Sds\DoctrineExtensions\Generator\GenerateEventArgs $eventArgs
-     */
-    public function generatorDojoModel(GenerateEventArgs $eventArgs)
+    public function generate($name, $class, $options = null)
     {
 
-        $options = $eventArgs->getOptions();
-        $resource = $eventArgs->getResource();
-        $metadata = $eventArgs->getDocumentManager()->getClassMetadata($eventArgs->getClassName());
+        $metadata = $this->getDocumentManager()->getClassMetadata($class);
         $defaultMixins = $this->getDefaultMixins();
 
         $templateArgs = [];
-
-        $mid = self::getMid($metadata->name);
 
         $params = [];
 
@@ -73,11 +51,15 @@ class Model extends AbstractDojoGenerator
         $templateArgs['params'] = $this->implodeParams($params);
         $templateArgs['comment'] = $this->indent("// Will return a model for $metadata->name");
 
-        $resource->content = $this->populateTemplate(
+        $resource = $this->populateTemplate(
             file_get_contents(__DIR__ . '/Template/Module.js.template'),
             $templateArgs
         );
 
-        $this->persistToFile($this->getFilePath($metadata->name), $resource->content);
+        if ($this->getPersistToFile()){
+            $this->persistToFile($this->getFilePath($name), $resource);
+        }
+
+        return $resource;
     }
 }

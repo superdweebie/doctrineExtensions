@@ -16,27 +16,15 @@ use Sds\DoctrineExtensions\AbstractExtension;
  */
 class Extension extends AbstractExtension {
 
-    protected $subscribers = [
-        'subscriber.dojo.annotationSubscriber',
-        'subscriber.dojo.generator.form',
-        'subscriber.dojo.generator.input',
-        'subscriber.dojo.generator.multifieldvalidator',
-        'subscriber.dojo.generator.validator',
-        'subscriber.dojo.generator.model',
-        'subscriber.dojo.generator.modelvalidator',
-        'subscriber.dojo.generator.jsonrest',
-    ];
-
     protected $serviceManagerConfig = [
         'invokables' => [
-            'subscriber.dojo.annotationSubscriber' => 'Sds\DoctrineExtensions\Dojo\AnnotationSubscriber',
-            'subscriber.dojo.generator.form' => 'Sds\DoctrineExtensions\Dojo\Generator\Form',
-            'subscriber.dojo.generator.input' => 'Sds\DoctrineExtensions\Dojo\Generator\Input',
-            'subscriber.dojo.generator.multifieldvalidator' => 'Sds\DoctrineExtensions\Dojo\Generator\MultiFieldValidator',
-            'subscriber.dojo.generator.validator' => 'Sds\DoctrineExtensions\Dojo\Generator\Validator',
-            'subscriber.dojo.generator.model' => 'Sds\DoctrineExtensions\Dojo\Generator\Model',
-            'subscriber.dojo.generator.modelvalidator' => 'Sds\DoctrineExtensions\Dojo\Generator\ModelValidator',
-            'subscriber.dojo.generator.jsonrest' => 'Sds\DoctrineExtensions\Dojo\Generator\JsonRest',
+            'generator.dojo.form' => 'Sds\DoctrineExtensions\Dojo\FormGenerator',
+            'generator.dojo.input' => 'Sds\DoctrineExtensions\Dojo\InputGenerator',
+            'generator.dojo.multifieldvalidator' => 'Sds\DoctrineExtensions\Dojo\MultiFieldValidatorGenerator',
+            'generator.dojo.validator' => 'Sds\DoctrineExtensions\Dojo\ValidatorGenerator',
+            'generator.dojo.model' => 'Sds\DoctrineExtensions\Dojo\ModelGenerator',
+            'generator.dojo.modelvalidator' => 'Sds\DoctrineExtensions\Dojo\ModelValidatorGenerator',
+            'generator.dojo.jsonrest' => 'Sds\DoctrineExtensions\Dojo\JsonRestGenerator'
         ]
     ];
 
@@ -76,7 +64,7 @@ class Extension extends AbstractExtension {
             'jsonRest'             => ['Sds/Mvc/JsonRest']
         ]
     ];
-    
+
     protected $persistToFile = false;
 
     /**

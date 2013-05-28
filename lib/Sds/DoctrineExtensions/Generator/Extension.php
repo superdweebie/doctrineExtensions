@@ -16,17 +16,26 @@ use Sds\DoctrineExtensions\AbstractExtension;
  */
 class Extension extends AbstractExtension {
 
+    protected $resourceMap;
+
     protected $serviceManagerConfig = [
         'invokables' => [
-            'resourceMap' => 'Sds\DoctrineExtensions\Generator\ResourceMap',
             'cli.generate' => 'Sds\DoctrineExtensions\Generator\Console\Command\GenerateCommand'
         ],
         'factories' => [
-            'generator' => 'Sds\DoctrineExtensions\Generator\GeneratorFactory'
+            'resourceMap' => 'Sds\DoctrineExtensions\Generator\ResourceMapFactory',
         ]
     ];
 
     protected $cliCommands = [
         'generate'
     ];
+
+    public function getResourceMap() {
+        return $this->resourceMap;
+    }
+
+    public function setResourceMap($resourceMap) {
+        $this->resourceMap = $resourceMap;
+    }
 }

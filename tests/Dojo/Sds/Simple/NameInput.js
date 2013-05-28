@@ -2,7 +2,7 @@
 define([
     'dojo/_base/declare',    
     'Sds/Form/ValidationTextBox',
-    'Sds/DoctrineExtensions/Test/Dojo/TestAsset/Document/Simple/Name/Validator'
+    'Sds/Simple/NameValidator'
 ],
 function(
     declare,    

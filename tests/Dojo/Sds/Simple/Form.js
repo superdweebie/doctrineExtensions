@@ -2,9 +2,9 @@
 define([
     'dojo/_base/declare',    
     'Sds/Form/ValidationControlGroup',
-    'Sds/DoctrineExtensions/Test/Dojo/TestAsset/Document/Simple/MultiFieldValidator',
+    'Sds/Simple/MultiFieldValidator',
     'Sds/DoctrineExtensions/Test/Dojo/TestAsset/Document/Simple/Id/Input',
-    'Sds/DoctrineExtensions/Test/Dojo/TestAsset/Document/Simple/Name/Input',
+    'Sds/Simple/NameInput',
     'Sds/DoctrineExtensions/Test/Dojo/TestAsset/Document/Simple/Country/Input',
     'Sds/DoctrineExtensions/Test/Dojo/TestAsset/Document/Simple/CamelCaseField/Input'
 ],

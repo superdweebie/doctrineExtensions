@@ -10,10 +10,6 @@ use Sds\DoctrineExtensions\Annotation\Annotations as Sds;
  * @ODM\Document
  * @Sds\Validator(class = "Sds/Test/ClassValidator1"),
  * @Sds\Validator(class = "Sds/Test/ClassValidator2", options = {"option1" = "a", "option2" = "b"})
- * @Sds\Dojo\Model
- * @Sds\Dojo\Form
- * @Sds\Dojo\ModelValidator
- * @Sds\Dojo\JsonRest
  * @Sds\Serializer\ClassName
  */
 class Simple {
@@ -28,22 +24,12 @@ class Simple {
      * @Sds\Validator\Required,
      * @Sds\Validator(class = "Sds/Test/NameValidator1"),
      * @Sds\Validator(class = "Sds/Test/NameValidator2", options = {"option1" = "b", "option2" = "b"})
-     * @Sds\Dojo\Input(
-     *     params = {
-     *         "label" = "NAME",
-     *         "tooltip" = "The document name",
-     *         "description" = "This is a longer description"
-     *     }
-     * )
      */
     protected $name;
 
     /**
      * @ODM\String
      * @Sds\Validator(class = "Sds/Test/CountryValidator1")
-     * @Sds\Dojo\Input(
-     *     mixins = {"Sds/Common/Form/ValidationTextarea"}
-     *  )
      */
     protected $country;
 

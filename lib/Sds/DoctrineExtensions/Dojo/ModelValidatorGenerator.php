@@ -4,9 +4,8 @@
  * @package    Sds
  * @license    MIT
  */
-namespace Sds\DoctrineExtensions\Dojo\Generator;
+namespace Sds\DoctrineExtensions\Dojo;
 
-use Sds\DoctrineExtensions\Generator\GenerateEventArgs;
 use Zend\Json\Expr;
 
 /**
@@ -14,44 +13,17 @@ use Zend\Json\Expr;
  * @since   1.0
  * @author  Tim Roediger <superdweebie@gmail.com>
  */
-class ModelValidator extends AbstractDojoGenerator
+class ModelValidatorGenerator extends AbstractDojoGenerator
 {
+    public function generate($name, $class, $options = null) {
 
-    const event = 'generatorDojoModelValidator';
-
-    public function getSubscribedEvents(){
-        return [
-            self::event,
-        ];
-    }
-
-    public function getFilePath($className, $fieldName = null){
-        return parent::getFilePath($className) . '/ModelValidator.js';
-    }
-
-    static public function getResourceName($className, $fieldName = null){
-        return parent::getResourceName($className) . '/ModelValidator.js';
-    }
-
-    static public function getMid($className, $fieldName = null){
-        return parent::getMid($className) . '/ModelValidator';
-    }
-
-    /**
-     *
-     * @param \Sds\DoctrineExtensions\Generator\GenerateEventArgs $eventArgs
-     */
-    public function generatorDojoModelValidator(GenerateEventArgs $eventArgs)
-    {
-
-        $metadata = $eventArgs->getDocumentManager()->getClassMetadata($eventArgs->getClassName());
-        $options = $eventArgs->getOptions();
-        $resource = $eventArgs->getResource();
+        $metadata = $this->getDocumentManager()->getClassMetadata($class);
+        $field = $options['field'];
         $defaultMixins = $this->getDefaultMixins();
 
         $templateArgs = [];
 
-        $hasMultiFieldValidator = array_key_exists(MultiFieldValidator::getResourceName($metadata->name), $metadata->generator);
+        $hasMultiFieldValidator = isset($metadata->validator) && isset($metadata->validator['document']);
 
         $params = ['validators' => []];
 
@@ -64,13 +36,13 @@ class ModelValidator extends AbstractDojoGenerator
         $templateArgs['mixins'] = $this->namesFromMids($templateArgs['dependencyMids']);
         $templateArgs['dependencies'] = $this->namesFromMids($templateArgs['dependencyMids']);
         if ($hasMultiFieldValidator){
-            $templateArgs['dependencyMids'][] = MultiFieldValidator::getMid($metadata->name);
+            $templateArgs['dependencyMids'][] = $this->serviceLocator->get('generator.dojo.multifieldvalidator')->getMid($metadata->name);
             $templateArgs['dependencies'][] = 'MultiFieldValidator';
             $params['validators'][] = new Expr('new MultiFieldValidator');
         }
         foreach($this->getSerializer()->fieldListForUnserialize($metadata) as $field){
-            if (array_key_exists(Validator::getResourceName($metadata->name, $field), $metadata->generator)){
-                $templateArgs['dependencyMids'][] = Validator::getMid($metadata->name, $field);
+            if(isset($metadata->validator) && isset($metadata->validator['fields'][$field])){
+                $templateArgs['dependencyMids'][] = $this->serviceLocator->get('generator.dojo.validator')->getMid($metadata->name, ['field' => $field]);
                 $templateArgs['dependencies'][] = ucfirst($field) . 'Validator';
                 $params['validators'][] = new Expr('new ' . ucfirst($field) . 'Validator');
             }
@@ -82,12 +54,15 @@ class ModelValidator extends AbstractDojoGenerator
         $templateArgs['params'] = $this->implodeParams($params);
         $templateArgs['comment'] = $this->indent("// Will return a validator to validate a complete model for $metadata->name");
 
-        $resource->content = $this->populateTemplate(
+        $resource = $this->populateTemplate(
             file_get_contents(__DIR__ . '/Template/Module.js.template'),
             $templateArgs
         );
 
-        $this->persistToFile($this->getFilePath($metadata->name), $resource->content);
+        if ($this->getPersistToFile()){
+            $this->persistToFile($this->getFilePath($name), $resource);
+        }
 
+        return $resource;
     }
 }

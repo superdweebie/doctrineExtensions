@@ -4,9 +4,10 @@
  * @package    Sds
  * @license    MIT
  */
-namespace Sds\DoctrineExtensions\Dojo\Generator;
+namespace Sds\DoctrineExtensions\Dojo;
 
-use Doctrine\Common\EventSubscriber;
+use Sds\DoctrineExtensions\DocumentManagerAwareInterface;
+use Sds\DoctrineExtensions\DocumentManagerAwareTrait;
 use Sds\DoctrineExtensions\Generator\GeneratorInterface;
 use Zend\Json\Expr;
 use Zend\Json\Json;
@@ -18,10 +19,15 @@ use Zend\ServiceManager\ServiceLocatorAwareTrait;
  * @since   1.0
  * @author  Tim Roediger <superdweebie@gmail.com>
  */
-abstract class AbstractDojoGenerator implements EventSubscriber, GeneratorInterface, ServiceLocatorAwareInterface
+abstract class AbstractDojoGenerator implements GeneratorInterface, ServiceLocatorAwareInterface, DocumentManagerAwareInterface
 {
 
     use ServiceLocatorAwareTrait;
+    use DocumentManagerAwareTrait;
+
+    protected $generatorName;
+
+    protected $resourceSuffix;
 
     protected $extension;
 
@@ -68,22 +74,18 @@ abstract class AbstractDojoGenerator implements EventSubscriber, GeneratorInterf
         return $this->serializer;
     }
 
-    public function getFilePath($className, $fieldName = null){
+    public function getFilePath($name){
         foreach ($this->getFilePaths() as $filePath){
-            if ($filePath['filter'] == '' || strpos($className, $filePath['filter']) !== false) {
-                return $filePath['path'] . '/' . self::getMid($className);
+            if ($filePath['filter'] == '' || strpos($name, $filePath['filter']) !== false) {
+                return $filePath['path'] . '/' . $name;
                 break;
             }
         }
     }
 
-    static public function getResourceName($className, $fieldName = null){
-        return self::getMid($className);
-    }
-
-    static public function getMid($className, $fieldName = null){
-        return str_replace('\\', '/', $className);
-    }
+//    static public function getResourceName($className, $fieldName = null){
+//        return self::getMid($className);
+//    }
 
     protected function populateTemplate($template, array $args) {
 
@@ -147,17 +149,38 @@ abstract class AbstractDojoGenerator implements EventSubscriber, GeneratorInterf
     }
 
     protected function persistToFile($filePath, $content){
-        if ($this->getPersistToFile()){
-            if ($filePath){
 
-                $dir = dirname($filePath);
+        if ($filePath){
 
-                if ( ! is_dir($dir)) {
-                    mkdir($dir, 0777, true);
-                }
+            $dir = dirname($filePath);
 
-                file_put_contents($filePath, $content);
+            if ( ! is_dir($dir)) {
+                mkdir($dir, 0777, true);
             }
+
+            file_put_contents($filePath, $content);
         }
     }
+
+    public function getMid($class, $options = null){
+
+        $resourceMap = $this->serviceLocator->get('resourcemap');
+        foreach ($resourceMap->getMap() as $name => $config){
+            if ($config['generator'] == $this->generatorName &&
+                $config['class'] == $class
+            ) {
+                return substr($name, 0, strrpos($name, '.'));
+            }
+        }
+
+        //no configured resource found, so create one.
+        $mid = str_replace('\\', '/', $class) . '/' . $this->resourceSuffix;
+        $resourceMap->setResourceConfig($mid . '.js', [
+            'class' => $class,
+            'generator' => $this->generatorName
+        ]);
+
+        return $mid;
+    }
+
 }

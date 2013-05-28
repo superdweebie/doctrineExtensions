@@ -2,7 +2,7 @@
 define([
     'dojo/_base/declare',    
     'Sds/Mvc/JsonRest',
-    'Sds/DoctrineExtensions/Test/Dojo/TestAsset/Document/Simple'
+    'Sds/Simple'
 ],
 function(
     declare,    

@@ -2,8 +2,8 @@
 define([
     'dojo/_base/declare',    
     'Sds/Validator/Model',
-    'Sds/DoctrineExtensions/Test/Dojo/TestAsset/Document/Simple/MultiFieldValidator',
-    'Sds/DoctrineExtensions/Test/Dojo/TestAsset/Document/Simple/Name/Validator',
+    'Sds/Simple/MultiFieldValidator',
+    'Sds/Simple/NameValidator',
     'Sds/DoctrineExtensions/Test/Dojo/TestAsset/Document/Simple/Country/Validator'
 ],
 function(

@@ -4,9 +4,9 @@
  * @package    Sds
  * @license    MIT
  */
-namespace Sds\DoctrineExtensions\Dojo\Generator;
+namespace Sds\DoctrineExtensions\Dojo;
 
-use Sds\DoctrineExtensions\Generator\GenerateEventArgs;
+
 use Zend\Json\Expr;
 
 /**
@@ -14,39 +14,44 @@ use Zend\Json\Expr;
  * @since   1.0
  * @author  Tim Roediger <superdweebie@gmail.com>
  */
-class Validator extends AbstractDojoGenerator
+class ValidatorGenerator extends AbstractDojoGenerator
 {
 
-    const event = 'generatorDojoValidator';
+    protected $generatorName = 'generator.dojo.validator';
 
-    public function getSubscribedEvents(){
-        return [
-            self::event,
-        ];
+    protected $resourceSuffix = 'Validator';
+
+    public function getMid($class, $options = null){
+
+        $field = $options['field'];
+        $resourceMap = $this->serviceLocator->get('resourcemap');
+        foreach ($resourceMap->getMap() as $name => $config){
+            if ($config['generator'] == $this->generatorName &&
+                $config['class'] == $class &&
+                isset($config['options']) &&
+                $config['options']['field'] == $field
+            ) {
+                return substr($name, 0, strrpos($name, '.'));
+            }
+        }
+
+        //no configured resource found, so create one.
+        $mid = str_replace('\\', '/', $class) . '/' . ucfirst($field) . '/' . $this->resourceSuffix;
+        $resourceMap->setResourceConfig($mid . '.js', [
+            'class' => $class,
+            'generator' => $this->generatorName,
+            'options' => [
+                'field' => $field
+            ]
+        ]);
+
+        return $mid;
     }
 
-    public function getFilePath($className, $fieldName = null){
-        return parent::getFilePath($className) . '/' . ucfirst($fieldName) . '/Validator.js';
-    }
-
-    static public function getResourceName($className, $fieldName = null){
-        return parent::getResourceName($className) . '/' . ucfirst($fieldName) . '/Validator.js';
-    }
-
-    static public function getMid($className, $fieldName = null){
-        return parent::getMid($className) . '/' . ucfirst($fieldName) . '/Validator';
-    }
-
-    /**
-     *
-     * @param \Sds\DoctrineExtensions\Generator\GenerateEventArgs $eventArgs
-     */
-    public function generatorDojoValidator(GenerateEventArgs $eventArgs)
+    public function generate($name, $class, $options = null)
     {
 
-        $metadata = $eventArgs->getDocumentManager()->getClassMetadata($eventArgs->getClassName());
-        $options = $eventArgs->getOptions();
-        $resource = $eventArgs->getResource();
+        $metadata = $this->getDocumentManager()->getClassMetadata($class);
         $field = $options['field'];
         $defaultMixins = $this->getDefaultMixins();
 
@@ -100,12 +105,15 @@ class Validator extends AbstractDojoGenerator
         $templateArgs['params'] = $this->implodeParams($templateArgs['params']);
         $templateArgs['comment'] = $this->indent("// Will return a validator that can be used to check\n// the $field field");
 
-        $resource->content = $this->populateTemplate(
+        $resource = $this->populateTemplate(
             file_get_contents(__DIR__ . '/Template/Module.js.template'),
             $templateArgs
         );
 
-        $this->persistToFile($this->getFilePath($metadata->name, $field), $resource->content);
+        if ($this->getPersistToFile()){
+            $this->persistToFile($this->getFilePath($name), $resource);
+        }
 
+        return $resource;
     }
 }

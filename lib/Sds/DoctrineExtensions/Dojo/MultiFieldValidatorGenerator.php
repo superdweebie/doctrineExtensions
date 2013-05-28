@@ -4,9 +4,8 @@
  * @package    Sds
  * @license    MIT
  */
-namespace Sds\DoctrineExtensions\Dojo\Generator;
+namespace Sds\DoctrineExtensions\Dojo;
 
-use Sds\DoctrineExtensions\Generator\GenerateEventArgs;
 use Zend\Json\Expr;
 
 /**
@@ -14,45 +13,22 @@ use Zend\Json\Expr;
  * @since   1.0
  * @author  Tim Roediger <superdweebie@gmail.com>
  */
-class MultiFieldValidator extends AbstractDojoGenerator
+class MultiFieldValidatorGenerator extends AbstractDojoGenerator
 {
 
-    const event = 'generatorDojoMultiFieldValidator';
+    protected $generatorName = 'generator.dojo.multifieldvalidator';
 
-    public function getSubscribedEvents(){
-        return [
-            self::event,
-        ];
-    }
+    protected $resourceSuffix = 'MultiFieldValidator';
 
-    public function getFilePath($className, $fieldName = null){
-        return parent::getFilePath($className) . '/MultiFieldValidator.js';
-    }
-
-    static public function getResourceName($className, $fieldName = null){
-        return parent::getResourceName($className) . '/MultiFieldValidator.js';
-    }
-
-    static public function getMid($className, $fieldName = null){
-        return parent::getMid($className) . '/MultiFieldValidator';
-    }
-
-    /**
-     *
-     * @param \Sds\DoctrineExtensions\Generator\GenerateEventArgs $eventArgs
-     */
-    public function generatorDojoMultiFieldValidator(GenerateEventArgs $eventArgs)
+    public function generate($name, $class, $options = null)
     {
 
-        $metadata = $eventArgs->getDocumentManager()->getClassMetadata($eventArgs->getClassName());
-        $options = $eventArgs->getOptions();
-        $resource = $eventArgs->getResource();
+        $metadata = $this->getDocumentManager()->getClassMetadata($class);
         $defaultMixins = $this->getDefaultMixins();
 
         if ( ! isset($metadata->validator['document'])){
             return;
         }
-
 
         if (count($metadata->validator['document']) > 1){
             $templateArgs = [
@@ -99,12 +75,15 @@ class MultiFieldValidator extends AbstractDojoGenerator
         $templateArgs['params'] = $this->implodeParams($templateArgs['params']);
         $templateArgs['comment'] = $this->indent("// Will return a multi field validator");
 
-        $resource->content = $this->populateTemplate(
+        $resource = $this->populateTemplate(
             file_get_contents(__DIR__ . '/Template/Module.js.template'),
             $templateArgs
         );
 
-        $this->persistToFile($this->getFilePath($metadata->name), $resource->content);
+        if ($this->getPersistToFile()){
+            $this->persistToFile($this->getFilePath($name), $resource);
+        }
 
+        return $resource;
     }
 }

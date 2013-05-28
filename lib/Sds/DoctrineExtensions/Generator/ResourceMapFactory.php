@@ -14,7 +14,7 @@ use Zend\ServiceManager\ServiceLocatorInterface;
  * @version $Revision$
  * @author  Tim Roediger <superdweebie@gmail.com>
  */
-class GeneratorFactory implements FactoryInterface
+class ResourceMapFactory implements FactoryInterface
 {
 
     /**
@@ -24,9 +24,10 @@ class GeneratorFactory implements FactoryInterface
      */
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
+        $extension = $serviceLocator->get('extension.generator');
+        $instance = new ResourceMap;
 
-        $instance = new Generator;
-        $instance->setResourceMap($serviceLocator->get('resourceMap'));
+        $instance->setMap($extension->getResourceMap());
 
         return $instance;
     }
