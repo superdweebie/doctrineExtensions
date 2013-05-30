@@ -3,7 +3,7 @@
 namespace Sds\DoctrineExtensions\Test\Owner;
 
 use Sds\DoctrineExtensions\Manifest;
-use Sds\DoctrineExtensions\Owner\Events as Events;
+use Sds\DoctrineExtensions\AccessControl\Events as Events;
 use Sds\DoctrineExtensions\Test\Owner\TestAsset\Document\OwnerDoc;
 use Sds\DoctrineExtensions\Test\BaseTest;
 use Sds\DoctrineExtensions\Test\TestAsset\RoleAwareIdentity;
@@ -44,10 +44,7 @@ class UpdateOwnerAllowTest extends BaseTest {
         $documentManager = $this->documentManager;
         $eventManager = $documentManager->getEventManager();
 
-        $eventManager->addEventListener(Events::preUpdateOwner, $this);
-        $eventManager->addEventListener(Events::onUpdateOwner, $this);
-        $eventManager->addEventListener(Events::postUpdateOwner, $this);
-        $eventManager->addEventListener(Events::updateOwnerDenied, $this);
+        $eventManager->addEventListener(Events::updateDenied, $this);
 
         $testDoc = new OwnerDoc();
 
@@ -62,10 +59,7 @@ class UpdateOwnerAllowTest extends BaseTest {
         $testDoc->setOwner('bobby');
         $documentManager->flush();
 
-        $this->assertTrue(isset($this->calls[Events::preUpdateOwner]));
-        $this->assertTrue(isset($this->calls[Events::onUpdateOwner]));
-        $this->assertTrue(isset($this->calls[Events::postUpdateOwner]));
-        $this->assertFalse(isset($this->calls[Events::updateOwnerDenied]));
+        $this->assertFalse(isset($this->calls[Events::updateDenied]));
     }
 
     public function __call($name, $arguments){

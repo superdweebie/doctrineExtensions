@@ -10,8 +10,10 @@ use Sds\DoctrineExtensions\Annotation\Annotations as Sds;
 
 /**
  * @ODM\Document
- * @Sds\Permission\Basic(roles="all", allow={"create", "read", "update"})
- * @Sds\Permission\Basic(roles="admin", allow="updateRoles")
+ * @Sds\AccessControl ({
+ *     @Sds\Permission\Basic(roles="*",     allow={"create", "read", "update"}, deny="update::roles"),
+ *     @Sds\Permission\Basic(roles="admin", allow="update::roles"                                   )
+ * })
  */
 class Identity extends RoleAwareIdentity {
 

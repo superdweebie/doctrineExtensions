@@ -20,7 +20,6 @@ trait CreatedByTrait {
     /**
      * @ODM\String
      * @Sds\Stamp\CreatedBy
-     * @Sds\Readonly
      */
     protected $createdBy;
 

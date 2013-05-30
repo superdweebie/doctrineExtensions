@@ -2,7 +2,7 @@
 
 namespace Sds\DoctrineExtensions\Test\Identity;
 
-use Sds\DoctrineExtensions\Identity\Events as Events;
+use Sds\DoctrineExtensions\AccessControl\Events as Events;
 use Sds\DoctrineExtensions\Manifest;
 use Sds\DoctrineExtensions\Test\BaseTest;
 use Sds\DoctrineExtensions\Test\Identity\TestAsset\Document\Identity;
@@ -43,10 +43,7 @@ class UpdateCredentialDenyTest extends BaseTest {
         $documentManager = $this->documentManager;
         $eventManager = $documentManager->getEventManager();
 
-        $eventManager->addEventListener(Events::preUpdateCredential, $this);
-        $eventManager->addEventListener(Events::onUpdateCredential, $this);
-        $eventManager->addEventListener(Events::postUpdateCredential, $this);
-        $eventManager->addEventListener(Events::updateCredentialDenied, $this);
+        $eventManager->addEventListener(Events::updateDenied, $this);
 
         $testDoc = new CredentialTraitDoc();
         $testDoc->setCredential('password1');
@@ -62,10 +59,7 @@ class UpdateCredentialDenyTest extends BaseTest {
         $testDoc->setCredential('password2');
         $documentManager->flush();
 
-        $this->assertTrue(isset($this->calls[Events::preUpdateCredential]));
-        $this->assertFalse(isset($this->calls[Events::onUpdateCredential]));
-        $this->assertFalse(isset($this->calls[Events::postUpdateCredential]));
-        $this->assertTrue(isset($this->calls[Events::updateCredentialDenied]));
+        $this->assertTrue(isset($this->calls[Events::updateDenied]));
     }
 
     public function __call($name, $arguments){

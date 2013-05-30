@@ -2,7 +2,7 @@
 
 namespace Sds\DoctrineExtensions\Test\Identity;
 
-use Sds\DoctrineExtensions\Identity\Events as Events;
+use Sds\DoctrineExtensions\AccessControl\Events as Events;
 use Sds\DoctrineExtensions\Manifest;
 use Sds\DoctrineExtensions\Test\BaseTest;
 use Sds\DoctrineExtensions\Test\Identity\TestAsset\Document\Identity;
@@ -42,10 +42,7 @@ class UpdateRolesDenyTest extends BaseTest {
         $documentManager = $this->documentManager;
         $eventManager = $documentManager->getEventManager();
 
-        $eventManager->addEventListener(Events::preUpdateRoles, $this);
-        $eventManager->addEventListener(Events::onUpdateRoles, $this);
-        $eventManager->addEventListener(Events::postUpdateRoles, $this);
-        $eventManager->addEventListener(Events::updateRolesDenied, $this);
+        $eventManager->addEventListener(Events::updateDenied, $this);
 
         $testDoc = new Identity();
         $testDoc->setIdentityName('test-name');
@@ -60,10 +57,7 @@ class UpdateRolesDenyTest extends BaseTest {
         $testDoc->addRole('user');
         $documentManager->flush();
 
-        $this->assertTrue(isset($this->calls[Events::preUpdateRoles]));
-        $this->assertFalse(isset($this->calls[Events::onUpdateRoles]));
-        $this->assertFalse(isset($this->calls[Events::postUpdateRoles]));
-        $this->assertTrue(isset($this->calls[Events::updateRolesDenied]));
+        $this->assertTrue(isset($this->calls[Events::updateDenied]));
     }
 
     public function __call($name, $arguments){

@@ -12,7 +12,6 @@ namespace Sds\DoctrineExtensions\Annotation\Annotations\Permission;
  * @author  Tim Roediger <superdweebie@gmail.com>
  *
  * @Annotation
- * @Target({"CLASS", "PROPERTY"})
  */
 final class State extends AbstractPermission
 {

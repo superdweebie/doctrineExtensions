@@ -1,14 +1,14 @@
 <?php
 
-namespace Sds\DoctrineExtensions\Test\Identity;
+namespace Sds\DoctrineExtensions\Test\AccessControl;
 
-use Sds\DoctrineExtensions\AccessControl\Events as Events;
+use Sds\DoctrineExtensions\AccessControl\Events as AccessControlEvents;
 use Sds\DoctrineExtensions\Manifest;
+use Sds\DoctrineExtensions\Test\AccessControl\TestAsset\Document\FieldPermissions;
 use Sds\DoctrineExtensions\Test\BaseTest;
-use Sds\DoctrineExtensions\Test\Identity\TestAsset\Document\Identity;
-use Sds\DoctrineExtensions\Test\Identity\TestAsset\Document\CredentialTraitDoc;
+use Sds\DoctrineExtensions\Test\TestAsset\Identity;
 
-class UpdateCredentialAllowTest extends BaseTest {
+class FieldPermissionsAllTest extends BaseTest {
 
     protected $calls = array();
 
@@ -27,26 +27,26 @@ class UpdateCredentialAllowTest extends BaseTest {
                     'testing.documentmanager' => 'Sds\DoctrineExtensions\Test\TestAsset\DocumentManagerFactory',
                     'identity' => function(){
                         $identity = new Identity();
-                        $identity->setIdentityName('toby')->addRole('admin');
+                        $identity->setIdentityName('toby');
                         return $identity;
                     }
                 ]
             ]
-        ]);
+       ]);
 
-        $this->documentManager = $manifest->getServiceManager()->get('testing.documentmanager');
+       $this->documentManager = $manifest->getServiceManager()->get('testing.documentmanager');
     }
 
-    public function testCredentialUpdateAllow(){
+    public function testUpdateDeny(){
 
         $this->calls = array();
         $documentManager = $this->documentManager;
         $eventManager = $documentManager->getEventManager();
 
-        $eventManager->addEventListener(Events::updateDenied, $this);
+        $eventManager->addEventListener(AccessControlEvents::updateDenied, $this);
 
-        $testDoc = new CredentialTraitDoc();
-        $testDoc->setCredential('password1');
+        $testDoc = new FieldPermissions();
+        $testDoc->setName('my name');
 
         $documentManager->persist($testDoc);
         $documentManager->flush();
@@ -56,10 +56,15 @@ class UpdateCredentialAllowTest extends BaseTest {
         $repository = $documentManager->getRepository(get_class($testDoc));
         $testDoc = $repository->find($id);
 
-        $testDoc->setCredential('password2');
+        $testDoc->setName('new name');
         $documentManager->flush();
 
-        $this->assertFalse(isset($this->calls[Events::updateDenied]));
+        $this->assertTrue(isset($this->calls[AccessControlEvents::updateDenied]));
+
+        $documentManager->clear();
+        $testDoc = $repository->find($id);
+
+        $this->assertEquals('my name', $testDoc->getName());
     }
 
     public function __call($name, $arguments){

@@ -4,7 +4,7 @@
  * @package    Sds
  * @license    MIT
  */
-namespace Sds\DoctrineExtensions\Annotation\Annotations\AccessControl;
+namespace Sds\DoctrineExtensions\Annotation\Annotations;
 
 use Doctrine\Common\Annotations\Annotation;
 
@@ -13,11 +13,11 @@ use Doctrine\Common\Annotations\Annotation;
  * @author  Tim Roediger <superdweebie@gmail.com>
  *
  * @Annotation
- * @Target({"PROPERTY"})
+ * @Target({"CLASS"})
  */
-final class IgnoreUpdate extends Annotation {
+final class AccessControl extends Annotation {
 
-    const event = 'annotationAccessControlIgnoreUpdate';
+    const event = 'annotationAccessControl';
 
-    public $value = true;
+    public $value = [];
 }

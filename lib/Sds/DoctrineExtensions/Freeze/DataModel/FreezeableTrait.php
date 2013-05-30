@@ -21,7 +21,6 @@ trait FreezeableTrait {
     /**
      * @ODM\Boolean
      * @Sds\Freeze
-     * @Sds\AccessControl\IgnoreUpdate
      */
     protected $frozen = false;
 

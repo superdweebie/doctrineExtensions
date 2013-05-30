@@ -44,7 +44,7 @@ class SoftDeleteSubscriber extends AbstractAccessControlSubscriber
 
         $document = $eventArgs->getDocument();
 
-        if( !$accessController->isAllowed(Actions::softDelete, null, $document)->getIsAllowed()) {
+        if( !$accessController->areAllowed([Actions::softDelete], null, $document)->getAllowed()) {
             //stop SoftDelete
             $this->getSoftDeleter()->restore($document);
 
@@ -71,7 +71,7 @@ class SoftDeleteSubscriber extends AbstractAccessControlSubscriber
 
         $document = $eventArgs->getDocument();
 
-        if ( !$accessController->isAllowed(Actions::restore, null, $document)->getIsAllowed()) {
+        if ( !$accessController->areAllowed([Actions::restore], null, $document)->getAllowed()) {
             //stop restore
             $this->getSoftDeleter()->softDelete($document);
 

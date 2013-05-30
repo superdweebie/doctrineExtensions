@@ -7,8 +7,11 @@
 namespace Sds\DoctrineExtensions\Stamp;
 
 use Doctrine\Common\EventSubscriber;
+use Sds\DoctrineExtensions\AccessControl\Actions;
+use Sds\DoctrineExtensions\AccessControl\BasicPermission;
 use Sds\DoctrineExtensions\Annotation\Annotations as Sds;
 use Sds\DoctrineExtensions\Annotation\AnnotationEventArgs;
+use Sds\DoctrineExtensions\Annotation\EventType;
 
 /**
  *
@@ -31,19 +34,51 @@ class AnnotationSubscriber implements EventSubscriber {
     }
 
     public function annotationStampCreatedBy(AnnotationEventArgs $eventArgs){
+
+        $field = $eventArgs->getReflection()->getName();
         $metadata = $eventArgs->getMetadata();
-        if (!isset($metadata->stamp)){
-            $metadata->stamp = [];
+        $eventManager = $eventArgs->getEventManager();
+
+        $metadata->stamp['createdBy'] = $field;
+
+        //Add sythentic annotation to create extra permission that will prevent
+        //updates on the createdby field when access control is enabled.
+        $permissionAnnotation = new Sds\Permission\Basic([
+            'roles' => BasicPermission::wild,
+            'deny' => Actions::update($field)
+        ]);
+
+        // Raise annotation event
+        if ($eventManager->hasListeners($permissionAnnotation::event)) {
+            $eventManager->dispatchEvent(
+                $permissionAnnotation::event,
+                new AnnotationEventArgs($metadata, EventType::document, $permissionAnnotation, $metadata->getReflectionClass(), $eventManager)
+            );
         }
-        $metadata->stamp['createdBy'] = $eventArgs->getReflection()->getName();
     }
 
     public function annotationStampCreatedOn(AnnotationEventArgs $eventArgs){
+
+        $field = $eventArgs->getReflection()->getName();
         $metadata = $eventArgs->getMetadata();
-        if (!isset($metadata->stamp)){
-            $metadata->stamp = [];
+        $eventManager = $eventArgs->getEventManager();
+
+        $metadata->stamp['createdOn'] = $field;
+
+        //Add sythentic annotation to create extra permission that will prevent
+        //updates on the createdby field when access control is enabled.
+        $permissionAnnotation = new Sds\Permission\Basic([
+            'roles' => BasicPermission::wild,
+            'deny' => Actions::update($field)
+        ]);
+
+        // Raise annotation event
+        if ($eventManager->hasListeners($permissionAnnotation::event)) {
+            $eventManager->dispatchEvent(
+                $permissionAnnotation::event,
+                new AnnotationEventArgs($metadata, EventType::document, $permissionAnnotation, $metadata->getReflectionClass(), $eventManager)
+            );
         }
-        $metadata->stamp['createdOn'] = $eventArgs->getReflection()->getName();
     }
 
     public function annotationStampUpdatedBy(AnnotationEventArgs $eventArgs){

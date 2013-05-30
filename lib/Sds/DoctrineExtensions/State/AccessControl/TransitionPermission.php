@@ -8,7 +8,8 @@ namespace Sds\DoctrineExtensions\State\AccessControl;
 
 use Sds\Common\AccessControl\PermissionInterface;
 use Sds\Common\State\Transition;
-use Sds\DoctrineExtensions\AccessControl\IsAllowedResult;
+use Sds\DoctrineExtensions\AccessControl\AllowedResult;
+use Sds\DoctrineExtensions\Exception\InvalidArgumentException;
 
 /**
  *
@@ -18,7 +19,7 @@ use Sds\DoctrineExtensions\AccessControl\IsAllowedResult;
 class TransitionPermission implements PermissionInterface
 {
 
-    const all = 'all';
+    const wild = '*';
 
     protected $roles;
 
@@ -30,34 +31,89 @@ class TransitionPermission implements PermissionInterface
 
     protected $stateField;
 
-    public function __construct(array $roles, array $allow, array $deny, $stateField){
-        $this->roles = $roles;
-        $this->allow = $allow;
-        $this->deny = $deny;
+    public function __construct(array $roles, array $allow, array $deny, $stateField)
+    {
+        $this->roles = array_map([$this, 'roleToRegex'], $roles);;
+        $this->allow = array_map([$this, 'actionToRegex'], $allow);
+        $this->deny  = array_map([$this, 'actionToRegex'], $deny);
         $this->stateField = (string) $stateField;
     }
 
-    public function isAllowed(array $roles, $action) {
-        if (in_array(self::all, $this->roles) || count(array_intersect($roles, $this->roles)) > 0){
-            if (in_array($action, $this->allow) ||
-               (in_array(self::all, $this->allow) && ! in_array($action, $this->deny))
+    protected function roleToRegex($string){
+        return '/^' . str_replace(self::wild, '[a-zA-Z0-9_-]*', $string) . '$/';
+    }
+
+    protected function actionToRegex($string){
+        $transition = Transition::fromString($string);
+        if (!$transition){
+            throw new InvalidArgumentException('Invalid transition passed to TransitonPermission');
+        }
+        return '/^'
+            . str_replace(self::wild, '[a-zA-Z0-9_:-]*', $transition->getFrom())
+            . Transition::arrow
+            . str_replace(self::wild, '[a-zA-Z0-9_:-]*', $transition->getTo())
+            . '$/';
+    }
+
+    /**
+     * Will test if a user with the supplied roles can do ALL the supplied actions.
+     *
+     * @param array $roles
+     * @param array $action
+     * @return \Sds\DoctrineExtensions\AccessControl\IsAllowedResult
+     */
+    public function areAllowed(array $testRoles, array $testActions) {
+
+        //only check allow and deny if there is at least one matching role
+        if (count($testRoles) == 0){
+            $testRoles = [''];
+        }
+        $roleMatch = false;
+        foreach ($this->roles as $role){
+            if (count(array_filter($testRoles, function($testRole) use ($role){
+                    return preg_match($role, $testRole);
+                })) > 0
             ){
-                $transition = Transition::fromString($action);
-                return new IsAllowedResult(
-                    true,
-                    [$this->stateField => $transition->getFrom()],
-                    [$this->stateField => $transition->getTo()]
-                );
+                $roleMatch = true;
+                break;
             }
-            if (in_array($action, $this->deny) || in_array(self::all, $this->deny)){
-                $transition = Transition::fromString($action);
-                return new IsAllowedResult(
+        }
+        if (!$roleMatch){
+            return new AllowedResult; //Permission is neither explicitly allowed or denied.
+        }
+
+        //check allow
+        $allowMatches = 0;
+        foreach ($testActions as $testAction){ //check each testAction in turn
+            $allowMatch = count(array_filter($this->allow, function($action) use ($testAction){ //first check that action matches at least one allow
+                return preg_match($action, $testAction);
+            })) > 0;
+
+            $denyMatch = count(array_filter($this->deny, function($action) use ($testAction){ //second check that action does not matche any deny
+                return preg_match($action, $testAction);
+            })) > 0;
+
+            if ($denyMatch){
+                $transition = Transition::fromString($testActions[0]);
+                return new AllowedResult(  //one or more actions are explicitly denied
                     false,
                     [$this->stateField => $transition->getFrom()],
                     [$this->stateField => $transition->getTo()]
                 );
             }
+            if ($allowMatch){
+                $allowMatches++;
+            }
         }
-        return new IsAllowedResult;
+        if ($allowMatches == count($testActions)){
+            $transition = Transition::fromString($testActions[0]);
+            return new AllowedResult(  //all actions are explicitly allowed
+                true,
+                [$this->stateField => $transition->getFrom()],
+                [$this->stateField => $transition->getTo()]
+            );
+        }
+
+        return new AllowedResult; //Permission is neither explicitly allowed or denied.
     }
 }

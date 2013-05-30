@@ -10,9 +10,11 @@ use Sds\DoctrineExtensions\Annotation\Annotations as Sds;
 
 /**
  * @ODM\Document
- * @Sds\Permission\Basic(roles="all", allow={"create", "read"})
- * @Sds\Permission\Basic(roles="owner", allow="update")
- * @Sds\Permission\Basic(roles="admin", allow="updateOwner")
+ * @Sds\AccessControl({
+ *     @Sds\Permission\Basic(roles="*",     allow={"create", "read"}                     ),
+ *     @Sds\Permission\Basic(roles="owner", allow="update::*",       deny="update::owner"),
+ *     @Sds\Permission\Basic(roles="admin", allow="update::owner"                        )
+ * })
  */
 class OwnerDoc {
 

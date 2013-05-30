@@ -26,13 +26,11 @@ class Actions
     const read = 'read';
 
     /**
-     * Change a resouce's content
-     */
-    const update = 'update';
-
-    /**
      * Make a resource disappear, never to come back again!
      */
     const delete = 'delete';
 
+    public static function update($field){
+        return 'update::' . $field;
+    }
 }

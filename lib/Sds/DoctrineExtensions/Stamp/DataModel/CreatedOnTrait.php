@@ -20,7 +20,6 @@ trait CreatedOnTrait {
     /**
      * @ODM\Timestamp
      * @Sds\Stamp\CreatedOn
-     * @Sds\Readonly
      */
     protected $createdOn;
 

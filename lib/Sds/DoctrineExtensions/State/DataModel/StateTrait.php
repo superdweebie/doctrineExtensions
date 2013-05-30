@@ -21,7 +21,6 @@ trait StateTrait{
      * @ODM\Field(type="string")
      * @ODM\Index
      * @Sds\State
-     * @Sds\AccessControl\IgnoreUpdate
      * @Sds\Validator(class = "Sds\Validator\Identifier")
      */
     protected $state;

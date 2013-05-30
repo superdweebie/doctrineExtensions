@@ -11,12 +11,14 @@ use Sds\DoctrineExtensions\Annotation\Annotations as Sds;
 
 /**
  * @ODM\Document
- * @Sds\Permission\State(roles="all", state="published", allow="read")
- * @Sds\Permission\State(roles="writer", state="draft", allow={"create", "update", "read"})
- * @Sds\Permission\Transition(roles="writer", allow="draft->review")
- * @Sds\Permission\State(roles="reviewer", state="review", allow={"update", "read"})
- * @Sds\Permission\Transition(roles="reviewer", allow={"review->draft", "review->published"}, deny="draft->review")
- * @Sds\Permission\Basic(roles="admin", allow="all")
+ * @Sds\AccessControl({
+ *     @Sds\Permission\State     (roles="*",           state="published", allow="read"                                                      ),
+ *     @Sds\Permission\State     (roles="writer",      state="draft",     allow={"create", "update", "read"}                                ),
+ *     @Sds\Permission\Transition(roles="writer",                         allow="draft->review"                                             ),
+ *     @Sds\Permission\State     (roles="reviewer",    state="review",    allow={"update", "read"}                                          ),
+ *     @Sds\Permission\Transition(roles="reviewer",                       allow={"review->draft", "review->published"}, deny="draft->review"),
+ *     @Sds\Permission\Basic     (roles="admin",                          allow="*"                                                         )
+ * })
  */
 class AccessControlled {
 

@@ -20,7 +20,6 @@ trait CredentialTrait {
     /**
      * @ODM\String
      * @Sds\Credential
-     * @Sds\AccessControl\IgnoreUpdate
      * @Sds\Serializer\Ignore("ignore_when_serializing"))
      * @Sds\Validator\Required
      * @Sds\Validator\Credential

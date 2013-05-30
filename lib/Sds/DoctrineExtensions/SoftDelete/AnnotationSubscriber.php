@@ -7,8 +7,11 @@
 namespace Sds\DoctrineExtensions\SoftDelete;
 
 use Doctrine\Common\EventSubscriber;
+use Sds\DoctrineExtensions\AccessControl\Actions;
+use Sds\DoctrineExtensions\AccessControl\BasicPermission;
 use Sds\DoctrineExtensions\Annotation\Annotations as Sds;
 use Sds\DoctrineExtensions\Annotation\AnnotationEventArgs;
+use Sds\DoctrineExtensions\Annotation\EventType;
 
 /**
  * Emits soft delete events
@@ -39,7 +42,26 @@ class AnnotationSubscriber implements EventSubscriber
      */
     public function annotationSoftDelete(AnnotationEventArgs $eventArgs)
     {
-        $eventArgs->getMetadata()->softDelete['flag'] = $eventArgs->getReflection()->getName();
+        $field = $eventArgs->getReflection()->getName();
+        $metadata = $eventArgs->getMetadata();
+        $eventManager = $eventArgs->getEventManager();
+
+        $metadata->softDelete['flag'] = $field;
+
+        //Add sythentic annotation to create extra permission that will allow
+        //updates on the softDelete field when access control is enabled.
+        $permissionAnnotation = new Sds\Permission\Basic([
+            'roles' => BasicPermission::wild,
+            'allow' => Actions::update($field)
+        ]);
+
+        // Raise annotation event
+        if ($eventManager->hasListeners($permissionAnnotation::event)) {
+            $eventManager->dispatchEvent(
+                $permissionAnnotation::event,
+                new AnnotationEventArgs($metadata, EventType::document, $permissionAnnotation, $metadata->getReflectionClass(), $eventManager)
+            );
+        }
     }
 
     /**

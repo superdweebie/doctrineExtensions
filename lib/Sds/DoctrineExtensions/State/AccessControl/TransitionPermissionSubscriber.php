@@ -39,17 +39,42 @@ class TransitionPermissionSubscriber extends AbstractAccessControlSubscriber {
         $annotation = $eventArgs->getAnnotation();
         $metadata = $eventArgs->getMetadata();
 
-        if ( !isset($metadata->permissions)){
-            $metadata->permissions = [];
-        }
-        $metadata->permissions[] = [
+        $config = [
             'factory' => 'Sds\DoctrineExtensions\State\AccessControl\TransitionPermissionFactory',
-            'options' => [
-                'roles' => is_array($annotation->roles) ? $annotation->roles : [$annotation->roles],
-                'allow' => is_array($annotation->allow) ? $annotation->allow : [$annotation->allow],
-                'deny' => is_array($annotation->deny) ? $annotation->deny : [$annotation->deny]
-            ]
+            'options' => []
         ];
+
+        if (isset($annotation->roles)){
+            if (is_array($annotation->roles)){
+                $config['options']['roles'] = $annotation->roles;
+            } else {
+                $config['options']['roles'] = [$annotation->roles];
+            }
+        } else {
+            $config['options']['roles'] = [];
+        }
+
+        if (isset($annotation->allow)){
+            if (is_array($annotation->allow)){
+                $config['options']['allow'] = $annotation->allow;
+            } else {
+                $config['options']['allow'] = [$annotation->allow];
+            }
+        } else {
+            $config['options']['allow'] = [];
+        }
+
+        if (isset($annotation->deny)){
+            if (is_array($annotation->deny)){
+                $config['options']['deny'] = $annotation->deny;
+            } else {
+                $config['options']['deny'] = [$annotation->deny];
+            }
+        } else {
+            $config['options']['deny'] = [];
+        }
+
+        $metadata->permissions[] = $config;
     }
 
     /**
@@ -68,7 +93,7 @@ class TransitionPermissionSubscriber extends AbstractAccessControlSubscriber {
         $eventManager = $documentManager->getEventManager();
         $action = $eventArgs->getTransition()->getAction();
 
-        if ( ! $accessController->isAllowed($action, null, $document)->getIsAllowed()) {
+        if ( ! $accessController->areAllowed([$action], null, $document)->getAllowed()) {
             //stop transition
             $document->setState($eventArgs->getTransition()->getFrom());
 

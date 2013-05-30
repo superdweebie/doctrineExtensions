@@ -20,7 +20,6 @@ trait SoftDeleteableTrait {
     /**
      * @ODM\Boolean
      * @Sds\SoftDelete
-     * @Sds\AccessControl\IgnoreUpdate)
      * )
      */
     protected $softDeleted = false;

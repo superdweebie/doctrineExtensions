@@ -12,21 +12,21 @@ namespace Sds\DoctrineExtensions\AccessControl;
  * @since   1.0
  * @author  Tim Roediger <superdweebie@gmail.com>
  */
-class IsAllowedResult
+class AllowedResult
 {
 
-    protected $isAllowed;
+    protected $allowed;
 
     protected $old;
 
     protected $new;
 
-    public function getIsAllowed() {
-        return $this->isAllowed;
+    public function getAllowed() {
+        return $this->allowed;
     }
 
-    public function setIsAllowed($isAllowed) {
-        $this->isAllowed = (boolean) $isAllowed;
+    public function setAllowed($allowed) {
+        $this->allowed = (boolean) $allowed;
     }
 
     public function getOld() {
@@ -45,8 +45,8 @@ class IsAllowedResult
         $this->new = $new;
     }
 
-    public function __construct($isAllowed = null, array $old = null, array $new = null){
-        $this->isAllowed = isset($isAllowed) ? (boolean) $isAllowed : null;
+    public function __construct($allowed = null, array $old = null, array $new = null){
+        $this->allowed = isset($allowed) ? (boolean) $allowed : null;
         $this->old = $old;
         $this->new = $new;
     }

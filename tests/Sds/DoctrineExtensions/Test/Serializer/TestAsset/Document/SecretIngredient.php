@@ -2,9 +2,6 @@
 
 namespace Sds\DoctrineExtensions\Test\Serializer\TestAsset\Document;
 
-use Sds\Common\AccessControl\AccessControlledInterface;
-use Sds\DoctrineExtensions\AccessControl\DataModel\AccessControlledTrait;
-
 //Annotation imports
 use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
 use Sds\DoctrineExtensions\Annotation\Annotations as Sds;
@@ -12,8 +9,10 @@ use Sds\DoctrineExtensions\Annotation\Annotations as Sds;
 /**
  * @ODM\Document
  * @Sds\Serializer\ClassName
- * @Sds\Permission\Basic(roles="all", allow="create")
- * @Sds\Permission\Basic(roles="user", allow="read")
+ * @Sds\AccessControl({
+ *     @Sds\Permission\Basic(roles="*", allow="create"),
+ *     @Sds\Permission\Basic(roles="user", allow="read")
+ * })
  */
 class SecretIngredient {
 

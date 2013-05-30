@@ -35,12 +35,12 @@ class ReadAccessControl extends BsonFilter
     public function addFilterCriteria(ClassMetadata $metadata)
     {
         $accessController = $this->accessController;
-        $result = $accessController->isAllowed(Actions::read, $metadata);
+        $result = $accessController->areAllowed([Actions::read], $metadata);
 
         if ($result->hasCriteria()){
             return $result->getNew();
         } else {
-            if ($result->getIsAllowed()){
+            if ($result->getAllowed()){
                 return []; //allow read
             } else {
                 return [$metadata->identifier => ['$exists' => false]]; //deny read

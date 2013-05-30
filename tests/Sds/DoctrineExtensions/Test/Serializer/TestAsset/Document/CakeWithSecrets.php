@@ -11,7 +11,9 @@ use Sds\DoctrineExtensions\Annotation\Annotations as Sds;
 /**
  * @ODM\Document
  * @Sds\Serializer\ClassName
- * @Sds\Permission\Basic(roles="all", allow="all")
+ * @Sds\AccessControl({
+ *     @Sds\Permission\Basic(roles="*", allow="*")
+ * })
  */
 class CakeWithSecrets {
 

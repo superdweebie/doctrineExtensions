@@ -10,7 +10,6 @@ trait IdentityTrait {
     /**
      * @ODM\Id(strategy="none")
      * @ODM\Index(unique = true, order = "asc")
-     * @Sds\Readonly
      * @Sds\Validator\Required
      * @Sds\Validator\Identifier
      */

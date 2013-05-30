@@ -20,7 +20,6 @@ trait OwnerTrait {
     /**
      * @ODM\String
      * @Sds\Owner
-     * @Sds\AccessControl\IgnoreUpdate
      * @Sds\Validator\Required
      * @Sds\Validator\Identifier
      */

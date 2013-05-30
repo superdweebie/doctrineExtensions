@@ -48,7 +48,7 @@ class MainSubscriber extends AbstractAccessControlSubscriber {
         foreach ($unitOfWork->getScheduledDocumentInsertions() as $document) {
 
             //Check create permissions
-            if ( ! $accessController->isAllowed(Actions::create, null, $document)->getIsAllowed()) {
+            if ( ! $accessController->areAllowed([Actions::create], null, $document)->getAllowed()) {
 
                 //stop creation
                 $metadata = $documentManager->getClassMetadata(get_class($document));
@@ -78,23 +78,16 @@ class MainSubscriber extends AbstractAccessControlSubscriber {
         //Check update permissions
         foreach ($unitOfWork->getScheduledDocumentUpdates() as $document) {
 
-            $metadata = $documentManager->getClassMetadata(get_class($document));
-            if ( isset($metadata->accessControl['ignoreUpdate'])){
-                // Skip any updates on fields marked with @AccessControl\UpdateIgnore
-                $changeSet = $unitOfWork->getDocumentChangeSet($document);
-
-                $checkPermission = false;
-                foreach ($changeSet as $field => $change) {
-                    if ( ! in_array($field, $metadata->accessControl['ignoreUpdate'])) {
-                        $checkPermission = true;
-                        break;
-                    }
-                }
-            } else {
-                $checkPermission = true;
+            //Assemble all the actions that require permission
+            $changeSet = $unitOfWork->getDocumentChangeSet($document);
+            foreach ($changeSet as $field => $change){
+                $actions[] = Actions::update($field);
             }
 
-            if ( $checkPermission && ! $accessController->isAllowed(Actions::update, null, $document)->getIsAllowed()) {
+            if (! $accessController->areAllowed($actions, null, $document)->getAllowed()) {
+
+                $metadata = $documentManager->getClassMetadata(get_class($document));
+
                 //roll back changes
                 if (!isset($changeSet)){
                     $changeSet = $unitOfWork->getDocumentChangeSet($document);
@@ -109,7 +102,7 @@ class MainSubscriber extends AbstractAccessControlSubscriber {
                 if ($eventManager->hasListeners(AccessControlEvents::updateDenied)) {
                     $eventManager->dispatchEvent(
                         AccessControlEvents::updateDenied,
-                        new EventArgs($document, $documentManager, Actions::update)
+                        new EventArgs($document, $documentManager, 'update')
                     );
                 }
                 continue;
@@ -118,7 +111,7 @@ class MainSubscriber extends AbstractAccessControlSubscriber {
 
         //Check delete permsisions
         foreach ($unitOfWork->getScheduledDocumentDeletions() as $document) {
-            if ( ! $accessController->isAllowed(Actions::delete, null, $document)->getIsAllowed()) {
+            if ( ! $accessController->areAllowed([Actions::delete], null, $document)->getAllowed()) {
                 //stop delete
                 $documentManager->persist($document);
 

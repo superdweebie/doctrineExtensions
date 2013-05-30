@@ -18,7 +18,6 @@ trait RoleAwareIdentityTrait {
     /**
      * @ODM\Collection
      * @Sds\Roles
-     * @Sds\AccessControl\IgnoreUpdate
      * @Sds\Validator\IdentifierArray
      */
     protected $roles = [];

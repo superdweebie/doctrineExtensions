@@ -10,8 +10,10 @@ use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
 use Sds\DoctrineExtensions\Annotation\Annotations as Sds;
 
 /** @ODM\Document
- * @Sds\Permission\Basic(roles="all", allow={"create", "read", "update"})
- * @Sds\Permission\Basic(roles="admin", allow="updateCredential")
+ * @Sds\AccessControl ({
+ *     @Sds\Permission\Basic(roles="*",     allow={"create", "read", "update"}, deny="update::credential"),
+ *     @Sds\Permission\Basic(roles="admin", allow="update::credential"                                   )
+ * })
  */
 class CredentialTraitDoc implements CredentialInterface {
 

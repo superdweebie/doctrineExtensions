@@ -30,27 +30,22 @@ class AccessController implements ServiceLocatorAwareInterface, DocumentManagerA
 
     protected $permissions = [];
 
-    protected $roles;
-
     public function enableReadFilter(){
         $filter = $this->documentManager->getFilterCollection()->enable('readAccessControl');
         $filter->setAccessController($this);
     }
 
-    public function resetRoles(){
-        $this->roles = null;
-    }
-
     /**
      * Determines if an action can be done by the current Identity
      *
+     * @param array $action
+     * @param \Doctrine\Common\Persistence\Mapping\ClassMetadata $metadata
      * @param type $document
-     * @param string | ActionInterface $action
-     * @return IsAllowedResult
+     * @return \Sds\DoctrineExtensions\AccessControl\IsAllowedResult
      */
-    public function isAllowed($action, ClassMetadata $metadata = null, $document = null){
+    public function areAllowed(array $actions, ClassMetadata $metadata = null, $document = null){
 
-        $result = new IsAllowedResult(false);
+        $result = new AllowedResult(false);
         if (!isset($metadata)){
             $metadata = $this->documentManager->getClassMetadata(get_class($document));
         }
@@ -90,12 +85,12 @@ class AccessController implements ServiceLocatorAwareInterface, DocumentManagerA
             }
 
             $permission = $this->permissions[$metadata->name][$index];
-            $newResult = $permission->isAllowed($roles, $action);
-            $isAllowed = $newResult->getIsAllowed();
-            if ( ! isset($isAllowed)){
+            $newResult = $permission->areAllowed($roles, $actions);
+            $allowed = $newResult->getAllowed();
+            if ( ! isset($allowed)){
                 continue;
             }
-            $result->setIsAllowed($isAllowed);
+            $result->setAllowed($allowed);
 
             $new = $newResult->getNew();
             if (isset($new)){
@@ -112,7 +107,7 @@ class AccessController implements ServiceLocatorAwareInterface, DocumentManagerA
             if (count($result->getNew()) > 0){
                 foreach ($result->getNew() as $field => $value){
                     if ($metadata->reflFields[$field]->getValue($document) != $value){
-                        $result->setIsAllowed(false);
+                        $result->setAllowed(false);
                         return $result;
                     }
                 }
@@ -122,7 +117,7 @@ class AccessController implements ServiceLocatorAwareInterface, DocumentManagerA
                 $changeSet = $this->documentManager->getUnitOfWork()->getDocumentChangeSet($document);
                 foreach ($result->getOld() as $field => $value){
                     if ($changeSet[$field][0] != $value){
-                        $result->setIsAllowed(false);
+                        $result->setAllowed(false);
                         return $result;
                     }
                 }
@@ -134,20 +129,14 @@ class AccessController implements ServiceLocatorAwareInterface, DocumentManagerA
 
     protected function getRoles(){
 
-        if (!isset($this->roles)){
-            if ($this->serviceLocator->has('identity') &&
-                $identity = $this->serviceLocator->get('identity')
-            ){
-                if ($identity instanceof RoleAwareIdentityInterface){
-                    $this->roles = $identity->getRoles();
-                } else {
-                    $this->roles = [];
-                }
-            } else {
-                $this->roles = [];
+        if ($this->serviceLocator->has('identity') &&
+            $identity = $this->serviceLocator->get('identity')
+        ){
+            if ($identity instanceof RoleAwareIdentityInterface){
+                return $identity->getRoles();
             }
         }
-        return $this->roles;
+        return [];
     }
 
     protected function getIdentityName(){

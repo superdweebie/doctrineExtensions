@@ -9,6 +9,7 @@ namespace Sds\DoctrineExtensions\AccessControl;
 use Doctrine\Common\EventSubscriber;
 use Sds\DoctrineExtensions\Annotation\Annotations as Sds;
 use Sds\DoctrineExtensions\Annotation\AnnotationEventArgs;
+use Sds\DoctrineExtensions\Annotation\EventType;
 
 /**
  *
@@ -23,7 +24,7 @@ class AnnotationSubscriber implements EventSubscriber {
      */
     public function getSubscribedEvents(){
         return [
-            Sds\AccessControl\IgnoreUpdate::event
+            Sds\AccessControl::event
         ];
     }
 
@@ -31,10 +32,26 @@ class AnnotationSubscriber implements EventSubscriber {
      *
      * @param \Sds\DoctrineExtensions\Annotation\AnnotationEventArgs $eventArgs
      */
-    public function annotationAccessControlIgnoreUpdate(AnnotationEventArgs $eventArgs)
+    public function annotationAccessControl(AnnotationEventArgs $eventArgs)
     {
-        if ($eventArgs->getAnnotation()->value){
-            $eventArgs->getMetadata()->accessControl['ignoreUpdate'][] = $eventArgs->getReflection()->getName();
+        $annotation = $eventArgs->getAnnotation();
+        $metadata = $eventArgs->getMetadata();
+
+        if ($annotation->value){
+            $metadata->permissions = [];
+            $eventManager = $eventArgs->getEventManager();
+            foreach ($annotation->value as $permissionAnnotation){
+                if (defined(get_class($permissionAnnotation) . '::event')) {
+
+                    // Raise annotation event
+                    if ($eventManager->hasListeners($permissionAnnotation::event)) {
+                        $eventManager->dispatchEvent(
+                            $permissionAnnotation::event,
+                            new AnnotationEventArgs($metadata, EventType::document, $permissionAnnotation, $eventArgs->getReflection(), $eventManager)
+                        );
+                    }
+                }
+            }
         }
     }
 }

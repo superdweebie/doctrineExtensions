@@ -18,15 +18,13 @@ class Extension extends AbstractExtension {
 
     protected $subscribers = [
         'subscriber.owner.mainsubscriber',
-        'subscriber.owner.annotationsubscriber',
-        'subscirber.owner.updateownersubscriber'
+        'subscriber.owner.annotationsubscriber'
     ];
 
     protected $serviceManagerConfig = [
         'invokables' => [
             'subscriber.owner.mainsubscriber' => 'Sds\DoctrineExtensions\Owner\MainSubscriber',
-            'subscriber.owner.annotationsubscriber' => 'Sds\DoctrineExtensions\Owner\AnnotationSubscriber',
-            'subscirber.owner.updateownersubscriber' => 'Sds\DoctrineExtensions\Owner\AccessControl\UpdateOwnerSubscriber'
+            'subscriber.owner.annotationsubscriber' => 'Sds\DoctrineExtensions\Owner\AnnotationSubscriber'
         ]
     ];
 

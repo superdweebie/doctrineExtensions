@@ -45,7 +45,7 @@ class FreezeSubscriber extends AbstractAccessControlSubscriber
 
         $document = $eventArgs->getDocument();
 
-        if ( ! $accessController->isAllowed(Actions::freeze, null, $document)->getIsAllowed()) {
+        if ( ! $accessController->areAllowed([Actions::freeze], null, $document)->getAllowed()) {
             //stop freeze
             $this->getFreezer()->thaw($document);
 
@@ -73,7 +73,7 @@ class FreezeSubscriber extends AbstractAccessControlSubscriber
 
         $document = $eventArgs->getDocument();
 
-        if ( ! $accessController->isAllowed(Actions::thaw, null, $document)->getIsAllowed()) {
+        if ( ! $accessController->areAllowed([Actions::thaw], null, $document)->getAllowed()) {
             //stop thaw
             $this->getFreezer()->freeze($document);
 

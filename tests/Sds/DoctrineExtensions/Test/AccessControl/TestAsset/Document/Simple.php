@@ -8,13 +8,15 @@ use Sds\DoctrineExtensions\Annotation\Annotations as Sds;
 
 /**
  * @ODM\Document
- * @Sds\Permission\Basic(roles="all", allow="read")
- * @Sds\Permission\Basic(roles="creator", allow="create", deny="read")
- * @Sds\Permission\Basic(roles="reader", allow="read")
- * @Sds\Permission\Basic(roles="updater", allow="update")
- * @Sds\Permission\Basic(roles="deletor", allow="delete")
- * @Sds\Permission\Basic(roles="admin", allow="all", deny="delete")
- * @Sds\Permission\Basic(roles="superadmin", allow="all")
+ * @Sds\AccessControl({
+ *     @Sds\Permission\Basic(roles="*",          allow="read"                  ),
+ *     @Sds\Permission\Basic(roles="creator",    allow="create",  deny="read"  ),
+ *     @Sds\Permission\Basic(roles="reader",     allow="read"                  ),
+ *     @Sds\Permission\Basic(roles="updater",    allow="update::*"             ),
+ *     @Sds\Permission\Basic(roles="deletor",    allow="delete"                ),
+ *     @Sds\Permission\Basic(roles="admin",      allow="*",       deny="delete"),
+ *     @Sds\Permission\Basic(roles="superadmin", allow="*"                     )
+ * })
  */
 class Simple {
 
