@@ -39,7 +39,7 @@ class StatePermission implements PermissionInterface
     }
 
     protected function roleToRegex($string){
-        return '/^' . str_replace(self::wild, '[a-zA-Z0-9_-]*', $string) . '$/';
+        return '/^' . str_replace(self::wild, '[a-zA-Z0-9_:-]*', $string) . '$/';
     }
 
     protected function actionToRegex($string){

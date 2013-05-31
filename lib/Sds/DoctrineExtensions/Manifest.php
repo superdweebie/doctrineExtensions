@@ -34,7 +34,6 @@ class Manifest extends AbstractExtension {
             'extension.generator' => 'Sds\DoctrineExtensions\Generator\ExtensionFactory',
             'extension.identity' => 'Sds\DoctrineExtensions\Identity\ExtensionFactory',
             'extension.owner' => 'Sds\DoctrineExtensions\Owner\ExtensionFactory',
-            'extension.readonly' => 'Sds\DoctrineExtensions\Readonly\ExtensionFactory',
             'extension.reference' => 'Sds\DoctrineExtensions\Reference\ExtensionFactory',
             'extension.rest' => 'Sds\DoctrineExtensions\Rest\ExtensionFactory',
             'extension.serializer' => 'Sds\DoctrineExtensions\Serializer\ExtensionFactory',

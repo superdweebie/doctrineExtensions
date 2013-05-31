@@ -18,6 +18,8 @@ class Extension extends AbstractExtension {
 
     protected $serviceManagerConfig = [
         'invokables' => [
+            'cli.command.dojo.files.saveall' => 'Sds\DoctrineExtensions\Dojo\Console\Command\FilesSaveAllCommand',
+            'cli.command.dojo.files.deleteall' => 'Sds\DoctrineExtensions\Dojo\Console\Command\FilesDeleteAllCommand',
             'generator.dojo.form' => 'Sds\DoctrineExtensions\Dojo\FormGenerator',
             'generator.dojo.input' => 'Sds\DoctrineExtensions\Dojo\InputGenerator',
             'generator.dojo.multifieldvalidator' => 'Sds\DoctrineExtensions\Dojo\MultiFieldValidatorGenerator',
@@ -25,7 +27,19 @@ class Extension extends AbstractExtension {
             'generator.dojo.model' => 'Sds\DoctrineExtensions\Dojo\ModelGenerator',
             'generator.dojo.modelvalidator' => 'Sds\DoctrineExtensions\Dojo\ModelValidatorGenerator',
             'generator.dojo.jsonrest' => 'Sds\DoctrineExtensions\Dojo\JsonRestGenerator'
+        ],
+        'factories' => [
+            'cli.helper.dojo.servicelocator' => 'Sds\DoctrineExtensions\Dojo\Console\Helper\ServiceLocatorHelperFactory',
         ]
+    ];
+
+    protected $cliCommands = [
+        'cli.command.dojo.files.saveall',
+        'cli.command.dojo.files.deleteall'
+    ];
+
+    protected $cliHelpers = [
+        'servicelocator' => 'cli.helper.dojo.servicelocator',
     ];
 
     /**
@@ -65,7 +79,12 @@ class Extension extends AbstractExtension {
         ]
     ];
 
-    protected $persistToFile = false;
+    /**
+     * Values can be save | delete | ignore
+     *
+     * @var string
+     */
+    protected $flatFileStrategy = 'ignore';
 
     /**
      *
@@ -91,11 +110,11 @@ class Extension extends AbstractExtension {
         $this->defaultMixins = $defaultMixins;
     }
 
-    public function getPersistToFile() {
-        return $this->persistToFile;
+    public function getFlatFileStrategy() {
+        return $this->flatFileStrategy;
     }
 
-    public function setPersistToFile($persistToFile) {
-        $this->persistToFile = $persistToFile;
+    public function setFlatFileStrategy($flatFileStrategy) {
+        $this->flatFileStrategy = (string) $flatFileStrategy;
     }
 }

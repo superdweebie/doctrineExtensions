@@ -37,7 +37,7 @@ abstract class AbstractDojoGenerator implements GeneratorInterface, ServiceLocat
 
     protected $defaultMixins;
 
-    protected $persistToFile;
+    protected $flatFileStrategy;
 
     public function getFilePaths(){
         if (!isset($this->filePaths)){
@@ -53,11 +53,11 @@ abstract class AbstractDojoGenerator implements GeneratorInterface, ServiceLocat
         return $this->defaultMixins;
     }
 
-    public function getPersistToFile(){
-        if (!isset($this->persistToFile)){
-            $this->persistToFile = $this->getExtension()->getPersistToFile();
+    public function getFlatFileStrategy(){
+        if (!isset($this->flatFileStrategy)){
+            $this->flatFileStrategy = $this->getExtension()->getflatFileStrategy();
         }
-        return $this->persistToFile;
+        return $this->flatFileStrategy;
     }
 
     public function getExtension(){
@@ -82,10 +82,6 @@ abstract class AbstractDojoGenerator implements GeneratorInterface, ServiceLocat
             }
         }
     }
-
-//    static public function getResourceName($className, $fieldName = null){
-//        return self::getMid($className);
-//    }
 
     protected function populateTemplate($template, array $args) {
 
@@ -148,7 +144,24 @@ abstract class AbstractDojoGenerator implements GeneratorInterface, ServiceLocat
         return str_replace('\\', '/', $class);
     }
 
-    protected function persistToFile($filePath, $content){
+    protected function handleFlatFile($name, $content){
+
+        $strategy = $this->getFlatFileStrategy();
+        if ($strategy == 'ignore'){
+            return;
+        }
+
+        $filePath = $this->getFilePath($name);
+        if ($strategy == 'save'){
+            $this->saveFlatFile($filePath, $content);
+        };
+
+        if ($strategy == 'delete'){
+            $this->deleteFlatFile($filePath, $content);
+        };
+    }
+
+    protected function saveFlatFile($filePath, $content){
 
         if ($filePath){
 
@@ -159,6 +172,12 @@ abstract class AbstractDojoGenerator implements GeneratorInterface, ServiceLocat
             }
 
             file_put_contents($filePath, $content);
+        }
+    }
+
+    protected function deleteFlatFile($filePath){
+        if ($filePath && file_exists($filePath)){
+            unlink($filePath);
         }
     }
 

@@ -19,16 +19,9 @@ class Extension extends AbstractExtension {
     protected $resourceMap;
 
     protected $serviceManagerConfig = [
-        'invokables' => [
-            'cli.generate' => 'Sds\DoctrineExtensions\Generator\Console\Command\GenerateCommand'
-        ],
         'factories' => [
             'resourceMap' => 'Sds\DoctrineExtensions\Generator\ResourceMapFactory',
         ]
-    ];
-
-    protected $cliCommands = [
-        'generate'
     ];
 
     public function getResourceMap() {

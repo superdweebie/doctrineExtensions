@@ -136,9 +136,7 @@ class InputGenerator extends AbstractDojoGenerator
             $templateArgs
         );
 
-        if ($this->getPersistToFile()){
-            $this->persistToFile($this->getFilePath($name), $resource);
-        }
+        $this->handleFlatFile($name, $resource);
 
         return $resource;
     }
