@@ -15,63 +15,51 @@ class EndpointMap
 {
     protected $map = [];
 
-    public function getMap() {
-        return $this->map;
-    }
-
     public function setMap($map) {
         $this->map = $map;
     }
 
-    public function has($endpoint){
-        return array_key_exists($endpoint, $this->map);
+    public function hasEndpoint($name){
+        return array_key_exists($name, $this->map);
     }
 
-    public function getClass($endpoint){
-        if (isset($this->map[$endpoint])){
-            if (is_string($this->map[$endpoint])){
-                return $this->map[$endpoint];
-            }
-            if (is_array($this->map[$endpoint])){
-                return $this->map[$endpoint]['class'];
-            }
+    public function getEndpoint($name){
+        if (!$this->hasEndpoint($name)){
+            return;
         }
-        return false;
+        $endpoint = $this->map[$name];
+        if ( ! $endpoint instanceof Endpoint){
+            $endpoint = new Endpoint($endpoint);
+            $endpoint->setName($name);
+            $this->map[$name] = $endpoint;
+        }
+        return $endpoint;
     }
 
-    public function getCacheOptions($endpoint = null, $class = null){
+    public function getEndpointsFromClass($class){
 
-        if (isset($class)){
-            $endpoints = array_keys(array_filter($this->map, function($value) use ($class){
-                if (is_string($value) && ($value == $class)){
-                    return true;
+        $result = [];
+
+        $checkEmbeddedEndpoints = function($endpoint) use (&$result, $class, &$checkEmbeddedEndpoints){
+            $embeddedLists = $endpoint->getEmbeddedLists();
+            if (count($embeddedLists) > 0){
+                foreach ($embeddedLists as $name => $embeddedEndpoint){
+                    if ($embeddedEndpoint->getClass() == $class){
+                        $result[] = $embeddedEndpoint;
+                    }
+                    $checkEmbeddedEndpoints($embeddedEndpoint);
                 }
-                if (isset($value['class']) && $value['class'] == $class){
-                    return true;
-                }
-            }));
-            if (count($endpoints) > 0){
-                $endpoint = $endpoints[0];
             }
-        }
-        if (isset($endpoint) && isset($this->map[$endpoint]) && isset($this->map[$endpoint]['cache'])){
-            $options = $this->map[$endpoint]['cache'];
-        } else {
-            $options = [];
-        }
-        return new CacheOptions($options);
-    }
+        };
 
-    public function getEndpoints($class){
-        return array_keys(
-            array_filter($this->map, function($value) use ($class){
-                if (is_string($value) && ($value == $class)){
-                    return true;
-                }
-                if (isset($value['class']) && $value['class'] == $class){
-                    return true;
-                }
-            })
-        );
+        foreach ($this->map as $name => $endpoint){
+            $endpoint = $this->getEndpoint($name);
+            if ($endpoint->getClass() == $class){
+                $result[] = $endpoint;
+            }
+            $checkEmbeddedEndpoints($endpoint);
+        }
+
+        return $result;
     }
 }

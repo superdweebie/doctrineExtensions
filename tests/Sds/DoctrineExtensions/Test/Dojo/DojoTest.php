@@ -21,7 +21,7 @@ class DojoTest extends BaseTest {
             ],
             'extension_configs' => [
                 'extension.dojo' => [
-                    'persist_to_file' => true,
+                    'flat_file_strategy' => 'save',
                     'file_paths' => [[
                         'filter' => '',
                         'path' => $this->path

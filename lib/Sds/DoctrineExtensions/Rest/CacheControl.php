@@ -13,7 +13,7 @@ use Zend\Stdlib\AbstractOptions;
  * @since   1.0
  * @author  Tim Roediger <superdweebie@gmail.com>
  */
-class CacheOptions extends AbstractOptions
+class CacheControl extends AbstractOptions
 {
     protected $public;
 

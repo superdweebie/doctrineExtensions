@@ -18,7 +18,8 @@ class RestTest extends BaseTest {
                     'endpoint_map' => [
                         'simple' => [
                             'class' => 'Sds\DoctrineExtensions\Test\Rest\TestAsset\Document\Simple',
-                            'cache' => [
+                            'property' => 'id',
+                            'cache_control' => [
                                 'public'  => true,
                                 'max_age' => 10
                             ]
@@ -39,21 +40,18 @@ class RestTest extends BaseTest {
 
     public function testHas(){
 
-        $this->assertTrue($this->endpointMap->has('simple'));
-        $this->assertFalse($this->endpointMap->has('does not exist'));
+        $this->assertTrue($this->endpointMap->hasEndpoint('simple'));
+        $this->assertFalse($this->endpointMap->hasEndpoint('does not exist'));
     }
 
-    public function testGetClass(){
-        $this->assertEquals('Sds\DoctrineExtensions\Test\Rest\TestAsset\Document\Simple', $this->endpointMap->getClass('simple'));
+    public function testGet(){
+        $endpoint = $this->endpointMap->getEndpoint('simple');
+        $this->assertEquals('Sds\DoctrineExtensions\Test\Rest\TestAsset\Document\Simple', $endpoint->getClass());
     }
 
-    public function testGetCacheOptions(){
-        $cacheOptions = $this->endpointMap->getCacheOptions('simple');
+    public function testCacheControl(){
+        $cacheOptions = $this->endpointMap->getEndpoint('simple')->getCacheControl();
         $this->assertTrue($cacheOptions->getPublic());
         $this->assertEquals(10, $cacheOptions->getMaxAge());
-    }
-
-    public function testGetEndpoints(){
-        $this->assertEquals(['simple'], $this->endpointMap->getEndpoints('Sds\DoctrineExtensions\Test\Rest\TestAsset\Document\Simple'));
     }
 }
