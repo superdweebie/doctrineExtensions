@@ -1,3 +1,5 @@
+DEPRECIATED. See <a href="http://zoopcommerce.github.io/shard">shard</a>
+
 DoctrineExtensions
 =====================
 
